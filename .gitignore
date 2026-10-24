@@ -1,0 +1,55 @@
+# ---------------------------------------------------------------
+# Vorlage-Map von chamo572 und ALLES daraus Erzeugte.
+# Die Nutzungsbedingungen des Erstellers verbieten einen Re-Upload.
+# Diese Dateien dürfen NIE auf GitHub landen.
+# ---------------------------------------------------------------
+/vorlage/
+/villa-export/
+**/structure/villa/
+**/structures/villa/
+*.nbt
+*.mca
+*.mcr
+level.dat
+level.dat_old
+
+# Gradle / Build
+.gradle/
+build/
+out/
+bin/
+.kotlin/
+versions/*/build/
+versions/*/.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Dev-Läufe von Minecraft (Welten, Logs, lokale Config mit API-Key)
+run/
+runs/
+versions/*/run/
+logs/
+crash-reports/
+*.log
+
+# Lokale Konfiguration und Geheimnisse
+.env
+*.secret
+stinkendreich-local.json
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+
+# Betriebssystem
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Fortschrittsseite (lokal) und Arbeitsdateien
+.claude/fortschritt/
