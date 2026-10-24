@@ -15,6 +15,10 @@ stonecutter parameters {
         string(current.parsed >= "1.21.11") {
             replace("ResourceLocation", "Identifier")
         }
+        // Tippfehler im Methodennamen wurde in 1.21.9 korrigiert
+        string(current.parsed >= "1.21.9") {
+            replace("noCollission()", "noCollision()")
+        }
         // Kopfzeile der Class-Tweaker-Datei
         string(current.parsed >= "26.1") {
             replace("classTweaker v2 named", "classTweaker v2 official")

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/tuerklingel"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/tuerklingel",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/tuerklingel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/tuerklingel",
+      "y": 270
+    }
+  }
+}

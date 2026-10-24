@@ -1,6 +1,15 @@
 package de.moinmornhart.stinkendreich;
 
 import de.moinmornhart.stinkendreich.dev.Autotest;
+import de.moinmornhart.stinkendreich.mechanik.Aufzug;
+import de.moinmornhart.stinkendreich.mechanik.SicherheitszentraleBlock;
+import de.moinmornhart.stinkendreich.mechanik.TastenfeldBlock;
+import de.moinmornhart.stinkendreich.mechanik.VillaZustand;
+import de.moinmornhart.stinkendreich.netz.Netz;
+import de.moinmornhart.stinkendreich.register.ModBloecke;
+import de.moinmornhart.stinkendreich.register.ModItems;
+import de.moinmornhart.stinkendreich.register.ModSounds;
+import de.moinmornhart.stinkendreich.register.ModTab;
 import de.moinmornhart.stinkendreich.villa.VillaBefehle;
 import de.moinmornhart.stinkendreich.villa.VillaPlatzierung;
 import net.fabricmc.api.ModInitializer;
@@ -24,6 +33,15 @@ public class StinkendReich implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Stinkend Reich {} für Minecraft {} startet", VERSION, MINECRAFT);
         Konfig.laden();
+        ModSounds.init();
+        ModItems.init();
+        ModBloecke.init();
+        ModTab.init();
+        Netz.registrieren();
+        VillaZustand.registrieren();
+        Aufzug.registrieren();
+        SicherheitszentraleBlock.aktionenRegistrieren();
+        TastenfeldBlock.aktionenRegistrieren();
         VillaPlatzierung.registrieren();
         VillaBefehle.registrieren();
         Autotest.registrieren();

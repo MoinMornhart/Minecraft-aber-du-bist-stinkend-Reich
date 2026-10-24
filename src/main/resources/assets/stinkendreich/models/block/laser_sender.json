@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "stinkendreich:block/technik_seite",
+    "north": "stinkendreich:block/laser_sender",
+    "south": "stinkendreich:block/technik_seite",
+    "east": "stinkendreich:block/technik_seite",
+    "west": "stinkendreich:block/technik_seite",
+    "up": "stinkendreich:block/technik_seite",
+    "down": "stinkendreich:block/technik_seite"
+  }
+}

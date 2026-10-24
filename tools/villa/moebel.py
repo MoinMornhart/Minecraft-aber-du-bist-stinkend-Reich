@@ -138,6 +138,7 @@ def aquarium(b: Bau, x0: int, y0: int, z0: int, x1: int, y1: int, z1: int) -> No
 
 def truhe(b: Bau, x: int, y: int, z: int, facing: str, inhalt: list[tuple[str, int]]) -> None:
     """Truhe mit Inhalt (Gegenstand, Anzahl) im Format von Minecraft 1.21."""
-    items = [{"Slot": ("b", i), "id": f"minecraft:{name}", "count": anzahl} for i, (name, anzahl) in enumerate(inhalt)]
+    items = [{"Slot": ("b", i), "id": name if ":" in name else f"minecraft:{name}", "count": anzahl}
+             for i, (name, anzahl) in enumerate(inhalt)]
     b.setze(x, y, z, zustand("chest", facing=facing, type="single", waterlogged="false"),
             {"id": "minecraft:chest", "Items": items})

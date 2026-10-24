@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,powered=false": {
+      "model": "stinkendreich:block/kartenleser"
+    },
+    "facing=north,powered=true": {
+      "model": "stinkendreich:block/kartenleser_an"
+    },
+    "facing=east,powered=false": {
+      "model": "stinkendreich:block/kartenleser",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "stinkendreich:block/kartenleser_an",
+      "y": 90
+    },
+    "facing=south,powered=false": {
+      "model": "stinkendreich:block/kartenleser",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "stinkendreich:block/kartenleser_an",
+      "y": 180
+    },
+    "facing=west,powered=false": {
+      "model": "stinkendreich:block/kartenleser",
+      "y": 270
+    },
+    "facing=west,powered=true": {
+      "model": "stinkendreich:block/kartenleser_an",
+      "y": 270
+    }
+  }
+}

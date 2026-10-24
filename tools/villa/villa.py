@@ -208,12 +208,9 @@ def huelle() -> None:
     for x in range(HX0, HX1 + 1):
         for y in list(range(EG + 1, OG)) + list(range(OG + 1, DACH)):
             b.setze(x, y, HZ1, SCHWARZ if x in pfeiler else GLAS)
-    # Eingang (Doppeltür mit Glas daneben)
-    b.luft(53, EG + 1, HZ1, 56, EG + 3, HZ1)
-    doppeltuer(b, 54, EG + 1, HZ1, "south", "dark_oak_door")
-    b.setze(53, EG + 1, HZ1, GLAS)
-    b.setze(56, EG + 1, HZ1, GLAS)
-    b.marke("haustuer", 54, EG + 1, HZ1, 55, EG + 2, HZ1)
+    # Eingang: Öffnung für die automatische Schiebetür (siehe mechanismen())
+    b.luft(54, EG + 1, HZ1, 55, EG + 3, HZ1)
+    b.marke("haustuer", 54, EG + 1, HZ1, 55, EG + 3, HZ1)
     # Balkon über dem Eingang: Obergeschoss-Platte kragt 3 Blöcke aus
     b.quader(HX0, OG, HZ1 + 1, HX1, OG, HZ1 + 3, WEISS)
     for x in range(HX0, HX1 + 1):
@@ -322,7 +319,6 @@ def erdgeschoss() -> None:
         b.setze(x, OG - 1, 57, zustand("lantern", hanging="true", waterlogged="false"))
     # Tür zur Garage
     b.luft(HX1, y, 60, HX1, y + 1, 60)
-    tuer(b, HX1, y, 60, "east", "iron_door")
     b.marke("garagentuer", HX1, y, 60)
 
 
@@ -361,28 +357,22 @@ def obergeschoss() -> None:
     for z in range(41, 48):
         truhe(b, 48, y, z, "west", [])
     # Tresorraum für den Schmuck (Nordosten, dicke Wände)
-    b.quader(61, OG, HZ0 + 1, 67, DACH - 1, 47, "polished_deepslate_bricks")
+    # Wände aus Tiefenschieferziegeln; die Tresortür (Panzertür) liegt in der Südwand zum Flur
+    b.quader(61, OG, HZ0 + 1, 67, DACH - 1, 47, "deepslate_bricks")
     b.luft(62, y, HZ0 + 2, 66, DACH - 2, 46)
     b.quader(62, OG, HZ0 + 2, 66, OG, 46, "gold_block")
-    b.luft(61, y, 41, 61, y + 1, 42)
-    tuer(b, 61, y, 41, "west", "iron_door", "left")
-    tuer(b, 61, y, 42, "west", "iron_door", "right")
-    b.marke("tresortuer", 61, y, 41, 61, y + 1, 42)
-    for z in range(HZ0 + 2, 47, 2):
+    b.luft(63, y, 47, 64, y + 1, 47)
+    b.marke("tresortuer", 63, y, 47, 64, y + 1, 47)
+    for z in range(HZ0 + 2, 45, 2):
         truhe(b, 66, y, z, "west", [("diamond", 16), ("emerald", 32), ("gold_ingot", 64), ("golden_apple", 4)])
     b.quader(62, y, HZ0 + 2, 65, y, HZ0 + 2, "diamond_block")
-    b.quader(62, y, 46, 64, y, 46, "emerald_block")
-    for z in (40, 43):
-        b.setze(64, y, z, zustand("light_weighted_pressure_plate", power="0"))
-        b.marke("tresorfalle", 64, y, z)
-    b.marke("entschaerfknopf", 62, y + 3, 44)
+    b.quader(65, y, 45, 66, y, 46, "emerald_block")
     # Überwachungsraum (Nordost hinten)
     b.quader(68, OG, HZ0 + 1, HX1 - 1, OG, 50, "gray_concrete")
     b.quader(68, y, 51, HX1 - 1, DACH - 1, 51, WEISS)
     b.luft(70, y, 51, 71, y + 1, 51)
     b.quader(69, y + 1, HZ0 + 1, HX1 - 1, y + 3, HZ0 + 1, SCHWARZ)        # Monitorwand
     for x in range(69, HX1, 2):
-        b.setze(x, y + 2, HZ0 + 1, "light_blue_stained_glass")
         b.marke("monitor", x, y + 2, HZ0 + 1)
     tisch(b, 69, y, 40, HX1 - 1, 40, "polished_blackstone_slab")
     for x in (71, 74, 77):
@@ -392,8 +382,7 @@ def obergeschoss() -> None:
     tisch(b, 66, y, 60, 72, 61, "dark_oak_slab")
     stuhl(b, 69, y, 59, "south")
     b.quader(HX1 - 1, y, 53, HX1 - 1, y + 3, 64, "bookshelf")
-    b.setze(62, y + 1, 53, "redstone_lamp")
-    b.marke("sicherheitszentrale", 62, y + 1, 53)
+    b.marke("sicherheitszentrale", 61, y, 54)
 
 
 def penthouse() -> None:
@@ -489,11 +478,10 @@ def bunker() -> None:
     # Kommandozentrale (Nordwest)
     b.quader(x0 + 2, y + 1, z0 + 1, 51, y + 3, z0 + 1, SCHWARZ)
     for x in range(x0 + 3, 51, 2):
-        b.setze(x, y + 2, z0 + 1, "lime_stained_glass")
+        b.marke("bunker_monitor", x, y + 2, z0 + 1)
     tisch(b, x0 + 3, y, z0 + 4, 50, z0 + 4, "polished_blackstone_slab")
     for x in range(x0 + 4, 50, 3):
         stuhl(b, x, y, z0 + 6, "north", "polished_blackstone_stairs")
-    b.setze(45, y, 44, "redstone_lamp")
     b.marke("bunker_zentrale", 45, y, 44)
     # Waffenkammer (Nordost)
     for z in range(z0 + 2, 49, 3):
@@ -520,8 +508,141 @@ def bunker() -> None:
         b.setze(17, yy, 59, "polished_deepslate")
         b.setze(17, yy, 61, "polished_deepslate")
         b.setze(18, yy, 59 if yy > y + 2 else 58, "polished_deepslate")
-    b.setze(17, G, 60, zustand("iron_trapdoor", facing="east", half="top", open="false", powered="false", waterlogged="false"))
+    b.setze(17, G, 60, zustand("dark_oak_trapdoor", facing="east", half="top", open="false", powered="false", waterlogged="false"))
     b.marke("fluchtluke", 17, G, 60)
+
+
+# Mod-Blöcke mit eigener Block-Entity (für gespeicherte Werte wie Modus, Name, Code)
+def mech(x: int, y: int, z: int, block: str, richtung: str | None = None, **werte) -> None:
+    """Setzt einen Mechanik-Block der Mod; Werte landen in seiner Block-Entity."""
+    props = {}
+    if richtung:
+        props["facing"] = richtung
+    if block in ("kartenleser", "tastenfeld", "bewegungsmelder"):
+        props["powered"] = "false"
+    if block == "warnleuchte":
+        props["lit"] = "false"
+    daten = {"id": "stinkendreich:mechanik", "stinkendreich": json.dumps({"werte": werte})} if werte else None
+    b.setze(x, y, z, zustand(f"stinkendreich:{block}", **props), daten)
+
+
+def fluegel(x0, y0, z0, x1, y1, z1, name: str, offen: bool) -> None:
+    """Fläche aus Torflügeln (Tor, Rollladen, Schiebetür …), offen oder geschlossen."""
+    b.quader(x0, y0, z0, x1, y1, z1, zustand(f"stinkendreich:{name}", open=str(offen).lower()))
+
+
+def mechanismen() -> None:
+    """Setzt alle Mechanismen der Villa (eigene Blöcke der Mod, keine Command-Blöcke)."""
+    n = GROESSE[0] - 1
+    yo = OG + 1
+    pfeiler = set(range(HX0, HX1 + 1, 7)) | {HX1}
+
+    # Tor: öffnet für Bewohner und Kartenträger, Klingel außen
+    fluegel(52, G + 1, n - 13, 59, G + 4, n - 12, "tor", False)
+    mech(55, G - 1, n - 13, "torsteuerung", modus="tor", ziel="stinkendreich:tor", radius=6)
+    mech(60, G + 2, n - 11, "tuerklingel", "south")
+
+    # Automatische Schiebetüren: Haustür und Durchgang zur Garage
+    fluegel(54, EG + 1, HZ1, 55, EG + 3, HZ1, "schiebetuer", False)
+    mech(54, EG - 1, HZ1, "torsteuerung", modus="schiebetuer", ziel="stinkendreich:schiebetuer", radius=4)
+    fluegel(HX1, EG + 1, 60, HX1, EG + 2, 60, "schiebetuer", False)
+    mech(HX1, EG - 1, 60, "torsteuerung", modus="schiebetuer", ziel="stinkendreich:schiebetuer", radius=3)
+
+    # Garagentor
+    fluegel(82, EG + 1, 67, 92, EG + 4, 67, "garagentor", False)
+    mech(87, EG - 1, 67, "torsteuerung", modus="tor", ziel="stinkendreich:garagentor", radius=6)
+
+    # Rollläden vor den Fenstern im Erdgeschoss: schließen ab Stufe 2 (Lockdown)
+    for x in range(HX0 + 1, HX1):
+        if x not in pfeiler and x not in (54, 55):
+            fluegel(x, EG + 1, HZ1 + 1, x, OG - 1, HZ1 + 1, "rollladen", True)
+    mech(55, EG - 1, HZ1 + 2, "torsteuerung", modus="rollladen", ziel="stinkendreich:rollladen", radius=24)
+
+    # Sicherheitszentralen und Überwachung
+    mech(61, yo, 54, "sicherheitszentrale", "east")
+    mech(45, BUNKER + 1, 44, "sicherheitszentrale", "north")
+    for m in b.marken["monitor"] + b.marken["bunker_monitor"]:
+        mech(m[0], m[1], m[2], "monitor", "south")
+    for (x, y, z, r) in ((51, G + 5, n - 11, "south"), (60, G + 5, n - 14, "north"), (51, EG + 4, HZ1 + 1, "south"),
+                         (58, EG + 4, HZ1 + 1, "south"), (55, OG + 3, HZ0 - 1, "north"), (65, yo + 3, 46, "north"),
+                         (93, EG + 4, 47, "south"), (57, BUNKER + 4, 68, "north")):
+        mech(x, y, z, "kamera", r)
+    truhe(b, 77, yo, 66, "north", [("stinkendreich:zugangskarte", 1)] * 4)
+
+    # Bewegungsmelder (Alarm bei Eindringlingen, Lichtautomatik), Sirenen, Warnleuchten
+    mech(52, EG + 4, HZ0 + 1, "bewegungsmelder", "south")
+    mech(51, G + 3, n - 11, "bewegungsmelder", "south")
+    mech(60, BUNKER + 3, 31, "bewegungsmelder", "south")
+    mech(91, EG + 3, 47, "bewegungsmelder", "south")                       # Garage: Licht an, wenn jemand kommt
+    for (x, y) in ((90, EG + 3), (92, EG + 3), (91, EG + 4)):
+        b.setze(x, y, 46, "redstone_lamp")
+    mech(16, G + 4, 64, "bewegungsmelder", "east")                         # Pavillon: Licht an
+    for z in (63, 65):
+        b.setze(15, G + 4, z, "redstone_lamp")
+    mech(56, OG + 4, HZ1 + 1, "alarmsirene", "south")
+    mech(52, yo + 3, HZ0 + 1, "alarmsirene", "south")
+    mech(57, BUNKER + 4, 31, "alarmsirene", "south")
+    for x in (51, 60):
+        mech(x, G + 7, n - 13, "warnleuchte")
+    mech(57, BUNKER + 7, 50, "warnleuchte")
+    mech(64, DACH - 1, 42, "warnleuchte")
+
+    # Laser (ab Stufe 3): Westgarten, Bunkerflur, Tresor
+    for z in (40, 58):
+        mech(16, G + 1, z, "laser_sender", "east")
+    for y in (BUNKER + 1, BUNKER + 2):
+        mech(54, y, 45, "laser_sender", "east")
+    for y in (yo, yo + 1):
+        mech(62, y, 43, "laser_sender", "east")
+
+    # Schmuck-Tresor: Panzertür mit Tastenfeld außen und Hebel innen, Fallenplatten, Gitterfalle, Entschärfknöpfe
+    fluegel(63, yo, 47, 64, yo + 1, 47, "panzertuer", False)
+    mech(62, yo, 47, "torsteuerung", modus="redstone", ziel="stinkendreich:panzertuer", radius=3)
+    mech(62, yo + 1, 48, "tastenfeld", "south")
+    b.setze(62, yo + 1, 46, zustand("lever", face="wall", facing="north", powered="false"))
+    fluegel(63, yo, 46, 64, yo + 1, 46, "gitterfalle", True)
+    for (x, z) in ((63, 42), (64, 40), (65, 43), (63, 45)):
+        b.setze(x, OG, z, "stinkendreich:fallenplatte")
+    mech(66, yo + 2, 47, "entschaerfknopf")
+    b.quader(62, yo, 66, 62, DACH - 1, 66, "deepslate_bricks")
+    mech(62, yo + 1, 66, "entschaerfknopf")
+
+    # Waffenkammer im Bunker: Eisentür mit Kartenleser auf beiden Seiten
+    b.quader(62, BUNKER + 1, 45, 62, BUNKER + 3, 45, "deepslate_tiles")
+    b.setze(62, BUNKER + 3, 44, "deepslate_tiles")
+    tuer(b, 62, BUNKER + 1, 44, "east", "iron_door")
+    mech(61, BUNKER + 2, 43, "kartenleser", "west")
+    mech(63, BUNKER + 2, 43, "kartenleser", "east")
+
+    # Aufzug: Bedientafel an jeder Haltestelle
+    for y, text in ((BUNKER, "Untergrundbasis"), (EG, "Erdgeschoss"), (OG, "Obergeschoss"), (DACH, "Penthouse")):
+        mech(AX0 + 1, y + 1, AZ0 + 1, "aufzugstafel", "south", name=text)
+
+    # Geheimgang: Bücherwand im Panikraum vor dem Fluchttunnel
+    b.luft(35, BUNKER + 1, 60, 35, BUNKER + 3, 61)
+    b.quader(36, BUNKER + 1, 57, 36, BUNKER + 3, 64, "bookshelf")
+    fluegel(36, BUNKER + 1, 60, 36, BUNKER + 3, 61, "geheimregal", False)
+    mech(36, BUNKER + 2, 63, "geheimschalter")
+
+    # Panikraum: Panzertür, Verriegelung per Schalter innen
+    fluegel(53, BUNKER + 1, 58, 53, BUNKER + 3, 59, "panzertuer", True)
+    mech(52, BUNKER + 1, 56, "torsteuerung", modus="schalter", ziel="stinkendreich:panzertuer", radius=3)
+
+    # Komfort: Poolabdeckung mit Hebel, Whirlpool, Kaminschalter, Musikanlage
+    fluegel(41, G + 1, 19, 68, G + 1, 26, "poolabdeckung", True)
+    mech(70, G, 22, "torsteuerung", modus="redstone_invers", ziel="stinkendreich:poolabdeckung", radius=29)
+    b.setze(70, G + 1, 22, zustand("lever", face="floor", facing="north", powered="false"))
+    mech(HX1 - 5, DACH, HZ0 + 3, "whirlpoolduese")
+    mech(43, EG + 2, HZ0 + 1, "kaminsteuerung", "south")
+    b.setze(52, DACH + 1, 40, zustand("jukebox", has_record="false"))
+
+
+def licht_im_garten() -> None:
+    """Unsichtbare Lichtblöcke auf dem Grundstück, damit nachts keine Monster spawnen und Alarm auslösen."""
+    for x in range(15, GROESSE[0] - 15, 9):
+        for z in range(15, GROESSE[2] - 15, 9):
+            if b.hole(x, G + 1, z) is None:
+                b.setze(x, G + 1, z, zustand("light", level="15", waterlogged="false"))
 
 
 def lichter() -> None:
@@ -549,6 +670,8 @@ def main() -> None:
     penthouse()
     treppe_und_aufzug()
     bunker()
+    mechanismen()
+    licht_im_garten()
     lichter()
 
     # Spawnpunkt vor dem Haus, Blick nach Norden auf den Eingang

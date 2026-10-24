@@ -2,9 +2,11 @@ package de.moinmornhart.stinkendreich.villa;
 
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import de.moinmornhart.stinkendreich.Kompat;
+import de.moinmornhart.stinkendreich.mechanik.VillaZustand;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -21,6 +23,7 @@ import java.util.Optional;
  *   <li>{@code /villa} – zurück vor den Eingang der Villa (für alle)</li>
  *   <li>{@code /villa info} – Lage der Villa anzeigen</li>
  *   <li>{@code /villa ort <x> <y> <z> [blick] [neigung]} – zu einer Stelle im Bauplan (nur Operatoren, für Tests)</li>
+ *   <li>{@code /villa stufe <0-3>} – Sicherheitsstufe setzen (nur Operatoren)</li>
  * </ul>
  */
 public final class VillaBefehle {
@@ -32,6 +35,12 @@ public final class VillaBefehle {
                 Commands.literal("villa")
                         .executes(VillaBefehle::nachHause)
                         .then(Commands.literal("info").executes(VillaBefehle::info))
+                        .then(Commands.literal("stufe").requires(Kompat.istOperator())
+                                .then(Commands.argument("stufe", IntegerArgumentType.integer(0, VillaZustand.MAX_STUFE))
+                                        .executes(k -> {
+                                            VillaZustand.get(k.getSource().getServer()).setzeStufe(IntegerArgumentType.getInteger(k, "stufe"));
+                                            return 1;
+                                        })))
                         .then(Commands.literal("ort").requires(Kompat.istOperator())
                                 .then(Commands.argument("x", DoubleArgumentType.doubleArg())
                                         .then(Commands.argument("y", DoubleArgumentType.doubleArg())

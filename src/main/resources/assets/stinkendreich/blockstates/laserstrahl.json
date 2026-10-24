@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "stinkendreich:block/laserstrahl"
+    },
+    "axis=x": {
+      "model": "stinkendreich:block/laserstrahl",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "stinkendreich:block/laserstrahl",
+      "x": 90
+    }
+  }
+}

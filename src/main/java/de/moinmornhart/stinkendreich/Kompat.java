@@ -80,6 +80,42 @@ public final class Kompat {
         /*return quelle -> quelle.hasPermission(2);*/
     }
 
+    /** Zeigt einem Spieler eine Nachricht im Chat oder über der Schnellleiste. */
+    public static void nachricht(net.minecraft.world.entity.player.Player spieler, net.minecraft.network.chat.Component text, boolean ueberLeiste) {
+        //? if >=26.1 {
+        if (ueberLeiste) {
+            spieler.sendOverlayMessage(text);
+        } else {
+            spieler.sendSystemMessage(text);
+        }
+        //?} else
+        /*spieler.displayClientMessage(text, ueberLeiste);*/
+    }
+
+    /** Fügt einer Entity Schaden zu (nur auf dem Server). */
+    public static void schaden(net.minecraft.world.entity.Entity ziel, ServerLevel welt, float menge) {
+        //? if >=1.21.2 {
+        ziel.hurtServer(welt, welt.damageSources().magic(), menge);
+        //?} else
+        /*ziel.hurt(welt.damageSources().magic(), menge);*/
+    }
+
+    /** Benachrichtigt die Nachbarblöcke (z. B. nach Änderung eines Redstone-Signals). */
+    public static void nachbarnAktualisieren(net.minecraft.world.level.Level welt, BlockPos pos, net.minecraft.world.level.block.Block block) {
+        //? if >=1.21.2 {
+        welt.updateNeighborsAt(pos, block, null);
+        //?} else
+        /*welt.updateNeighborsAt(pos, block);*/
+    }
+
+    /** Block zu einer ID (Methode hieß bis 1.21.1 {@code get}). */
+    public static net.minecraft.world.level.block.Block blockNachId(net.minecraft.resources.Identifier id) {
+        //? if >=1.21.2 {
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(id);
+        //?} else
+        /*return net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(id);*/
+    }
+
     /** Führt einen Befehl als Server aus, ohne Ausgabe im Chat. */
     public static void befehl(MinecraftServer server, String befehl) {
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), befehl);

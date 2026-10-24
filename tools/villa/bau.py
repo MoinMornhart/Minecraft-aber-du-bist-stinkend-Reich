@@ -34,7 +34,7 @@ NICHT_VOLL = ("air", "slab", "stairs", "carpet", "door", "trapdoor", "button", "
               "cauldron", "bell", "anvil", "hopper", "_gate", "ladder", "glass_pane", "bars", "fence", "_wall",
               "scaffolding", "cobweb", "snow", "moss_carpet", "pickle", "kelp", "coral", "tulip", "poppy",
               "dandelion", "allium", "orchid", "daisy", "cornflower", "lily", "bush", "azalea", "dripleaf",
-              "frame", "sculk_sensor", "lectern", "grindstone", "stonecutter", "brewing")
+              "frame", "sculk_sensor", "lectern", "grindstone", "stonecutter", "brewing", "stinkendreich:")
 
 
 def zustand(name: str, **props) -> str:

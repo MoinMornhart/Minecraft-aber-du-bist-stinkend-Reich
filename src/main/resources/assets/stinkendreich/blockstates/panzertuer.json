@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "stinkendreich:block/panzertuer"
+    },
+    "open=true": {
+      "model": "stinkendreich:block/leer"
+    }
+  }
+}

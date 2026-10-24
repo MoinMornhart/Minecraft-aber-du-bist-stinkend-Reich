@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/laser_sender"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/laser_sender",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/laser_sender",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/laser_sender",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "stinkendreich:block/laser_sender",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "stinkendreich:block/laser_sender",
+      "x": 90
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "piep_ok": {
+    "subtitle": "stinkendreich.ton.piep_ok",
+    "sounds": [
+      "stinkendreich:piep_ok"
+    ]
+  },
+  "piep_fehler": {
+    "subtitle": "stinkendreich.ton.piep_fehler",
+    "sounds": [
+      "stinkendreich:piep_fehler"
+    ]
+  },
+  "sirene": {
+    "subtitle": "stinkendreich.ton.sirene",
+    "sounds": [
+      "stinkendreich:sirene"
+    ]
+  },
+  "gong": {
+    "subtitle": "stinkendreich.ton.gong",
+    "sounds": [
+      "stinkendreich:gong"
+    ]
+  },
+  "klingel": {
+    "subtitle": "stinkendreich.ton.klingel",
+    "sounds": [
+      "stinkendreich:klingel"
+    ]
+  },
+  "tresor": {
+    "subtitle": "stinkendreich.ton.tresor",
+    "sounds": [
+      "stinkendreich:tresor"
+    ]
+  }
+}

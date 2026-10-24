@@ -28,6 +28,9 @@ public final class Konfig {
     /** Spieler beim allerersten Betreten einer Welt vor die Villa stellen. */
     public boolean villaSpawnSetzen = true;
 
+    /** Wie viele versteckte Entschärfknöpfe kurz hintereinander gedrückt werden müssen. */
+    public int tresorKnoepfe = 2;
+
     // ---------- Butler ----------
     /** Anthropic-API-Key für den Chat mit dem Butler. Leer = Butler nur über Befehle und Menü. */
     public String anthropicApiKey = "";
@@ -71,6 +74,7 @@ public final class Konfig {
         erklaerung.put("villaBauen", "Villa in jeder neuen Welt am Spawn bauen (true/false)");
         erklaerung.put("villaAnblendung", "Breite des Übergangs vom ebenen Grundstück ins Gelände in Blöcken");
         erklaerung.put("villaSpawnSetzen", "Spieler beim ersten Betreten vor die Villa stellen");
+        erklaerung.put("tresorKnoepfe", "Anzahl versteckter Knöpfe, die zum Entschärfen der Tresorfallen nötig sind");
         erklaerung.put("anthropicApiKey", "API-Key von console.anthropic.com für den Butler-Chat. Leer lassen = ohne Claude");
         erklaerung.put("butlerModell", "Claude-Modell für den Butler");
         erklaerung.put("updatePruefen", "Beim Start nach neuen Versionen auf GitHub suchen");

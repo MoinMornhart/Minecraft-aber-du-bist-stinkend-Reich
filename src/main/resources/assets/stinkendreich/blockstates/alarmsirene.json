@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/alarmsirene"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/alarmsirene",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/alarmsirene",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/alarmsirene",
+      "y": 270
+    }
+  }
+}

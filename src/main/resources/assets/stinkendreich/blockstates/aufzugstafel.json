@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/aufzugstafel"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/aufzugstafel",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/aufzugstafel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/aufzugstafel",
+      "y": 270
+    }
+  }
+}

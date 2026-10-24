@@ -1,0 +1,58 @@
+# Mechanismen der Villa vorführen (Koordinaten im Bauplan, siehe tools/villa/villa.py)
+befehl /gamemode spectator
+befehl /time set noon
+taste F1
+befehl /villa ort 56 31 100 180 8
+warte 8
+bild m01_stufe1_tor_zu
+befehl /villa stufe 2
+warte 4
+befehl /villa ort 56 33 90 180 6
+warte 6
+bild m02_stufe2_rolllaeden
+befehl /villa stufe 3
+warte 6
+befehl /villa ort 23 28.5 49 180 20
+warte 6
+bild m03_laser_garten
+befehl /villa ort 57.5 7 52 180 8
+warte 6
+bild m04_laser_bunker
+befehl /villa ort 63.5 32.5 50 180 10
+warte 5
+bild m05_tresortuer
+befehl /villa ort 64.5 33.5 46.3 180 30
+warte 5
+bild m06_tresor_innen
+befehl /villa ort 73.5 33 46 180 5
+warte 5
+bild m07_ueberwachung
+befehl /villa ort 65 33 54.5 90 15
+warte 5
+bild m08_zentrale
+befehl /villa ort 58 27.2 40.6 170 35
+warte 5
+bild m09_aufzug
+befehl /villa ort 87.5 28 78 180 5
+warte 6
+bild m10_garagentor
+befehl /villa ort 36.5 7 61 270 5
+warte 5
+bild m11_geheimgang
+befehl /villa ort 70.5 26 22.5 0 0
+befehl /setblock ~ ~ ~ minecraft:lever[face=floor,facing=north,powered=true]
+warte 3
+befehl /villa ort 55 36 31 180 40
+warte 6
+bild m12_poolabdeckung
+befehl /villa stufe 1
+befehl /villa ort 55.5 26 50 180 0
+befehl /summon minecraft:zombie ~ ~ ~-4 {NoAI:1b,PersistenceRequired:1b}
+warte 3
+befehl /villa ort 55.5 33 96 180 0
+warte 4
+taste F1
+taste t
+warte 1
+bild m13_alarm_chat
+taste Escape

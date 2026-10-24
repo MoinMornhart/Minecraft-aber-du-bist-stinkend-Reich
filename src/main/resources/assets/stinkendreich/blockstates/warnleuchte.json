@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "stinkendreich:block/warnleuchte"
+    },
+    "lit=true": {
+      "model": "stinkendreich:block/warnleuchte_an"
+    }
+  }
+}

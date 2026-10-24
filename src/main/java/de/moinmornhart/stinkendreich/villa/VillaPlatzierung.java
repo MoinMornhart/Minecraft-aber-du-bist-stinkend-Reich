@@ -100,6 +100,8 @@ public final class VillaPlatzierung {
             return;
         }
         spieler.addTag(TAG_ANGEKOMMEN);
+        // Willkommensgeschenk: eine Zugangskarte für Tore und Kartenleser
+        spieler.getInventory().add(new net.minecraft.world.item.ItemStack(de.moinmornhart.stinkendreich.register.ModItems.ZUGANGSKARTE));
         BlockPos p = aktuelleVilla.spawn();
         Kompat.befehl(server, String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f %.1f 0",
                 spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, aktuelleVilla.spawnBlick()));

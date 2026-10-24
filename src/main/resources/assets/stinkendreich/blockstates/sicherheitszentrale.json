@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/sicherheitszentrale"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/sicherheitszentrale",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/sicherheitszentrale",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/sicherheitszentrale",
+      "y": 270
+    }
+  }
+}

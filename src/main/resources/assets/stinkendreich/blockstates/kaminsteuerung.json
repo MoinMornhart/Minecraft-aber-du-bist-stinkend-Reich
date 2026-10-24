@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/kaminsteuerung"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/kaminsteuerung",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/kaminsteuerung",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/kaminsteuerung",
+      "y": 270
+    }
+  }
+}

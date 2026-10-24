@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "stinkendreich:block/rollladen"
+    },
+    "open=true": {
+      "model": "stinkendreich:block/leer"
+    }
+  }
+}

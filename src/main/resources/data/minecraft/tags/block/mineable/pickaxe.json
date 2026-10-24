@@ -1,0 +1,28 @@
+{
+  "replace": false,
+  "values": [
+    "stinkendreich:sicherheitszentrale",
+    "stinkendreich:laser_sender",
+    "stinkendreich:bewegungsmelder",
+    "stinkendreich:alarmsirene",
+    "stinkendreich:warnleuchte",
+    "stinkendreich:kartenleser",
+    "stinkendreich:tastenfeld",
+    "stinkendreich:tuerklingel",
+    "stinkendreich:torsteuerung",
+    "stinkendreich:tor",
+    "stinkendreich:garagentor",
+    "stinkendreich:rollladen",
+    "stinkendreich:schiebetuer",
+    "stinkendreich:panzertuer",
+    "stinkendreich:poolabdeckung",
+    "stinkendreich:aufzugstafel",
+    "stinkendreich:fallenplatte",
+    "stinkendreich:gitterfalle",
+    "stinkendreich:entschaerfknopf",
+    "stinkendreich:kamera",
+    "stinkendreich:monitor",
+    "stinkendreich:whirlpoolduese",
+    "stinkendreich:kaminsteuerung"
+  ]
+}

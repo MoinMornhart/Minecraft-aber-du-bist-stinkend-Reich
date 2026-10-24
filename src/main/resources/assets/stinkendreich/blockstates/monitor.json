@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/monitor"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/monitor",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/monitor",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/monitor",
+      "y": 270
+    }
+  }
+}

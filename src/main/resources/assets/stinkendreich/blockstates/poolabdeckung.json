@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "stinkendreich:block/poolabdeckung"
+    },
+    "open=true": {
+      "model": "stinkendreich:block/leer"
+    }
+  }
+}
