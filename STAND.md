@@ -4,16 +4,18 @@ _Zuletzt aktualisiert: 2026-10-24_
 
 ## Erledigt
 
-- Repo-Grundgerüst: `CLAUDE.md`, `STAND.md`, `README.md`, `.gitignore` (sperrt Vorlage und `.nbt`), Cloud-Start-Hook für Philips Skills.
-- Recherche Versionen: Releases seit 1.21 sind 1.21 bis 1.21.11 (Java 21, obfuskiert) und 26.1, 26.1.1, 26.1.2, 26.2, 26.3 (Java 25, ohne Obfuskation). 26.4 ist im Snapshot. Die genaue Liste wird gegen das Mojang-Versionsmanifest geprüft, sobald das Netz frei ist.
+- Repo-Grundgerüst: `CLAUDE.md`, `STAND.md`, `README.md`, `.gitignore`, Cloud-Start-Hook für Philips Skills.
+- Entscheidungen (siehe `CLAUDE.md`): öffentliches Repo, Update-Funktion, „Verfasst mit Claude 🤖“, nur Fabric, **eigene Villa im Stil des Originals**, Villa in jeder neuen Welt.
+- Recherche Versionen: 1.21 bis 1.21.11 (Java 21) und 26.1, 26.1.1, 26.1.2, 26.2, 26.3 (Java 25, unverschleiert). 26.4 im Snapshot.
+- `docs/BAUPLAN.md`: technischer Plan für alle Bausteine.
+- `tools/lib/anvil.py`, `tools/lib/render.py`, `tools/vorlage/analyse.py`: liest die Original-Map (1.13+ Formate) aus, listet alle Command-Blöcke mit Befehlen, Schilder, Scoreboards, Entities und rendert Draufsicht und Isometrie. Getestet mit `tools/tests/test_anvil.py` und einer künstlichen 1.15-Welt.
+- JDK 25 in der Cloud-Umgebung per apt installiert (für 26.x).
 
 ## Offen / blockiert
 
-- **Netzwerk der Cloud-Umgebung** sperrt Mojang-, Fabric-, NeoForge-, Stonecutter- und Modrinth-Server. Ohne Freigabe kein Gradle-Build und kein Ingame-Test.
-- **Vorlage-Map** fehlt noch in `/vorlage`.
-- **Loader-Entscheidung** (Fabric / NeoForge / beide) steht noch aus.
-- **Villa-Daten und öffentliche Releases:** Weg, wie die Villa zum Spieler kommt, ohne dass sie in einer öffentlichen .jar steckt, muss Philip bestätigen.
+- **Netzwerk der Cloud-Umgebung** sperrt Mojang-, Fabric-, Stonecutter- und Modrinth-Server. Ohne Freigabe kein Gradle-Build und kein Ingame-Test.
+- **Original-Map** fehlt noch in `/vorlage` (Philip lädt die Zip im Chat hoch oder schickt den Link). Danach: `python3 tools/vorlage/analyse.py`.
 
 ## Nächster Schritt
 
-Baustein 1: Multi-Version-Setup mit Stonecutter, sobald Netz und Loader-Entscheidung da sind.
+Baustein 1: Multi-Version-Setup mit Stonecutter, sobald das Netz frei ist. Parallel: Map analysieren, sobald sie da ist.

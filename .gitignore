@@ -5,9 +5,9 @@
 # ---------------------------------------------------------------
 /vorlage/
 /villa-export/
-**/structure/villa/
-**/structures/villa/
 *.nbt
+# Ausnahme: unsere EIGENE Villa aus tools/villa/ (keine Kopie des Originals)
+!/src/main/resources/data/stinkendreich/structure/**/*.nbt
 *.mca
 *.mcr
 level.dat
@@ -53,3 +53,7 @@ desktop.ini
 
 # Fortschrittsseite (lokal) und Arbeitsdateien
 .claude/fortschritt/
+
+# Python
+__pycache__/
+*.pyc
