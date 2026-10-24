@@ -8,15 +8,19 @@ import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.Konfig;
 import de.moinmornhart.stinkendreich.StinkendReich;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,6 +49,8 @@ public final class VillaPlatzierung {
 
     /** Lage der Villa in der aktuell geladenen Welt, oder null. */
     private static VillaInfo aktuelleVilla;
+    /** Nach dem Bauen: so viele Ticks lang herabfallende Stöcke, Setzlinge usw. wegräumen. */
+    private static int aufraeumenTicks;
 
     private VillaPlatzierung() {
     }
@@ -52,6 +58,7 @@ public final class VillaPlatzierung {
     public static void registrieren() {
         ServerLifecycleEvents.SERVER_STARTED.register(VillaPlatzierung::beimStart);
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> aktuelleVilla = null);
+        ServerTickEvents.END_SERVER_TICK.register(VillaPlatzierung::aufraeumen);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> beimBetreten(handler.getPlayer(), server));
     }
 
@@ -78,6 +85,7 @@ public final class VillaPlatzierung {
                 long start = System.currentTimeMillis();
                 aktuelleVilla = bauen(server, welt);
                 info = aktuelleVilla.alsJson();
+                aufraeumenTicks = 20 * 180;
                 StinkendReich.LOGGER.info("Villa gebaut bei {} in {} ms", aktuelleVilla.ursprung(), System.currentTimeMillis() - start);
             }
             Files.writeString(datei, GSON.toJson(info), StandardCharsets.UTF_8);
@@ -215,6 +223,30 @@ public final class VillaPlatzierung {
                     boolean nass = abstand > 0 && y < meer && !alt.getFluidState().isEmpty();
                     welt.setBlock(p, nass ? wasser : luft, flags);
                 }
+            }
+        }
+    }
+
+    /**
+     * Blätter gefällter Bäume am Rand zerfallen noch eine Weile und lassen Stöcke, Setzlinge
+     * und Äpfel fallen. Die werden in den ersten Minuten auf dem Grundstück weggeräumt.
+     */
+    private static void aufraeumen(MinecraftServer server) {
+        if (aufraeumenTicks <= 0 || aktuelleVilla == null) {
+            return;
+        }
+        if (--aufraeumenTicks % 20 != 0) {
+            return;
+        }
+        BlockPos u = aktuelleVilla.ursprung();
+        VillaDaten plan = aktuelleVilla.plan();
+        int r = Konfig.get().villaAnblendung + 8;
+        AABB bereich = new AABB(u.getX() - r, u.getY(), u.getZ() - r,
+                u.getX() + plan.breiteX + r, u.getY() + plan.hoehe + 40, u.getZ() + plan.breiteZ + r);
+        for (ItemEntity e : server.overworld().getEntitiesOfClass(ItemEntity.class, bereich, i -> true)) {
+            var stapel = e.getItem();
+            if (stapel.is(Items.STICK) || stapel.is(ItemTags.SAPLINGS) || stapel.is(Items.APPLE) || stapel.is(Items.WHEAT_SEEDS)) {
+                e.discard();
             }
         }
     }

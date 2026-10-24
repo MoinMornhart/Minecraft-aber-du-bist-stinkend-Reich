@@ -229,11 +229,6 @@ def huelle() -> None:
     # Lichtleiste unter dem Überstand
     for x in range(HX0, HX1 + 1, 4):
         b.setze(x, DACH, HZ1 + 4, LICHT)
-    # Deckenlichter (bündig in den Platten)
-    for x in range(HX0 + 3, HX1 - 1, 5):
-        for z in range(HZ0 + 3, HZ1 - 1, 5):
-            b.setze(x, OG, z, LICHT)
-            b.setze(x, DACH, z, LICHT)
 
 
 def treppe_und_aufzug() -> None:
@@ -529,6 +524,19 @@ def bunker() -> None:
     b.marke("fluchtluke", 17, G, 60)
 
 
+def lichter() -> None:
+    """Hängeleuchten unter allen Decken, nur wo der Raum frei ist (zuletzt ausführen)."""
+    def haengen(x0, x1, z0, z1, y, abstand=4):
+        for x in range(x0, x1 + 1, abstand):
+            for z in range(z0, z1 + 1, abstand):
+                if b.hole(x, y, z) == "minecraft:air" and b.hole(x, y + 1, z) not in (None, "minecraft:air"):
+                    b.setze(x, y, z, zustand("lantern", hanging="true", waterlogged="false"))
+    haengen(HX0 + 3, HX1 - 2, HZ0 + 3, HZ1 - 2, OG - 1)          # Erdgeschoss
+    haengen(HX0 + 3, HX1 - 2, HZ0 + 3, HZ1 - 2, DACH - 1)        # Obergeschoss
+    haengen(44, 65, 40, 56, PH_DACH - 1)                         # Penthouse
+    haengen(82, 92, 48, 64, OG - 1, 3)                           # Garage
+
+
 def main() -> None:
     grundstueck()
     tor_und_bruecke()
@@ -541,9 +549,10 @@ def main() -> None:
     penthouse()
     treppe_und_aufzug()
     bunker()
+    lichter()
 
     # Spawnpunkt vor dem Haus, Blick nach Norden auf den Eingang
-    b.marke("spawn", 55.5, G + 1, 76.5, 180.0)
+    b.marke("spawn", 55.5, G + 1, 93.5, 180.0)
     b.marke("butler", 57.5, EG + 1, 60.5)
     b.verbinden()
 
