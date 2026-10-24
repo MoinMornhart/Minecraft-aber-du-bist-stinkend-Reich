@@ -1,6 +1,8 @@
 package de.moinmornhart.stinkendreich;
 
 import de.moinmornhart.stinkendreich.dev.Autotest;
+import de.moinmornhart.stinkendreich.villa.VillaBefehle;
+import de.moinmornhart.stinkendreich.villa.VillaPlatzierung;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
@@ -21,6 +23,9 @@ public class StinkendReich implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Stinkend Reich {} für Minecraft {} startet", VERSION, MINECRAFT);
+        Konfig.laden();
+        VillaPlatzierung.registrieren();
+        VillaBefehle.registrieren();
         Autotest.registrieren();
     }
 

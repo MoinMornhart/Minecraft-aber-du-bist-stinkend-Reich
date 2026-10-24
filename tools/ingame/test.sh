@@ -21,6 +21,7 @@ cd "$ROOT"
 melde() { echo "[$(date +%H:%M:%S)] $V: $*"; }
 
 # ---------- 1. Neue Welt mit dem Server erzeugen ----------
+if [[ "${WELT_BEHALTEN:-0}" != 1 || ! -f "$RUN/testwelt/level.dat" ]]; then
 rm -rf "$RUN/testwelt"
 echo "eula=true" > "$RUN/eula.txt"
 cat > "$RUN/server.properties" <<EOF
@@ -39,6 +40,7 @@ melde "Server erzeugt die Welt …"
 STINKENDREICH_AUTOTEST=server-stop timeout 900 ./gradlew ":$V:runServer" --console=plain > "$LOGS/server.log" 2>&1 </dev/null
 if [[ ! -f "$RUN/testwelt/level.dat" ]]; then
   melde "FEHLER: Server hat keine Welt erzeugt"; tail -40 "$LOGS/server.log"; exit 1
+fi
 fi
 
 # ---------- 2. Welt als Einzelspieler-Spielstand vorbereiten ----------
@@ -63,12 +65,22 @@ EOF
 # ---------- 3. Client auf einem virtuellen Bildschirm starten ----------
 NR=99
 while [[ -e /tmp/.X11-unix/X$NR ]]; do NR=$((NR - 1)); done
-Xvfb ":$NR" -screen 0 1280x720x24 -nolisten tcp >/dev/null 2>&1 &
+Xvfb ":$NR" -screen 0 1280x720x24 +extension GLX +render -nolisten tcp >/dev/null 2>&1 &
 XVFB=$!
 export DISPLAY=":$NR" LIBGL_ALWAYS_SOFTWARE=1
+# Ab 26.x öffnet Minecraft das Fenster über SDL3; mit EGL statt GLX klappt Software-OpenGL
+export SDL_VIDEO_FORCE_EGL=1 XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/xdg-$UID}"
+mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
 
+# Nur die eigenen Minecraft-Prozesse beenden (erkennbar am Arbeitsordner), falls mehrere Tests laufen
+eigene_beenden() {
+  local p
+  for p in $(pgrep -f "net.fabricmc.devlaunchinjector.Main"); do
+    [[ "$(readlink "/proc/$p/cwd" 2>/dev/null)" == "$RUN" ]] && kill "$p" 2>/dev/null
+  done
+}
 aufraeumen() {
-  pkill -f "net.fabricmc.devlaunchinjector.Main" 2>/dev/null
+  eigene_beenden
   kill "$CLIENT" "$XVFB" 2>/dev/null
 }
 trap aufraeumen EXIT
@@ -80,13 +92,13 @@ melde "Client startet …"
 CLIENT=$!
 
 for _ in $(seq 1 900); do
-  grep -q "joined the game" "$LOGS/client.log" && break
+  grep -qE "joined the game|hat das Spiel betreten" "$LOGS/client.log" && break
   if ! kill -0 "$CLIENT" 2>/dev/null; then
     melde "FEHLER: Client ist abgestürzt"; tail -60 "$LOGS/client.log"; exit 1
   fi
   sleep 1
 done
-grep -q "joined the game" "$LOGS/client.log" || { melde "FEHLER: Welt nicht betreten"; tail -60 "$LOGS/client.log"; exit 1; }
+grep -qE "joined the game|hat das Spiel betreten" "$LOGS/client.log" || { melde "FEHLER: Welt nicht betreten"; tail -60 "$LOGS/client.log"; exit 1; }
 melde "In der Welt, warte auf die Darstellung …"
 sleep "${RENDERZEIT:-25}"
 

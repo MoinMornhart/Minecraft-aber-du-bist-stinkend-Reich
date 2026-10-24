@@ -1,4 +1,6 @@
 {
   "stinkendreich.titel": "Stinkend Reich %s · Minecraft %s",
-  "stinkendreich.willkommen": "Stinkend Reich %s für Minecraft %s ist geladen. Willkommen, du reicher Mensch!"
+  "stinkendreich.willkommen": "Stinkend Reich %s für Minecraft %s ist geladen. Willkommen, du reicher Mensch!",
+  "stinkendreich.villa.keine": "In dieser Welt gibt es keine Villa.",
+  "stinkendreich.villa.info": "Villa: Ecke %s %s %s, Eingang %s %s %s"
 }

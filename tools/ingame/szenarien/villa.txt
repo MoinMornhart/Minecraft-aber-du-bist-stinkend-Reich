@@ -1,0 +1,40 @@
+# Rundgang durch die Villa (Koordinaten im Bauplan, siehe tools/villa/villa.py)
+befehl /gamemode spectator
+befehl /time set noon
+taste F1
+befehl /villa
+warte 6
+bild 01_ankunft
+befehl /villa ort 56 75 140 180 30
+warte 14
+bild 02_luft_sued
+befehl /villa ort 138 82 138 135 32
+warte 14
+bild 03_luft_suedost
+befehl /villa ort 70 31 92 160 6
+warte 8
+bild 04_vorplatz
+befehl /villa ort 55.5 26.2 64 180 4
+warte 6
+bild 05_halle
+befehl /villa ort 45 26.2 60 90 6
+warte 6
+bild 06_wohnzimmer
+befehl /villa ort 64 26.2 63 215 8
+warte 6
+bild 07_kueche
+befehl /villa ort 56 37 33 180 28
+warte 8
+bild 08_pool
+befehl /villa ort 55 38.2 54 180 6
+warte 6
+bild 09_penthouse
+befehl /villa ort 64 32.2 46 180 18
+warte 6
+bild 10_tresor
+befehl /villa ort 87 26.2 65 180 6
+warte 6
+bild 11_garage
+befehl /villa ort 57.5 6.2 55 180 4
+warte 6
+bild 12_bunker
