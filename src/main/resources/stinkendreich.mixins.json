@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "de.moinmornhart.stinkendreich.mixin",
+  "compatibilityLevel": "${java}",
+  "mixins": [],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

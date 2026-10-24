@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "Minecraft, aber du bist stinkend reich: Jede neue Welt startet in einer Luxusvilla mit Butler und Bonzenauto.",
+  "authors": ["MoinMornhart", "Claude"],
+  "contact": {
+    "homepage": "https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich",
+    "sources": "https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich",
+    "issues": "https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/issues"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/stinkendreich/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["de.moinmornhart.stinkendreich.StinkendReich"],
+    "client": ["de.moinmornhart.stinkendreich.client.StinkendReichClient"]
+  },
+  "mixins": ["stinkendreich.mixins.json"],
+  "accessWidener": "stinkendreich.ct",
+  "depends": {
+    "fabricloader": ">=${loader}",
+    "minecraft": "${minecraft}",
+    "fabric-api": "*"
+  }
+}

@@ -1,0 +1,12 @@
+# Baustein 1: Mod lädt im Spiel. Chat öffnen, damit die Begrüßung sichtbar bleibt.
+befehl /time set noon
+warte 2
+taste t
+warte 1
+bild chat
+taste Escape
+warte 1
+taste F3
+warte 2
+bild debug
+taste F3
