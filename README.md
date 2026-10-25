@@ -124,6 +124,61 @@ Lackfarben: Schwarz, Weiß, Rot, Gelb, Gold, Blau, Grün, Pink – einfach mit d
 
 <br>
 
+## 🎵 Musik
+
+Die **Musikanlage (DJ-Pult)** und die **Lautsprecher** liegen im Kreativ-Reiter „Stinkend Reich“. Rechtsklick aufs Pult öffnet das Menü mit zwei Reitern: **Eigene Musik** und **Spotify**. Solange Musik läuft, steigen Noten aus Pult und Boxen.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/musik_anlage.jpg" alt="DJ-Pult mit zwei Lautsprechern"><br><sub><b>DJ-Pult</b> mit zwei Lautsprechern</sub></td>
+<td width="50%"><img src="docs/bilder/musik_noten.jpg" alt="Pult mit aufsteigenden Noten"><br><sub><b>Läuft:</b> Aussteuerung, Plattenteller und Noten</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/musik_menue.jpg" alt="Menü Eigene Musik"><br><sub><b>Eigene Musik:</b> Titelliste, Steuerung, Lautstärke</sub></td>
+<td><img src="docs/bilder/musik_spotify.jpg" alt="Menü Spotify"><br><sub><b>Spotify:</b> mit dem eigenen Konto verbinden</sub></td>
+</tr>
+</table>
+
+### Eigene Musik
+
+1. Pult aufstellen, Rechtsklick → **Musikordner öffnen**. Das ist `stinkendreich/musik/` in deinem Minecraft-Ordner (unter Windows `%appdata%\.minecraft\stinkendreich\musik`).
+2. **OGG**- oder **MP3**-Dateien hineinlegen. Die Liste im Menü aktualisiert sich von selbst.
+3. Titel anklicken – läuft. Dazu **⏮ Zurück**, **■ Stopp**, **Weiter ⏭**, Lautstärke, **Zufall** und **Wiederholen** (alle · einen · aus).
+
+- Jeder **Lautsprecher** bis 16 Blöcke ums Pult spielt mit. Zu hören ist die Musik bis 24 Blöcke um Pult und Boxen, nach außen leiser (in der Config: `lautsprecherRadius`, `musikRadius`).
+- **Mehrspieler:** Jeder hört mit, der eine Datei **mit demselben Namen** in seinem eigenen Musikordner hat – an derselben Stelle im Titel, auch wer später dazukommt. Die Dateien selbst werden nicht verschickt.
+- Wer einen Titel startet, ist **DJ**: Sein Spiel startet am Ende den nächsten Titel aus seinem Ordner.
+- Die Musik hängt am Regler **„Jukebox/Notenblöcke“** in den Minecraft-Musik- und Toneinstellungen.
+
+### Spotify als Fernbedienung
+
+Das Pult steuert dein eigenes Spotify: Titel und Interpret anzeigen, Play/Pause, Weiter/Zurück, Lautstärke und deine Playlists starten. Die Musik spielt dabei **auf deinem Spotify-Gerät** (Handy, PC, Box), nicht im Spiel. Die anderen sehen im Menü, was du spielst, und Partyblöcke leuchten mit.
+
+> [!IMPORTANT]
+> Du brauchst **Spotify Premium** – ohne Premium erlaubt Spotify keine Fernsteuerung. Außerdem braucht es einmalig eine eigene kleine App bei Spotify (kostenlos, ein paar Minuten):
+
+1. Auf [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) mit deinem Spotify-Konto anmelden und **Create app** wählen.
+2. Name und Beschreibung frei wählen (z. B. „Stinkend Reich“). Bei **Redirect URIs** genau
+   ```
+   http://127.0.0.1:8888/callback
+   ```
+   eintragen und mit **Add** übernehmen. Bei der Frage nach den Schnittstellen **Web API** ankreuzen, den Bedingungen zustimmen, **Save**.
+3. In der App unter **Settings** die **Client ID** kopieren. Das „Client secret“ brauchst du **nicht**.
+4. Minecraft einmal mit der Mod starten, danach `config/stinkendreich.json` öffnen und die Client-ID eintragen:
+   ```json
+   "spotifyClientId": "hier-deine-client-id",
+   ```
+   Speichern und Minecraft neu starten.
+5. Rechtsklick aufs Pult → Reiter **Spotify** → **Mit Spotify verbinden**. Im Browser anmelden und zustimmen; dort steht dann „Fertig!“ und du gehst zurück ins Spiel. Öffnet sich kein Browser, steht im Chat ein Link zum Anklicken.
+6. Spotify auf Handy oder PC öffnen und kurz etwas abspielen (sonst meldet das Menü „kein aktives Gerät“). Ab jetzt steuerst du es vom Pult aus.
+
+Gut zu wissen:
+- **Port 8888 belegt?** In der Config `spotifyPort` ändern und bei Spotify die Redirect-URI mit demselben Port eintragen.
+- **Freunde:** Am einfachsten legt jeder seine eigene App an und trägt seine Client-ID ein. Teilst du deine App, müssen die anderen in deiner App unter **User Management** eingetragen sein (Spotify erlaubt dort nur wenige Leute, und der Besitzer der App braucht Premium).
+- Die Anmeldung liegt nur auf deinem Rechner in `config/stinkendreich-spotify.json`. **Gib diese Datei nicht weiter.** **Trennen** im Menü (oder Löschen der Datei) meldet ab.
+
+<br>
+
 ## 📦 Installation
 
 1. [Fabric Loader](https://fabricmc.net/use/installer/) für deine Minecraft-Version installieren.
@@ -149,7 +204,7 @@ Die Zahl hinter `+mc` muss **genau** deiner Version entsprechen. 1.21 bis 1.21.1
 
 ## ⚙️ Einstellungen
 
-Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Name und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Höchstgeschwindigkeit des Autos und die Update-Prüfung.
+Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Name und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Höchstgeschwindigkeit des Autos, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port sowie die Update-Prüfung.
 
 ## 🔄 Updates
 

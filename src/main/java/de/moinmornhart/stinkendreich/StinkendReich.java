@@ -9,11 +9,13 @@ import de.moinmornhart.stinkendreich.mechanik.Aufzug;
 import de.moinmornhart.stinkendreich.mechanik.SicherheitszentraleBlock;
 import de.moinmornhart.stinkendreich.mechanik.TastenfeldBlock;
 import de.moinmornhart.stinkendreich.mechanik.VillaZustand;
+import de.moinmornhart.stinkendreich.musik.MusikanlageBlock;
 import de.moinmornhart.stinkendreich.netz.Netz;
 import de.moinmornhart.stinkendreich.register.ModBloecke;
 import de.moinmornhart.stinkendreich.register.ModDeko;
 import de.moinmornhart.stinkendreich.register.ModEntities;
 import de.moinmornhart.stinkendreich.register.ModItems;
+import de.moinmornhart.stinkendreich.register.ModMusik;
 import de.moinmornhart.stinkendreich.register.ModSounds;
 import de.moinmornhart.stinkendreich.register.ModTab;
 import de.moinmornhart.stinkendreich.villa.VillaBefehle;
@@ -52,12 +54,14 @@ public class StinkendReich implements ModInitializer {
         ModBloecke.init();
         ModDeko.init();
         ModEntities.init();
+        ModMusik.init();
         ModTab.init();
         Netz.registrieren();
         VillaZustand.registrieren();
         Aufzug.registrieren();
         SicherheitszentraleBlock.aktionenRegistrieren();
         TastenfeldBlock.aktionenRegistrieren();
+        MusikanlageBlock.aktionenRegistrieren();
         SpielerBloecke.registrieren();
         // Vor der Villa, damit die Butler-Liste geladen ist, wenn die Villa ihren Butler einstellt
         ButlerVerwaltung.registrieren();

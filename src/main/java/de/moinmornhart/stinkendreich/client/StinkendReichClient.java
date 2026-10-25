@@ -10,6 +10,8 @@ import de.moinmornhart.stinkendreich.client.auto.AutoRenderer;
 import de.moinmornhart.stinkendreich.client.bildschirm.AufzugBildschirm;
 import de.moinmornhart.stinkendreich.client.update.UpdateKlient;
 import de.moinmornhart.stinkendreich.client.bildschirm.ButlerBildschirm;
+import de.moinmornhart.stinkendreich.client.bildschirm.MusikBildschirm;
+import de.moinmornhart.stinkendreich.client.musik.MusikKlient;
 import de.moinmornhart.stinkendreich.client.butler.ButlerModell;
 import de.moinmornhart.stinkendreich.client.butler.ButlerRenderer;
 import de.moinmornhart.stinkendreich.register.ModBloecke;
@@ -38,6 +40,7 @@ public class StinkendReichClient implements ClientModInitializer {
         KlientBruecke.aufzug = pos -> KompatClient.zeige(new AufzugBildschirm(pos));
         KlientBruecke.monitor = pos -> KompatClient.zeige(new KameraBildschirm(pos));
         KlientBruecke.butler = id -> KompatClient.zeige(new ButlerBildschirm(id));
+        KlientBruecke.musikanlage = pos -> KompatClient.zeige(new MusikBildschirm(pos));
 
         // Türen und Tore mit durchsichtigen Stellen
         KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
@@ -65,6 +68,8 @@ public class StinkendReichClient implements ClientModInitializer {
         AufzugMusik.registrieren();
         AutoKlient.registrieren();
         UpdateKlient.registrieren();
+        // Musikanlage: eigene Dateien abspielen, Spotify-Fernbedienung
+        MusikKlient.registrieren();
         AutotestKlient.registrieren();
 
         // Begrüßung im Chat, sobald man eine Welt betritt

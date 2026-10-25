@@ -79,5 +79,14 @@
         "stream": true
       }
     ]
+  },
+  "musik": {
+    "subtitle": "stinkendreich.ton.musik",
+    "sounds": [
+      {
+        "name": "fabric-sound-api-v1:empty",
+        "stream": true
+      }
+    ]
   }
 }

@@ -1,0 +1,203 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/musikanlage_seite",
+    "vorne": "stinkendreich:block/musikanlage_vorne",
+    "hinten": "stinkendreich:block/musikanlage_hinten",
+    "seite": "stinkendreich:block/musikanlage_seite",
+    "oben": "stinkendreich:block/musikanlage_oben"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        14,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            2,
+            16,
+            16
+          ],
+          "texture": "#vorne",
+          "cullface": "north"
+        },
+        "south": {
+          "uv": [
+            0,
+            2,
+            16,
+            16
+          ],
+          "texture": "#hinten",
+          "cullface": "south"
+        },
+        "east": {
+          "uv": [
+            0,
+            2,
+            16,
+            16
+          ],
+          "texture": "#seite",
+          "cullface": "east"
+        },
+        "west": {
+          "uv": [
+            0,
+            2,
+            16,
+            16
+          ],
+          "texture": "#seite",
+          "cullface": "west"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#oben"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#seite",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        1.0,
+        14,
+        3
+      ],
+      "to": [
+        8.0,
+        14.5,
+        10
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            1.0,
+            3,
+            8.0,
+            10
+          ],
+          "texture": "#oben"
+        },
+        "north": {
+          "uv": [
+            1.0,
+            0,
+            8.0,
+            0.5
+          ],
+          "texture": "#seite"
+        },
+        "south": {
+          "uv": [
+            1.0,
+            0,
+            8.0,
+            0.5
+          ],
+          "texture": "#seite"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            7,
+            0.5
+          ],
+          "texture": "#seite"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            7,
+            0.5
+          ],
+          "texture": "#seite"
+        }
+      }
+    },
+    {
+      "from": [
+        8.0,
+        14,
+        3
+      ],
+      "to": [
+        15.0,
+        14.5,
+        10
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            8.0,
+            3,
+            15.0,
+            10
+          ],
+          "texture": "#oben"
+        },
+        "north": {
+          "uv": [
+            8.0,
+            0,
+            15.0,
+            0.5
+          ],
+          "texture": "#seite"
+        },
+        "south": {
+          "uv": [
+            8.0,
+            0,
+            15.0,
+            0.5
+          ],
+          "texture": "#seite"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            7,
+            0.5
+          ],
+          "texture": "#seite"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            7,
+            0.5
+          ],
+          "texture": "#seite"
+        }
+      }
+    }
+  ]
+}

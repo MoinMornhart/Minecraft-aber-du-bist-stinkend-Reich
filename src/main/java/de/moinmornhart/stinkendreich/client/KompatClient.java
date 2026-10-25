@@ -66,6 +66,28 @@ public final class KompatClient {
         /*return new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.OPEN_URL, adresse);*/
     }
 
+    /** Öffnet eine Internetseite im Browser (26.3: Blaze3D, ab 1.21.11: Util liegt in net.minecraft.util). */
+    public static void oeffneLink(java.net.URI adresse) {
+        //? if >=26.3 {
+        com.mojang.blaze3d.Blaze3D.openUri(adresse);
+        //?} else if >=1.21.11 {
+        /*net.minecraft.util.Util.getPlatform().openUri(adresse);
+        *///?} else {
+        /*net.minecraft.Util.getPlatform().openUri(adresse);
+        *///?}
+    }
+
+    /** Öffnet einen Ordner im Dateimanager des Systems. */
+    public static void oeffneOrdner(java.nio.file.Path ordner) {
+        //? if >=26.3 {
+        com.mojang.blaze3d.Blaze3D.openPath(ordner);
+        //?} else if >=1.21.11 {
+        /*net.minecraft.util.Util.getPlatform().openPath(ordner);
+        *///?} else {
+        /*net.minecraft.Util.getPlatform().openPath(ordner);
+        *///?}
+    }
+
     /** Schickt eine Aktion an den Server. */
     public static void sende(String art, BlockPos pos, String wert) {
         ClientPlayNetworking.send(new Aktion(art, pos, wert));

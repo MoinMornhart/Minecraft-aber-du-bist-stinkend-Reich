@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "stinkendreich:block/lautsprecher_vorne",
+    "side": "stinkendreich:block/lautsprecher_seite",
+    "top": "stinkendreich:block/lautsprecher_oben"
+  }
+}

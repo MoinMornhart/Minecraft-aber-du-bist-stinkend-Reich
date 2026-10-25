@@ -559,7 +559,11 @@ def main() -> None:
     TEXTE_DE.update(g["de"])
     TEXTE_EN.update(g["en"])
     for werkzeug, liste in werkzeuge.items():
-        schreibe_json(RES / f"data/minecraft/tags/block/mineable/{werkzeug}.json", {"replace": False, "values": liste})
+        pfad = RES / f"data/minecraft/tags/block/mineable/{werkzeug}.json"
+        # Einträge anderer Generatoren (z. B. musik.py) behalten
+        alt = json.loads(pfad.read_text(encoding="utf-8"))["values"] if pfad.exists() else []
+        fremde = [v for v in alt if v not in liste and v.removeprefix(f"{NS}:") not in BLOECKE]
+        schreibe_json(pfad, {"replace": False, "values": liste + fremde})
 
     # Sprachdateien ergänzen (vorhandene Einträge bleiben)
     for datei, texte in (("de_de", TEXTE_DE), ("en_us", TEXTE_EN)):

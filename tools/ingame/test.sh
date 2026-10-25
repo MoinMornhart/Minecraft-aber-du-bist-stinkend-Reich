@@ -5,6 +5,7 @@
 #
 # Aufruf:   tools/ingame/test.sh <minecraft-version> [szenario-datei]
 # Ausgabe:  build/ingame/<version>/*.png und build/ingame/<version>/logs/
+# Umgebung: PORT, SEED, SICHTWEITE, WELT_BEHALTEN=1, LAUTSTAERKE (Gesamtlautstärke 0.0–1.0, sonst stumm)
 #
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
 #                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
@@ -63,7 +64,10 @@ pauseOnLostFocus:false
 renderDistance:${SICHTWEITE:-8}
 simulationDistance:5
 guiScale:2
-soundCategory_master:0.0
+soundCategory_master:${LAUTSTAERKE:-0.0}
+soundCategory_music:0.0
+soundCategory_ambient:0.0
+soundCategory_weather:0.0
 tutorialStep:none
 skipMultiplayerWarning:true
 joinedFirstServer:true

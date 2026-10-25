@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/musikanlage"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/musikanlage",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/musikanlage",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/musikanlage",
+      "y": 270
+    }
+  }
+}
