@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-25, 19:30 Uhr_
+_Zuletzt aktualisiert: 2026-10-25, 21:00 Uhr_
 
 ## Erledigt
 
@@ -58,8 +58,10 @@ _Zuletzt aktualisiert: 2026-10-25, 19:30 Uhr_
   (`Autotyp.massstab`), Tische `tafel_marmor`/`tafel_holz` (moebel.tisch), Sofas ohne Spalt.
 - Rutsche (`Rutsche`, Marke „rutsche“): schiebt jetzt richtig (in 1 s unten im Pool). Wichtig: Bewegung an den
   Spieler geht ab 26.3 über `syncVelocity` (bis 26.2 `hurtMarked`), Hilfe `Kompat.bewegungSenden`.
-- Waffenhaltung endgültig (`WAFFEN_HALTUNG` in ausruestung.py): rechts [0,90,80] mit Verschiebung [0,-0.5,5]
-  (Griff in der Faust), links [0,-90,-80], Ich-Sicht [0,100,0] / [0,-100,0]. Achsen in der Hand vor der Drehung:
+- Waffenhaltung endgültig (`WAFFEN_HALTUNG` in ausruestung.py, Stand 0.2.2): rechts [0,90,80], Maßstab 0,65,
+  Verschiebung [0,0.6,2.2] (Griff in der Faust wie ein Schwertgriff), links [0,-90,-80], Ich-Sicht [0,100,0] /
+  [0,-100,0]. Prüfen am besten an einer Schaufensterpuppe (`minecraft:mannequin`, ab 1.21.9) von der Seite
+  (Szenario `show.txt`); am Spieler steht der Körper nach einem Teleport schräg zum Kopf. Achsen in der Hand vor der Drehung:
   +y vorn, +z oben, x seitlich; Drehfolge erst z, dann y, dann x (Mojang-Standard). Zum Prüfen am Spieler: von
   hinten muss man das Ende ohne Mündung sehen, von vorn in die Mündung; die Ich-Sicht braucht eingeblendete
   Hand (kein F1). [0,-90,-80] zeigte nach hinten, [0,-90,100] hatte den Griff oben.
@@ -80,6 +82,15 @@ _Zuletzt aktualisiert: 2026-10-25, 19:30 Uhr_
 - Totem der Unsterblichkeit = Geldbündel: Bild und Name in `src/main/resources/assets/minecraft/` (von
   ausruestung.py erzeugt, `python3 tools/assets/assets.py` nach Änderungen ausführen).
 - Club-Bar „ein bisschen Wasser“: in der neuen Villa nicht nachvollziehbar (`/villa lecks` findet nichts dort).
+
+## Version 0.2.1 (veröffentlicht 25.10., 17 Dateien) und 0.2.2 (in Arbeit)
+
+- 0.2.1: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.2.1
+- 0.2.2: Penthouse-Fernseher mittig (Marke x 63.0), Waffen von außen kleiner mit Griff in der Faust,
+  Show-Tänzerinnen im Geheimclub (`club/TaenzerinEntity`, `client/club/Taenzerin*`, Texturen aus
+  `tools/assets/taenzerin.py`; im Bauplan als Entities in `geheimclub()` mit „stange|Kostüm“ oder „laufen|Kostüm“,
+  den Anker setzt die Figur beim ersten Tick selbst). Tänzerinnen tragen Glitzer-Showkostüme (bewusst nicht
+  freizügiger, weil Repo öffentlich und Minecraft auch von Kindern gespielt wird).
 
 ## Version 0.3 (geplant, Philips Wünsche vom 25.10.)
 

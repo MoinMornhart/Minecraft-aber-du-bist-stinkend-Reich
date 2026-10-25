@@ -53,6 +53,11 @@ public final class ModEntities {
             EntityType.Builder.of(de.moinmornhart.stinkendreich.moebel.SitzEntity::new, MobCategory.MISC).sized(0.3F, 0.1F)
                     .clientTrackingRange(10).fireImmune());
 
+    /** Show-Tänzerin im Geheimclub: so groß wie ein Spieler, tanzt an der Stange oder läuft durch den Club. */
+    public static final EntityType<de.moinmornhart.stinkendreich.club.TaenzerinEntity> TAENZERIN = registrieren("taenzerin",
+            EntityType.Builder.of(de.moinmornhart.stinkendreich.club.TaenzerinEntity::new, MobCategory.MISC).sized(0.6F, 1.9F)
+                    .eyeHeight(1.6F).clientTrackingRange(8).updateInterval(2).fireImmune());
+
     private ModEntities() {
     }
 
@@ -92,5 +97,6 @@ public final class ModEntities {
         FabricDefaultAttributeRegistry.register(AUFZUG, de.moinmornhart.stinkendreich.mechanik.AufzugKabine.attribute());
         FabricDefaultAttributeRegistry.register(SITZ, de.moinmornhart.stinkendreich.moebel.SitzEntity.attribute());
         FabricDefaultAttributeRegistry.register(DREHTELLER, de.moinmornhart.stinkendreich.auto.DrehtellerEntity.attribute());
+        FabricDefaultAttributeRegistry.register(TAENZERIN, de.moinmornhart.stinkendreich.club.TaenzerinEntity.attribute());
     }
 }

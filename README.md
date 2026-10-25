@@ -27,7 +27,7 @@
 
 In **jeder neuen Welt** steht am Spawn deine Villa – egal welcher Welttyp. Das Gelände drumherum wird geebnet und weich an die Landschaft angeblendet. Du startest vor dem Tor, mit der Zugangskarte in der Tasche. Bestehende Welten bleiben unberührt.
 
-Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke · Ballsaal · Luxusküche · Nachtclub im Keller mit Geheimclub hinter dem Bücherregal · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen).
+Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke · Ballsaal · Luxusküche · Nachtclub im Keller mit Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen).
 
 <table>
 <tr>

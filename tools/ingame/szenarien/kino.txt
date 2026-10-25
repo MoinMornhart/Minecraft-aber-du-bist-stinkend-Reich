@@ -1,0 +1,12 @@
+# Penthouse-Kino: Fernseher mittig über den drei Samtsofas
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 30
+taste F1
+server /villa ort 63.0 38.5 40.8 0 15
+warte 8
+bild p01_kino_mittig
+server /villa ort 63.0 40.5 41.5 0 35
+warte 2
+bild p02_kino_oben

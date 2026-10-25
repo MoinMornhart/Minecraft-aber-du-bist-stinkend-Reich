@@ -89,6 +89,13 @@ public class StinkendReichClient implements ClientModInitializer {
         //?} else
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(de.moinmornhart.stinkendreich.client.drehteller.DrehtellerModell.SCHICHT, de.moinmornhart.stinkendreich.client.drehteller.DrehtellerModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.DREHTELLER, de.moinmornhart.stinkendreich.client.drehteller.DrehtellerRenderer::new);
+        // Show-Tänzerinnen im Geheimclub
+        //? if >=26.1 {
+        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(
+                de.moinmornhart.stinkendreich.client.club.TaenzerinModell.SCHICHT, de.moinmornhart.stinkendreich.client.club.TaenzerinModell::schicht);
+        //?} else
+        /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(de.moinmornhart.stinkendreich.client.club.TaenzerinModell.SCHICHT, de.moinmornhart.stinkendreich.client.club.TaenzerinModell::schicht);*/
+        EntityRendererRegistry.register(ModEntities.TAENZERIN, de.moinmornhart.stinkendreich.client.club.TaenzerinRenderer::new);
         AutoKlient.registrieren();
         UpdateKlient.registrieren();
         // Musikanlage: eigene Dateien abspielen, Spotify-Fernbedienung

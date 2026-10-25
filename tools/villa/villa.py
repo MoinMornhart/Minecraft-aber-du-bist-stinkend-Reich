@@ -633,7 +633,7 @@ def penthouse() -> None:
     # FernseherEntity); die Wand trennt den Schlafbereich von der Lounge
     b.quader(59, y, 47, 66, PH_DACH - 1, 47, SCHWARZ)
     b.quader(59, y, 47, 66, y, 47, "gold_block")
-    b.marke("fernseher", 62.5, y + 0.4, 46.85, 180.0)
+    b.marke("fernseher", 63.0, y + 0.4, 46.85, 180.0)                       # mittig über dem Sofa-U (x 60 … 65)
     # Kino vor dem Fernseher: drei Samtsofas als U (hinten drei Plätze, links und rechts je zwei), in der Mitte
     # Popcorn- und Loungetisch
     reihe(b, 64, y, 43, 4, "sofa_samt", "south")                            # x 64 … 61
@@ -1113,6 +1113,12 @@ def geheimclub() -> None:
     for x in (11, 13, 15):
         deko(b, x, y, 66, "barhocker")
     deko(b, 12, y + 3, z0, "neon_bar", "south")
+    # Show-Tänzerinnen (TaenzerinEntity): je eine an jeder Stange, drei laufen durch den Club und tanzen im Stehen.
+    # „Art|Kostüm“; den Anker (Mitte der Stange bzw. des Laufbereichs) setzt die Figur beim ersten Tick selbst.
+    for nr, z in enumerate((68, 71, 75)):
+        b.entity(x0 + 1.5, y + 1, z + 0.5, {"id": "stinkendreich:taenzerin", "stinkendreich": f"stange|{nr}"})
+    for nr, (x, z) in enumerate(((11.5, 70.5), (13.5, 73.5), (12.5, 79.5))):
+        b.entity(x, y, z, {"id": "stinkendreich:taenzerin", "stinkendreich": f"laufen|{(nr + 3) % 4}"})
 
 
 def bunker() -> None:
