@@ -61,7 +61,31 @@ def ist_voll(block: str | None) -> bool:
     if block is None:
         return False
     n = basisname(block)
+    if n.endswith("sea_lantern"):
+        return True
     return not any(t in n for t in NICHT_VOLL)
+
+
+# Blöcke, in die fließendes Wasser oder Lava NICHT hineinläuft, obwohl sie nicht voll sind:
+# Türen (ausdrücklich ausgenommen) und alles, was Wasser speichern kann (Stufen, Scheiben, Laternen …)
+HAELT_FLUESSIGKEIT = ("door", "slab", "stairs", "trapdoor", "_pane", "bars", "fence", "_wall", "lantern", "chain",
+                      "ladder", "sign", "light", "campfire", "chest", "barrel", "glass", "leaves", "sea_pickle",
+                      "coral", "kelp", "seagrass", "stinkendreich:")
+
+
+def voller_modblock(block: str) -> bool:
+    """Eigene Blöcke ohne Ausrichtung (Torsteuerung, Düse …) sind volle Würfel."""
+    return basisname(block).startswith("stinkendreich:") and "facing" not in eigenschaften(block) and "open" not in eigenschaften(block)
+
+
+def haelt_fluessigkeit(block: str | None) -> bool:
+    """Läuft Wasser von nebenan NICHT in diesen Block? (None = unbekanntes Gelände: kann eine Höhle sein)."""
+    if block is None:
+        return False
+    n = basisname(block)
+    if n in ("minecraft:water", "minecraft:lava"):
+        return True
+    return ist_voll(block) or any(t in n for t in HAELT_FLUESSIGKEIT)
 
 
 GEGENRICHTUNG = {"north": "south", "south": "north", "east": "west", "west": "east"}
@@ -77,6 +101,8 @@ class Bau:
         self.block_daten: dict[tuple[int, int, int], dict] = {}
         self.entities: list[tuple[tuple[float, float, float], dict]] = []
         self.marken: dict[str, list] = {}
+        # Stellen, an denen Wasser absichtlich fließt (z. B. Regendusche), für die Dichtheitsprüfung
+        self.gewollter_fluss: set[tuple[int, int, int]] = set()
 
     # ---------- Grundoperationen ----------
     def drin(self, x: int, y: int, z: int) -> bool:
@@ -135,6 +161,31 @@ class Bau:
         self.entities.append(((x, y, z), nbt))
 
     # ---------- Nachbearbeitung ----------
+    def pruefe_dichtheit(self, boden_y: int) -> list[str]:
+        """
+        Sucht Lecks im Bauplan, bevor sie im Spiel Räume fluten:
+          - Wasser oder Lava neben Luft oder nicht festen Blöcken (läuft aus) oder neben
+            unbekanntem Gelände unterhalb der Grasschicht (Höhle möglich)
+          - unterirdische Räume (Luft unter der Grasschicht), die an unbekanntes Gelände grenzen
+            (Grundwasser und Höhlen können hereinlaufen)
+        """
+        probleme = []
+        seiten = ((0, -1, 0), (1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1))
+        for (x, y, z), block in self.bloecke.items():
+            name = basisname(block)
+            if name in ("minecraft:water", "minecraft:lava"):
+                for dx, dy, dz in seiten:
+                    n = self.hole(x + dx, y + dy, z + dz)
+                    if n is None and y + dy > boden_y:
+                        continue  # über der Grasschicht: dort ist draußen nur Luft, das ist kein Leck
+                    if n is None or not haelt_fluessigkeit(n):
+                        probleme.append(f"{name[10:]} bei {x} {y} {z} läuft nach {x + dx} {y + dy} {z + dz} ({n or 'Gelände'})")
+            elif y < boden_y and (name == LUFT or not ist_voll(block)) and not voller_modblock(block):
+                for dx, dy, dz in seiten + ((0, 1, 0),):
+                    if self.drin(x + dx, y + dy, z + dz) and self.hole(x + dx, y + dy, z + dz) is None:
+                        probleme.append(f"Untergrund offen bei {x} {y} {z} zum Gelände {x + dx} {y + dy} {z + dz}")
+        return [p for p in probleme if not any(f"bei {x} {y} {z} " in p for (x, y, z) in self.gewollter_fluss)]
+
     def verbinden(self) -> None:
         """Glasscheiben, Gitter, Zäune und Mauern mit ihren Nachbarn verbinden."""
         for (x, y, z), block in list(self.bloecke.items()):

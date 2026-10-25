@@ -1,0 +1,10 @@
+# Dichtheitsprüfung: Wasser fließen lassen, dann alles Wasser mit dem Bauplan vergleichen
+server /gamemode spectator
+server /villa ort 56 30 52 180 0
+warte 150
+server /villa lecks
+warte 3
+taste t
+warte 2
+bild l01_lecks
+klient schliessen

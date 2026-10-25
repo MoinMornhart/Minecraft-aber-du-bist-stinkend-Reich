@@ -34,12 +34,17 @@ import static de.moinmornhart.stinkendreich.register.ModRegister.block;
 
 /** Alle Blöcke der Mod. */
 public final class ModBloecke {
+    /*
+     * forceSolidOn: Für Wasser und Lava gelten diese Blöcke als fest, auch Wandplatten und offene Tore.
+     * Sonst flösse Wasser hinein, spülte den Block weg und liefe weiter (z. B. durch eine offene
+     * Geheimtür in den Bunker). Laufen kann man durch offene Tore trotzdem, das regelt die Form.
+     */
     private static BlockBehaviour.Properties technik() {
-        return BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.METAL).noOcclusion();
+        return BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.METAL).noOcclusion().forceSolidOn();
     }
 
     private static BlockBehaviour.Properties stein() {
-        return BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.DEEPSLATE_BRICKS);
+        return BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.DEEPSLATE_BRICKS).forceSolidOn();
     }
 
     // ---------- Sicherheitssystem ----------
@@ -65,14 +70,14 @@ public final class ModBloecke {
     public static final Block PANZERTUER = block("panzertuer", p -> new TorfluegelBlock(p, true, false), technik().strength(80.0F, 3600000.0F));
     public static final Block POOLABDECKUNG = block("poolabdeckung", p -> new TorfluegelBlock(p, true, true), technik());
     public static final Block GEHEIMREGAL = block("geheimregal", p -> new TorfluegelBlock(p, false, false),
-            BlockBehaviour.Properties.of().strength(1.5F).sound(SoundType.WOOD).noOcclusion());
+            BlockBehaviour.Properties.of().strength(1.5F).sound(SoundType.WOOD).noOcclusion().forceSolidOn());
     public static final Block GEHEIMSCHALTER = block("geheimschalter", GeheimschalterBlock::new,
             BlockBehaviour.Properties.of().strength(1.5F).sound(SoundType.WOOD));
 
     // ---------- Aufzug, Tresor, Überwachung, Komfort ----------
     public static final Block AUFZUGSTAFEL = block("aufzugstafel", AufzugstafelBlock::new, technik());
     public static final Block FALLENPLATTE = block("fallenplatte", FallenplatteBlock::new,
-            BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.METAL));
+            BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.METAL).forceSolidOn());
     public static final Block GITTERFALLE = block("gitterfalle", p -> new TorfluegelBlock(p, true, false), technik().strength(80.0F, 3600000.0F));
     public static final Block ENTSCHAERFKNOPF = block("entschaerfknopf", EntschaerfknopfBlock::new, stein());
     public static final Block KAMERA = block("kamera", KameraBlock::new, technik());

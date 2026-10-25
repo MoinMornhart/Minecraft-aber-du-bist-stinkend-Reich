@@ -62,12 +62,17 @@ def grundstueck() -> None:
             b.setze(x, G + 1, z, QUARZ)
             b.setze(x, G + 2, z, QUARZ)
             b.setze(x, G + 3, z, LICHT)
-    # Lava-Kanal unter begehbarem Glas
+    # Lava-Kanal unter begehbarem Glas; Seitenwände, damit nichts in Höhlen läuft
+    for y in (G - 2, G - 1):
+        b.ring(2, 2, n - 2, n - 2, y, "polished_blackstone")
     for k in (3, 4):
         b.ring(k, k, n - k, n - k, G - 2, "magma_block")
         b.ring(k, k, n - k, n - k, G - 1, "lava")
         b.ring(k, k, n - k, n - k, G, "glass")
-    # Wassergraben, 5 breit, 3 tief, mit Steinziegel-Rand und Lichtern am Grund
+    # Wassergraben, 5 breit, 3 tief, mit Seitenwänden und Lichtern am Grund
+    for y in range(G - 4, G):
+        b.ring(5, 5, n - 5, n - 5, y, "dark_prismarine")
+        b.ring(11, 11, n - 11, n - 11, y, "dark_prismarine")
     for k in range(6, 11):
         b.ring(k, k, n - k, n - k, G - 4, "dark_prismarine")
         for y in range(G - 3, G):
@@ -356,14 +361,15 @@ def obergeschoss() -> None:
     sofa(b, 44, y, 62, 3, "west", "smooth_quartz_stairs")
     # Bad und Ankleide (Nordwesten)
     b.quader(HX0 + 1, OG, HZ0 + 1, 48, OG, 48, "white_concrete")
-    b.quader(HX0 + 2, y - 1, HZ0 + 2, HX0 + 6, y - 1, HZ0 + 4, "quartz_bricks")
-    b.quader(HX0 + 3, y - 1, HZ0 + 3, HX0 + 5, y - 1, HZ0 + 3, "water")
-    b.quader(HX0 + 2, y, HZ0 + 2, HX0 + 6, y, HZ0 + 4, zustand("quartz_slab", type="bottom", waterlogged="false"))
-    b.quader(HX0 + 3, y, HZ0 + 3, HX0 + 5, y, HZ0 + 3, "air")
+    # Badewanne: Wasser auf dem Boden des Obergeschosses, ringsum Quarzziegel (nicht in der Bodenplatte,
+    # sonst läuft sie ins Wohnzimmer darunter)
+    b.quader(HX0 + 2, y, HZ0 + 2, HX0 + 6, y, HZ0 + 4, "quartz_bricks")
+    b.quader(HX0 + 3, y, HZ0 + 3, HX0 + 5, y, HZ0 + 3, "water")
     b.setze(HX0 + 9, y, HZ0 + 1, zustand("water_cauldron", level="3"))
     b.quader(HX0 + 12, y, HZ0 + 1, HX0 + 14, y + 3, HZ0 + 3, "glass")
     b.luft(HX0 + 13, y, HZ0 + 2, HX0 + 13, y + 2, HZ0 + 2)
     b.setze(HX0 + 13, y + 3, HZ0 + 2, zustand("water", level="0"))
+    b.gewollter_fluss.add((HX0 + 13, y + 3, HZ0 + 2))   # Regendusche im Glaskasten
     for z in range(41, 48):
         truhe(b, 48, y, z, "west", [])
     # Tresorraum für den Schmuck (Nordosten, dicke Wände)
@@ -512,7 +518,10 @@ def bunker() -> None:
     b.quader(63, y, 51, x1 - 1, y1 - 1, 51, "iron_block")
     b.quader(x1 - 1, y, 52, x1 - 1, y1 - 1, z1 - 1, "gold_block")
     b.quader(66, y, 56, 70, y, 64, "gold_block")
-    # Fluchttunnel nach Westen, Leiter hoch in den Westgarten
+    # Fluchttunnel nach Westen, Leiter hoch in den Westgarten; rundum Tiefenschiefer, damit kein
+    # Grundwasser aus Höhlen hereinläuft
+    b.quader(16, y0 - 1, 59, x0 - 1, y + 3, 62, "polished_deepslate")
+    b.quader(15, y, 58, 19, G - 1, 62, "polished_deepslate")
     b.luft(x0 - 1, y, 60, 18, y + 2, 61)
     b.quader(x0 - 1, y0, 60, 18, y0, 61, "polished_andesite")
     for x in range(20, x0, 5):
@@ -696,6 +705,14 @@ def main() -> None:
     truhe(b, 59, EG + 1, 62, "west", [])
     b.marke("lieferkiste", 59, EG + 1, 62)
     b.verbinden()
+
+    # Dichtheitsprüfung: kein Wasser und keine Lava darf auslaufen, kein Raum unter der Erde offen sein
+    probleme = b.pruefe_dichtheit(G)
+    if probleme:
+        print(f"{len(probleme)} Lecks im Bauplan, Villa wird nicht gespeichert:")
+        for p in probleme[:40]:
+            print("  " + p)
+        sys.exit(1)
 
     ZIEL.mkdir(parents=True, exist_ok=True)
     b.speichern(ZIEL / "villa.nbt")

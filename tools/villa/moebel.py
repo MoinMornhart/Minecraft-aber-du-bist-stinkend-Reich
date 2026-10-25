@@ -127,7 +127,9 @@ def aquarium(b: Bau, x0: int, y0: int, z0: int, x1: int, y1: int, z1: int) -> No
                 b.setze(x, y0 + 1, z, zustand("seagrass"))
             elif (x + z) % 5 == 1:
                 b.setze(x, y0 + 1, z, zustand("tube_coral", waterlogged="true"))
-    b.setze(x0 + 1, y1 - 1, z0 + 1, zustand("sea_pickle", pickles="4", waterlogged="true"))
+    # Seegurken leuchten am Grund (schwebend würden sie abfallen)
+    b.setze(x0 + 1, y0 + 1, z0 + 1, zustand("sea_pickle", pickles="4", waterlogged="true"))
+    b.setze(x1 - 1, y0 + 1, z1 - 1, zustand("sea_pickle", pickles="3", waterlogged="true"))
     mx, mz = (x0 + x1) / 2 + 0.5, (z0 + z1) / 2 + 0.5
     for i, variante in enumerate((117506305, 67764993, 50790401)):
         b.entity(mx + (i - 1) * 0.6, y0 + 2.2, mz, {
