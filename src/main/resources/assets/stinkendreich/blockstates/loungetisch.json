@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/loungetisch"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/loungetisch",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/loungetisch",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/loungetisch",
+      "y": 270
+    }
+  }
+}

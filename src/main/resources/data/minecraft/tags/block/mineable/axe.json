@@ -8,7 +8,17 @@
     "stinkendreich:flaschenregal",
     "stinkendreich:geldstapel",
     "stinkendreich:flamingo",
+    "stinkendreich:kopfteil",
+    "stinkendreich:nachttisch",
+    "stinkendreich:liege_kopf",
+    "stinkendreich:liege_fuss",
+    "stinkendreich:sonnenschirm",
     "stinkendreich:fluegel_tasten",
-    "stinkendreich:fluegel_korpus"
+    "stinkendreich:fluegel_korpus",
+    "stinkendreich:sofa_weiss",
+    "stinkendreich:sofa_samt",
+    "stinkendreich:sofa_schwarz",
+    "stinkendreich:bett_ende",
+    "stinkendreich:bettbank"
   ]
 }

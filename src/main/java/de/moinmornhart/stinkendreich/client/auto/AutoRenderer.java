@@ -2,25 +2,24 @@ package de.moinmornhart.stinkendreich.client.auto;
 
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.auto.AutoEntity;
+import de.moinmornhart.stinkendreich.auto.Autotyp;
+import de.moinmornhart.stinkendreich.client.fahrzeug.FahrzeugModell;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.Identifier;
 
-/** Zeichnet das Bonzenauto in seiner Lackfarbe. */
+/** Zeichnet ein Auto (jeder Typ mit eigenem Modell) in seiner Lackfarbe. */
 //? if >=1.21.2 {
-public class AutoRenderer extends MobRenderer<AutoEntity, AutoRenderState, AutoModell> {
+public class AutoRenderer extends MobRenderer<AutoEntity, AutoRenderState, FahrzeugModell> {
 //?} else
-/*public class AutoRenderer extends MobRenderer<AutoEntity, AutoModell> {*/
-    private static final Identifier[] TEXTUREN = new Identifier[AutoEntity.FARBEN.length];
+/*public class AutoRenderer extends MobRenderer<AutoEntity, FahrzeugModell> {*/
+    private final Identifier[] texturen = new Identifier[AutoEntity.FARBEN.length];
 
-    static {
-        for (int i = 0; i < TEXTUREN.length; i++) {
-            TEXTUREN[i] = StinkendReich.id("textures/entity/bonzenauto/" + AutoEntity.FARBEN[i] + ".png");
+    public AutoRenderer(EntityRendererProvider.Context kontext, Autotyp typ) {
+        super(kontext, new FahrzeugModell(kontext.bakeLayer(FahrzeugModell.schicht(typ.name))), 1.6F);
+        for (int i = 0; i < texturen.length; i++) {
+            texturen[i] = StinkendReich.id("textures/entity/" + typ.name + "/" + AutoEntity.FARBEN[i] + ".png");
         }
-    }
-
-    public AutoRenderer(EntityRendererProvider.Context kontext) {
-        super(kontext, new AutoModell(kontext.bakeLayer(AutoModell.SCHICHT)), 1.6F);
     }
 
     //? if >=1.21.2 {
@@ -39,12 +38,12 @@ public class AutoRenderer extends MobRenderer<AutoEntity, AutoRenderState, AutoM
 
     @Override
     public Identifier getTextureLocation(AutoRenderState zustand) {
-        return TEXTUREN[zustand.farbe];
+        return texturen[zustand.farbe];
     }
     //?} else {
     /*@Override
     public Identifier getTextureLocation(AutoEntity auto) {
-        return TEXTUREN[auto.farbe()];
+        return texturen[auto.farbe()];
     }
     *///?}
 }

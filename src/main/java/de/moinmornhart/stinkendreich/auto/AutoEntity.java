@@ -58,7 +58,8 @@ public class AutoEntity extends Mob {
     private static final EntityDataAccessor<Integer> FARBE = SynchedEntityData.defineId(AutoEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> LICHT = SynchedEntityData.defineId(AutoEntity.class, EntityDataSerializers.BOOLEAN);
     private static final String SCHLUESSEL = "stinkendreich";
-    public static final int SITZE = 4;
+    /** Welches Fahrzeug (Bonzenauto, Geländewagen, Supersportwagen, Stretch-Limo). */
+    public final Autotyp art;
 
     /** Lackfarben (Reihenfolge = Texturen auto/0.png … 7.png). */
     public static final String[] FARBEN = {"schwarz", "weiss", "rot", "gelb", "gold", "blau", "gruen", "pink"};
@@ -80,12 +81,13 @@ public class AutoEntity extends Mob {
     private final List<BlockPos> geladeneLichter = new ArrayList<>();
     private int hupeSperre;
 
-    public AutoEntity(EntityType<? extends AutoEntity> typ, Level welt) {
+    public AutoEntity(EntityType<? extends AutoEntity> typ, Level welt, Autotyp art) {
         super(typ, welt);
+        this.art = art;
         setPersistenceRequired();
     }
 
-    public static AttributeSupplier.Builder attribute() {
+    public static AttributeSupplier.Builder attribute(Autotyp art) {
         AttributeSupplier.Builder b = Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 100.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.0)
@@ -93,7 +95,7 @@ public class AutoEntity extends Mob {
                 .add(Attributes.STEP_HEIGHT, 1.05);
         // Ab 1.21.6 richtet sich die Kamera beim Fahren nach diesem Wert (Verfolgerkamera)
         //? if >=1.21.6
-        b.add(Attributes.CAMERA_DISTANCE, 7.0);
+        b.add(Attributes.CAMERA_DISTANCE, art == Autotyp.STRETCHLIMO ? 11.0 : 7.0);
         return b;
     }
 
@@ -158,7 +160,7 @@ public class AutoEntity extends Mob {
 
     @Override
     protected boolean canAddPassenger(Entity passagier) {
-        return getPassengers().size() < SITZE;
+        return getPassengers().size() < art.sitze.length;
     }
 
     @Override
@@ -166,13 +168,12 @@ public class AutoEntity extends Mob {
         return getFirstPassenger() instanceof Player p ? p : null;
     }
 
-    /** Sitze: Fahrer vorne links, Beifahrer vorne rechts, zwei hinten. */
+    /** Sitze je Fahrzeug (siehe {@link Autotyp}); Platz 0 ist der Fahrer. */
     @Override
     protected Vec3 getPassengerAttachmentPoint(Entity passagier, EntityDimensions masse, float skala) {
-        int platz = Math.max(0, getPassengers().indexOf(passagier));
-        double seite = platz % 2 == 0 ? 0.42 : -0.42;
-        double vorne = platz < 2 ? 0.0 : -1.0;
-        return new Vec3(seite, 0.55, vorne).yRot(-getYRot() * Mth.DEG_TO_RAD);
+        int platz = Math.min(art.sitze.length - 1, Math.max(0, getPassengers().indexOf(passagier)));
+        double[] s = art.sitze[platz];
+        return new Vec3(s[0], s[1], s[2]).yRot(-getYRot() * Mth.DEG_TO_RAD);
     }
 
     /**
@@ -224,7 +225,7 @@ public class AutoEntity extends Mob {
             // Einpacken: das Auto wird wieder zum Gegenstand
             if (!level().isClientSide()) {
                 lichterLoeschen();
-                spawnAtLocationSicher(new ItemStack(ModItems.BONZENAUTO));
+                spawnAtLocationSicher(new ItemStack(ModItems.auto(art)));
                 discard();
             }
             return InteractionResult.SUCCESS;
@@ -291,7 +292,8 @@ public class AutoEntity extends Mob {
             // Der Fahrer schaut nach vorn, kann sich aber umsehen
             setYHeadRot(getYRot());
         }
-        double max = Math.max(0.3, Konfig.get().autoHoechstTempo / 72.0);
+        double max = Math.max(0.3, Konfig.get().autoHoechstTempo / 72.0 * art.tempo);
+        double kraft = art.beschleunigung;
 
         // Gas, Bremse, Rückwärtsgang
         if (gas > 0) {
@@ -299,7 +301,7 @@ public class AutoEntity extends Mob {
                 tempo = Math.min(0, tempo + 0.06);
             } else {
                 double kurve = 1.0 - (tempo / max) * (tempo / max);
-                tempo = Math.min(max, tempo + 0.004 + 0.016 * kurve);
+                tempo = Math.min(max, tempo + (0.004 + 0.016 * kurve) * kraft);
             }
         } else if (gas < 0) {
             if (tempo > 0) {
@@ -377,7 +379,7 @@ public class AutoEntity extends Mob {
             boolean quer = gefahren > 0.3 && Math.abs(vor) < gefahren * 0.92;
             if (quer || driftet) {
                 for (int seite = -1; seite <= 1; seite += 2) {
-                    Vec3 rad = position().add(richtung.scale(-1.4)).add(new Vec3(richtung.z, 0, -richtung.x).scale(0.9 * seite));
+                    Vec3 rad = position().add(richtung.scale(-art.hinterachse)).add(new Vec3(richtung.z, 0, -richtung.x).scale(0.9 * seite));
                     for (int i = 0; i < 3; i++) {
                         double rx = (random.nextDouble() - 0.5) * 0.5, rz = (random.nextDouble() - 0.5) * 0.5;
                         level().addParticle(ParticleTypes.CLOUD, rad.x + rx, getY() + 0.15, rad.z + rz, rx * 0.1, 0.04, rz * 0.1);
@@ -409,7 +411,7 @@ public class AutoEntity extends Mob {
         Vec3 richtung = new Vec3(-Mth.sin(getYRot() * Mth.DEG_TO_RAD), 0, Mth.cos(getYRot() * Mth.DEG_TO_RAD));
         Set<BlockPos> neu = new HashSet<>();
         for (int abstand : new int[]{3, 7, 11}) {
-            Vec3 p = position().add(richtung.scale(abstand)).add(0, 1, 0);
+            Vec3 p = position().add(richtung.scale(abstand + art.front)).add(0, 1, 0);
             BlockPos pos = BlockPos.containing(p);
             if (level().getBlockState(pos).isAir() || level().getBlockState(pos).is(Blocks.LIGHT)) {
                 neu.add(pos);

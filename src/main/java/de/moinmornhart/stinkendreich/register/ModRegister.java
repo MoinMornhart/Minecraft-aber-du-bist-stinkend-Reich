@@ -63,6 +63,23 @@ public final class ModRegister {
         return block;
     }
 
+    /** XXL-Kingsize-Bett: Block mit Bett-Item (setzt Fuß- und Kopfteil). */
+    public static Block bett(String name, BlockBehaviour.Properties eigenschaften) {
+        Identifier id = StinkendReich.id(name);
+        //? if >=1.21.2
+        eigenschaften.setId(ResourceKey.create(Registries.BLOCK, id));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, id, new de.moinmornhart.stinkendreich.moebel.KingsizeBettBlock(eigenschaften));
+        Item.Properties ip = new Item.Properties().stacksTo(1);
+        //? if >=1.21.2
+        ip = ip.setId(ResourceKey.create(Registries.ITEM, id)).useBlockDescriptionPrefix();
+        // Ab 26.3 gibt es kein eigenes Bett-Item mehr, das normale Block-Item setzt beide Hälften
+        //? if >=26.3 {
+        ALLE_ITEMS.add(Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, ip)));
+        //?} else
+        /*ALLE_ITEMS.add(Registry.register(BuiltInRegistries.ITEM, id, new net.minecraft.world.item.BedItem(block, ip)));*/
+        return block;
+    }
+
     /** Registriert ein einfaches Item. */
     public static <I extends Item> I item(String name, Function<Item.Properties, I> fabrik, Item.Properties eigenschaften) {
         Identifier id = StinkendReich.id(name);

@@ -1,0 +1,65 @@
+# Penthouse-Möbel: Büro, XXL-Bett, Kinosofa (mit Hinsetzen), Strandliegen, Himmelbett, Drehteller mit Fahrer
+server /gamemode spectator
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 69 34.2 57.6 0 25
+warte 8
+bild m01_buero
+server /villa ort 69 33.6 58.6 0 50
+warte 2
+bild m02_tastatur
+server /villa ort 62.5 39.4 43.2 180 22
+warte 3
+bild m03_bett
+server /villa ort 66.3 39.3 43 150 20
+warte 2
+bild m04_bett_seite
+server /villa ort 63 39.4 41.6 0 12
+warte 2
+bild m05_kinosofa_hinten
+server /villa ort 62.6 38.5 46.4 180 8
+warte 2
+bild m06_kinosofa_vorn
+server /villa ort 52 40.5 52 135 15
+warte 2
+bild m07_lounge
+# Hinsetzen aufs Kinosofa und von außen anschauen
+server /gamemode creative
+server /villa ort 62.5 38 45.6 180 50
+warte 2
+klick
+warte 2
+taste F5
+warte 1
+taste F5
+warte 2
+bild m08_sitzen
+taste F5
+halte 1 shift
+warte 1
+# Strandliegen am Pool und auf dem Dach, Himmelbett im Obergeschoss
+server /gamemode spectator
+server /villa ort 54 28.5 36 180 22
+warte 4
+bild m09_liegen_pool
+server /villa ort 44.5 27.2 33.5 150 20
+warte 2
+bild m10_liege_nah
+server /villa ort 70 40.5 51 -90 22
+warte 3
+bild m11_liegen_dach
+server /villa ort 37 33.6 57.5 90 15
+warte 3
+bild m12_himmelbett
+# Drehteller: Auto drauf, einsteigen, eine Sekunde stehen, er wendet
+server /gamemode creative
+server /villa ort 91.5 17 45.2 180 30
+warte 1
+server /execute at @p run summon stinkendreich:bonzenauto ~ ~ ~-4.7 {Rotation:[0f,0f],stinkendreich:"{\"farbe\":4}"}
+warte 2
+klick
+warte 2
+bild m13_eingestiegen
+warte 5
+bild m14_gewendet

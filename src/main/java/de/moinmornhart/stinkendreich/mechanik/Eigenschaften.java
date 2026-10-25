@@ -49,6 +49,17 @@ public final class Eigenschaften {
         }
     }
 
+    /** Bildschirm auf dem Tisch: gerade oder schräg zur Mitte (links/rechts vom Betrachter aus); WAND = in die Wand eingelassen. */
+    public enum Winkel implements StringRepresentable {
+        GERADE, LINKS, RECHTS, WAND;
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(java.util.Locale.ROOT);
+        }
+    }
+
+    public static final EnumProperty<Winkel> WINKEL = EnumProperty.create("winkel", Winkel.class);
     public static final EnumProperty<Spalte> SPALTE = EnumProperty.create("spalte", Spalte.class);
     public static final EnumProperty<Zeile> ZEILE = EnumProperty.create("zeile", Zeile.class);
     /** Öffnungsstufe für die Animation: 0 zu, 3 ganz offen. */

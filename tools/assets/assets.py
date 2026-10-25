@@ -21,6 +21,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 import deko
+import drehteller
+import fahrzeuge
+import fernseher
 import gemaelde
 import tueren
 
@@ -163,6 +166,19 @@ def tex_zentrale_front():
 
 
 def tex_monitor_front():
+    """Bildschirm (oben 14 × 10 Pixel genutzt): vier Kamerabilder, roter Aufnahmepunkt, dünner Rand."""
+    img, d = neu((14, 14, 16))
+    d.rectangle([0, 0, 13, 9], fill=(12, 12, 14))
+    bilder = ((1, 1, 6, 4, (70, 110, 80)), (7, 1, 12, 4, (90, 100, 120)), (1, 5, 6, 8, (110, 110, 118)), (7, 5, 12, 8, (60, 80, 70)))
+    for x0, y0, x1, y1, farbe in bilder:
+        d.rectangle([x0, y0, x1, y1], fill=farbe)
+        d.point((x0 + 1, y0 + 1), fill=tuple(min(255, c + 60) for c in farbe))
+    d.point((12, 1), fill=(240, 40, 40))
+    return img
+
+
+def tex_monitor_wand():
+    """Großer Wandmonitor (ganzer Block): vier Kamerabilder."""
     img, d = neu((18, 18, 20))
     d.rectangle([1, 2, 14, 12], fill=(70, 90, 110))
     for y in range(3, 12, 2):
@@ -258,6 +274,7 @@ TEXTUREN = {
     "kaminsteuerung": tex_kaminsteuerung,
     "sicherheitszentrale": tex_zentrale_front,
     "monitor": tex_monitor_front,
+    "monitor_wand": tex_monitor_wand,
     "laser_sender": tex_laser_front,
     "laserstrahl": tex_laserstrahl,
     "warnleuchte": lambda: tex_warnleuchte(False),
@@ -309,6 +326,24 @@ def m_kamera() -> dict:
 
 def m_orientierbar(front: str, seite: str = SEITE, oben: str = SEITE) -> dict:
     return {"parent": "minecraft:block/orientable", "textures": {"front": front, "side": seite, "top": oben}}
+
+
+def m_monitor(winkel: float) -> dict:
+    """Flacher Monitor auf Standfuß, Bildschirm nach Norden; winkel dreht ihn um die Hochachse."""
+    t = B("monitor")
+    gehaeuse = "minecraft:block/black_concrete"
+    elemente = [
+        {"from": [1, 3, 7], "to": [15, 13, 8.5], "faces": {
+            "north": {"uv": [0, 0, 14, 10], "texture": "#bild"}, "south": {"texture": "#g"}, "east": {"texture": "#g"},
+            "west": {"texture": "#g"}, "up": {"texture": "#g"}, "down": {"texture": "#g"}}},
+        {"from": [7, 1, 8.5], "to": [9, 7, 9.5], "faces": {f: {"texture": "#g"} for f in ("north", "south", "east", "west", "up", "down")}},
+        {"from": [5, 0, 6], "to": [11, 1, 11], "faces": {f: {"texture": "#g"} for f in ("north", "south", "east", "west", "up", "down")}},
+    ]
+    if winkel:
+        for e in elemente:
+            e["rotation"] = {"angle": winkel, "axis": "y", "origin": [8, 0, 8]}
+    return {"parent": "minecraft:block/block", "textures": {"particle": gehaeuse, "g": gehaeuse, "bild": t},
+            "elements": elemente}
 
 
 def m_wuerfel(tex: str) -> dict:
@@ -414,8 +449,12 @@ BLOECKE: dict[str, dict] = {
     "entschaerfknopf": dict(modelle={"entschaerfknopf": m_wuerfel("minecraft:block/white_concrete")},
                             zustand=bs_einfach(B("entschaerfknopf")), de="Entschärfknopf", en="Hidden Disarm Button"),
     "kamera": dict(modelle={"kamera": m_kamera()}, zustand=bs_waagerecht(B("kamera")), de="Überwachungskamera", en="Security Camera"),
-    "monitor": dict(modelle={"monitor": m_orientierbar(B("monitor"), "minecraft:block/black_concrete", "minecraft:block/black_concrete")},
-                    zustand=bs_waagerecht(B("monitor")), de="Überwachungsmonitor", en="Security Monitor"),
+    "monitor": dict(modelle={"monitor": m_monitor(0), "monitor_links": m_monitor(22.5), "monitor_rechts": m_monitor(-22.5),
+                             "monitor_wand": m_orientierbar(B("monitor_wand"), "minecraft:block/black_concrete",
+                                                            "minecraft:block/black_concrete")},
+                    zustand=bs_waagerecht("", {"winkel=gerade": B("monitor"), "winkel=links": B("monitor_links"),
+                                              "winkel=rechts": B("monitor_rechts"), "winkel=wand": B("monitor_wand")}),
+                    de="Überwachungsmonitor", en="Security Monitor"),
     "whirlpoolduese": dict(modelle={"whirlpoolduese": m_saeule("minecraft:block/quartz_block_side", B("whirlpoolduese"))},
                            zustand=bs_einfach(B("whirlpoolduese")), de="Whirlpool-Düse", en="Whirlpool Jet"),
     "kaminsteuerung": dict(modelle={"kaminsteuerung": m_wandplatte(B("kaminsteuerung"))},
@@ -555,6 +594,12 @@ def main() -> None:
         werkzeuge[werkzeug] += liste
     TEXTE_DE.update(dk["de"])
     TEXTE_EN.update(dk["en"])
+    fz = fahrzeuge.main()
+    TEXTE_DE.update(fz["de"])
+    TEXTE_EN.update(fz["en"])
+    for texte in (drehteller.main(), fernseher.main()):
+        TEXTE_DE.update(texte["de"])
+        TEXTE_EN.update(texte["en"])
     g = gemaelde.main()
     TEXTE_DE.update(g["de"])
     TEXTE_EN.update(g["en"])

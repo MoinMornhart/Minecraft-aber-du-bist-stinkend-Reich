@@ -108,6 +108,10 @@ public final class ModBloecke {
     public static final Block STAHLTUER = ModRegister.tuer("stahltuer", BlockSetType.COPPER,
             tuer(MapColor.METAL, SoundType.METAL).strength(5.0F).requiresCorrectToolForDrops());
     /** Bunkertür mit Schloss und Riegeln: nur per Redstone, Kartenleser oder Tastenfeld. */
+    /** XXL-Kingsize-Bett (verbindet sich mit Nachbarn zu einer großen Liegefläche). */
+    public static final Block KINGSIZE_BETT = ModRegister.bett("kingsize_bett", BlockBehaviour.Properties.of()
+            .mapColor(MapColor.COLOR_RED).sound(SoundType.WOOL).strength(0.2F).noOcclusion()
+            .pushReaction(Kompat.ZERBRICHT_BEIM_SCHIEBEN));
     public static final Block BUNKERTUER = ModRegister.tuer("bunkertuer", BlockSetType.IRON,
             tuer(MapColor.METAL, SoundType.METAL).strength(80.0F, 3600000.0F).requiresCorrectToolForDrops());
 

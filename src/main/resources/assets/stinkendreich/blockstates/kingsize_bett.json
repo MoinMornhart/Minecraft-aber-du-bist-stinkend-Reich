@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "facing=north,part=head,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_head_links"
+    },
+    "facing=east,part=head,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_head_links",
+      "y": 90
+    },
+    "facing=south,part=head,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_head_links",
+      "y": 180
+    },
+    "facing=west,part=head,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_head_links",
+      "y": 270
+    },
+    "facing=north,part=head,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_head_mitte"
+    },
+    "facing=east,part=head,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_head_mitte",
+      "y": 90
+    },
+    "facing=south,part=head,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_head_mitte",
+      "y": 180
+    },
+    "facing=west,part=head,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_head_mitte",
+      "y": 270
+    },
+    "facing=north,part=head,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_head_rechts"
+    },
+    "facing=east,part=head,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_head_rechts",
+      "y": 90
+    },
+    "facing=south,part=head,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_head_rechts",
+      "y": 180
+    },
+    "facing=west,part=head,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_head_rechts",
+      "y": 270
+    },
+    "facing=north,part=head,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_head_einzeln"
+    },
+    "facing=east,part=head,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_head_einzeln",
+      "y": 90
+    },
+    "facing=south,part=head,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_head_einzeln",
+      "y": 180
+    },
+    "facing=west,part=head,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_head_einzeln",
+      "y": 270
+    },
+    "facing=north,part=foot,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_foot_links"
+    },
+    "facing=east,part=foot,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_foot_links",
+      "y": 90
+    },
+    "facing=south,part=foot,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_foot_links",
+      "y": 180
+    },
+    "facing=west,part=foot,spalte=links": {
+      "model": "stinkendreich:block/deko/bett_foot_links",
+      "y": 270
+    },
+    "facing=north,part=foot,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_foot_mitte"
+    },
+    "facing=east,part=foot,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_foot_mitte",
+      "y": 90
+    },
+    "facing=south,part=foot,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_foot_mitte",
+      "y": 180
+    },
+    "facing=west,part=foot,spalte=mitte": {
+      "model": "stinkendreich:block/deko/bett_foot_mitte",
+      "y": 270
+    },
+    "facing=north,part=foot,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_foot_rechts"
+    },
+    "facing=east,part=foot,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_foot_rechts",
+      "y": 90
+    },
+    "facing=south,part=foot,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_foot_rechts",
+      "y": 180
+    },
+    "facing=west,part=foot,spalte=rechts": {
+      "model": "stinkendreich:block/deko/bett_foot_rechts",
+      "y": 270
+    },
+    "facing=north,part=foot,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_foot_einzeln"
+    },
+    "facing=east,part=foot,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_foot_einzeln",
+      "y": 90
+    },
+    "facing=south,part=foot,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_foot_einzeln",
+      "y": 180
+    },
+    "facing=west,part=foot,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/bett_foot_einzeln",
+      "y": 270
+    }
+  }
+}

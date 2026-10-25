@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 from bau import Bau, zustand
-from moebel import (aquarium, baum, bett, bilderrahmen, blumenbeet, brunnen_kuppel, deko, doppeltuer, fass, gemaelde,
+from moebel import (kingsize_bett, reihe, strandliege, aquarium, baum, bett, bilderrahmen, blumenbeet, brunnen_kuppel, deko, doppeltuer, fass, gemaelde,
                     hecke, kronleuchter, laterne, pflanze, sofa, stuhl, tisch, truhe, tuer)
 
 WURZEL = Path(__file__).resolve().parents[2]
@@ -153,13 +153,12 @@ def garten() -> None:
         b.setze(x, G - 3, 22, LICHT)
         b.setze(x, G - 3, 23, LICHT)
     b.ring(40, 18, 69, 27, G, QUARZ)
-    # Liegen und Sonnenschirme
+    # Strandliegen mit Blick auf den Pool, dazwischen Sonnenschirme und Loungetische
     for x in range(42, 68, 5):
-        b.setze(x, G + 1, 29, zustand("white_bed", facing="north", part="head", occupied="false"))
-        b.setze(x, G + 1, 30, zustand("white_bed", facing="north", part="foot", occupied="false"))
+        strandliege(b, x, G + 1, 30, "north")
+        deko(b, x + 2, G + 1, 30, "loungetisch")
         if x % 10 == 2:
-            b.quader(x + 2, G + 1, 30, x + 2, G + 2, 30, "end_rod")
-            b.quader(x + 1, G + 3, 29, x + 3, G + 3, 31, "white_wool")
+            deko(b, x + 2, G + 1, 29, "sonnenschirm")
     # Grill-Ecke
     b.quader(76, G, 16, 84, G, 24, "polished_andesite")
     b.setze(78, G + 1, 17, zustand("campfire", lit="true", facing="south", signal_fire="false", waterlogged="false"))
@@ -439,8 +438,7 @@ def obergeschoss() -> None:
     b.quader(HX0 + 1, OG, 50, 48, OG, HZ1 - 1, HOLZBODEN)
     b.quader(HX0 + 1, y, 49, 48, DACH - 1, 49, WEISS)
     b.luft(44, y, 49, 45, y + 1, 49)
-    bett(b, HX0 + 1, y, 57, "west", "red")
-    bett(b, HX0 + 1, y, 58, "west", "red")
+    kingsize_bett(b, HX0 + 1, y, 58, 2, "west")
     for x, z in ((HX0 + 1, 56), (HX0 + 1, 59), (HX0 + 3, 56), (HX0 + 3, 59)):
         b.quader(x, y, z, x, y + 2, z, "gold_block")
     b.quader(HX0 + 1, y + 3, 56, HX0 + 3, y + 3, 59, "red_wool")
@@ -502,8 +500,10 @@ def obergeschoss() -> None:
     b.quader(66, y, 60, 72, y, 61, "polished_blackstone")
     b.quader(66, y, 60, 66, y, 61, "gold_block")
     b.quader(72, y, 60, 72, y, 61, "gold_block")
-    for x in (68, 69, 70):
-        mech(x, y + 1, 61, "monitor", "north")
+    # Drei flache Monitore, die äußeren schräg zum Platz; davor Tastatur und Maus
+    for x, winkel in ((68, "rechts"), (69, "gerade"), (70, "links")):
+        mech(x, y + 1, 61, "monitor", "north", {"winkel": winkel})
+    deko(b, 69, y + 1, 60, "tastatur", "north")
     stuhl(b, 69, y, 59, "south", "polished_blackstone_stairs")
     deko(b, 67, y + 1, 60, "geldstapel", "north")
     deko(b, 71, y + 1, 60, "pokal")
@@ -515,7 +515,7 @@ def obergeschoss() -> None:
 
 
 def penthouse() -> None:
-    """Sky-Lounge auf dem Dach: Bar mit Flaschenregal, Tanzfläche mit Discokugeln, DJ, Lounge;
+    """Privates Penthouse auf dem Dach (Schlafbereich): XXL-Kingsize-Bett, XXL-Fernseher, Hausbar, Lounge;
     draußen Dachgarten, Whirlpool und Glasgeländer."""
     x0, x1, z0, z1 = 42, 67, 37, 58
     y = DACH + 1
@@ -535,7 +535,7 @@ def penthouse() -> None:
     b.luft(54, y, z1, 55, y + 1, z1)
     tuerrahmen(53, y, z1, 56, y + 2)
     doppeltuer(b, 54, y, z1, "south", "stinkendreich:glastuer")
-    # Bar an der Nordwand: Theke mit Goldkante, Flaschenregale, Barhocker, Leuchtschrift
+    # Hausbar an der Nordwand: Theke mit Goldkante, Flaschenregale, Barhocker
     b.quader(x0 + 2, y, z0 + 3, x0 + 10, y, z0 + 3, "polished_blackstone")
     b.quader(x0 + 2, y, z0 + 4, x0 + 10, y, z0 + 4, "gold_block")
     for x in range(x0 + 2, x0 + 11):
@@ -545,25 +545,39 @@ def penthouse() -> None:
         deko(b, x, y, z0 + 5, "barhocker")
     deko(b, x0 + 4, y + 1, z0 + 3, "cocktail")
     deko(b, x0 + 8, y + 1, z0 + 3, "champagner")
-    deko(b, x0 + 6, y + 2, z0 + 1, "neon_bar", "south")
-    # Tanzfläche mit Discokugeln, DJ-Pult mit Lautsprechern
-    for x in range(52, 59):
-        for z in range(44, 51):
-            deko(b, x, DACH, z, "tanzflaeche")
-    for x, z in ((54, 46), (57, 48)):
-        deko(b, x, PH_DACH - 1, z, "discokugel")
-    b.setze(55, y, z0 + 1, zustand("stinkendreich:musikanlage", facing="south"))
-    b.marke("dj_penthouse", 55, y, z0 + 1)
-    for x in (52, 58):
-        b.setze(x, y, z0 + 1, zustand("stinkendreich:lautsprecher", facing="south"))
-        b.setze(x, y + 1, z0 + 1, zustand("stinkendreich:lautsprecher", facing="south"))
-    # Lounge mit Sektturm
+    # XXL-Kingsize-Bett im Nordosten: ein Bett aus einem Stück (4 × 3 Blöcke, Satindecke, weißes Fell), Samt-
+    # Kopfteil mit Goldrahmen in der Wand, Nachttische mit Lampen, Bettbank, lila Leuchtband im Boden
+    kingsize_bett(b, 61, y, z0 + 1, 4, "north")
+    for x in range(61, 65):
+        b.quader(x, y, z0, x, y + 2, z0, zustand("stinkendreich:kopfteil", facing="south", waterlogged="false"))
+    b.quader(60, y, z0, 60, y + 3, z0, "gold_block")
+    b.quader(65, y, z0, 65, y + 3, z0, "gold_block")
+    b.quader(61, y + 3, z0, 64, y + 3, z0, "gold_block")
+    for x in (60, 65):
+        deko(b, x, y, z0 + 1, "nachttisch", "south")
+        deko(b, x, y + 1, z0 + 1, "tischlampe", "south")
+    reihe(b, 64, y, z0 + 4, 4, "bettbank", "south")
+    b.quader(60, DACH, z0 + 5, 65, DACH, z0 + 5, "crying_obsidian")
+    b.quader(61, y, z0 + 6, 64, y, z0 + 6, "white_carpet")
+    kronleuchter(b, 62, PH_DACH - 1, z0 + 2)
+    kronleuchter(b, 63, PH_DACH - 1, z0 + 2)
+    # XXL-Fernseher an einer frei stehenden Wand gegenüber dem Bett (zeigt YouTube-Vorschau, siehe
+    # FernseherEntity); die Wand trennt den Schlafbereich von der Lounge
+    b.quader(59, y, 47, 66, PH_DACH - 1, 47, SCHWARZ)
+    b.quader(59, y, 47, 66, y, 47, "gold_block")
+    b.marke("fernseher", 62.5, y + 0.4, 46.85, 180.0)
+    # Kinosofa für zwei (roter Samt, Zierkissen) mit Popcorn-Tisch, genau vor dem Fernseher
+    reihe(b, 63, y, 44, 2, "sofa_samt", "south")
+    deko(b, 64, y, 44, "kinotisch", "south")
+    # Lounge mit Blick über die Stadt: weißes Fell, Sofas, Sektturm
+    b.quader(50, DACH, 44, 57, DACH, 50, "white_wool")
     sofa(b, x0 + 6, y, z1 - 4, 8, "south", "smooth_quartz_stairs")
     tisch(b, x0 + 7, y, z1 - 2, x0 + 12, z1 - 2, "smooth_quartz_slab")
     deko(b, x0 + 8, y + 1, z1 - 2, "sektturm")
     deko(b, x0 + 11, y + 1, z1 - 2, "champagner")
     sofa(b, x1 - 2, y, 52, 4, "west", "smooth_quartz_stairs", None)
     deko(b, x1 - 4, y, 53, "goldbarren", "east")
+    kronleuchter(b, 53, PH_DACH - 1, 47)
     # Glasgeländer um die Dachterrasse
     rx0, rx1, rz0, rz1 = HX0 - 2, HX1 + 2, HZ0 - 2, HZ1 + 6
     b.ring(rx0, rz0, rx1, rz1, y, GLAS)
@@ -612,10 +626,10 @@ def dachparty() -> None:
     for (x, z, blick) in ((39, 65, "south"), (39, 71, "north")):
         sofa(b, x - 1, y, z, 3, blick, "smooth_quartz_stairs", None)
     deko(b, 42, y, 68, "champagner")
-    # Sonnenliegen auf der Ostseite
+    # Strandliegen auf der Ostseite mit Sonnenschirmen und Loungetischen
     for z in range(45, 58, 3):
-        b.setze(HX1 - 2, y, z, zustand("white_bed", facing="east", part="head", occupied="false"))
-        b.setze(HX1 - 3, y, z, zustand("white_bed", facing="east", part="foot", occupied="false"))
+        strandliege(b, HX1 - 2, y, z, "west")
+        deko(b, HX1 - 2, y, z + 1, "sonnenschirm" if (z - 45) % 6 == 0 else "loungetisch")
 
 
 def hubschrauberlandeplatz() -> None:
@@ -801,10 +815,10 @@ def keller() -> None:
     deko(b, 51, y + 2, 55, "geldstapel", "west")
     deko(b, 53, y + 3, 55, "neon_vip", "west")
     # Sitzecken im Westen
-    sofa(b, 31, y, 39, 5, "east", "smooth_quartz_stairs", None)
+    sofa(b, 31, y, 39, 5, "east", farbe="schwarz")
     tisch(b, 33, y, 40, 33, 42, "smooth_quartz_slab")
     deko(b, 33, y + 1, 41, "champagner")
-    sofa(b, 31, y, 53, 5, "east", "smooth_quartz_stairs", None)
+    sofa(b, 31, y, 53, 5, "east", farbe="schwarz")
     tisch(b, 33, y, 54, 33, 56, "smooth_quartz_slab")
     deko(b, 33, y + 1, 55, "cocktail")
     # Treppe aus dem Westgarten (offener Abgang mit Glasgeländer, dann Tunnel) bis zur Clubtür
@@ -846,7 +860,7 @@ def keller() -> None:
     for z in range(51, 65):
         deko(b, 60, y, z, "weinkuehlschrank", "west")
         deko(b, 60, y + 1, z, "weinkuehlschrank", "west")
-    sofa(b, 55, y, 54, 6, "east", "smooth_quartz_stairs", None)
+    sofa(b, 55, y, 54, 6, "east", farbe="samt")
     tisch(b, 57, y, 55, 57, 58, "dark_oak_slab")
     deko(b, 57, y + 1, 56, "champagner")
     kronleuchter(b, 57, oben, 57)
@@ -980,9 +994,10 @@ def bunker() -> None:
 
 
 # Mod-Blöcke mit eigener Block-Entity (für gespeicherte Werte wie Modus, Name, Code)
-def mech(x: int, y: int, z: int, block: str, richtung: str | None = None, **werte) -> None:
-    """Setzt einen Mechanik-Block der Mod; Werte landen in seiner Block-Entity."""
-    props = {}
+def mech(x: int, y: int, z: int, block: str, richtung: str | None = None, zustand_extra: dict | None = None,
+         **werte) -> None:
+    """Setzt einen Mechanik-Block der Mod; Werte landen in seiner Block-Entity, zustand_extra in den Blockzustand."""
+    props = dict(zustand_extra or {})
     if richtung:
         props["facing"] = richtung
     if block in ("kartenleser", "tastenfeld", "bewegungsmelder"):
@@ -1052,7 +1067,7 @@ def mechanismen() -> None:
     mech(61, yo, 54, "sicherheitszentrale", "east")
     mech(45, BUNKER + 1, 44, "sicherheitszentrale", "north")
     for m in b.marken["monitor"] + b.marken["bunker_monitor"]:
-        mech(m[0], m[1], m[2], "monitor", "south")
+        mech(m[0], m[1], m[2], "monitor", "south", {"winkel": "wand"})
     for (x, y, z, r) in ((51, G + 5, n - 11, "south"), (60, G + 5, n - 14, "north"), (51, EG + 4, HZ1 + 1, "south"),
                          (58, EG + 4, HZ1 + 1, "south"), (55, OG + 3, HZ0 - 1, "north"), (65, yo + 3, 46, "north"),
                          (93, EG + 4, 47, "south"), (57, BUNKER + 4, 68, "north")):

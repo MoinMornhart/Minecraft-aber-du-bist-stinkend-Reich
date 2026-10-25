@@ -5,7 +5,11 @@ import de.moinmornhart.stinkendreich.client.aufzug.AufzugModell;
 import de.moinmornhart.stinkendreich.client.aufzug.AufzugMusik;
 import de.moinmornhart.stinkendreich.client.aufzug.AufzugRenderer;
 import de.moinmornhart.stinkendreich.client.auto.AutoKlient;
-import de.moinmornhart.stinkendreich.client.auto.AutoModell;
+import de.moinmornhart.stinkendreich.client.fernseher.FernseherBildschirm;
+import de.moinmornhart.stinkendreich.client.fernseher.FernseherModell;
+import de.moinmornhart.stinkendreich.client.fernseher.FernseherRenderer;
+import de.moinmornhart.stinkendreich.auto.Autotyp;
+import de.moinmornhart.stinkendreich.client.fahrzeug.FahrzeugModell;
 import de.moinmornhart.stinkendreich.client.auto.AutoRenderer;
 import de.moinmornhart.stinkendreich.client.bildschirm.AufzugBildschirm;
 import de.moinmornhart.stinkendreich.client.update.UpdateKlient;
@@ -53,12 +57,14 @@ public class StinkendReichClient implements ClientModInitializer {
         //?} else
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(ButlerModell.SCHICHT, ButlerModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.BUTLER, ButlerRenderer::new);
-        // Bonzenauto: Modell, Renderer, Tasten, Tacho, Motorgeräusch
-        //? if >=26.1 {
-        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(AutoModell.SCHICHT, AutoModell::schicht);
-        //?} else
-        /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(AutoModell.SCHICHT, AutoModell::schicht);*/
-        EntityRendererRegistry.register(ModEntities.AUTO, AutoRenderer::new);
+        // Fahrzeuge: Modell aus dem Baukasten, Renderer je Typ, Tasten, Tacho, Motorgeräusch
+        for (Autotyp art : Autotyp.values()) {
+            //? if >=26.1 {
+            net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(FahrzeugModell.schicht(art.name), () -> FahrzeugModell.schichtAusDatei(art.name));
+            //?} else
+            /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(FahrzeugModell.schicht(art.name), () -> FahrzeugModell.schichtAusDatei(art.name));*/
+            EntityRendererRegistry.register(ModEntities.auto(art), k -> new AutoRenderer(k, art));
+        }
         // Aufzugskabine: Modell, Renderer, Fahrstuhlmusik
         //? if >=26.1 {
         net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(AufzugModell.SCHICHT, AufzugModell::schicht);
@@ -66,6 +72,22 @@ public class StinkendReichClient implements ClientModInitializer {
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(AufzugModell.SCHICHT, AufzugModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.AUFZUG, AufzugRenderer::new);
         AufzugMusik.registrieren();
+        // XXL-Fernseher
+        //? if >=26.1 {
+        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(FernseherModell.SCHICHT, FernseherModell::schicht);
+        //?} else
+        /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(FernseherModell.SCHICHT, FernseherModell::schicht);*/
+        EntityRendererRegistry.register(ModEntities.FERNSEHER, FernseherRenderer::new);
+        KlientBruecke.fernseher = id -> KompatClient.zeige(new FernseherBildschirm(id));
+        // Sitzplätze auf Möbeln sind unsichtbar
+        EntityRendererRegistry.register(ModEntities.SITZ, net.minecraft.client.renderer.entity.NoopRenderer::new);
+        // Drehteller in der Tiefgarage
+        //? if >=26.1 {
+        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(
+                de.moinmornhart.stinkendreich.client.drehteller.DrehtellerModell.SCHICHT, de.moinmornhart.stinkendreich.client.drehteller.DrehtellerModell::schicht);
+        //?} else
+        /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(de.moinmornhart.stinkendreich.client.drehteller.DrehtellerModell.SCHICHT, de.moinmornhart.stinkendreich.client.drehteller.DrehtellerModell::schicht);*/
+        EntityRendererRegistry.register(ModEntities.DREHTELLER, de.moinmornhart.stinkendreich.client.drehteller.DrehtellerRenderer::new);
         AutoKlient.registrieren();
         UpdateKlient.registrieren();
         // Musikanlage: eigene Dateien abspielen, Spotify-Fernbedienung

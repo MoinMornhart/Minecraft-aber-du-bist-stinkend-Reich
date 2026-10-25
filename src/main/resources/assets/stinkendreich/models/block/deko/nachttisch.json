@@ -1,0 +1,147 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "lack_schwarz": "stinkendreich:block/deko/lack_schwarz",
+    "marmor": "stinkendreich:block/deko/marmor",
+    "nachttisch_front": "stinkendreich:block/deko/nachttisch_front",
+    "particle": "stinkendreich:block/deko/nachttisch_front"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        13,
+        15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            3,
+            15,
+            16.0
+          ],
+          "texture": "#nachttisch_front"
+        },
+        "south": {
+          "uv": [
+            1,
+            3,
+            15,
+            16.0
+          ],
+          "texture": "#lack_schwarz"
+        },
+        "east": {
+          "uv": [
+            1,
+            3,
+            15,
+            16.0
+          ],
+          "texture": "#lack_schwarz"
+        },
+        "west": {
+          "uv": [
+            1,
+            3,
+            15,
+            16.0
+          ],
+          "texture": "#lack_schwarz"
+        },
+        "up": {
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ],
+          "texture": "#lack_schwarz"
+        },
+        "down": {
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ],
+          "texture": "#lack_schwarz"
+        }
+      }
+    },
+    {
+      "from": [
+        0.5,
+        13,
+        0.5
+      ],
+      "to": [
+        15.5,
+        14,
+        15.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.5,
+            2,
+            15.5,
+            3
+          ],
+          "texture": "#marmor"
+        },
+        "south": {
+          "uv": [
+            0.5,
+            2,
+            15.5,
+            3
+          ],
+          "texture": "#marmor"
+        },
+        "east": {
+          "uv": [
+            0.5,
+            2,
+            15.5,
+            3
+          ],
+          "texture": "#marmor"
+        },
+        "west": {
+          "uv": [
+            0.5,
+            2,
+            15.5,
+            3
+          ],
+          "texture": "#marmor"
+        },
+        "up": {
+          "uv": [
+            0.5,
+            0.5,
+            15.5,
+            15.5
+          ],
+          "texture": "#marmor"
+        },
+        "down": {
+          "uv": [
+            0.5,
+            0.5,
+            15.5,
+            15.5
+          ],
+          "texture": "#marmor"
+        }
+      }
+    }
+  ]
+}

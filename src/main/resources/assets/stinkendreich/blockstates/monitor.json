@@ -1,18 +1,63 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=north,winkel=gerade": {
       "model": "stinkendreich:block/monitor"
     },
-    "facing=east": {
+    "facing=north,winkel=links": {
+      "model": "stinkendreich:block/monitor_links"
+    },
+    "facing=north,winkel=rechts": {
+      "model": "stinkendreich:block/monitor_rechts"
+    },
+    "facing=north,winkel=wand": {
+      "model": "stinkendreich:block/monitor_wand"
+    },
+    "facing=east,winkel=gerade": {
       "model": "stinkendreich:block/monitor",
       "y": 90
     },
-    "facing=south": {
+    "facing=east,winkel=links": {
+      "model": "stinkendreich:block/monitor_links",
+      "y": 90
+    },
+    "facing=east,winkel=rechts": {
+      "model": "stinkendreich:block/monitor_rechts",
+      "y": 90
+    },
+    "facing=east,winkel=wand": {
+      "model": "stinkendreich:block/monitor_wand",
+      "y": 90
+    },
+    "facing=south,winkel=gerade": {
       "model": "stinkendreich:block/monitor",
       "y": 180
     },
-    "facing=west": {
+    "facing=south,winkel=links": {
+      "model": "stinkendreich:block/monitor_links",
+      "y": 180
+    },
+    "facing=south,winkel=rechts": {
+      "model": "stinkendreich:block/monitor_rechts",
+      "y": 180
+    },
+    "facing=south,winkel=wand": {
+      "model": "stinkendreich:block/monitor_wand",
+      "y": 180
+    },
+    "facing=west,winkel=gerade": {
       "model": "stinkendreich:block/monitor",
+      "y": 270
+    },
+    "facing=west,winkel=links": {
+      "model": "stinkendreich:block/monitor_links",
+      "y": 270
+    },
+    "facing=west,winkel=rechts": {
+      "model": "stinkendreich:block/monitor_rechts",
+      "y": 270
+    },
+    "facing=west,winkel=wand": {
+      "model": "stinkendreich:block/monitor_wand",
       "y": 270
     }
   }

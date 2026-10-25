@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/liege_kopf"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/liege_kopf",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/liege_kopf",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/liege_kopf",
+      "y": 270
+    }
+  }
+}

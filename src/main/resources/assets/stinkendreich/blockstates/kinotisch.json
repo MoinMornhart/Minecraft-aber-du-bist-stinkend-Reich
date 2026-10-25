@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/kinotisch"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/kinotisch",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/kinotisch",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/kinotisch",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,25 @@
+# Kurztest Möbel (für ältere Versionen): Bett, Kinosofa, Hinsetzen, Liegen, Räder
+server /gamemode spectator
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 66.3 39.3 43 150 20
+warte 8
+bild k01_bett
+server /villa ort 62.6 38.5 46.4 180 8
+warte 2
+bild k02_kinosofa
+server /villa ort 44.5 27.2 33.5 150 20
+warte 2
+bild k03_liege
+server /villa ort 76 17.3 58 200 8
+warte 3
+bild k04_tiefgarage
+server /gamemode creative
+server /villa ort 62.5 38 45.6 180 50
+warte 2
+klick
+warte 2
+taste F5
+warte 3
+bild k05_sitzen

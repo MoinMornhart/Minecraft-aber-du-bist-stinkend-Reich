@@ -1,0 +1,58 @@
+# Runde Räder an allen Autos und der Drehteller in der Tiefgarage
+server /gamemode spectator
+server /time set noon
+server /weather clear
+taste F1
+# Drehteller von oben und schräg
+server /villa ort 91.5 21.5 49 180 45
+warte 8
+bild r01_drehteller
+# Auto auf den Drehteller, einsteigen, stehen bleiben: er wendet um 180 Grad
+server /gamemode creative
+server /villa ort 91.5 17 47.5 180 25
+warte 1
+server /execute at @p run summon stinkendreich:bonzenauto ~ ~ ~-7 {Rotation:[0f,0f],stinkendreich:"{\"farbe\":4}"}
+warte 2
+bild r02_auto_drauf
+klick
+warte 1
+bild r03_eingestiegen
+warte 2
+bild r04_dreht
+warte 4
+bild r05_gewendet
+halte 1 shift
+warte 1
+server /gamemode spectator
+server /villa ort 96 19.5 40.5 90 30
+warte 2
+bild r06_drehteller_danach
+# Alle vier Typen auf dem Rasen, Räder aus der Nähe
+server /gamemode creative
+server /villa ort 30 26 105 0 0
+warte 1
+server /fill ~-4 ~-1 ~-14 ~40 ~-1 ~-4 minecraft:gray_concrete
+server /fill ~-4 ~ ~-14 ~40 ~6 ~-4 minecraft:air
+server /execute at @p run summon stinkendreich:bonzenauto ~2 ~ ~-9 {Rotation:[90f,0f],stinkendreich:"{\"farbe\":4}"}
+server /execute at @p run summon stinkendreich:gelaendewagen ~10 ~ ~-9 {Rotation:[90f,0f],stinkendreich:"{\"farbe\":0}"}
+server /execute at @p run summon stinkendreich:supersportwagen ~18 ~ ~-9 {Rotation:[90f,0f],stinkendreich:"{\"farbe\":3}"}
+server /execute at @p run summon stinkendreich:stretchlimo ~30 ~ ~-9 {Rotation:[90f,0f],stinkendreich:"{\"farbe\":1}"}
+server /gamemode spectator
+server /villa ort 46 30 112 205 25
+warte 5
+bild r07_aufstellung
+server /villa ort 40 27 100 165 8
+warte 3
+bild r08_g_seite
+server /villa ort 37.5 26.6 97.5 135 5
+warte 2
+bild r09_g_rad
+server /villa ort 30 26.8 100 160 10
+warte 2
+bild r10_bonzenauto
+server /villa ort 48 26.8 100 160 10
+warte 2
+bild r11_supersportwagen
+server /villa ort 45 28 87 -20 15
+warte 2
+bild r12_g_hinten

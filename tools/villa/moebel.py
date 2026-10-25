@@ -26,20 +26,51 @@ def bett(b: Bau, x: int, y: int, z: int, facing: str, farbe: str = "white") -> N
     b.setze(x - vx, y, z - vz, zustand(f"{farbe}_bed", facing=facing, part="foot", occupied="false"))
 
 
-def sofa(b: Bau, x: int, y: int, z: int, laenge: int, blick: str, material: str = "smooth_quartz_stairs",
-         kissen: str | None = "gray_carpet") -> None:
-    """Sofa aus Treppenstufen. blick = Richtung, in die man sitzend schaut."""
-    lehne = GEGENRICHTUNG[blick]
+def spalte(i: int, anzahl: int) -> str:
+    """Stück i einer Reihe aus anzahl verbundenen Möbeln (von links aus Blickrichtung gezählt)."""
+    if anzahl == 1:
+        return "einzeln"
+    return "links" if i == 0 else ("rechts" if i == anzahl - 1 else "mitte")
+
+
+def reihe(b: Bau, x: int, y: int, z: int, anzahl: int, name: str, blick: str) -> None:
+    """Verbundmöbel der Mod (Sofa, Bettbank …) als Reihe; (x, y, z) = linkes Ende aus Blickrichtung."""
     rx, _, rz = RICHTUNG_VEKTOR[RECHTS_VON[blick]]
-    for i in range(laenge):
-        b.setze(x + rx * i, y, z + rz * i, zustand(material, facing=lehne, half="bottom", shape="straight", waterlogged="false"))
-    # Armlehnen
-    for seite in (-1, laenge):
-        b.setze(x + rx * seite, y, z + rz * seite, zustand(material.replace("_stairs", "_slab"), type="bottom", waterlogged="false"))
-    if kissen:
-        bx, _, bz = RICHTUNG_VEKTOR[lehne]
-        for i in range(laenge):
-            b.setze(x + rx * i + bx, y, z + rz * i + bz, zustand(material.replace("_stairs", "_slab"), type="top", waterlogged="false"))
+    for i in range(anzahl):
+        b.setze(x + rx * i, y, z + rz * i, zustand(f"stinkendreich:{name}", facing=blick, spalte=spalte(i, anzahl),
+                                                   waterlogged="false"))
+
+
+def sofa(b: Bau, x: int, y: int, z: int, laenge: int, blick: str, material: str = "smooth_quartz_stairs",
+         kissen: str | None = None, farbe: str = "weiss") -> None:
+    """Sofa der Mod (tools/assets/deko.py) mit laenge Sitzplätzen; die Armlehnen sitzen links und rechts
+    daneben wie früher bei der Treppenstufen-Version. blick = Richtung, in die man sitzend schaut.
+    material und kissen stammen noch aus der alten Version und werden nicht mehr gebraucht."""
+    rx, _, rz = RICHTUNG_VEKTOR[RECHTS_VON[blick]]
+    reihe(b, x - rx, y, z - rz, laenge + 2, f"sofa_{farbe}", blick)
+
+
+def kingsize_bett(b: Bau, x: int, y: int, z: int, breite: int, kopf: str, ende: bool = True) -> None:
+    """XXL-Kingsize-Bett der Mod: breite Betten nebeneinander, die sich zu einer Liegefläche verbinden.
+    (x, y, z) = Kopfteil ganz links (Blick vom Fuß- zum Kopfende), kopf = Richtung vom Fuß zum Kopf.
+    Mit ende=True kommt ein drittes Feld (Fußende mit Fell) dazu."""
+    vx, _, vz = RICHTUNG_VEKTOR[kopf]
+    rx, _, rz = RICHTUNG_VEKTOR[RECHTS_VON[kopf]]
+    for i in range(breite):
+        sp = spalte(i, breite)
+        px, pz = x + rx * i, z + rz * i
+        for teil, abstand in (("head", 0), ("foot", 1)):
+            b.setze(px - vx * abstand, y, pz - vz * abstand,
+                    zustand("stinkendreich:kingsize_bett", facing=kopf, part=teil, occupied="false", spalte=sp))
+        if ende:
+            b.setze(px - vx * 2, y, pz - vz * 2, zustand("stinkendreich:bett_ende", facing=kopf, spalte=sp, waterlogged="false"))
+
+
+def strandliege(b: Bau, x: int, y: int, z: int, blick: str) -> None:
+    """Strandliege der Mod: Kopfteil bei (x, y, z), Fußteil davor; blick = Richtung, in die man liegend schaut."""
+    vx, _, vz = RICHTUNG_VEKTOR[blick]
+    b.setze(x, y, z, zustand("stinkendreich:liege_kopf", facing=blick, waterlogged="false"))
+    b.setze(x + vx, y, z + vz, zustand("stinkendreich:liege_fuss", facing=blick, waterlogged="false"))
 
 
 def tisch(b: Bau, x0: int, y: int, z0: int, x1: int, z1: int, platte: str = "dark_oak_slab") -> None:

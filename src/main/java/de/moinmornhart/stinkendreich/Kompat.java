@@ -30,6 +30,14 @@ public final class Kompat {
         /*e.moveTo(x, y, z, gier, neigung);*/
     }
 
+    /** Ob dieser Rechner die Bewegung der Entity bestimmt (z. B. der Klient des Fahrers). Ab 1.21.5 umbenannt. */
+    public static boolean lokalGesteuert(net.minecraft.world.entity.Entity e) {
+        //? if >=1.21.5 {
+        return e.isLocalInstanceAuthoritative();
+        //?} else
+        /*return e.isControlledByLocalInstance();*/
+    }
+
     /** Unterste baubare Y-Koordinate. */
     public static int minY(LevelHeightAccessor welt) {
         //? if >=1.21.2 {

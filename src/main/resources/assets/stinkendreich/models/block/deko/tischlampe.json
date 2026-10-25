@@ -1,0 +1,350 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "gold": "stinkendreich:block/deko/gold",
+    "lampenschirm": "stinkendreich:block/deko/lampenschirm",
+    "particle": "stinkendreich:block/deko/gold"
+  },
+  "elements": [
+    {
+      "from": [
+        5.5,
+        0,
+        5.5
+      ],
+      "to": [
+        10.5,
+        1,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            5.5,
+            15,
+            10.5,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            5.5,
+            5.5,
+            10.5,
+            10.5
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            5.5,
+            5.5,
+            10.5,
+            10.5
+          ],
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        7.5,
+        1,
+        7.5
+      ],
+      "to": [
+        8.5,
+        8,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            8,
+            8.5,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            7.5,
+            8,
+            8.5,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            7.5,
+            8,
+            8.5,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            8,
+            8.5,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            7.5,
+            7.5,
+            8.5,
+            8.5
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            7.5,
+            7.5,
+            8.5,
+            8.5
+          ],
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        8,
+        4
+      ],
+      "to": [
+        13,
+        15,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            1,
+            13,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "south": {
+          "uv": [
+            3,
+            1,
+            13,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "east": {
+          "uv": [
+            4,
+            1,
+            12,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "west": {
+          "uv": [
+            4,
+            1,
+            12,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "up": {
+          "uv": [
+            3,
+            4,
+            13,
+            12
+          ],
+          "texture": "#lampenschirm"
+        },
+        "down": {
+          "uv": [
+            3,
+            4,
+            13,
+            12
+          ],
+          "texture": "#lampenschirm"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        8,
+        3
+      ],
+      "to": [
+        12,
+        15,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            1,
+            12,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "south": {
+          "uv": [
+            4,
+            1,
+            12,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "east": {
+          "uv": [
+            3,
+            1,
+            13,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "west": {
+          "uv": [
+            3,
+            1,
+            13,
+            8
+          ],
+          "texture": "#lampenschirm"
+        },
+        "up": {
+          "uv": [
+            4,
+            3,
+            12,
+            13
+          ],
+          "texture": "#lampenschirm"
+        },
+        "down": {
+          "uv": [
+            4,
+            3,
+            12,
+            13
+          ],
+          "texture": "#lampenschirm"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        15,
+        7
+      ],
+      "to": [
+        9,
+        15.5,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            0.5,
+            9,
+            1
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            7,
+            0.5,
+            9,
+            1
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            7,
+            0.5,
+            9,
+            1
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            7,
+            0.5,
+            9,
+            1
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#gold"
+        }
+      }
+    }
+  ]
+}

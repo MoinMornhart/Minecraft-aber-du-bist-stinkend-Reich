@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.mechanik.DekoBlock;
+import de.moinmornhart.stinkendreich.moebel.VerbundDekoBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -58,7 +59,10 @@ public final class ModDeko {
                 if (!fest) {
                     p = p.noCollision();
                 }
-                BLOECKE.put(name, ModRegister.block(name, q -> new DekoBlock(q, kaesten, fest), p));
+                double sitz = o.has("sitz") ? o.get("sitz").getAsDouble() : -1;
+                boolean verbund = o.has("verbund") && o.get("verbund").getAsBoolean();
+                BLOECKE.put(name, ModRegister.block(name, q -> verbund ? new VerbundDekoBlock(q, kaesten, fest, sitz)
+                        : new DekoBlock(q, kaesten, fest, sitz), p));
             }
             StinkendReich.LOGGER.info("{} Deko-Blöcke registriert", BLOECKE.size());
         } catch (Exception e) {

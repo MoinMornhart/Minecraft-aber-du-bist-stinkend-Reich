@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/nachttisch"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/nachttisch",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/nachttisch",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/nachttisch",
+      "y": 270
+    }
+  }
+}

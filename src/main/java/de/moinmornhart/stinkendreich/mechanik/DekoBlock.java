@@ -1,9 +1,14 @@
 package de.moinmornhart.stinkendreich.mechanik;
 
+import de.moinmornhart.stinkendreich.moebel.SitzEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -13,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -23,7 +29,7 @@ import java.util.List;
  * Deko-Block der Villa (Möbel, Partyzubehör, Küchengeräte, Goldkram). Form, Licht und Klang kommen aus
  * deko_bloecke.json (erzeugt von tools/assets/deko.py, siehe {@link de.moinmornhart.stinkendreich.register.ModDeko}).
  * Jeder Deko-Block zeigt mit der Vorderseite zum Spieler, der ihn setzt, und kann im Wasser stehen
- * (z. B. der Flamingo im Pool).
+ * (z. B. der Flamingo im Pool). Sitzmöbel (Sofa, Liege, Bank) haben eine Sitzhöhe: Rechtsklick setzt sich drauf.
  */
 public class DekoBlock extends Block implements SimpleWaterloggedBlock {
     public static final BooleanProperty NASS = BlockStateProperties.WATERLOGGED;
@@ -31,14 +37,18 @@ public class DekoBlock extends Block implements SimpleWaterloggedBlock {
     /** Formen je Richtung (Index = 2D-Wert: Süden, Westen, Norden, Osten). */
     private final VoxelShape[] formen = new VoxelShape[4];
     private final boolean fest;
+    /** Sitzhöhe in Pixeln, negativ = kein Sitzmöbel. */
+    private final double sitz;
 
     /**
      * @param kaesten Kästen in Pixeln (x0, y0, z0, x1, y1, z1), Vorderseite nach Norden
      * @param fest    ob man dagegen läuft (Kronleuchter und Discokugel nicht)
+     * @param sitz    Sitzhöhe in Pixeln oder -1
      */
-    public DekoBlock(Properties eigenschaften, List<double[]> kaesten, boolean fest) {
+    public DekoBlock(Properties eigenschaften, List<double[]> kaesten, boolean fest, double sitz) {
         super(eigenschaften);
         this.fest = fest;
+        this.sitz = sitz;
         for (Direction d : Direction.Plane.HORIZONTAL) {
             VoxelShape form = Shapes.empty();
             for (double[] k : kaesten) {
@@ -71,6 +81,18 @@ public class DekoBlock extends Block implements SimpleWaterloggedBlock {
     public BlockState getStateForPlacement(BlockPlaceContext kontext) {
         boolean wasser = kontext.getLevel().getFluidState(kontext.getClickedPos()).getType() == Fluids.WATER;
         return defaultBlockState().setValue(Eigenschaften.RICHTUNG, kontext.getHorizontalDirection().getOpposite()).setValue(NASS, wasser);
+    }
+
+    /** Sitzmöbel: hinsetzen (mit Schleichen kann man stattdessen etwas daraufstellen). */
+    @Override
+    protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
+        if (sitz < 0 || spieler.isShiftKeyDown() || spieler.isPassenger()) {
+            return InteractionResult.PASS;
+        }
+        if (welt instanceof ServerLevel server) {
+            SitzEntity.hinsetzen(server, pos, sitz, zustand.getValue(Eigenschaften.RICHTUNG), spieler);
+        }
+        return InteractionResult.SUCCESS;
     }
 
     @Override

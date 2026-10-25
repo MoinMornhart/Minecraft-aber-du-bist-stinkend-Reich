@@ -1,0 +1,46 @@
+# Möbel, zweiter Durchgang: schwarze Satindecke, Schreibunterlage, Sitzen, Sofas in Lounge, Wohnzimmer und Club
+server /gamemode spectator
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 62.5 39.4 43.2 180 22
+warte 8
+bild n01_bett
+server /villa ort 66.3 39.3 43 150 20
+warte 2
+bild n02_bett_seite
+server /villa ort 69 33.6 58.6 0 50
+warte 2
+bild n03_tastatur
+server /villa ort 55 39.5 56 180 12
+warte 2
+bild n04_lounge
+server /villa ort 44 27.5 54 120 10
+warte 2
+bild n05_wohnzimmer
+server /villa ort 42 17.6 58 180 8
+warte 2
+bild n06_club
+server /villa ort 50 17.6 54 90 5
+warte 2
+bild n07_club_vip
+server /villa ort 37 33.6 57.5 90 15
+warte 2
+bild n08_himmelbett
+server /villa ort 54 28.5 36 180 22
+warte 2
+bild n09_liegen_pool
+# Hinsetzen aufs Kinosofa, Kamera hinter dem Spieler
+server /gamemode creative
+server /data merge entity @e[type=stinkendreich:fernseher,limit=1] {stinkendreich_video:"aqz-KE-bpKQ"}
+server /villa ort 62.5 38 45.6 180 50
+warte 2
+klick
+warte 2
+taste F5
+warte 3
+bild n10_sitzen
+taste F5
+taste F5
+warte 1
+bild n11_sitzen_blick

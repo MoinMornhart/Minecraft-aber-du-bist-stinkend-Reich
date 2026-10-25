@@ -156,21 +156,76 @@ public final class VillaPlatzierung {
         // Der Butler wartet in der Halle auf seinen Herrn
         JsonArray b = plan.ersteMarke("butler");
         ButlerVerwaltung.villaButlerErzeugen(welt, villa.weltPos(b.get(0).getAsDouble(), b.get(1).getAsDouble(), b.get(2).getAsDouble()));
-        // Das Bonzenauto steht in der Garage, mit der Schnauze zum Tor
-        JsonArray a = plan.ersteMarke("auto");
-        de.moinmornhart.stinkendreich.auto.AutoEntity auto = de.moinmornhart.stinkendreich.register.ModEntities.AUTO.create(welt
+        // XXL-Fernseher im Penthouse
+        for (JsonArray m : plan.marke("fernseher")) {
+            de.moinmornhart.stinkendreich.fernseher.FernseherEntity tv = de.moinmornhart.stinkendreich.register.ModEntities.FERNSEHER.create(welt
+                    //? if >=1.21.2
+                    , net.minecraft.world.entity.EntitySpawnReason.STRUCTURE
+            );
+            if (tv != null) {
+                float blick = (float) m.get(3).getAsDouble();
+                Kompat.versetzen(tv, ursprung.getX() + m.get(0).getAsDouble(), ursprung.getY() + m.get(1).getAsDouble(),
+                        ursprung.getZ() + m.get(2).getAsDouble(), blick, 0.0F);
+                tv.setYBodyRot(blick);
+                welt.addFreshEntity(tv);
+            }
+        }
+        // Drehteller am Fuß der Garagenrampe
+        for (JsonArray m : plan.marke("drehteller")) {
+            de.moinmornhart.stinkendreich.auto.DrehtellerEntity teller = de.moinmornhart.stinkendreich.register.ModEntities.DREHTELLER.create(welt
+                    //? if >=1.21.2
+                    , net.minecraft.world.entity.EntitySpawnReason.STRUCTURE
+            );
+            if (teller != null) {
+                Kompat.versetzen(teller, ursprung.getX() + m.get(0).getAsDouble(), ursprung.getY() + m.get(1).getAsDouble(),
+                        ursprung.getZ() + m.get(2).getAsDouble(), 0.0F, 0.0F);
+                welt.addFreshEntity(teller);
+            }
+        }
+        // Der Fuhrpark steht in der Tiefgarage (Stellplätze aus dem Bauplan)
+        for (JsonArray platz : plan.marke("stellplatz")) {
+            int nr = platz.get(4).getAsInt();
+            if (nr < FUHRPARK.length) {
+                abstellen(welt, FUHRPARK[nr].art(), FUHRPARK[nr].farbe(), ursprung.getX() + platz.get(0).getAsDouble(),
+                        ursprung.getY() + platz.get(1).getAsDouble(), ursprung.getZ() + platz.get(2).getAsDouble(),
+                        (float) platz.get(3).getAsDouble());
+            }
+        }
+        return villa;
+    }
+
+    /** Ein Wagen im Fuhrpark: Typ und Lackfarbe (Index in AutoEntity.FARBEN). */
+    private record Wagen(de.moinmornhart.stinkendreich.auto.Autotyp art, int farbe) {
+    }
+
+    /** Belegung der Stellplätze 0–9 (Süd-Reihe, dann Nord-Reihe). */
+    private static final Wagen[] FUHRPARK = {
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.BONZENAUTO, 4),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.SUPERSPORTWAGEN, 3),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.GELAENDEWAGEN, 0),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.SUPERSPORTWAGEN, 6),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.BONZENAUTO, 7),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.GELAENDEWAGEN, 1),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.SUPERSPORTWAGEN, 2),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.BONZENAUTO, 0),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.BONZENAUTO, 5),
+            new Wagen(de.moinmornhart.stinkendreich.auto.Autotyp.STRETCHLIMO, 0),
+    };
+
+    private static void abstellen(ServerLevel welt, de.moinmornhart.stinkendreich.auto.Autotyp art, int farbe,
+                                  double x, double y, double z, float blick) {
+        de.moinmornhart.stinkendreich.auto.AutoEntity auto = de.moinmornhart.stinkendreich.register.ModEntities.auto(art).create(welt
                 //? if >=1.21.2
                 , net.minecraft.world.entity.EntitySpawnReason.STRUCTURE
         );
         if (auto != null) {
-            auto.teleportTo(ursprung.getX() + a.get(0).getAsDouble(), ursprung.getY() + a.get(1).getAsDouble(), ursprung.getZ() + a.get(2).getAsDouble());
-            auto.setYRot(0.0F);
-            auto.setYHeadRot(0.0F);
-            auto.yBodyRot = 0.0F;
-            auto.setzeFarbe(4);
+            auto.teleportTo(x, y, z);
+            auto.setYRot(blick);
+            auto.setYHeadRot(blick);
+            auto.yBodyRot = blick;
+            auto.setzeFarbe(farbe);
             welt.addFreshEntity(auto);
         }
-        return villa;
     }
 
     /** Höhe des natürlichen Bodens (erste Luft über Erde/Stein), ohne Bäume und Pflanzen. */

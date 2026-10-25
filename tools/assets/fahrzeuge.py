@@ -16,6 +16,7 @@ vorne ist -Z. Aufruf: python3 tools/assets/fahrzeuge.py
 from __future__ import annotations
 
 import json
+import math
 import random
 from pathlib import Path
 
@@ -44,6 +45,8 @@ INNEN = (40, 34, 30)
 LICHT = (255, 248, 210)
 ROT = (210, 20, 24)
 REIFEN = (30, 30, 32)
+FLANKE = (38, 38, 42)
+FEIN = 4   # Auflösung der Textur: 4 Texel pro Modellpixel (runde Felgen und Scheinwerfer werden fein gemalt)
 
 
 def mischen(a, b, t):
@@ -120,6 +123,47 @@ def mat_felge(d, r, lack):
     d.rectangle([int(mx), int(my), int(mx) + 1, int(my) + 1], fill=(*GOLD, 255))
 
 
+def mat_leer(d, r, lack):
+    """Durchsichtig; die Fläche wird erst in der feinen Auflösung bemalt (siehe FEIN_MALER)."""
+    x0, y0, b, h = r
+    if b > 0 and h > 0:
+        d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=(0, 0, 0, 0))
+
+
+def fein_flanke(d, r):
+    """Reifenflanke: glatt, ohne Rauschen (die Flanken der sechs Reifenstreifen liegen übereinander)."""
+    x0, y0, b, h = r
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=(*FLANKE, 255))
+
+
+def fein_felge(d, r):
+    """Runde Goldfelge mit acht Chromspeichen und Nabe; außerhalb des Kreises durchsichtig."""
+    x0, y0, b, h = r
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=(0, 0, 0, 0))
+    mx, my, rad = x0 + b / 2, y0 + h / 2, min(b, h) / 2
+    def kreis(rr, farbe):
+        d.ellipse([mx - rr, my - rr, mx + rr - 1, my + rr - 1], fill=farbe)
+    kreis(rad, (*FLANKE, 255))                                  # schmaler Gummirand
+    kreis(rad - FEIN * 0.5, (*GOLD, 255))                        # Felgenhorn
+    kreis(rad - FEIN * 1.25, (58, 50, 36, 255))                  # Felgenbett (dunkel)
+    for i in range(8):
+        w = math.tau * i / 8
+        for dw in (-0.09, 0.09):
+            d.line([(mx, my), (mx + (rad - FEIN) * math.cos(w + dw), my + (rad - FEIN) * math.sin(w + dw))],
+                   fill=(*CHROM, 255), width=max(1, FEIN // 2))
+    kreis(FEIN * 1.4, (*GOLD, 255))                              # Nabe
+    kreis(FEIN * 0.6, (*CHROM, 255))
+
+
+def fein_scheinwerfer_rund(d, r):
+    """Runder Scheinwerfer im Chromring (fein)."""
+    x0, y0, b, h = r
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=(*SCHWARZ, 255))
+    d.ellipse([x0, y0, x0 + b - 1, y0 + h - 1], fill=(*CHROM, 255))
+    d.ellipse([x0 + FEIN * 0.6, y0 + FEIN * 0.6, x0 + b - 1 - FEIN * 0.6, y0 + h - 1 - FEIN * 0.6], fill=(*LICHT, 255))
+    d.ellipse([x0 + b * 0.3, y0 + h * 0.3, x0 + b * 0.5, y0 + h * 0.5], fill=(255, 255, 255, 255))
+
+
 def mat_grill(d, r, lack):
     fuellen(d, r, SCHWARZ)
     x0, y0, b, h = r
@@ -151,6 +195,24 @@ def mat_carbon(d, r, lack):
         d.line([(x, y0), (x, y0 + h - 1)], fill=(28, 28, 30, 255))
 
 
+def mat_grill_quer(d, r, lack):
+    """Kühlergrill mit drei waagerechten Chromstreben (Geländewagen)."""
+    fuellen(d, r, SCHWARZ)
+    x0, y0, b, h = r
+    for i in range(1, 4):
+        y = y0 + i * h // 4
+        d.line([(x0 + 1, y), (x0 + b - 2, y)], fill=(*CHROM, 255))
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], outline=(*CHROM, 255))
+
+
+def mat_scheinwerfer_rund(d, r, lack):
+    """Runder Scheinwerfer im Chromring auf schwarzem Grund."""
+    fuellen(d, r, SCHWARZ)
+    x0, y0, b, h = r
+    d.ellipse([x0, y0, x0 + b - 1, y0 + h - 1], fill=(*CHROM, 255))
+    d.ellipse([x0 + 1, y0 + 1, x0 + b - 2, y0 + h - 2], fill=(*LICHT, 255))
+
+
 def mat_leder_knoepfe(d, r, lack):
     fuellen(d, r, LEDER)
     x0, y0, b, h = r
@@ -165,8 +227,13 @@ MATERIALIEN = {
     "leder": farbe_mat(LEDER), "leder_dunkel": farbe_mat(LEDER_DUNKEL), "leder_knoepfe": mat_leder_knoepfe,
     "innen": farbe_mat(INNEN), "licht": farbe_mat(LICHT), "rot": farbe_mat(ROT), "reifen": mat_reifen,
     "felge": mat_felge, "grill": mat_grill, "kennzeichen": mat_kennzeichen, "lamellen": mat_lamellen,
-    "carbon": mat_carbon, "bar": farbe_mat((60, 34, 22)),
+    "carbon": mat_carbon, "bar": farbe_mat((60, 34, 22)), "orange": farbe_mat((250, 150, 30)),
+    "grill_quer": mat_grill_quer, "scheinwerfer_rund": mat_scheinwerfer_rund,
+    "reifen_flanke": farbe_mat(FLANKE), "felge_rund": mat_leer,
 }
+
+# Materialien, die nach dem Vergrößern noch einmal fein gemalt werden
+FEIN_MALER = {"reifen_flanke": fein_flanke, "felge_rund": fein_felge, "scheinwerfer_rund": fein_scheinwerfer_rund}
 
 # ---------------------------------------------------------------------------
 # Modell-Baukasten
@@ -207,6 +274,8 @@ class Modell:
                 k["schluessel"] = schluessel
                 eindeutig.setdefault(schluessel, (2 * (dd + w), dd + h))
         reihenfolge = sorted(eindeutig, key=lambda s: -eindeutig[s][1])
+        while breite < max(bw for bw, _ in eindeutig.values()):
+            breite *= 2
         x = y = regal = 0
         platz = {}
         for s in reihenfolge:
@@ -230,17 +299,32 @@ class Modell:
         return {"breite": self.breite, "hoehe": self.hoehe, "teile": teile}
 
     def textur(self, lack) -> Image.Image:
+        """Malt die Lackierung: erst grob (1 Texel pro Pixel), dann FEIN-fach vergrößert; runde Teile
+        (Felgen, Scheinwerfer) und die Reifenflanken werden in der feinen Auflösung neu gemalt.
+        Minecraft rechnet die Texturkoordinaten selbst auf die größere Datei um."""
         img = Image.new("RGBA", (self.breite, self.hoehe), (0, 0, 0, 0))
         d = ImageDraw.Draw(img)
+        fein = []
         for (w, h, dd, flaechen), (u, v) in self.platz.items():
             f = dict(flaechen)
-            bereiche = {"oben": (u + dd, v, w, dd), "unten": (u + dd + w, v, w, dd), "links": (u, v + dd, dd, h),
-                        "vorne": (u + dd, v + dd, w, h), "rechts": (u + dd + w, v + dd, dd, h),
-                        "hinten": (u + 2 * dd + w, v + dd, w, h)}
-            for seite, r in bereiche.items():
+            for seite, r in self.bereiche(u, v, w, h, dd).items():
                 MATERIALIEN[f[seite]](d, r, lack)
+                if f[seite] in FEIN_MALER:
+                    fein.append((FEIN_MALER[f[seite]], r))
         glanz(img, sum(lack))
+        img = img.resize((self.breite * FEIN, self.hoehe * FEIN), Image.NEAREST)
+        d = ImageDraw.Draw(img)
+        for maler, (x0, y0, b, h) in fein:
+            if b > 0 and h > 0:
+                maler(d, (x0 * FEIN, y0 * FEIN, b * FEIN, h * FEIN))
         return img
+
+    @staticmethod
+    def bereiche(u, v, w, h, dd):
+        """Lage der sechs Flächen eines Kastens auf der Textur (wie Minecraft sie abwickelt)."""
+        return {"oben": (u + dd, v, w, dd), "unten": (u + dd + w, v, w, dd), "links": (u, v + dd, dd, h),
+                "vorne": (u + dd, v + dd, w, h), "rechts": (u + dd + w, v + dd, dd, h),
+                "hinten": (u + 2 * dd + w, v + dd, w, h)}
 
 
 def glanz(img: Image.Image, saat: int) -> None:
@@ -255,10 +339,32 @@ def glanz(img: Image.Image, saat: int) -> None:
 
 
 def raeder(m: Modell, x, y, z_vorne, z_hinten, w=4, durchmesser=10):
-    """Vier Räder: Lauffläche Reifen, Seiten Goldfelge. Namen rad_vl/vr/hl/hr (vorne gelenkt)."""
+    """Vier runde Räder (Namen rad_vl/vr/hl/hr, vorne gelenkt). Der Reifen ist ein Zwölfeck aus sechs
+    Streifen, die um je 30 Grad um die Achse gedreht sind; ihre Enden bilden die Lauffläche. Außen sitzt
+    auf jeder Seite eine flache runde Goldfelge (Kreis auf durchsichtigem Grund)."""
+    streifen = durchmesser * math.tan(math.radians(15))
+    felge = durchmesser - 3
     for name, px, pz in (("rad_vl", -x, z_vorne), ("rad_vr", x, z_vorne), ("rad_hl", -x, z_hinten), ("rad_hr", x, z_hinten)):
-        m.teil(name, (px, y, pz)).kasten((-w / 2, -durchmesser / 2, -durchmesser / 2), (w, durchmesser, durchmesser),
-                                         "reifen", seite="felge")
+        rad = m.teil(name, (px, y, pz))
+        for i in range(6):
+            teil = rad if i == 0 else m.teil(f"{name}_{i}", (0, 0, 0), (math.radians(30 * i), 0, 0), eltern=name)
+            teil.kasten((-w / 2, -streifen / 2, -durchmesser / 2), (w, streifen, durchmesser), "reifen",
+                        seite="reifen_flanke")
+        for sx in (-w / 2 - 0.05, w / 2 + 0.05):                       # knapp vor der Flanke: kein Flimmern
+            rad.kasten((sx, -felge / 2, -felge / 2), (0, felge, felge), "felge_rund")
+
+
+def reserverad(m: Modell, mitte, durchmesser, dicke):
+    """Rundes Reserverad an der Hecktür (Achse längs zum Auto): sechs Streifen um je 30 Grad um die
+    Z-Achse gedreht, hinten eine runde Goldfelge."""
+    streifen = durchmesser * math.tan(math.radians(15))
+    felge = durchmesser - 3
+    rad = m.teil("reserverad", mitte)
+    for i in range(6):
+        teil = rad if i == 0 else m.teil(f"reserverad_{i}", (0, 0, 0), (0, 0, math.radians(30 * i)), eltern="reserverad")
+        teil.kasten((-streifen / 2, -durchmesser / 2, -dicke / 2), (streifen, durchmesser, dicke), "reifen",
+                    vorne="reifen_flanke", hinten="reifen_flanke")
+    rad.kasten((-felge / 2, -felge / 2, dicke / 2 + 0.05), (felge, felge, 0), "felge_rund")
 
 
 def sitz(t: Teil, x, y_sitz, z, breite=9, lehne_hoehe=4, tiefe=7, mat="leder"):
@@ -305,35 +411,68 @@ def bonzenauto() -> Modell:
 
 
 def gelaendewagen() -> Modell:
-    """Kastiger Luxus-Geländewagen (4 × 2 Blöcke, fast 2 hoch): Dach auf Säulen, Reserverad, runde Scheinwerfer."""
+    """Kastiger Luxus-Geländewagen im Stil der großen Klassiker (4 × 2 Blöcke, gut 2 hoch): fast senkrechte
+    Frontscheibe, flache Haube mit Blinkern auf den Kotflügeln, runde Scheinwerfer, Grill mit drei Querstreben,
+    schwarze Kotflügelverbreiterungen, Sidepipes, Reserverad an der Hecktür. Teil-Rahmen: y = 0 ist der Boden."""
     m = Modell("gelaendewagen")
     k = m.teil("karosserie")
-    k.kasten((-15, -16, -32), (30, 12, 64), "lack", unten="schwarz", seite="seite")    # Wanne bis zur Gürtellinie
-    k.kasten((-16, -6, -34), (32, 3, 3), "schwarz")                                   # Stoßstange vorn
-    k.kasten((-16, -6, 31), (32, 3, 3), "schwarz")                                    # Stoßstange hinten
-    k.kasten((-17, -7, -14), (1, 1, 30), "chrom").kasten((16, -7, -14), (1, 1, 30), "chrom")   # Trittbretter
-    k.kasten((-8, -15, -32.6), (16, 7, 1), "grill")
-    k.kasten((-1, -13, -33.2), (2, 2, 1), "gold")                                     # Emblem
-    k.kasten((-13, -15, -32.7), (4, 4, 1), "chrom", vorne="licht").kasten((9, -15, -32.7), (4, 4, 1), "chrom", vorne="licht")
-    k.kasten((-14, -14, 32), (3, 5, 1), "rot").kasten((11, -14, 32), (3, 5, 1), "rot")
-    k.kasten((-4, -6, -34.6), (8, 2, 1), "kennzeichen").kasten((-4, -6, 34), (8, 2, 1), "kennzeichen")
-    k.kasten((-13, -17, -18), (26, 1, 48), "innen")                                   # Innenboden
-    # Aufbau: Säulen, Dach, Front- und Heckscheibe
+    # Fahrgestell, Stoßstangen, Unterfahrschutz
+    k.kasten((-14, -6, -30), (28, 2, 60), "schwarz")
+    k.kasten((-16, -8, -33), (32, 4, 3), "schwarz", vorne="lack_dunkel")
+    k.kasten((-16, -8, 30), (32, 4, 3), "schwarz")
+    k.kasten((-8, -5, -33), (16, 1, 3), "chrom")
+    # Motorraum mit flacher Haube, Kotflügel vorn mit Blinkern obendrauf
+    k.kasten((-12, -18, -30), (24, 10, 16), "lack")
+    for x in (-15, 12):
+        k.kasten((x, -18, -30), (3, 5, 16), "lack", seite="seite")
+        k.kasten((x + 0.5, -19, -29.5), (2, 1, 3), "orange")
+    k.kasten((-11, -18.5, -28), (22, 0.5, 12), "lack_dunkel")                        # Haubenkante
+    # Front: Grill mit Querstreben, Emblem, runde Scheinwerfer, Blinker darunter
+    k.kasten((-7, -17, -30.6), (14, 8, 1), "grill_quer")
+    k.kasten((-1.5, -14.5, -31.2), (3, 3, 1), "gold")
+    k.kasten((-13, -17, -30.7), (5, 5, 1), "schwarz", vorne="scheinwerfer_rund")
+    k.kasten((8, -17, -30.7), (5, 5, 1), "schwarz", vorne="scheinwerfer_rund")
+    k.kasten((-13, -11.5, -30.6), (4, 1, 1), "orange").kasten((9, -11.5, -30.6), (4, 1, 1), "orange")
+    k.kasten((-4, -9, -33.6), (8, 2, 1), "kennzeichen")
+    # Seitenwände der Kabine bis zur Gürtellinie (18 px); hinten über dem Rad nur der Kotflügel
     for x in (-15, 13):
-        for z in (-18, 6, 28):
-            k.kasten((x, -28, z), (2, 12, 2), "lack")
-    k.kasten((-15, -30, -18), (30, 2, 48), "lack", oben="lack_dunkel")
-    k.kasten((-10, -31, -14), (20, 1, 2), "licht")                                    # Lichtleiste auf dem Dach
-    k.kasten((-13, -28, -18), (26, 12, 1), "glas")
-    k.kasten((-13, -28, 29), (26, 12, 1), "glas")
-    k.kasten((-6, -26, 32), (12, 12, 3), "reifen", hinten="felge")                   # Reserverad
-    k.kasten((-17, -24, -16), (2, 2, 2), "lack", vorne="chrom").kasten((15, -24, -16), (2, 2, 2), "lack", vorne="chrom")
+        k.kasten((x, -18, -14), (2, 12, 26), "lack", seite="seite")
+        k.kasten((x, -18, 12), (2, 5, 18), "lack", seite="lack")
+        k.kasten((x, -12, 26), (2, 6, 4), "lack")
+        k.kasten((x + (-0.5 if x < 0 else 2), -15, -6), (0.5, 1, 3), "chrom")         # Türgriffe
+        k.kasten((x + (-0.5 if x < 0 else 2), -15, 8), (0.5, 1, 3), "chrom")
+    k.kasten((-13, -18, 29), (26, 12, 1), "lack")                                    # Hecktür unten
+    # Kotflügelverbreiterungen über den Rädern, Sidepipes vor den Hinterrädern
+    for x in (-17.5, 15):
+        for z in (-29, 11):
+            k.kasten((x, -14, z), (2.5, 1.5, 17), "schwarz")
+        k.kasten((x + (0.5 if x < 0 else 0), -7, 4), (2, 1.5, 6), "chrom")
+    k.kasten((-13, -7, -14), (26, 1, 43), "innen")                                   # Innenboden
+    # Aufbau: fast senkrechte Frontscheibe, Säulen, Seitenscheiben, Dach mit Dachreling
+    k.kasten((-13, -32, -14), (26, 14, 1), "glas")
+    for x in (-15, 13):
+        k.kasten((x, -32, -14), (2, 14, 2), "lack")                                   # A-Säule
+        k.kasten((x, -32, 4), (2, 14, 2), "schwarz")                                  # B-Säule
+        k.kasten((x, -32, 27), (2, 14, 3), "lack")                                    # D-Säule
+        k.kasten((x + (0.5 if x < 0 else 0.5), -31, -12), (1, 12, 16), "glas")
+        k.kasten((x + 0.5, -31, 6), (1, 12, 21), "glas")
+    k.kasten((-15, -34, -14), (30, 2, 44), "lack", oben="lack")
+    k.kasten((-14, -35, -10), (1, 1, 36), "schwarz").kasten((13, -35, -10), (1, 1, 36), "schwarz")
+    k.kasten((-13, -32, 29), (26, 14, 1), "glas")
+    # Hinten: senkrechte Rücklichter, Kennzeichen, Reserverad mit Hülle an der Tür (zur Seite versetzt)
+    k.kasten((-15, -18, 30), (2, 7, 1), "rot").kasten((13, -18, 30), (2, 7, 1), "rot")
+    k.kasten((-4, -9, 33), (8, 2, 1), "kennzeichen")
+    reserverad(m, (-4.5, 2.5, 31.5), 13, 3)
+    # Spiegel an den A-Säulen
+    k.kasten((-18, -22, -13), (3, 2, 2), "lack", vorne="schwarz", hinten="chrom")
+    k.kasten((15, -22, -13), (3, 2, 2), "lack", vorne="schwarz", hinten="chrom")
     s = m.teil("sitze")
     for x in (-12, 3):
-        for z in (-12, 8):
-            sitz(s, x, -18, z, lehne_hoehe=6)
-    m.teil("lenkrad").kasten((4, -22, -14), (5, 4, 1), "schwarz")
-    raeder(m, 14, 18, -20, 21, w=5, durchmesser=12)
+        for z in (-10, 10):
+            sitz(s, x, -10, z, lehne_hoehe=7)
+    m.teil("lenkrad").kasten((4, -15, -12), (5, 4, 1), "schwarz")
+    m.teil("armaturen").kasten((-13, -19, -14), (26, 2, 3), "schwarz", oben="lack_dunkel")
+    raeder(m, 15, 17.5, -21, 20, w=5, durchmesser=13)
     return m
 
 
@@ -399,6 +538,33 @@ def stretchlimo() -> Modell:
     return m
 
 
+TEXTE_DE = {
+    "key.categories.stinkendreich": "Stinkend Reich",
+    "key.category.stinkendreich.bonzenauto": "Stinkend Reich: Bonzenauto",
+    "key.stinkendreich.hupe": "Hupe",
+    "key.stinkendreich.licht": "Scheinwerfer",
+    "key.stinkendreich.kamera": "Kamera im Auto",
+    "stinkendreich.auto.hinweis": "W/S Gas und Bremse · A/D lenken · Leertaste Handbremse (Driften) · H Hupe · G Licht · V Kamera · Schleichen: aussteigen",
+    "stinkendreich.ton.motor": "Motor brummt",
+    "stinkendreich.ton.anlasser": "Motor startet",
+    "stinkendreich.ton.hupe": "Hupe",
+    "stinkendreich.ton.reifen": "Reifen quietschen",
+    "stinkendreich.ton.crash": "Blech kracht",
+}
+TEXTE_EN = {
+    "key.categories.stinkendreich": "Filthy Rich",
+    "key.category.stinkendreich.bonzenauto": "Filthy Rich: car",
+    "key.stinkendreich.hupe": "Horn",
+    "key.stinkendreich.licht": "Headlights",
+    "key.stinkendreich.kamera": "Car camera",
+    "stinkendreich.auto.hinweis": "W/S throttle and brake · A/D steer · Space handbrake (drift) · H horn · G lights · V camera · Sneak: get out",
+    "stinkendreich.ton.motor": "Engine hums",
+    "stinkendreich.ton.anlasser": "Engine starts",
+    "stinkendreich.ton.hupe": "Horn",
+    "stinkendreich.ton.reifen": "Tyres squeal",
+    "stinkendreich.ton.crash": "Metal crunches",
+}
+
 FAHRZEUGE = {
     # Typ: (Bauplan, Deutsch, Englisch, Farben, die es gibt)
     "bonzenauto": (bonzenauto, "Bonzenauto", "Fat Cat Car"),
@@ -447,7 +613,7 @@ def schreibe_json(pfad: Path, daten) -> None:
 
 
 def main() -> dict:
-    de, en = {}, {}
+    de, en = dict(TEXTE_DE), dict(TEXTE_EN)
     for typ, (bauplan, name_de, name_en) in FAHRZEUGE.items():
         m = bauplan()
         m.packen()
