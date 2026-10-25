@@ -187,6 +187,40 @@ def crash() -> np.ndarray:
     return (schlag + blech + splitter + klirr) * huelle(len(t), ab=0.1)
 
 
+def schuss() -> np.ndarray:
+    """Schallgedämpfter Agenten-Schuss: kurzer, satter „Plopp“ mit metallischem Nachklang."""
+    t = zeit(0.35)
+    rnd = np.random.default_rng(31)
+    knall = rnd.normal(0, 1, len(t)) * np.exp(-t / 0.012)
+    knall = np.convolve(knall, np.ones(6) / 6, mode="same")
+    plopp = np.sin(2 * np.pi * (180 - 260 * t) * t) * np.exp(-t / 0.04)
+    metall = (np.sin(2 * np.pi * 2400 * t) + 0.6 * np.sin(2 * np.pi * 3550 * t)) * np.exp(-t / 0.06) * 0.12
+    return (knall * 0.9 + plopp + metall) * huelle(len(t), an=0.001, ab=0.08)
+
+
+def laser() -> np.ndarray:
+    """Laserstrahl: schnell fallender Pfeifton mit Schwebung."""
+    t = zeit(0.5)
+    freq = 2600 * np.exp(-t * 5.0) + 400
+    phase = 2 * np.pi * np.cumsum(freq) / RATE
+    s = np.sin(phase) * 0.7 + np.sin(phase * 1.007) * 0.5 + np.sign(np.sin(phase * 0.5)) * 0.12
+    return s * np.exp(-t / 0.25) * huelle(len(t), an=0.002, ab=0.1)
+
+
+def geldregen() -> np.ndarray:
+    """Geldkanone: dumpfer Druckluftstoß, dann flatternde Scheine und klimpernde Münzen."""
+    t = zeit(1.1)
+    rnd = np.random.default_rng(41)
+    stoss = np.convolve(rnd.normal(0, 1, len(t)), np.ones(40) / 40, mode="same") * np.exp(-t / 0.05) * 3.0
+    stoss += np.sin(2 * np.pi * 70 * t) * np.exp(-t / 0.06)
+    flattern = rnd.normal(0, 1, len(t)) * (0.5 + 0.5 * np.sign(np.sin(2 * np.pi * 23 * t))) * np.exp(-t / 0.4) * 0.25
+    muenzen = np.zeros_like(t)
+    for start in rnd.uniform(0.1, 0.9, 9):
+        f = rnd.uniform(3800, 6200)
+        muenzen += (t >= start) * np.sin(2 * np.pi * f * t) * np.exp(-np.maximum(0, t - start) / 0.03) * 0.3
+    return (stoss + flattern + muenzen) * huelle(len(t), an=0.002, ab=0.15)
+
+
 def midi(n: float) -> float:
     return 440.0 * 2 ** ((n - 69) / 12)
 
@@ -281,6 +315,9 @@ GERAEUSCHE = {
     "reifen": (reifen, "Reifen quietschen", "Tyres squeal"),
     "crash": (crash, "Blech kracht", "Metal crunches"),
     "aufzug_musik": (aufzug_musik, "Fahrstuhlmusik", "Elevator music"),
+    "schuss": (schuss, "Goldene Pistole feuert", "Golden pistol fires"),
+    "laser": (laser, "Laser zischt", "Laser zaps"),
+    "geldregen": (geldregen, "Geldkanone feuert", "Money cannon fires"),
 }
 # Lange Stücke werden gestreamt statt ganz in den Speicher geladen
 GESTREAMT = {"aufzug_musik"}

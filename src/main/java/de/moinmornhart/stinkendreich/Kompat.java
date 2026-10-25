@@ -130,6 +130,14 @@ public final class Kompat {
         /*ziel.hurt(welt.damageSources().magic(), menge);*/
     }
 
+    /** Fügt einer Entity Schaden aus einer bestimmten Quelle zu (nur auf dem Server). */
+    public static void treffen(net.minecraft.world.entity.Entity ziel, ServerLevel welt, net.minecraft.world.damagesource.DamageSource quelle, float menge) {
+        //? if >=1.21.2 {
+        ziel.hurtServer(welt, quelle, menge);
+        //?} else
+        /*ziel.hurt(quelle, menge);*/
+    }
+
     /** Benachrichtigt die Nachbarblöcke (z. B. nach Änderung eines Redstone-Signals). */
     public static void nachbarnAktualisieren(net.minecraft.world.level.Level welt, BlockPos pos, net.minecraft.world.level.block.Block block) {
         //? if >=1.21.2 {

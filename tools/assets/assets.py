@@ -20,6 +20,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+import ausruestung
 import deko
 import drehteller
 import fahrzeuge
@@ -597,7 +598,7 @@ def main() -> None:
     fz = fahrzeuge.main()
     TEXTE_DE.update(fz["de"])
     TEXTE_EN.update(fz["en"])
-    for texte in (drehteller.main(), fernseher.main()):
+    for texte in (ausruestung.main(), drehteller.main(), fernseher.main()):
         TEXTE_DE.update(texte["de"])
         TEXTE_EN.update(texte["en"])
     g = gemaelde.main()

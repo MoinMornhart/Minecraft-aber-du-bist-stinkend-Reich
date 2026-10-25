@@ -9,6 +9,7 @@
 #
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
 #                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
+#                   klickbild <name>     (Rechtsklick und gleich danach ein Bild, z. B. Schuss mit Strahl)
 #                   halte <sek> <taste…>   (z. B. „halte 3 w space“)
 #                   druecke <taste…> | loslassen <taste…>   (Tasten festhalten, z. B. für ein Bild mitten im Drift)
 #                   server </befehl oder Chattext>   (über eine Datei, ohne Tippen)
@@ -149,6 +150,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     befehl) xdotool key t; sleep "${TIPP_PAUSE:-1}"; xdotool type --delay 30 "$rest"; sleep 0.4; xdotool key Return; sleep 1.5 ;;
     bild) bild "$rest" ;;
     klick) xdotool click 3; sleep 1 ;;                                   # Rechtsklick (Block benutzen)
+    klickbild) xdotool click 3; sleep 0.25; bild "$rest" ;;               # Rechtsklick und sofort ein Bild (z. B. Schuss)
     linksklick) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3; xdotool click 1; sleep 1 ;;
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;   # Befehl ohne Tippen (Autotest-Modus)

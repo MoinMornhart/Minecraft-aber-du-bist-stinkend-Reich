@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "stinkendreich:agent"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "stinkendreich:agent"
+      }
+    ]
+  }
+}

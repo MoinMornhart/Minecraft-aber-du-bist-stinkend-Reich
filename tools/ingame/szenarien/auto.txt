@@ -3,7 +3,7 @@
 server /gamemode creative
 server /time set noon
 taste F1
-server /villa ort 87.5 26 61.5 180 15
+server /villa ort 64.5 16 58.5 0 20
 warte 4
 bild a01_garage
 klick

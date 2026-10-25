@@ -86,6 +86,24 @@
       }
     ]
   },
+  "schuss": {
+    "subtitle": "stinkendreich.ton.schuss",
+    "sounds": [
+      "stinkendreich:schuss"
+    ]
+  },
+  "laser": {
+    "subtitle": "stinkendreich.ton.laser",
+    "sounds": [
+      "stinkendreich:laser"
+    ]
+  },
+  "geldregen": {
+    "subtitle": "stinkendreich.ton.geldregen",
+    "sounds": [
+      "stinkendreich:geldregen"
+    ]
+  },
   "musik": {
     "subtitle": "stinkendreich.ton.musik",
     "sounds": [

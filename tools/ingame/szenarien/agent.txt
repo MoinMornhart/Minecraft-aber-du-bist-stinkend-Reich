@@ -1,0 +1,76 @@
+# Agenten-Ausrüstung: Waffenkammer, Anzug am Spieler (mit Kräften), Beschreibung, Waffen im Einsatz, Nachtsicht
+server /gamemode spectator
+server /time set noon
+server /weather clear
+server /difficulty normal
+taste F1
+server /villa ort 64.2 7.5 40 270 10
+warte 6
+bild ag01_waffenkammer
+server /villa ort 68.4 7.4 34.5 235 8
+warte 2
+bild ag02_agent_staender
+server /villa ort 66 7.6 36 160 25
+warte 2
+bild ag03_truhen
+# Anzug am Spieler, von vorn
+server /gamemode survival
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p armor.chest with stinkendreich:smoking
+server /item replace entity @p armor.legs with stinkendreich:anzughose
+server /item replace entity @p armor.feet with stinkendreich:lackschuhe
+server /item replace entity @p weapon.mainhand with stinkendreich:goldene_pistole
+server /item replace entity @p weapon.offhand with stinkendreich:laseruhr
+server /villa ort 55.5 26 93.5 0 0
+warte 3
+taste F5
+taste F5
+warte 2
+bild ag04_agent_vorn
+taste F5
+taste F1
+warte 2
+bild ag05_kraefte
+# Beschreibung des Smokings im Inventar (Brustplatz, GUI-Maßstab 2)
+taste e
+warte 1
+maus 498 263
+warte 1
+bild ag06_smoking_text
+taste Escape
+warte 1
+# Waffen gegen Diener (erst stillgehalten, für die Geldkanone wieder beweglich)
+taste F1
+server /execute as @p at @s run summon vindicator ^ ^ ^9 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^1.5 ^ ^11 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^-1.5 ^ ^11 {NoAI:1b}
+warte 2
+klickbild ag07_pistole
+warte 2
+server /item replace entity @p weapon.mainhand with stinkendreich:laseruhr
+warte 1
+klickbild ag08_laser
+warte 2
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /kill @e[type=vindicator]
+server /execute as @p at @s run summon vindicator ^ ^ ^6 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^1.2 ^ ^7 {NoAI:1b}
+warte 1
+server /execute as @e[type=vindicator] run data merge entity @s {NoAI:0b}
+klickbild ag09_geldkanone
+warte 1
+bild ag10_danach
+# Nachtsicht und Agentenblick (Gegner leuchten durch Wände)
+server /kill @e[type=vindicator]
+server /time set midnight
+server /execute as @p at @s run summon vindicator ^ ^ ^14 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^4 ^ ^18 {NoAI:1b}
+warte 3
+bild ag11_nachtsicht
+# Fallschaden: aus 30 Blöcken fallen lassen, danach volle Herzen
+server /kill @e[type=vindicator]
+server /time set noon
+taste F1
+server /execute as @p at @s run tp @s ~ ~30 ~
+warte 5
+bild ag12_nach_fall

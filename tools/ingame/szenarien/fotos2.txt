@@ -1,0 +1,25 @@
+# Fotos der Neuheiten von 0.2 für die README (ergänzt fotos.txt): Tiefgarage, Agent im Anzug
+server /gamemode spectator
+server /weather clear
+server /time set 6000
+taste F1
+# Tiefgarage mit dem Fuhrpark (runde Goldfelgen) und dem Drehteller
+server /villa ort 75 19.5 49 180 20
+warte 10
+bild q01_tiefgarage
+server /villa ort 91.5 19 47 180 30
+warte 3
+bild q02_drehteller
+# Der Agent im Anzug auf dem roten Teppich (Ansicht von vorn)
+server /gamemode survival
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p armor.chest with stinkendreich:smoking
+server /item replace entity @p armor.legs with stinkendreich:anzughose
+server /item replace entity @p armor.feet with stinkendreich:lackschuhe
+server /item replace entity @p weapon.mainhand with stinkendreich:goldene_pistole
+server /villa ort 55.5 26 93.5 0 0
+warte 4
+taste F5
+taste F5
+warte 2
+bild q03_agent

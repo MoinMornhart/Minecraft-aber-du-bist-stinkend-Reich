@@ -184,6 +184,12 @@ public final class VillaPlatzierung {
                 welt.addFreshEntity(teller);
             }
         }
+        // Waffenkammer im Bunker: Rüstungsständer mit den Sets
+        for (JsonArray m : plan.marke("ruestung")) {
+            de.moinmornhart.stinkendreich.ausruestung.Waffenkammer.aufstellen(welt, ursprung.getX() + m.get(0).getAsDouble(),
+                    ursprung.getY() + m.get(1).getAsDouble(), ursprung.getZ() + m.get(2).getAsDouble(),
+                    (float) m.get(3).getAsDouble(), m.get(4).getAsInt());
+        }
         // Der Hubschrauber steht auf dem Landeplatz auf dem Penthouse-Dach
         for (JsonArray m : plan.marke("hubschrauber")) {
             abstellen(welt, de.moinmornhart.stinkendreich.auto.Autotyp.HUBSCHRAUBER, 0, ursprung.getX() + m.get(0).getAsDouble(),

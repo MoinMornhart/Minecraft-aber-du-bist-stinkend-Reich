@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-25, 14:45 Uhr_
+_Zuletzt aktualisiert: 2026-10-25, 17:00 Uhr_
 
 ## Erledigt
 
@@ -17,7 +17,7 @@ _Zuletzt aktualisiert: 2026-10-25, 14:45 Uhr_
 - **Alle 17 Versionen im Spiel getestet:** Villa-Komplett-Test und Rundgang (`rundgang.txt`: Villa, Butler-Auftrag „hol 4 Eisen in die Truhe“ bis zur Lieferkiste, Auto, Poolabdeckung) überall bestanden.
 - Werkzeuge: `tools/ingame/test.sh` (Spieltest mit Xvfb/Mesa; Aktionen u. a. `server`, `klient`, `halte`, `druecke`/`loslassen`, `merke`/`bis`), `tools/ingame/alle.sh` (alle Versionen nacheinander), Szenarien in `tools/ingame/szenarien/` (`villa_komplett`, `butler`, `auto`, `rundgang`), `tools/mcapi.sh` (Minecraft-Klassen je Version nachschlagen).
 
-## Version 0.2 (in Arbeit, Stand 25.10. nachmittags)
+## Version 0.2 (in Arbeit, Stand 25.10. abends)
 
 - Fertig und in 26.3 im Spiel getestet: Fehler aus Philips Bildern, neue Türen, Aufzugsfahrt, Glow-up der Räume,
   4 Partybereiche, Musik (DJ-Pult, Spotify), Tiefgarage mit Rampe, Fuhrpark und Drehteller (`auto/DrehtellerEntity`),
@@ -26,9 +26,17 @@ _Zuletzt aktualisiert: 2026-10-25, 14:45 Uhr_
 - Möbel (`tools/assets/deko.py`, `moebel/`): XXL-Kingsize-Bett (`KingsizeBettBlock`, echtes Bett, Spalten verbinden
   sich), Bettende/Bettbank/Sofas als `VerbundDekoBlock`, Nachttisch, Tischlampe, Kinotisch, Strandliegen,
   Sonnenschirm, Loungetisch; Hinsetzen über `SitzEntity`. Kurztest auch in 1.21 bestanden.
+- Butler als Chauffeur (`butler/Chauffeur`, `FahrAuftrag`, Orte merken) und Pilot (`butler/Pilot`, `FlugAuftrag`),
+  Luxus-Hubschrauber (`auto/HubschrauberEntity`) auf dem Landeplatz.
+- OP-Ausrüstung (`ausruestung/`): Agenten-Anzug als echte Rüstung (`AgentRuestung`, je Version anders angelegt:
+  bis 1.21.1 registriertes Material mit Schichten, 1.21.2–1.21.4 `ArmorItem`, ab 1.21.5 `humanoidArmor`),
+  Texturen aus `tools/assets/ausruestung.py`, Kräfte in `AgentKraefte` (Nachtsicht + leuchtende Gegner, Resistenz,
+  Tempo, Sprung, kein Fallschaden, Set: Stärke + Regeneration), Waffen `AgentWaffe` (Pistole, Laseruhr, Geldkanone,
+  Sofort-Treffer ohne Blockschaden), Waffenkammer mit 6 verzauberten Ständern (`Waffenkammer`, Marke „ruestung“).
+  Test: `tools/ingame/szenarien/agent.txt` und `agent_waffen.txt`.
 - Achtung bei Testfotos: Kamera nicht in Kronleuchter stellen (die Kristalle sahen aus wie schwebende Flächen).
-- Offen für 0.2: Butler als Chauffeur, Hubschrauber mit Pilot, OP-Ausrüstung mit Rüstungsständern, Waffenkammer,
-  Szenarien (rundgang/auto) auf die neue Garage umstellen, Test in allen 17 Versionen, README-Fotos, Release 0.2.0.
+  Wüstenzombies geben Hunger (grüne Ringe im Bild) – für Waffenbilder Diener (Vindicator) nehmen.
+- Offen für 0.2: Test in allen 17 Versionen, README-Fotos (`fotos.txt`, `fotos2.txt` neu aufnehmen), Release 0.2.0.
 
 ## Release
 

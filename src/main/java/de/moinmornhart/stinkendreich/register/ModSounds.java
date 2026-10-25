@@ -20,6 +20,10 @@ public final class ModSounds {
     public static final SoundEvent CRASH = ModRegister.sound("crash");
     // Aufzug
     public static final SoundEvent AUFZUG_MUSIK = ModRegister.sound("aufzug_musik");
+    // Agenten-Waffen
+    public static final SoundEvent SCHUSS = ModRegister.sound("schuss");
+    public static final SoundEvent LASER = ModRegister.sound("laser");
+    public static final SoundEvent GELDREGEN = ModRegister.sound("geldregen");
 
     private ModSounds() {
     }

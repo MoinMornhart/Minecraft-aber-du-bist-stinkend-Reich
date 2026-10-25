@@ -945,11 +945,27 @@ def bunker() -> None:
     for x in range(x0 + 4, 50, 3):
         stuhl(b, x, y, z0 + 6, "north", "polished_blackstone_stairs")
     b.marke("bunker_zentrale", 45, y, 44)
-    # Waffenkammer (Nordost)
-    for z in range(z0 + 2, 49, 3):
-        b.entity(x1 - 1.5, y, z + 0.5, {"id": "minecraft:armor_stand", "Rotation": [90.0, 0.0], "ShowArms": ("b", 1)})
-    for x in range(63, x1, 2):
-        truhe(b, x, y, z0 + 1, "south", [("iron_sword", 1), ("bow", 1), ("arrow", 64), ("shield", 1)])
+    # Waffenkammer (Nordost): sechs Rüstungsständer mit voll verzauberten Sets (die Mod rüstet sie beim
+    # Platzieren aus, siehe Waffenkammer.java), davor goldene Podeste, Truhen mit Agenten-Waffen und Vorräten
+    b.quader(63, y0, z0 + 1, x1 - 1, y0, 49, "polished_blackstone")              # dunkler Boden
+    b.quader(x1 - 1, y, z0 + 1, x1 - 1, y1 - 1, 49, SCHWARZ)                   # Rückwand schwarz
+    b.quader(x1 - 1, y1 - 1, z0 + 1, x1 - 1, y1 - 1, 49, "gold_block")          # Goldleiste oben
+    for i, z in enumerate(range(z0 + 2, 49, 3)):
+        b.setze(x1 - 2, y0, z, "gold_block")                                    # goldener Sockel im Boden
+        b.setze(x1 - 2, y, z, "smooth_quartz_slab")                             # Podest
+        b.setze(x1 - 2, y1, z, LICHT)                                           # Spot von oben
+        b.setze(x1 - 1, y + 3, z, "gold_block")                                 # Goldplakette hinter dem Kopf
+        b.marke("ruestung", x1 - 1.5, y + 0.5, z + 0.5, 90.0, i)
+    vorraete = [
+        [("stinkendreich:goldene_pistole", 1), ("stinkendreich:laseruhr", 1), ("stinkendreich:geldkanone", 1)],
+        [("stinkendreich:bond_sonnenbrille", 1), ("stinkendreich:smoking", 1), ("stinkendreich:anzughose", 1),
+         ("stinkendreich:lackschuhe", 1)],
+        [("totem_of_undying", 1), ("totem_of_undying", 1), ("enchanted_golden_apple", 8), ("golden_apple", 32)],
+        [("ender_pearl", 16), ("firework_rocket", 64), ("arrow", 64), ("spectral_arrow", 64)],
+        [("netherite_ingot", 16), ("diamond", 64), ("experience_bottle", 64), ("shield", 1)],
+    ]
+    for x, inhalt in zip(range(63, x1, 2), vorraete):
+        truhe(b, x, y, z0 + 1, "south", inhalt)
     # Panikraum (Südwest): Betten, Vorräte
     for z in range(53, 66, 3):
         bett(b, x0 + 1, y, z, "west", "gray")

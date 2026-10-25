@@ -1,0 +1,29 @@
+# Nur die Agenten-Waffen (Kurztest): Pistole, Laser, Geldkanone gegen Diener
+server /gamemode survival
+server /time set noon
+server /weather clear
+server /difficulty normal
+taste F1
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p weapon.mainhand with stinkendreich:goldene_pistole
+server /villa ort 55.5 26 93.5 0 0
+warte 4
+server /execute as @p at @s run summon vindicator ^ ^ ^9 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^1.5 ^ ^11 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^-1.5 ^ ^11 {NoAI:1b}
+warte 2
+klickbild ag07_pistole
+warte 2
+server /item replace entity @p weapon.mainhand with stinkendreich:laseruhr
+warte 1
+klickbild ag08_laser
+warte 2
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /kill @e[type=vindicator]
+server /execute as @p at @s run summon vindicator ^ ^ ^6 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^1.2 ^ ^7 {NoAI:1b}
+warte 1
+server /execute as @e[type=vindicator] run data merge entity @s {NoAI:0b}
+klickbild ag09_geldkanone
+warte 1
+bild ag10_danach

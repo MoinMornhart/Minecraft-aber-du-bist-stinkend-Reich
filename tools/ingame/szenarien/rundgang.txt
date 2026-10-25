@@ -40,7 +40,7 @@ klient schliessen
 warte 1
 # Bonzenauto: einsteigen und aus der Garage fahren
 taste F1
-server /villa ort 87.5 26 61.5 180 15
+server /villa ort 64.5 16 58.5 0 20
 warte 3
 klick
 warte 3
