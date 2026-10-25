@@ -64,8 +64,10 @@ jobs:
             echo
             echo "| Minecraft | Datei |"
             echo "|---|---|"
+            # nach Minecraft-Version sortiert (1.21, 1.21.1 … 1.21.11, 26.1 …)
             for f in build/libs/*/*.jar; do
-              n="$(basename "$f")"; mc="${n##*+mc}"; mc="${mc%.jar}"
+              n="$(basename "$f")"; mc="${n##*+mc}"; echo "${mc%.jar} ${n}"
+            done | sort -V | while read -r mc n; do
               echo "| ${mc} | \`${n}\` |"
             done
             echo
