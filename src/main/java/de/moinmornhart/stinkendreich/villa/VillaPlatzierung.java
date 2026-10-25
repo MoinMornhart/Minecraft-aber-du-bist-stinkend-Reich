@@ -21,6 +21,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -250,7 +252,10 @@ public final class VillaPlatzierung {
 
     /**
      * Blätter gefällter Bäume am Rand zerfallen noch eine Weile und lassen Stöcke, Setzlinge
-     * und Äpfel fallen. Die werden in den ersten Minuten auf dem Grundstück weggeräumt.
+     * und Äpfel fallen; Laubstreu, Blumen und Gräser (ab 1.21.5 liegt in Wäldern Laubstreu) fallen
+     * ab, wenn ihnen beim Ebnen der Boden fehlt. Solcher Pflanzenabfall wird in den ersten
+     * Minuten auf dem Grundstück weggeräumt – nur herrenlose Gegenstände, die schon ein paar
+     * Sekunden liegen, damit nichts verschwindet, was ein Spieler wirft oder gleich aufhebt.
      */
     private static void aufraeumen(MinecraftServer server) {
         long zeit = server.overworld().getGameTime();
@@ -263,11 +268,25 @@ public final class VillaPlatzierung {
         AABB bereich = new AABB(u.getX() - r, u.getY(), u.getZ() - r,
                 u.getX() + plan.breiteX + r, u.getY() + plan.hoehe + 40, u.getZ() + plan.breiteZ + r);
         for (ItemEntity e : server.overworld().getEntitiesOfClass(ItemEntity.class, bereich, i -> true)) {
-            var stapel = e.getItem();
-            if (stapel.is(Items.STICK) || stapel.is(ItemTags.SAPLINGS) || stapel.is(Items.APPLE) || stapel.is(Items.WHEAT_SEEDS)) {
+            if (e.getAge() > 100 && e.getOwner() == null && pflanzenabfall(e.getItem())) {
                 e.discard();
             }
         }
+    }
+
+    private static boolean pflanzenabfall(ItemStack stapel) {
+        if (stapel.is(Items.STICK) || stapel.is(ItemTags.SAPLINGS) || stapel.is(Items.APPLE) || stapel.is(Items.WHEAT_SEEDS)) {
+            return true;
+        }
+        if (!(stapel.getItem() instanceof BlockItem bi)) {
+            return false;
+        }
+        BlockState s = bi.getBlock().defaultBlockState();
+        return s.is(BlockTags.LEAVES) || s.is(BlockTags.FLOWERS) || s.canBeReplaced()
+                //? if >=1.21.5 {
+                || s.is(Blocks.LEAF_LITTER)
+                //?}
+                ;
     }
 
     /**

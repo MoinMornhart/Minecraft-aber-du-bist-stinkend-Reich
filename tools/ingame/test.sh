@@ -9,6 +9,7 @@
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
 #                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
 #                   halte <sek> <taste…>   (z. B. „halte 3 w space“)
+#                   druecke <taste…> | loslassen <taste…>   (Tasten festhalten, z. B. für ein Bild mitten im Drift)
 #                   server </befehl oder Chattext>   (über eine Datei, ohne Tippen)
 #                   klient schliessen|butlermenue      (Bildschirm schließen / Butler-Menü öffnen)
 #                   merke                (merkt sich die Stelle im Client-Log für das nächste „bis“)
@@ -154,6 +155,8 @@ while read -r wort rest || [[ -n "$wort" ]]; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi
            sleep 2
          done ;;
+    druecke) xdotool keydown $rest ;;
+    loslassen) xdotool keyup $rest; sleep 0.3 ;;
     halte) set -- $rest; dauer="$1"; shift; xdotool keydown "$@"; sleep "$dauer"; xdotool keyup "$@"; sleep 0.3 ;;   # Tasten gedrückt halten
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac

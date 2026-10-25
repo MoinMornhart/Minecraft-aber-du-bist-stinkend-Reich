@@ -36,10 +36,14 @@ klick
 warte 2
 halte 1.5 w
 bild a04_fahrt
-halte 1.2 w d
+druecke w d
+warte 1
 bild a05_kurve
-halte 1.5 w a space
+loslassen w d
+druecke w a space
+warte 1.2
 bild a06_drift
+loslassen w a space
 halte 1 s
 taste g
 server /time set midnight

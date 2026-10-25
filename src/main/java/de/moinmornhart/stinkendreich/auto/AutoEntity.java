@@ -378,7 +378,10 @@ public class AutoEntity extends Mob {
             if (quer || driftet) {
                 for (int seite = -1; seite <= 1; seite += 2) {
                     Vec3 rad = position().add(richtung.scale(-1.4)).add(new Vec3(richtung.z, 0, -richtung.x).scale(0.9 * seite));
-                    level().addParticle(ParticleTypes.CLOUD, rad.x, getY() + 0.1, rad.z, 0, 0.02, 0);
+                    for (int i = 0; i < 3; i++) {
+                        double rx = (random.nextDouble() - 0.5) * 0.5, rz = (random.nextDouble() - 0.5) * 0.5;
+                        level().addParticle(ParticleTypes.CLOUD, rad.x + rx, getY() + 0.15, rad.z + rz, rx * 0.1, 0.04, rz * 0.1);
+                    }
                 }
                 if (tickCount % 6 == 0) {
                     level().playLocalSound(getX(), getY(), getZ(), ModSounds.REIFEN, SoundSource.NEUTRAL, 0.5F, 1.0F, false);
