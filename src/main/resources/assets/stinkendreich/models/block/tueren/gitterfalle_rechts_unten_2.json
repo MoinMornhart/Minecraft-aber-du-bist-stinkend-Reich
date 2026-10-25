@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/tueren/gitterfalle",
+    "t": "stinkendreich:block/tueren/gitterfalle"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        -11,
+        6
+      ],
+      "to": [
+        16,
+        5,
+        10
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            8,
+            8,
+            12,
+            12
+          ],
+          "texture": "#t"
+        },
+        "north": {
+          "uv": [
+            12,
+            8,
+            8,
+            12
+          ],
+          "texture": "#t"
+        },
+        "east": {
+          "uv": [
+            11,
+            8,
+            12,
+            12
+          ],
+          "texture": "#t"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            9,
+            12
+          ],
+          "texture": "#t"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            12,
+            9
+          ],
+          "texture": "#t"
+        },
+        "down": {
+          "uv": [
+            8,
+            11,
+            12,
+            12
+          ],
+          "texture": "#t"
+        }
+      }
+    }
+  ]
+}

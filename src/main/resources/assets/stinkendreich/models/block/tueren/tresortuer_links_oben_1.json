@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/tueren/tresortuer",
+    "t": "stinkendreich:block/tueren/tresortuer"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        6
+      ],
+      "to": [
+        21,
+        16,
+        10
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": "#t"
+        },
+        "north": {
+          "uv": [
+            4,
+            0,
+            0,
+            4
+          ],
+          "texture": "#t"
+        },
+        "east": {
+          "uv": [
+            3,
+            0,
+            4,
+            4
+          ],
+          "texture": "#t"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            4
+          ],
+          "texture": "#t"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            1
+          ],
+          "texture": "#t"
+        },
+        "down": {
+          "uv": [
+            0,
+            3,
+            4,
+            4
+          ],
+          "texture": "#t"
+        }
+      }
+    }
+  ]
+}

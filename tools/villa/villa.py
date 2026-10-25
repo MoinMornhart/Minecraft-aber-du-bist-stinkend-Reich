@@ -181,6 +181,17 @@ def garten() -> None:
     tisch(b, 18, G + 1, 69, 20, 69)
 
 
+def tuerrahmen(x0: int, y0: int, z: int, x1: int, y1: int, gold: int | None = None) -> None:
+    """Schwarzer Rahmen um eine Türöffnung in einer Glaswand (Pfosten links/rechts, Sturz oben),
+    damit die Tür nicht frei im Glas steht. `gold`: Höhe einer goldenen Sturzleiste."""
+    b.quader(x0, y0, z, x0, y1, z, SCHWARZ)
+    b.quader(x1, y0, z, x1, y1, z, SCHWARZ)
+    oben = y0 + 2 if gold is None else gold
+    b.quader(x0 + 1, oben, z, x1 - 1, y1, z, SCHWARZ)
+    if gold is not None:
+        b.quader(x0, gold, z, x1, gold, z, "gold_block")
+
+
 def huelle() -> None:
     """Außenwände, Decken, Dachplatten mit weitem Überstand, Glasfassade im Süden."""
     # Fundament und Böden
@@ -216,6 +227,7 @@ def huelle() -> None:
     # Eingang: Öffnung für die automatische Schiebetür (siehe mechanismen())
     b.luft(54, EG + 1, HZ1, 55, EG + 3, HZ1)
     b.marke("haustuer", 54, EG + 1, HZ1, 55, EG + 3, HZ1)
+    tuerrahmen(53, EG + 1, HZ1, 56, OG - 1, gold=EG + 4)
     # Balkon über dem Eingang: Obergeschoss-Platte kragt 3 Blöcke aus
     b.quader(HX0, OG, HZ1 + 1, HX1, OG, HZ1 + 3, WEISS)
     for x in range(HX0, HX1 + 1):
@@ -224,7 +236,8 @@ def huelle() -> None:
         b.setze(HX0, OG + 1, z, GLAS)
         b.setze(HX1, OG + 1, z, GLAS)
     b.luft(54, OG + 1, HZ1, 55, OG + 2, HZ1)
-    doppeltuer(b, 54, OG + 1, HZ1, "south", "birch_door")
+    tuerrahmen(53, OG + 1, HZ1, 56, OG + 3)
+    doppeltuer(b, 54, OG + 1, HZ1, "south", "stinkendreich:glastuer")
     # Dachplatte mit großem Überstand (2 seitlich, 6 nach Süden)
     b.quader(HX0 - 2, DACH, HZ0 - 2, HX1 + 2, DACH, HZ1 + 6, WEISS)
     b.quader(HX0 - 2, DACH - 1, HZ1 + 6, HX1 + 2, DACH - 1, HZ1 + 6, WEISS)
@@ -419,7 +432,8 @@ def penthouse() -> None:
     for x in range(x0, x1 + 1, 4):
         b.setze(x, PH_DACH, z1 + 3, LICHT)
     b.luft(54, y, z1, 55, y + 1, z1)
-    doppeltuer(b, 54, y, z1, "south", "birch_door")
+    tuerrahmen(53, y, z1, 56, y + 2)
+    doppeltuer(b, 54, y, z1, "south", "stinkendreich:glastuer")
     # Bar und Lounge
     b.quader(x0 + 2, y, z0 + 2, x0 + 9, y, z0 + 2, "polished_blackstone")
     b.quader(x0 + 2, y + 1, z0 + 2, x0 + 9, y + 1, z0 + 2, zustand("smooth_quartz_slab", type="bottom", waterlogged="false"))
@@ -551,8 +565,26 @@ def mech(x: int, y: int, z: int, block: str, richtung: str | None = None, **wert
 
 
 def fluegel(x0, y0, z0, x1, y1, z1, name: str, offen: bool) -> None:
-    """Fläche aus Torflügeln (Tor, Rollladen, Schiebetür …), offen oder geschlossen."""
-    b.quader(x0, y0, z0, x1, y1, z1, zustand(f"stinkendreich:{name}", open=str(offen).lower()))
+    """Fläche aus Torflügeln (Tor, Rollladen, Schiebetür …), offen oder geschlossen.
+
+    Jedes Feld bekommt seine Lage im Ganzen (Spalte längs der Fläche, Zeile von oben nach unten), damit
+    Rahmen und Griffe stimmen. Liegt die Fläche flach (Poolabdeckung), zählen die Zeilen von Norden nach Süden.
+    """
+    def lage(i: int, n: int, namen: tuple[str, str, str]) -> str:
+        if n == 1:
+            return "einzeln"
+        return namen[0] if i == 0 else namen[2] if i == n - 1 else namen[1]
+
+    flach = y0 == y1 and x0 != x1 and z0 != z1
+    achse = "z" if (x0 == x1 and not flach) else "x"
+    for x in range(x0, x1 + 1):
+        for y in range(y0, y1 + 1):
+            for z in range(z0, z1 + 1):
+                i, n = (z - z0, z1 - z0 + 1) if achse == "z" else (x - x0, x1 - x0 + 1)
+                j, m = (z - z0, z1 - z0 + 1) if flach else (y1 - y, y1 - y0 + 1)
+                b.setze(x, y, z, zustand(f"stinkendreich:{name}", open=str(offen).lower(), stufe="3" if offen else "0",
+                                         axis=achse, spalte=lage(i, n, ("links", "mitte", "rechts")),
+                                         zeile=lage(j, m, ("oben", "mitte", "unten"))))
 
 
 def mechanismen() -> None:
@@ -577,9 +609,14 @@ def mechanismen() -> None:
     mech(87, EG - 1, 67, "torsteuerung", modus="tor", ziel="stinkendreich:garagentor", radius=6)
 
     # Rollläden vor den Fenstern im Erdgeschoss: schließen ab Stufe 2 (Lockdown)
-    for x in range(HX0 + 1, HX1):
-        if x not in pfeiler and x not in (54, 55):
-            fluegel(x, EG + 1, HZ1 + 1, x, OG - 1, HZ1 + 1, "rollladen", True)
+    luecke = []
+    for x in range(HX0 + 1, HX1 + 1):
+        if x in pfeiler or 53 <= x <= 56 or x == HX1:
+            if luecke:
+                fluegel(luecke[0], EG + 1, HZ1 + 1, luecke[-1], OG - 1, HZ1 + 1, "rollladen", True)
+            luecke = []
+        else:
+            luecke.append(x)
     mech(55, EG - 1, HZ1 + 2, "torsteuerung", modus="rollladen", ziel="stinkendreich:rollladen", radius=24)
 
     # Sicherheitszentralen und Überwachung
@@ -619,9 +656,9 @@ def mechanismen() -> None:
     for y in (yo, yo + 1):
         mech(62, y, 43, "laser_sender", "east")
 
-    # Schmuck-Tresor: Panzertür mit Tastenfeld außen und Hebel innen, Fallenplatten, Gitterfalle, Entschärfknöpfe
-    fluegel(63, yo, 47, 64, yo + 1, 47, "panzertuer", False)
-    mech(62, yo, 47, "torsteuerung", modus="redstone", ziel="stinkendreich:panzertuer", radius=3)
+    # Schmuck-Tresor: runde Tresortür mit Tastenfeld außen und Hebel innen, Fallenplatten, Gitterfalle, Entschärfknöpfe
+    fluegel(63, yo, 47, 64, yo + 1, 47, "tresortuer", False)
+    mech(62, yo, 47, "torsteuerung", modus="redstone", ziel="stinkendreich:tresortuer", radius=3)
     mech(62, yo + 1, 48, "tastenfeld", "south")
     b.setze(62, yo + 1, 46, zustand("lever", face="wall", facing="north", powered="false"))
     fluegel(63, yo, 46, 64, yo + 1, 46, "gitterfalle", True)
@@ -631,10 +668,10 @@ def mechanismen() -> None:
     b.quader(62, yo, 66, 62, DACH - 1, 66, "deepslate_bricks")
     mech(62, yo + 1, 66, "entschaerfknopf")
 
-    # Waffenkammer im Bunker: Eisentür mit Kartenleser auf beiden Seiten
+    # Waffenkammer im Bunker: Bunkertür (Schloss und Riegel) mit Kartenleser auf beiden Seiten
     b.quader(62, BUNKER + 1, 45, 62, BUNKER + 3, 45, "deepslate_tiles")
     b.setze(62, BUNKER + 3, 44, "deepslate_tiles")
-    tuer(b, 62, BUNKER + 1, 44, "east", "iron_door")
+    tuer(b, 62, BUNKER + 1, 44, "east", "stinkendreich:bunkertuer")
     mech(61, BUNKER + 2, 43, "kartenleser", "west")
     mech(63, BUNKER + 2, 43, "kartenleser", "east")
 

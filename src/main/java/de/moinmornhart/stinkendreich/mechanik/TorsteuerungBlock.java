@@ -108,8 +108,7 @@ public class TorsteuerungBlock extends MechanikBlock {
         boolean geaendert = false;
         for (BlockPos p : BlockPos.betweenClosed(mitte.offset(-radius, -radius, -radius), mitte.offset(radius, radius, radius))) {
             BlockState s = welt.getBlockState(p);
-            if (s.is(typ) && s.getValue(Eigenschaften.OFFEN) != offen) {
-                welt.setBlock(p, s.setValue(Eigenschaften.OFFEN, offen), 3);
+            if (s.is(typ) && TorfluegelBlock.setzeOffen(welt, p, s, offen)) {
                 geaendert = true;
             }
         }

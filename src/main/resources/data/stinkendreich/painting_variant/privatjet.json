@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:privatjet",
+  "width": 3,
+  "height": 2,
+  "title": {
+    "translate": "painting.stinkendreich.privatjet.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.privatjet.author",
+    "color": "gray"
+  }
+}

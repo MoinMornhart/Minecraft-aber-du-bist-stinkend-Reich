@@ -1,9 +1,435 @@
 {
   "variants": {
-    "open=false": {
-      "model": "stinkendreich:block/poolabdeckung"
+    "axis=x,spalte=links,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_oben_0"
     },
-    "open=true": {
+    "axis=x,spalte=links,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_oben_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_oben_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=links,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_mitte_0"
+    },
+    "axis=x,spalte=links,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_mitte_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_mitte_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=links,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_unten_0"
+    },
+    "axis=x,spalte=links,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_unten_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_unten_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=links,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_einzeln_0"
+    },
+    "axis=x,spalte=links,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_einzeln_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_einzeln_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_oben_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_oben_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_oben_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_mitte_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_mitte_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_mitte_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_unten_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_unten_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_unten_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_einzeln_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_einzeln_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_einzeln_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_oben_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_oben_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_oben_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_mitte_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_mitte_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_mitte_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_unten_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_unten_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_unten_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_einzeln_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_einzeln_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_einzeln_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_oben_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_oben_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_oben_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_mitte_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_mitte_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_mitte_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_unten_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_unten_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_unten_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_einzeln_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_einzeln_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_einzeln_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_oben_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_oben_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_oben_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_mitte_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_mitte_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_mitte_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_unten_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_unten_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_unten_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_einzeln_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_einzeln_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_links_einzeln_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_oben_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_oben_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_oben_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_mitte_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_mitte_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_mitte_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_unten_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_unten_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_unten_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_einzeln_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_einzeln_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_mitte_einzeln_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_oben_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_oben_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_oben_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_mitte_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_mitte_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_mitte_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_unten_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_unten_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_unten_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_einzeln_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_einzeln_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_rechts_einzeln_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_oben_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_oben_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_oben_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_mitte_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_mitte_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_mitte_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_unten_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_unten_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_unten_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_einzeln_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_einzeln_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_einzeln_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=einzeln": {
       "model": "stinkendreich:block/leer"
     }
   }

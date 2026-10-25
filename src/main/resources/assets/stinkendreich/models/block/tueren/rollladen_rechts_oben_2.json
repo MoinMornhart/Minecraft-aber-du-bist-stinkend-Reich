@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/tueren/rollladen",
+    "t": "stinkendreich:block/tueren/rollladen"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        11,
+        6
+      ],
+      "to": [
+        16,
+        27,
+        10
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#t"
+        },
+        "north": {
+          "uv": [
+            12,
+            0,
+            8,
+            4
+          ],
+          "texture": "#t"
+        },
+        "east": {
+          "uv": [
+            11,
+            0,
+            12,
+            4
+          ],
+          "texture": "#t"
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            9,
+            4
+          ],
+          "texture": "#t"
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            1
+          ],
+          "texture": "#t"
+        },
+        "down": {
+          "uv": [
+            8,
+            3,
+            12,
+            4
+          ],
+          "texture": "#t"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:der_bonze",
+  "width": 2,
+  "height": 3,
+  "title": {
+    "translate": "painting.stinkendreich.der_bonze.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.der_bonze.author",
+    "color": "gray"
+  }
+}

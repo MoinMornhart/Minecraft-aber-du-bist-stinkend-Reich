@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "stinkendreich:block/poolabdeckung"
+    "model": "stinkendreich:block/tueren/poolabdeckung_einzeln_einzeln_0"
   }
 }

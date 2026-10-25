@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "minecraft:block/bookshelf",
+    "r": "minecraft:block/bookshelf",
+    "h": "minecraft:block/oak_planks"
+  },
+  "elements": [
+    {
+      "from": [
+        11,
+        0,
+        0.25
+      ],
+      "to": [
+        27,
+        16,
+        15.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#r"
+        },
+        "south": {
+          "texture": "#r"
+        },
+        "east": {
+          "texture": "#h"
+        },
+        "west": {
+          "texture": "#h"
+        },
+        "up": {
+          "texture": "#h"
+        },
+        "down": {
+          "texture": "#h"
+        }
+      }
+    }
+  ]
+}

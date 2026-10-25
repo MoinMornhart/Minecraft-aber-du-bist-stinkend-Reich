@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:villa_nacht",
+  "width": 4,
+  "height": 2,
+  "title": {
+    "translate": "painting.stinkendreich.villa_nacht.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.villa_nacht.author",
+    "color": "gray"
+  }
+}

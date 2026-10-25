@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:goldrausch",
+  "width": 4,
+  "height": 3,
+  "title": {
+    "translate": "painting.stinkendreich.goldrausch.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.goldrausch.author",
+    "color": "gray"
+  }
+}

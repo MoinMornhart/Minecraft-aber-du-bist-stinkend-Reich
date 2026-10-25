@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:james",
+  "width": 2,
+  "height": 2,
+  "title": {
+    "translate": "painting.stinkendreich.james.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.james.author",
+    "color": "gray"
+  }
+}

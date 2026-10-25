@@ -1,7 +1,9 @@
 {
   "replace": false,
   "values": [
-    "stinkendreich:geheimregal",
-    "stinkendreich:geheimschalter"
+    "stinkendreich:geheimschalter",
+    "stinkendreich:prunktuer",
+    "stinkendreich:glastuer",
+    "stinkendreich:geheimregal"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "stinkendreich:block/garagentor"
+    "model": "stinkendreich:block/tueren/garagentor_einzeln_einzeln_0"
   }
 }

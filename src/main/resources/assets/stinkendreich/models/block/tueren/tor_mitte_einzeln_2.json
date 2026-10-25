@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/tueren/tor",
+    "t": "stinkendreich:block/tueren/tor"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        -11,
+        6
+      ],
+      "to": [
+        16,
+        5,
+        10
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            4,
+            12,
+            8,
+            16
+          ],
+          "texture": "#t"
+        },
+        "north": {
+          "uv": [
+            8,
+            12,
+            4,
+            16
+          ],
+          "texture": "#t"
+        },
+        "east": {
+          "uv": [
+            7,
+            12,
+            8,
+            16
+          ],
+          "texture": "#t"
+        },
+        "west": {
+          "uv": [
+            4,
+            12,
+            5,
+            16
+          ],
+          "texture": "#t"
+        },
+        "up": {
+          "uv": [
+            4,
+            12,
+            8,
+            13
+          ],
+          "texture": "#t"
+        },
+        "down": {
+          "uv": [
+            4,
+            15,
+            8,
+            16
+          ],
+          "texture": "#t"
+        }
+      }
+    }
+  ]
+}

@@ -62,3 +62,6 @@ __pycache__/
 versions/*/run/
 versions/*/.gradle/
 .stonecutter/
+
+# Arbeitsordner von Claude-Helfern
+.claude/worktrees/

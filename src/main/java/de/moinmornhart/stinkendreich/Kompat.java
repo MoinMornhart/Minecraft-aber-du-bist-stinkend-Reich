@@ -13,6 +13,12 @@ import net.minecraft.world.level.storage.LevelData;
  * Die {@code //?}-Zeilen sind Stonecutter-Bedingungen (siehe {@code KompatClient}).
  */
 public final class Kompat {
+    /** Kolben zerstören den Block statt ihn zu schieben (Türen). Heißt ab 26.3 POPPED. */
+    //? if >=26.3 {
+    public static final net.minecraft.world.level.material.PushReaction ZERBRICHT_BEIM_SCHIEBEN = net.minecraft.world.level.material.PushReaction.POPPED;
+    //?} else
+    /*public static final net.minecraft.world.level.material.PushReaction ZERBRICHT_BEIM_SCHIEBEN = net.minecraft.world.level.material.PushReaction.DESTROY;*/
+
     private Kompat() {
     }
 

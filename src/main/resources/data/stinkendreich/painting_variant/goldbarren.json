@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:goldbarren",
+  "width": 2,
+  "height": 2,
+  "title": {
+    "translate": "painting.stinkendreich.goldbarren.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.goldbarren.author",
+    "color": "gray"
+  }
+}

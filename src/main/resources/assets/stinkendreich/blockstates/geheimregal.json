@@ -1,9 +1,435 @@
 {
   "variants": {
-    "open=false": {
-      "model": "stinkendreich:block/geheimregal"
+    "axis=x,spalte=links,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
     },
-    "open=true": {
+    "axis=x,spalte=links,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=links,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=links,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=links,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=links,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=links,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=links,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=links,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=links,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=mitte,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=mitte,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=mitte,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=mitte,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=rechts,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=rechts,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=rechts,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=rechts,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=x,spalte=einzeln,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0"
+    },
+    "axis=x,spalte=einzeln,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1"
+    },
+    "axis=x,spalte=einzeln,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2"
+    },
+    "axis=x,spalte=einzeln,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=links,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=links,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=mitte,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=mitte,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=rechts,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=rechts,stufe=3,zeile=einzeln": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=oben": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=oben": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=mitte": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=mitte": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=unten": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=unten": {
+      "model": "stinkendreich:block/leer"
+    },
+    "axis=z,spalte=einzeln,stufe=0,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_0",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=1,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_1",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=2,zeile=einzeln": {
+      "model": "stinkendreich:block/tueren/geheimregal_2",
+      "y": 90
+    },
+    "axis=z,spalte=einzeln,stufe=3,zeile=einzeln": {
       "model": "stinkendreich:block/leer"
     }
   }

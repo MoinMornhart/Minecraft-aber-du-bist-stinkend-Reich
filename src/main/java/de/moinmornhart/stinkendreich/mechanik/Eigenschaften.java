@@ -2,10 +2,11 @@ package de.moinmornhart.stinkendreich.mechanik;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 //? if <1.21.2
 /*import net.minecraft.world.level.block.state.properties.DirectionProperty;*/
-//? if >=1.21.2
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 /**
@@ -25,6 +26,35 @@ public final class Eigenschaften {
     public static final BooleanProperty AN = BlockStateProperties.POWERED;
     public static final BooleanProperty OFFEN = BlockStateProperties.OPEN;
     public static final BooleanProperty LEUCHTET = BlockStateProperties.LIT;
+
+    // ---------- Türflügel: Lage im Ganzen, Ausrichtung, Öffnungsstufe ----------
+
+    /** Spalte eines Feldes in einer Tür aus mehreren Blöcken (für Rahmen, Griffe, durchgehende Bilder). */
+    public enum Spalte implements StringRepresentable {
+        LINKS, MITTE, RECHTS, EINZELN;
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(java.util.Locale.ROOT);
+        }
+    }
+
+    /** Zeile eines Feldes in einer Tür aus mehreren Blöcken. */
+    public enum Zeile implements StringRepresentable {
+        UNTEN, MITTE, OBEN, EINZELN;
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(java.util.Locale.ROOT);
+        }
+    }
+
+    public static final EnumProperty<Spalte> SPALTE = EnumProperty.create("spalte", Spalte.class);
+    public static final EnumProperty<Zeile> ZEILE = EnumProperty.create("zeile", Zeile.class);
+    /** Öffnungsstufe für die Animation: 0 zu, 3 ganz offen. */
+    public static final IntegerProperty STUFE = IntegerProperty.create("stufe", 0, 3);
+    /** In welcher Achse die Türfläche liegt (x: Fläche läuft von West nach Ost). */
+    public static final EnumProperty<Direction.Axis> ACHSE = BlockStateProperties.HORIZONTAL_AXIS;
 
     private Eigenschaften() {
     }

@@ -20,6 +20,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+import gemaelde
+import tueren
+
 WURZEL = Path(__file__).resolve().parents[2]
 RES = WURZEL / "src/main/resources"
 ASSETS = RES / "assets/stinkendreich"
@@ -207,58 +210,16 @@ def tex_torsteuerung():
     return img
 
 
-def tex_tor():
-    img, d = neu((18, 18, 20))
-    for x in (1, 5, 9, 13):
-        d.rectangle([x, 0, x + 1, 15], fill=(55, 56, 60))
-        d.line([(x, 0), (x, 15)], fill=(80, 82, 86))
-    d.rectangle([0, 0, 15, 1], fill=(190, 150, 50))
-    d.rectangle([0, 14, 15, 15], fill=(40, 40, 44))
-    return img
 
 
-def tex_lamellen(hell, dunkel, saat):
-    img, d = neu(hell)
-    for y in range(0, 16, 4):
-        d.line([(0, y + 3), (15, y + 3)], fill=dunkel)
-        d.line([(0, y), (15, y)], fill=tuple(min(255, c + 12) for c in hell))
-    return rauschen(img, 2, saat)
 
 
-def tex_schiebetuer():
-    img, d = neu((176, 206, 220))
-    for x in range(16):
-        for y in range(16):
-            if (x + y) % 7 == 0:
-                d.point((x, y), fill=(196, 222, 234))
-    d.rectangle([0, 0, 15, 15], outline=(60, 64, 70))
-    d.line([(14, 6), (14, 9)], fill=(140, 144, 150))
-    return img
 
 
-def tex_panzertuer():
-    img, d = neu((120, 124, 130))
-    rauschen(img, 5, 11)
-    d.rectangle([0, 0, 15, 15], outline=(80, 82, 88))
-    for x, y in ((2, 2), (13, 2), (2, 13), (13, 13), (7, 2), (7, 13)):
-        d.point((x, y), fill=(190, 192, 196))
-    d.line([(1, 7), (14, 7)], fill=(96, 98, 104))
-    return img
 
 
-def tex_gitter():
-    img, d = neu((26, 26, 28))
-    for i in range(0, 16, 4):
-        d.rectangle([i + 1, 0, i + 2, 15], fill=(120, 122, 128))
-        d.rectangle([0, i + 1, 15, i + 2], fill=(100, 102, 108))
-    return img
 
 
-def tex_poolabdeckung():
-    img, d = neu((30, 52, 100))
-    for y in range(0, 16, 3):
-        d.line([(0, y), (15, y)], fill=(40, 66, 120))
-    return rauschen(img, 3, 12)
 
 
 def tex_whirlpool_oben():
@@ -301,13 +262,6 @@ TEXTUREN = {
     "warnleuchte": lambda: tex_warnleuchte(False),
     "warnleuchte_an": lambda: tex_warnleuchte(True),
     "torsteuerung": tex_torsteuerung,
-    "tor": tex_tor,
-    "garagentor": lambda: tex_lamellen((232, 234, 236), (170, 174, 178), 13),
-    "rollladen": lambda: tex_lamellen((150, 154, 160), (96, 100, 106), 14),
-    "schiebetuer": tex_schiebetuer,
-    "panzertuer": tex_panzertuer,
-    "gitterfalle": tex_gitter,
-    "poolabdeckung": tex_poolabdeckung,
     "whirlpoolduese": tex_whirlpool_oben,
 }
 
@@ -364,15 +318,6 @@ def m_saeule(seite: str, oben: str) -> dict:
     return {"parent": "minecraft:block/cube_column", "textures": {"side": seite, "end": oben}}
 
 
-def m_flach(tex: str) -> dict:
-    return {
-        "parent": "minecraft:block/block",
-        "textures": {"particle": tex, "t": tex},
-        "elements": [{"from": [0, 0, 0], "to": [16, 2, 16], "faces": {
-            "up": {"texture": "#t"}, "down": {"texture": "#t", "cullface": "down"},
-            "north": {"uv": [0, 14, 16, 16], "texture": "#t"}, "south": {"uv": [0, 14, 16, 16], "texture": "#t"},
-            "east": {"uv": [0, 14, 16, 16], "texture": "#t"}, "west": {"uv": [0, 14, 16, 16], "texture": "#t"}}}],
-    }
 
 
 def m_laserstrahl() -> dict:
@@ -421,8 +366,6 @@ def bs_einfach(modell: str) -> dict:
     return {"variants": {"": {"model": modell}}}
 
 
-def bs_offen(modell: str) -> dict:
-    return {"variants": {"open=false": {"model": modell}, "open=true": {"model": f"{NS}:block/leer"}}}
 
 
 def B(name: str) -> str:
@@ -461,27 +404,12 @@ BLOECKE: dict[str, dict] = {
                         zustand=bs_waagerecht(B("tuerklingel")), de="Türklingel", en="Doorbell"),
     "torsteuerung": dict(modelle={"torsteuerung": m_wuerfel(B("torsteuerung"))}, zustand=bs_einfach(B("torsteuerung")),
                          de="Torsteuerung", en="Gate Controller"),
-    "tor": dict(modelle={"tor": m_wuerfel(B("tor"))}, zustand=bs_offen(B("tor")), de="Tor", en="Gate"),
-    "garagentor": dict(modelle={"garagentor": m_wuerfel(B("garagentor"))}, zustand=bs_offen(B("garagentor")),
-                       de="Garagentor", en="Garage Door"),
-    "rollladen": dict(modelle={"rollladen": m_wuerfel(B("rollladen"))}, zustand=bs_offen(B("rollladen")),
-                      de="Rollladen", en="Security Shutter"),
-    "schiebetuer": dict(modelle={"schiebetuer": m_wuerfel(B("schiebetuer"))}, zustand=bs_offen(B("schiebetuer")),
-                        de="Schiebetür", en="Sliding Door"),
-    "panzertuer": dict(modelle={"panzertuer": m_wuerfel(B("panzertuer"))}, zustand=bs_offen(B("panzertuer")),
-                       de="Panzertür", en="Blast Door"),
-    "poolabdeckung": dict(modelle={"poolabdeckung": m_flach(B("poolabdeckung"))}, zustand=bs_offen(B("poolabdeckung")),
-                          de="Poolabdeckung", en="Pool Cover"),
-    "geheimregal": dict(modelle={"geheimregal": m_saeule("minecraft:block/bookshelf", "minecraft:block/oak_planks")},
-                        zustand=bs_offen(B("geheimregal")), werkzeug="axe", de="Geheimregal", en="Secret Bookshelf"),
     "geheimschalter": dict(modelle={"geheimschalter": m_saeule("minecraft:block/bookshelf", "minecraft:block/oak_planks")},
                            zustand=bs_einfach(B("geheimschalter")), werkzeug="axe", de="Geheimschalter", en="Secret Switch"),
     "aufzugstafel": dict(modelle={"aufzugstafel": m_wandplatte(B("aufzugstafel"), B("aufzugstafel"))},
                          zustand=bs_waagerecht(B("aufzugstafel")), de="Aufzugstafel", en="Elevator Panel"),
     "fallenplatte": dict(modelle={"fallenplatte": m_wuerfel("minecraft:block/gold_block")}, zustand=bs_einfach(B("fallenplatte")),
                          de="Fallenplatte", en="Trap Plate"),
-    "gitterfalle": dict(modelle={"gitterfalle": m_wuerfel(B("gitterfalle"))}, zustand=bs_offen(B("gitterfalle")),
-                        de="Gitterfalle", en="Cage Trap"),
     "entschaerfknopf": dict(modelle={"entschaerfknopf": m_wuerfel("minecraft:block/deepslate_bricks")},
                             zustand=bs_einfach(B("entschaerfknopf")), de="Entschärfknopf", en="Hidden Disarm Button"),
     "kamera": dict(modelle={"kamera": m_kamera()}, zustand=bs_waagerecht(B("kamera")), de="Überwachungskamera", en="Security Camera"),
@@ -615,6 +543,15 @@ def main() -> None:
                   {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/zugangskarte"}})
     schreibe_json(ASSETS / "items/zugangskarte.json",
                   {"model": {"type": "minecraft:model", "model": f"{NS}:item/zugangskarte"}})
+    # Türen und Torflügel (eigener Generator), dann gemeinsame Werkzeug-Listen und Namen
+    t = tueren.main()
+    for werkzeug, liste in t["werkzeuge"].items():
+        werkzeuge[werkzeug] += liste
+    TEXTE_DE.update(t["de"])
+    TEXTE_EN.update(t["en"])
+    g = gemaelde.main()
+    TEXTE_DE.update(g["de"])
+    TEXTE_EN.update(g["en"])
     for werkzeug, liste in werkzeuge.items():
         schreibe_json(RES / f"data/minecraft/tags/block/mineable/{werkzeug}.json", {"replace": False, "values": liste})
 

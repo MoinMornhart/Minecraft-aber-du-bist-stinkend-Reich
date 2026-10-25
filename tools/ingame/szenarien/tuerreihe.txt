@@ -1,0 +1,26 @@
+# Die vier Klapptüren nebeneinander in einer weißen Wand (Prunk-, Glas-, Stahl-, Bunkertür; rechts Prunktür offen)
+server /gamemode creative
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 30 26 90 0 10
+warte 1
+server /fill ~-2 ~-1 ~3 ~10 ~3 ~3 minecraft:white_concrete
+server /fill ~-2 ~-1 ~2 ~10 ~-1 ~-1 minecraft:polished_andesite
+server /setblock ~0 ~ ~3 stinkendreich:prunktuer[half=lower,facing=north]
+server /setblock ~0 ~1 ~3 stinkendreich:prunktuer[half=upper,facing=north]
+server /setblock ~2 ~ ~3 stinkendreich:glastuer[half=lower,facing=north]
+server /setblock ~2 ~1 ~3 stinkendreich:glastuer[half=upper,facing=north]
+server /setblock ~4 ~ ~3 stinkendreich:stahltuer[half=lower,facing=north]
+server /setblock ~4 ~1 ~3 stinkendreich:stahltuer[half=upper,facing=north]
+server /setblock ~6 ~ ~3 stinkendreich:bunkertuer[half=lower,facing=north]
+server /setblock ~6 ~1 ~3 stinkendreich:bunkertuer[half=upper,facing=north]
+server /setblock ~8 ~ ~3 stinkendreich:prunktuer[half=lower,facing=north,open=true]
+server /setblock ~8 ~1 ~3 stinkendreich:prunktuer[half=upper,facing=north,open=true]
+server /gamemode spectator
+server /villa ort 34.5 25.6 85.5 0 4
+warte 4
+bild t17_tuerreihe
+server /villa ort 31.5 25.8 89.4 -15 3
+warte 2
+bild t18_prunktuer_nah

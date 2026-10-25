@@ -9,6 +9,7 @@ import de.moinmornhart.stinkendreich.client.update.UpdateKlient;
 import de.moinmornhart.stinkendreich.client.bildschirm.ButlerBildschirm;
 import de.moinmornhart.stinkendreich.client.butler.ButlerModell;
 import de.moinmornhart.stinkendreich.client.butler.ButlerRenderer;
+import de.moinmornhart.stinkendreich.register.ModBloecke;
 import de.moinmornhart.stinkendreich.register.ModEntities;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import de.moinmornhart.stinkendreich.client.bildschirm.KameraBildschirm;
@@ -34,6 +35,10 @@ public class StinkendReichClient implements ClientModInitializer {
         KlientBruecke.aufzug = pos -> KompatClient.zeige(new AufzugBildschirm(pos));
         KlientBruecke.monitor = pos -> KompatClient.zeige(new KameraBildschirm(pos));
         KlientBruecke.butler = id -> KompatClient.zeige(new ButlerBildschirm(id));
+
+        // Türen und Tore mit durchsichtigen Stellen
+        KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
+                ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER);
 
         // Butler: eigenes Modell (Fabric hat die Klasse dafür in 26.x umbenannt) und Renderer
         //? if >=26.1 {

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_left_open",
+  "textures": {
+    "bottom": "stinkendreich:block/tueren/glastuer_unten",
+    "top": "stinkendreich:block/tueren/glastuer_oben"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:yacht",
+  "width": 4,
+  "height": 2,
+  "title": {
+    "translate": "painting.stinkendreich.yacht.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.yacht.author",
+    "color": "gray"
+  }
+}

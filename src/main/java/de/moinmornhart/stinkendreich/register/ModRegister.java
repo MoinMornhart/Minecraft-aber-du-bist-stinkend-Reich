@@ -7,10 +7,13 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
+import de.moinmornhart.stinkendreich.mechanik.ZiertuerBlock;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +47,19 @@ public final class ModRegister {
             ip = ip.setId(ResourceKey.create(Registries.ITEM, id)).useBlockDescriptionPrefix();
             ALLE_ITEMS.add(Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, ip)));
         }
+        return block;
+    }
+
+    /** Registriert eine zweiteilige Tür samt Item, das beide Hälften setzt. */
+    public static Block tuer(String name, BlockSetType art, BlockBehaviour.Properties eigenschaften) {
+        Identifier id = StinkendReich.id(name);
+        //? if >=1.21.2
+        eigenschaften.setId(ResourceKey.create(Registries.BLOCK, id));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, id, new ZiertuerBlock(art, eigenschaften));
+        Item.Properties ip = new Item.Properties();
+        //? if >=1.21.2
+        ip = ip.setId(ResourceKey.create(Registries.ITEM, id)).useBlockDescriptionPrefix();
+        ALLE_ITEMS.add(Registry.register(BuiltInRegistries.ITEM, id, new DoubleHighBlockItem(block, ip)));
         return block;
     }
 

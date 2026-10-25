@@ -17,6 +17,19 @@ public final class KompatClient {
     private KompatClient() {
     }
 
+    /**
+     * Blöcke mit durchsichtigen Pixeln (Gitter, Glas, Türen) im Ausschnitt-Modus zeichnen, sonst wären die
+     * Lücken schwarz. Ab 26.1 erkennt das Spiel das an der Textur selbst; vorher braucht es die Fabric-Liste,
+     * die mit 1.21.6 umgezogen ist.
+     */
+    public static void durchsichtig(net.minecraft.world.level.block.Block... bloecke) {
+        //? if <1.21.6 {
+        /*net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap.INSTANCE.putBlocks(net.minecraft.client.renderer.RenderType.cutout(), bloecke);
+        *///?} else if <26.1 {
+        /*net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap.putBlocks(net.minecraft.client.renderer.chunk.ChunkSectionLayer.CUTOUT, bloecke);
+        *///?}
+    }
+
     /** Zeigt eine Nachricht nur lokal im Chat an. */
     public static void chatNachricht(Minecraft client, Component text) {
         //? if >=26.2 {

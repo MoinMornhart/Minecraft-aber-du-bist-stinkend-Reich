@@ -1,5 +1,6 @@
 package de.moinmornhart.stinkendreich.register;
 
+import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.mechanik.AlarmsireneBlock;
 import de.moinmornhart.stinkendreich.mechanik.AufzugstafelBlock;
@@ -18,6 +19,7 @@ import de.moinmornhart.stinkendreich.mechanik.MonitorBlock;
 import de.moinmornhart.stinkendreich.mechanik.SicherheitszentraleBlock;
 import de.moinmornhart.stinkendreich.mechanik.TastenfeldBlock;
 import de.moinmornhart.stinkendreich.mechanik.TorfluegelBlock;
+import de.moinmornhart.stinkendreich.mechanik.TorfluegelBlock.Form;
 import de.moinmornhart.stinkendreich.mechanik.TorsteuerungBlock;
 import de.moinmornhart.stinkendreich.mechanik.TuerklingelBlock;
 import de.moinmornhart.stinkendreich.mechanik.WarnleuchteBlock;
@@ -29,6 +31,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.material.MapColor;
 
 import static de.moinmornhart.stinkendreich.register.ModRegister.block;
 
@@ -41,6 +45,16 @@ public final class ModBloecke {
      */
     private static BlockBehaviour.Properties technik() {
         return BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.METAL).noOcclusion().forceSolidOn();
+    }
+
+    /** Torflügel: Feld eines Tores, einer Tür oder Abdeckung, das sich animiert öffnet (siehe {@link TorfluegelBlock}). */
+    private static Block fluegel(String name, boolean offenAmAnfang, Form form, BlockBehaviour.Properties eigenschaften) {
+        return block(name, p -> new TorfluegelBlock(p, offenAmAnfang, form), eigenschaften);
+    }
+
+    /** Grundeigenschaften der Türen; Wasser zählt Türen ohnehin als Sperre. */
+    private static BlockBehaviour.Properties tuer(MapColor farbe, SoundType klang) {
+        return BlockBehaviour.Properties.of().mapColor(farbe).sound(klang).noOcclusion().pushReaction(Kompat.ZERBRICHT_BEIM_SCHIEBEN);
     }
 
     private static BlockBehaviour.Properties stein() {
@@ -62,14 +76,14 @@ public final class ModBloecke {
     public static final Block TASTENFELD = block("tastenfeld", TastenfeldBlock::new, technik());
     public static final Block TUERKLINGEL = block("tuerklingel", TuerklingelBlock::new, technik());
     public static final Block TORSTEUERUNG = block("torsteuerung", TorsteuerungBlock::new, technik());
-    public static final Block TOR = block("tor", p -> new TorfluegelBlock(p, false, false), technik().strength(50.0F, 1200.0F));
-    public static final Block GARAGENTOR = block("garagentor", p -> new TorfluegelBlock(p, false, false), technik().strength(50.0F, 1200.0F));
-    public static final Block ROLLLADEN = block("rollladen", p -> new TorfluegelBlock(p, true, false), technik().strength(50.0F, 1200.0F));
-    public static final Block SCHIEBETUER = block("schiebetuer", p -> new TorfluegelBlock(p, false, false),
-            technik().sound(SoundType.GLASS).strength(50.0F, 1200.0F));
-    public static final Block PANZERTUER = block("panzertuer", p -> new TorfluegelBlock(p, true, false), technik().strength(80.0F, 3600000.0F));
-    public static final Block POOLABDECKUNG = block("poolabdeckung", p -> new TorfluegelBlock(p, true, true), technik());
-    public static final Block GEHEIMREGAL = block("geheimregal", p -> new TorfluegelBlock(p, false, false),
+    public static final Block TOR = fluegel("tor", false, Form.DUENN, technik().strength(50.0F, 1200.0F));
+    public static final Block GARAGENTOR = fluegel("garagentor", false, Form.DUENN, technik().strength(50.0F, 1200.0F));
+    public static final Block ROLLLADEN = fluegel("rollladen", true, Form.DUENN, technik().strength(50.0F, 1200.0F));
+    public static final Block SCHIEBETUER = fluegel("schiebetuer", false, Form.DUENN, technik().sound(SoundType.GLASS).strength(50.0F, 1200.0F));
+    public static final Block PANZERTUER = fluegel("panzertuer", true, Form.DUENN, technik().strength(80.0F, 3600000.0F));
+    public static final Block TRESORTUER = fluegel("tresortuer", false, Form.DUENN, technik().strength(80.0F, 3600000.0F));
+    public static final Block POOLABDECKUNG = fluegel("poolabdeckung", true, Form.FLACH, technik());
+    public static final Block GEHEIMREGAL = fluegel("geheimregal", false, Form.VOLL,
             BlockBehaviour.Properties.of().strength(1.5F).sound(SoundType.WOOD).noOcclusion().forceSolidOn());
     public static final Block GEHEIMSCHALTER = block("geheimschalter", GeheimschalterBlock::new,
             BlockBehaviour.Properties.of().strength(1.5F).sound(SoundType.WOOD));
@@ -78,12 +92,24 @@ public final class ModBloecke {
     public static final Block AUFZUGSTAFEL = block("aufzugstafel", AufzugstafelBlock::new, technik());
     public static final Block FALLENPLATTE = block("fallenplatte", FallenplatteBlock::new,
             BlockBehaviour.Properties.of().strength(3.0F, 1200.0F).sound(SoundType.METAL).forceSolidOn());
-    public static final Block GITTERFALLE = block("gitterfalle", p -> new TorfluegelBlock(p, true, false), technik().strength(80.0F, 3600000.0F));
+    public static final Block GITTERFALLE = fluegel("gitterfalle", true, Form.DUENN, technik().strength(80.0F, 3600000.0F));
     public static final Block ENTSCHAERFKNOPF = block("entschaerfknopf", EntschaerfknopfBlock::new, stein());
     public static final Block KAMERA = block("kamera", KameraBlock::new, technik());
     public static final Block MONITOR = block("monitor", MonitorBlock::new, technik().lightLevel(s -> 6));
     public static final Block WHIRLPOOLDUESE = block("whirlpoolduese", WhirlpoolduseBlock::new, technik().lightLevel(s -> 10));
     public static final Block KAMINSTEUERUNG = block("kaminsteuerung", KaminsteuerungBlock::new, technik());
+
+    // ---------- Türen zum Aufklappen (wie Holz- und Eisentüren) ----------
+    /** Weiß lackiert mit Goldbeschlägen, für Wohnräume. */
+    public static final Block PRUNKTUER = ModRegister.tuer("prunktuer", BlockSetType.OAK, tuer(MapColor.SNOW, SoundType.WOOD).strength(3.0F));
+    /** Glas im Goldrahmen, für Balkon und Dachterrasse. */
+    public static final Block GLASTUER = ModRegister.tuer("glastuer", BlockSetType.CHERRY, tuer(MapColor.GOLD, SoundType.GLASS).strength(3.0F));
+    /** Genietete Stahltür, lässt sich von Hand öffnen (Bunker, Technikräume). */
+    public static final Block STAHLTUER = ModRegister.tuer("stahltuer", BlockSetType.COPPER,
+            tuer(MapColor.METAL, SoundType.METAL).strength(5.0F).requiresCorrectToolForDrops());
+    /** Bunkertür mit Schloss und Riegeln: nur per Redstone, Kartenleser oder Tastenfeld. */
+    public static final Block BUNKERTUER = ModRegister.tuer("bunkertuer", BlockSetType.IRON,
+            tuer(MapColor.METAL, SoundType.METAL).strength(80.0F, 3600000.0F).requiresCorrectToolForDrops());
 
     /** Eine gemeinsame Block-Entity für alle Mechanik-Blöcke. */
     public static final BlockEntityType<MechanikBlockEntity> MECHANIK_TYP = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,

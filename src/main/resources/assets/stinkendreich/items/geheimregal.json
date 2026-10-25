@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "stinkendreich:block/geheimregal"
+    "model": "stinkendreich:block/tueren/geheimregal_0"
   }
 }

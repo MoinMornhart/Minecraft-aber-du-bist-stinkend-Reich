@@ -1,0 +1,13 @@
+{
+  "asset_id": "stinkendreich:bonzenauto",
+  "width": 3,
+  "height": 2,
+  "title": {
+    "translate": "painting.stinkendreich.bonzenauto.title",
+    "color": "yellow"
+  },
+  "author": {
+    "translate": "painting.stinkendreich.bonzenauto.author",
+    "color": "gray"
+  }
+}

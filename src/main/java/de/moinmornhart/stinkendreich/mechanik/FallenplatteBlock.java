@@ -65,8 +65,8 @@ public class FallenplatteBlock extends MechanikBlock {
     private static void gitterSetzen(ServerLevel welt, BlockPos mitte, boolean offen) {
         for (BlockPos p : BlockPos.betweenClosed(mitte.offset(-RADIUS_GITTER, -3, -RADIUS_GITTER), mitte.offset(RADIUS_GITTER, 4, RADIUS_GITTER))) {
             BlockState s = welt.getBlockState(p);
-            if (s.is(ModBloecke.GITTERFALLE) && s.getValue(Eigenschaften.OFFEN) != offen) {
-                welt.setBlock(p, s.setValue(Eigenschaften.OFFEN, offen), 3);
+            if (s.is(ModBloecke.GITTERFALLE)) {
+                TorfluegelBlock.setzeOffen(welt, p, s, offen);
             }
         }
     }

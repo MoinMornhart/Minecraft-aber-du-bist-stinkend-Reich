@@ -1,0 +1,79 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/tueren/poolabdeckung",
+    "t": "stinkendreich:block/tueren/poolabdeckung"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        0
+      ],
+      "to": [
+        21,
+        2,
+        16
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#t"
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#t"
+        },
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            0.5
+          ],
+          "texture": "#t"
+        },
+        "south": {
+          "uv": [
+            8,
+            3.5,
+            12,
+            4
+          ],
+          "texture": "#t"
+        },
+        "east": {
+          "uv": [
+            11.5,
+            0,
+            12,
+            4
+          ],
+          "texture": "#t",
+          "rotation": 90
+        },
+        "west": {
+          "uv": [
+            8,
+            0,
+            8.5,
+            4
+          ],
+          "texture": "#t",
+          "rotation": 90
+        }
+      }
+    }
+  ]
+}

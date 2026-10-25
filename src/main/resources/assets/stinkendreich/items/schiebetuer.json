@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "stinkendreich:block/schiebetuer"
+    "model": "stinkendreich:block/tueren/schiebetuer_einzeln_einzeln_0"
   }
 }

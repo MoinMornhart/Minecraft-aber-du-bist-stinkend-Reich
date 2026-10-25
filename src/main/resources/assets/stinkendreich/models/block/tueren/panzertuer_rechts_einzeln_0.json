@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/tueren/panzertuer",
+    "t": "stinkendreich:block/tueren/panzertuer"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        6
+      ],
+      "to": [
+        16,
+        16,
+        10
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            8,
+            12,
+            12,
+            16
+          ],
+          "texture": "#t"
+        },
+        "north": {
+          "uv": [
+            12,
+            12,
+            8,
+            16
+          ],
+          "texture": "#t"
+        },
+        "east": {
+          "uv": [
+            11,
+            12,
+            12,
+            16
+          ],
+          "texture": "#t"
+        },
+        "west": {
+          "uv": [
+            8,
+            12,
+            9,
+            16
+          ],
+          "texture": "#t"
+        },
+        "up": {
+          "uv": [
+            8,
+            12,
+            12,
+            13
+          ],
+          "texture": "#t"
+        },
+        "down": {
+          "uv": [
+            8,
+            15,
+            12,
+            16
+          ],
+          "texture": "#t"
+        }
+      }
+    }
+  ]
+}

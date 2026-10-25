@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_right",
+  "textures": {
+    "bottom": "stinkendreich:block/tueren/bunkertuer_unten",
+    "top": "stinkendreich:block/tueren/bunkertuer_oben"
+  }
+}

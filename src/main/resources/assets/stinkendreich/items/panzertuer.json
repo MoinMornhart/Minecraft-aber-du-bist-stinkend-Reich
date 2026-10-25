@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "stinkendreich:block/panzertuer"
+    "model": "stinkendreich:block/tueren/panzertuer_einzeln_einzeln_0"
   }
 }

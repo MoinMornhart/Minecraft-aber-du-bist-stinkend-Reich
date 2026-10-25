@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/tueren/schiebetuer",
+    "t": "stinkendreich:block/tueren/schiebetuer"
+  },
+  "elements": [
+    {
+      "from": [
+        11,
+        0,
+        6
+      ],
+      "to": [
+        27,
+        16,
+        10
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            4,
+            12,
+            8,
+            16
+          ],
+          "texture": "#t"
+        },
+        "north": {
+          "uv": [
+            8,
+            12,
+            4,
+            16
+          ],
+          "texture": "#t"
+        },
+        "east": {
+          "uv": [
+            7,
+            12,
+            8,
+            16
+          ],
+          "texture": "#t"
+        },
+        "west": {
+          "uv": [
+            4,
+            12,
+            5,
+            16
+          ],
+          "texture": "#t"
+        },
+        "up": {
+          "uv": [
+            4,
+            12,
+            8,
+            13
+          ],
+          "texture": "#t"
+        },
+        "down": {
+          "uv": [
+            4,
+            15,
+            8,
+            16
+          ],
+          "texture": "#t"
+        }
+      }
+    }
+  ]
+}
