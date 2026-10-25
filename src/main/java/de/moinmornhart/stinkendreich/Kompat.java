@@ -30,6 +30,14 @@ public final class Kompat {
         /*e.moveTo(x, y, z, gier, neigung);*/
     }
 
+    /** Steigt ein, auch wenn das Fahrzeug das sonst nicht zuließe (z. B. der Butler ins Auto). Ab 1.21.9 mit drittem Wert. */
+    public static void einsteigen(net.minecraft.world.entity.Entity e, net.minecraft.world.entity.Entity fahrzeug) {
+        //? if >=1.21.9 {
+        e.startRiding(fahrzeug, true, true);
+        //?} else
+        /*e.startRiding(fahrzeug, true);*/
+    }
+
     /** Ob dieser Rechner die Bewegung der Entity bestimmt (z. B. der Klient des Fahrers). Ab 1.21.5 umbenannt. */
     public static boolean lokalGesteuert(net.minecraft.world.entity.Entity e) {
         //? if >=1.21.5 {

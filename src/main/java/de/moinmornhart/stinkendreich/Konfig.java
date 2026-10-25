@@ -55,6 +55,8 @@ public final class Konfig {
     // ---------- Bonzenauto ----------
     /** Höchstgeschwindigkeit des Bonzenautos in km/h. */
     public double autoHoechstTempo = 110.0;
+    /** Höchstgeschwindigkeit, wenn der Butler chauffiert (km/h). */
+    public double chauffeurTempo = 60.0;
 
     // ---------- Musik ----------
     /** Hörweite rund um die Musikanlage und jeden ihrer Lautsprecher (Blöcke). */
@@ -115,6 +117,7 @@ public final class Konfig {
         erklaerung.put("butlerAnrede", "Chat-Nachrichten, die mit diesem Wort oder dem Butler-Namen beginnen, gehen an den Butler");
         erklaerung.put("anthropicApiKey", "API-Key von console.anthropic.com für den Butler-Chat. Leer lassen = ohne Claude");
         erklaerung.put("butlerModell", "Claude-Modell für den Butler");
+        erklaerung.put("chauffeurTempo", "So schnell fährt der Butler als Chauffeur höchstens, in km/h");
         erklaerung.put("autoHoechstTempo", "Höchstgeschwindigkeit des Bonzenautos in km/h (zum Vergleich: Sprinten sind etwa 20 km/h)");
         erklaerung.put("musikRadius", "Hörweite der Musikanlage und jedes Lautsprechers in Blöcken");
         erklaerung.put("lautsprecherRadius", "Lautsprecher in diesem Umkreis um eine Musikanlage spielen mit (Blöcke)");

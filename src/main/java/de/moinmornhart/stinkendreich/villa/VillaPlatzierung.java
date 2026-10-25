@@ -149,6 +149,7 @@ public final class VillaPlatzierung {
         StructureTemplate vorlage = Kompat.strukturen(server).get(StinkendReich.id("villa/villa"))
                 .orElseThrow(() -> new IllegalStateException("Strukturdatei villa/villa.nbt fehlt"));
         vorlage.placeInWorld(welt, ursprung, ursprung, new StructurePlaceSettings(), welt.getRandom(), Block.UPDATE_CLIENTS);
+        zufahrtBauen(welt, ursprung, plan, y0, rand);
 
         VillaInfo villa = new VillaInfo(ursprung, plan);
         Kompat.setzeSpawnPunkt(welt, villa.spawn(), villa.spawnBlick());
@@ -254,6 +255,72 @@ public final class VillaPlatzierung {
      * Ebnet das Grundstück auf y0 und blendet ringsum über {@code rand} Blöcke weich ins Gelände über.
      * Bäume und Pflanzen auf der Fläche werden entfernt; Wasser außerhalb des Grundstücks bleibt Wasser.
      */
+    /** Zufahrt vor der Brücke (Strukturkoordinaten): Fahrbahn x 52–59, Bordsteine bei 51 und 60. */
+    private static final int ZUFAHRT_X0 = 51, ZUFAHRT_X1 = 60;
+
+    /**
+     * Gepflasterte Zufahrt vom Ende der Brücke nach Süden ins Gelände. Sie steigt oder fällt höchstens
+     * einen Block pro Block (so kommen Autos und der Chauffeur hinauf), wird bei Bedarf aufgeschüttet und
+     * endet, sobald sie das natürliche Gelände erreicht hat (mindestens so lang wie die Anblendung).
+     */
+    private static void zufahrtBauen(ServerLevel welt, BlockPos ursprung, VillaDaten plan, int y0, int rand) {
+        BlockState fahrbahn = Kompat.blockNachId(net.minecraft.resources.Identifier.withDefaultNamespace("gray_concrete")).defaultBlockState();
+        BlockState bord = Blocks.POLISHED_ANDESITE.defaultBlockState();
+        BlockState stein = Blocks.STONE.defaultBlockState();
+        BlockState luft = Blocks.AIR.defaultBlockState();
+        int flags = Block.UPDATE_CLIENTS;
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        int start = ursprung.getZ() + plan.breiteZ;
+        int mitte = ursprung.getX() + (ZUFAHRT_X0 + ZUFAHRT_X1) / 2;
+        int hoehe = y0;     // begehbare Höhe der Fahrbahn
+        int vorher = y0;
+        BlockState stufe = Blocks.POLISHED_ANDESITE_SLAB.defaultBlockState();
+        for (int i = 0; i < rand + 40; i++) {
+            int z = start + i;
+            int natur = bodenHoehe(welt, mitte, z);
+            if (i >= rand + 2 && natur == hoehe) {
+                break;  // im Gelände angekommen
+            }
+            vorher = hoehe;
+            hoehe += Mth.clamp(natur - hoehe, -1, 1);
+            for (int x = ursprung.getX() + ZUFAHRT_X0; x <= ursprung.getX() + ZUFAHRT_X1; x++) {
+                boolean rand_ = x == ursprung.getX() + ZUFAHRT_X0 || x == ursprung.getX() + ZUFAHRT_X1;
+                // Unterbau bis zum Boden (höchstens 12 Blöcke), Belag, darüber vier Blöcke frei
+                for (int y = hoehe - 2; y > hoehe - 14; y--) {
+                    p.set(x, y, z);
+                    BlockState alt = welt.getBlockState(p);
+                    if (!alt.isAir() && alt.getFluidState().isEmpty() && !alt.canBeReplaced()) {
+                        break;
+                    }
+                    welt.setBlock(p, stein, flags);
+                }
+                welt.setBlock(p.set(x, hoehe - 1, z), rand_ ? bord : fahrbahn, flags);
+                for (int y = hoehe; y < hoehe + 5; y++) {
+                    if (!welt.getBlockState(p.set(x, y, z)).isAir()) {
+                        welt.setBlock(p, luft, flags);
+                    }
+                }
+            }
+            // Stufen mit einer halben Platte auf dem tieferen Feld weicher machen
+            if (hoehe != vorher) {
+                int zTief = hoehe > vorher ? z - 1 : z, yTief = Math.min(hoehe, vorher);
+                for (int x = ursprung.getX() + ZUFAHRT_X0 + 1; x < ursprung.getX() + ZUFAHRT_X1; x++) {
+                    if (welt.getBlockState(p.set(x, yTief, zTief)).isAir()) {
+                        welt.setBlock(p, stufe, flags);
+                    }
+                }
+            }
+            // Laternen am Rand
+            if (i % 6 == 3) {
+                for (int x : new int[]{ursprung.getX() + ZUFAHRT_X0 - 1, ursprung.getX() + ZUFAHRT_X1 + 1}) {
+                    welt.setBlock(p.set(x, hoehe - 1, z), bord, flags);
+                    welt.setBlock(p.set(x, hoehe, z), Blocks.POLISHED_BLACKSTONE_WALL.defaultBlockState(), Block.UPDATE_ALL);
+                    welt.setBlock(p.set(x, hoehe + 1, z), Blocks.LANTERN.defaultBlockState(), Block.UPDATE_ALL);
+                }
+            }
+        }
+    }
+
     private static void gelaendeFormen(ServerLevel welt, int x0, int z0, int bx, int bz, int y0, int rand) {
         BlockState gras = Blocks.GRASS_BLOCK.defaultBlockState();
         BlockState erde = Blocks.DIRT.defaultBlockState();

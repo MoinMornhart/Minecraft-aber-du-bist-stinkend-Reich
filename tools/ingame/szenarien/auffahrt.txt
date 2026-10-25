@@ -1,0 +1,9 @@
+server /gamemode spectator
+server /time set noon
+taste F1
+server /villa ort 66 34 128 135 25
+warte 8
+bild c07_auffahrt
+server /villa ort 60 30 140 160 20
+warte 2
+bild c08_auffahrt_oben

@@ -1,0 +1,41 @@
+# Butler als Chauffeur: Ort auf der Auffahrt merken, Wagen vorfahren lassen, durchs Tor zum Ort und zurück
+server /gamemode creative
+server /time set noon
+server /weather clear
+taste F1
+# Ort „Strand“ am Ende der Auffahrt vor der Brücke (Spieler fällt auf den Boden)
+server /villa ort 55.5 45 126 0 0
+warte 4
+server Butler, merk dir den Ort als Strand
+warte 2
+# Auf dem Vorplatz: Limo vorfahren lassen und einsteigen
+server /villa ort 55.5 26 86 0 15
+warte 2
+merke
+server Butler, hol den Wagen
+bis 20 vorgefahren
+warte 3
+bild c01_vorgefahren
+server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
+warte 3
+bild c02_eingestiegen
+merke
+server Butler, fahr mich zum Strand
+warte 7
+bild c03_durchs_tor
+bis 80 Wir sind da|nicht weiter
+warte 1
+bild c04_angekommen
+merke
+server Butler, fahr mich nach Hause
+warte 8
+bild c05_heimweg
+bis 120 Wir sind da|nicht weiter
+warte 1
+bild c06_zuhause
+# Von außen: die Auffahrt
+taste F5
+server /gamemode spectator
+server /villa ort 66 34 128 135 25
+warte 3
+bild c07_auffahrt

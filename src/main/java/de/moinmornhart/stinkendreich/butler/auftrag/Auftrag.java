@@ -60,6 +60,7 @@ public abstract class Auftrag {
             case VorratAuftrag.TYP -> VorratAuftrag.ausJson(j);
             case SortierAuftrag.TYP -> SortierAuftrag.ausJson(j);
             case GehAuftrag.TYP -> GehAuftrag.ausJson(j);
+            case FahrAuftrag.TYP -> FahrAuftrag.ausJson(j);
             default -> null;
         };
     }

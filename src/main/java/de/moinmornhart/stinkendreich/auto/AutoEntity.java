@@ -66,6 +66,8 @@ public class AutoEntity extends Mob {
 
     // Fahrzustand (auf dem steuernden Rechner)
     private double tempo;
+    /** Gas (-1…1) und Lenkung (-1 rechts … 1 links) vom Chauffeur, wenn der Butler fährt (Server). */
+    private double chauffeurGas, chauffeurLenk;
     private double lenkung;
     private Vec3 schub = Vec3.ZERO;
     private boolean driftet;
@@ -163,15 +165,76 @@ public class AutoEntity extends Mob {
         return getPassengers().size() < art.sitze.length;
     }
 
+    /**
+     * Fahrer: sitzt der Butler im Wagen, fährt er (Minecraft setzt einsteigende Spieler sonst immer auf
+     * den ersten Platz der Insassenliste); sonst der Spieler auf Platz 0.
+     */
     @Override
     public LivingEntity getControllingPassenger() {
+        de.moinmornhart.stinkendreich.butler.ButlerEntity butler = chauffeur();
+        if (butler != null) {
+            return butler;
+        }
         return getFirstPassenger() instanceof Player p ? p : null;
     }
 
-    /** Sitze je Fahrzeug (siehe {@link Autotyp}); Platz 0 ist der Fahrer. */
+    /** Der Butler, falls er im Wagen sitzt (dann am Steuer). */
+    public de.moinmornhart.stinkendreich.butler.ButlerEntity chauffeur() {
+        for (Entity e : getPassengers()) {
+            if (e instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity b) {
+                return b;
+            }
+        }
+        return null;
+    }
+
+    /** Fährt gerade der Butler? */
+    public boolean chauffeurFaehrt() {
+        return chauffeur() != null;
+    }
+
+    /** Eingaben des Chauffeurs für den nächsten Tick (siehe {@code butler.Chauffeur}). */
+    public void chauffeurEingabe(double gas, double lenk) {
+        chauffeurGas = Mth.clamp(gas, -1, 1);
+        chauffeurLenk = Mth.clamp(lenk, -1, 1);
+    }
+
+    /** Aktuelle Geschwindigkeit in Blöcken pro Tick (vorwärts positiv). */
+    public double tempo() {
+        return tempo;
+    }
+
+    /** Höchstgeschwindigkeit dieses Wagens in Blöcken pro Tick. */
+    public double hoechstTempo() {
+        return Math.max(0.3, Konfig.get().autoHoechstTempo / 72.0 * art.tempo);
+    }
+
+    /**
+     * Sitze je Fahrzeug (siehe {@link Autotyp}); Platz 0 ist der Fahrer. Fährt der Butler, sitzen die Gäste
+     * von hinten nach vorn (in der Limousine also ganz hinten im Fond).
+     */
     @Override
     protected Vec3 getPassengerAttachmentPoint(Entity passagier, EntityDimensions masse, float skala) {
-        int platz = Math.min(art.sitze.length - 1, Math.max(0, getPassengers().indexOf(passagier)));
+        int index = Math.max(0, getPassengers().indexOf(passagier));
+        Entity butler = chauffeur();
+        if (butler != null) {
+            if (passagier == butler) {
+                index = 0;
+            } else {
+                // Gäste der Reihe nach von hinten (der Butler zählt nicht mit)
+                int gast = 0;
+                for (Entity e : getPassengers()) {
+                    if (e == passagier) {
+                        break;
+                    }
+                    if (e != butler) {
+                        gast++;
+                    }
+                }
+                index = art.sitze.length - 1 - gast;
+            }
+        }
+        int platz = Mth.clamp(index, 0, art.sitze.length - 1);
         double[] s = art.sitze[platz];
         return new Vec3(s[0], s[1], s[2]).yRot(-getYRot() * Mth.DEG_TO_RAD);
     }
@@ -291,8 +354,17 @@ public class AutoEntity extends Mob {
             handbremse = level().isClientSide() && KlientBruecke.handbremse.getAsBoolean();
             // Der Fahrer schaut nach vorn, kann sich aber umsehen
             setYHeadRot(getYRot());
+        } else if (fahrer instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity butler) {
+            // Der Butler fährt (nur auf dem Server, er ist dann der steuernde Rechner); ohne Fahrauftrag bremst er
+            if (butler.faehrtGerade()) {
+                gas = chauffeurGas;
+                lenk = chauffeurLenk;
+            } else {
+                gas = tempo > 0.02 ? -1 : (tempo < -0.02 ? 1 : 0);
+            }
+            setYHeadRot(getYRot());
         }
-        double max = Math.max(0.3, Konfig.get().autoHoechstTempo / 72.0 * art.tempo);
+        double max = hoechstTempo();
         double kraft = art.beschleunigung;
 
         // Gas, Bremse, Rückwärtsgang
@@ -374,7 +446,9 @@ public class AutoEntity extends Mob {
         radWinkel += (float) (vor / 0.3125); // Radius 5/16 Block
         if (level().isClientSide()) {
             LivingEntity f = getControllingPassenger();
-            lenkWinkel += ((f instanceof Player p ? p.xxa : 0) * 0.45F - lenkWinkel) * 0.3F;
+            // Lenkrad-Anzeige: beim Spieler aus der Eingabe, beim Chauffeur aus der Kurvenfahrt
+            float soll = f instanceof Player p ? p.xxa : (f != null ? Mth.clamp(-Mth.wrapDegrees(getYRot() - yRotO) / 3.0F, -1, 1) : 0);
+            lenkWinkel += (soll * 0.45F - lenkWinkel) * 0.3F;
             // Reifenqualm beim Driften und beim scharfen Bremsen
             boolean quer = gefahren > 0.3 && Math.abs(vor) < gefahren * 0.92;
             if (quer || driftet) {

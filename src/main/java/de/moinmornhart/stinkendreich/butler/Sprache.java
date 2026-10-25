@@ -15,9 +15,16 @@ import java.util.regex.Pattern;
  * Butlers; mit Claude (API-Key in der Config) versteht er auch freie Sätze.
  */
 public final class Sprache {
-    public enum Art { HOLEN, KOCHEN, SORTIEREN, FOLGEN, BLEIBEN, HEIM, KOMMEN, STOPP, INVENTAR, STATUS, HILFE, UNBEKANNT }
+    public enum Art { HOLEN, KOCHEN, SORTIEREN, FOLGEN, BLEIBEN, HEIM, KOMMEN, STOPP, INVENTAR, STATUS, HILFE,
+        FAHREN, ORT_MERKEN, ORTE, UNBEKANNT }
 
-    /** Ein verstandener Auftrag. {@code menge} ist -1, wenn keine Zahl genannt wurde. */
+    /** Ziele beim Fahren (in {@link Befehl#quelle()}): Villa, Blickziel, nur vorfahren; sonst Name eines Ortes. */
+    public static final String ZIEL_VILLA = "#villa", ZIEL_BLICK = "#blick", ZIEL_ABHOLEN = "#abholen";
+
+    /**
+     * Ein verstandener Auftrag. {@code menge} ist -1, wenn keine Zahl genannt wurde. Beim Fahren und Ortemerken
+     * steht in {@code quelle} das Ziel bzw. der Name des Ortes.
+     */
     public record Befehl(Art art, String quelle, int menge, boolean inTruhe) {
         public static Befehl von(Art art) {
             return new Befehl(art, null, -1, false);
@@ -122,6 +129,30 @@ public final class Sprache {
         if (enthaelt(t, "sortier", "aufraeum", "raeum", "ordne", "ordnung")) {
             return Befehl.von(Art.SORTIEREN);
         }
+        // Chauffeur: Orte merken und auflisten, fahren
+        if (enthaelt(t, "merk dir", "merke dir", "ort merken", "ort speichern", "speicher den ort", "speichere den ort",
+                "speicher diesen ort", "speichere diesen ort")) {
+            return new Befehl(Art.ORT_MERKEN, ortsname(t), -1, false);
+        }
+        if (enthaelt(t, " welche orte", " orte ", "gespeicherte orte", "deine orte")) {
+            return Befehl.von(Art.ORTE);
+        }
+        if (enthaelt(t, "hol den wagen", "hol das auto", "hol die limo", "hol mein auto", "hol meinen wagen", "vorfahren",
+                "wagen holen", "auto holen", "limo holen")) {
+            return new Befehl(Art.FAHREN, ZIEL_ABHOLEN, -1, false);
+        }
+        if (enthaelt(t, " fahr", "chauffier", "kutschier", "bring mich")) {
+            String ziel;
+            if (enthaelt(t, "nach hause", " heim", "zur villa", "zu hause", "zurueck")) {
+                ziel = ZIEL_VILLA;
+            } else if (enthaelt(t, " dahin", " dorthin", " da hin", " dort hin", " hierhin", " wo ich hin", " dahinten", " da vorne")) {
+                ziel = ZIEL_BLICK;
+            } else {
+                String name = ortsname(t);
+                ziel = name.isEmpty() ? ZIEL_BLICK : name;
+            }
+            return new Befehl(Art.FAHREN, ziel, -1, false);
+        }
         int menge = menge(t);
         if (enthaelt(t, "koch", " brat", "grill", " jag")) {
             return new Befehl(Art.KOCHEN, "essen", menge, inTruhe);
@@ -149,6 +180,26 @@ public final class Sprache {
             return Befehl.von(Art.BLEIBEN);
         }
         return Befehl.von(Art.UNBEKANNT);
+    }
+
+    /** Name eines Ortes: was nach „als“, „zu“, „zum“, „nach“ … steht (ohne Artikel und Füllwörter). */
+    private static String ortsname(String text) {
+        String t = " " + text.trim() + " ";
+        int start = -1;
+        for (String w : List.of(" als ", " zum ", " zur ", " zu ", " nach ", " ins ", " in die ", " in den ", " in das ", " namens ", " ort ")) {
+            int i = t.lastIndexOf(w);
+            if (i >= 0 && i + w.length() > start) {
+                start = i + w.length();
+            }
+        }
+        if (start < 0) {
+            return "";
+        }
+        String rest = t.substring(start).trim();
+        for (String f : List.of("bitte", "mal", "jetzt", "sofort", "dem ", "der ", "die ", "das ", "den ", "meinem ", "meiner ", "meinen ")) {
+            rest = rest.replaceAll("(^| )" + f.trim() + "( |$)", " ").trim();
+        }
+        return rest;
     }
 
     private static boolean enthaelt(String text, String... woerter) {

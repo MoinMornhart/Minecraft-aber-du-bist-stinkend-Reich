@@ -1,0 +1,244 @@
+package de.moinmornhart.stinkendreich.butler.auftrag;
+
+import com.google.gson.JsonObject;
+import de.moinmornhart.stinkendreich.Kompat;
+import de.moinmornhart.stinkendreich.auto.AutoEntity;
+import de.moinmornhart.stinkendreich.auto.Autotyp;
+import de.moinmornhart.stinkendreich.butler.ButlerEntity;
+import de.moinmornhart.stinkendreich.butler.Chauffeur;
+import de.moinmornhart.stinkendreich.register.ModSounds;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Der Butler als Chauffeur: setzt sich ans Steuer, wartet, bis der Herr eingestiegen ist (er sitzt hinten),
+ * und fährt ihn zum Ziel (gespeicherter Ort, Villa oder die Stelle, auf die der Herr geschaut hat). Ohne
+ * Ziel („hol den Wagen“) lässt er nur den Wagen vorfahren und wartet am Steuer auf Anweisungen.
+ *
+ * <p>Den Wagen nimmt er in dieser Reihenfolge: den, in dem der Herr sitzt; einen in der Nähe (24 Blöcke);
+ * sonst lässt er einen geladenen Wagen vorfahren (am liebsten die Stretch-Limo).</p>
+ */
+public class FahrAuftrag extends Auftrag {
+    public static final String TYP = "fahren";
+    private static final double NAH = 24.0, VORFAHREN = 256.0;
+
+    private enum Phase { WAGEN, EINSTEIGEN, WARTEN, FAHREN }
+
+    /** Ziel oder null (nur vorfahren). */
+    private final Vec3 ziel;
+    /** Anzeigename des Ziels für Status und Nachrichten. */
+    private final String zielName;
+    private Phase phase = Phase.WAGEN;
+    private AutoEntity auto;
+    private Chauffeur chauffeur;
+    private int warten;
+    /** Der Wagen ist vorgefahren (dann hat James schon „Bitte steigen Sie ein“ gesagt). */
+    private boolean vorgefahren;
+
+    public FahrAuftrag(Vec3 ziel, String zielName) {
+        this.ziel = ziel;
+        this.zielName = zielName;
+    }
+
+    @Override
+    protected Stand tick(ButlerEntity butler) {
+        ServerPlayer herr = butler.besitzerOnline();
+        if (herr == null || herr.level() != butler.level()) {
+            return Stand.FERTIG;
+        }
+        if (auto != null && auto.isRemoved()) {
+            auto = null;
+            phase = Phase.WAGEN;
+        }
+        switch (phase) {
+            case WAGEN -> {
+                auto = wagenFinden(butler, herr);
+                vorgefahren = auto != null && butler.getVehicle() == auto;
+                if (auto == null) {
+                    return fehlschlag(Component.translatable("stinkendreich.butler.fahren.keinwagen"));
+                }
+                phase = Phase.EINSTEIGEN;
+            }
+            case EINSTEIGEN -> {
+                if (butler.distanceTo(auto) > NAH) {
+                    butler.teleportiereNahe(auto.blockPosition());
+                }
+                if (butler.distanceTo(auto) > 3.0 && ticks < 200) {
+                    ButlerEntity.Weg w = butler.gehZu(auto, 2.5);
+                    if (w != ButlerEntity.Weg.UNERREICHBAR && w != ButlerEntity.Weg.DA) {
+                        return Stand.LAEUFT;
+                    }
+                }
+                ansSteuer(butler, auto);
+                phase = Phase.WARTEN;
+                warten = 0;
+                if (!sitztDrin(herr) && !vorgefahren) {
+                    butler.sagen(Component.translatable("stinkendreich.butler.fahren.einsteigen"));
+                }
+            }
+            case WARTEN -> {
+                if (butler.getVehicle() != auto) {
+                    phase = Phase.EINSTEIGEN;
+                    return Stand.LAEUFT;
+                }
+                auto.chauffeurEingabe(auto.tempo() > 0.03 ? -1 : 0, 0);
+                if (sitztDrin(herr)) {
+                    if (ziel == null) {
+                        butler.sagen(Component.translatable("stinkendreich.butler.fahren.wohin"));
+                        return Stand.FERTIG;
+                    }
+                    chauffeur = new Chauffeur(route(auto.position(), ziel), 5.0);
+                    phase = Phase.FAHREN;
+                } else if (++warten > 20 * 90) {
+                    butler.sagen(Component.translatable("stinkendreich.butler.fahren.ausgestiegen"));
+                    return Stand.FERTIG;
+                }
+            }
+            case FAHREN -> {
+                if (butler.getVehicle() != auto) {
+                    return Stand.FERTIG;
+                }
+                if (!sitztDrin(herr)) {
+                    auto.chauffeurEingabe(-1, 0);
+                    butler.sagen(Component.translatable("stinkendreich.butler.fahren.ausgestiegen"));
+                    return Stand.FERTIG;
+                }
+                switch (chauffeur.fahren(auto)) {
+                    case DA -> {
+                        // Angekommen: James steigt aus, der Herr kann selbst weiterfahren
+                        // Erst nach dem Tick aussteigen (nicht mitten im Fahrzeug-Tick)
+                        butler.welt().getServer().execute(butler::stopRiding);
+                        butler.sagen(Component.translatable("stinkendreich.butler.fahren.da"));
+                        return Stand.FERTIG;
+                    }
+                    case FESTGEFAHREN -> {
+                        return fehlschlag(Component.translatable("stinkendreich.butler.fahren.fest"));
+                    }
+                    default -> {
+                    }
+                }
+            }
+        }
+        return Stand.LAEUFT;
+    }
+
+    private boolean sitztDrin(ServerPlayer herr) {
+        return auto != null && herr.getVehicle() == auto;
+    }
+
+    /** Einfahrt der Villa (Strukturkoordinaten): vor der Brücke und hinter dem Tor, mittig auf dem roten Teppich. */
+    private static final double TOR_X = 55.5, VOR_DER_BRUECKE_Z = 117.5, HINTER_DEM_TOR_Z = 95.5;
+
+    /**
+     * Weg zum Ziel: Liegt genau eines von Start und Ziel auf dem Villa-Grundstück, geht es über die Brücke
+     * und durchs Tor (der Graben ringsum ist sonst nicht zu überwinden).
+     */
+    static List<Vec3> route(Vec3 start, Vec3 ziel) {
+        var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
+        if (villa.isEmpty()) {
+            return List.of(ziel);
+        }
+        var v = villa.get();
+        boolean startDrin = aufDemGrundstueck(v, start), zielDrin = aufDemGrundstueck(v, ziel);
+        if (startDrin == zielDrin) {
+            return List.of(ziel);
+        }
+        int y = v.plan().bodenY + 1;
+        Vec3 aussen = Vec3.atBottomCenterOf(v.weltPos(TOR_X, y, VOR_DER_BRUECKE_Z));
+        Vec3 innen = Vec3.atBottomCenterOf(v.weltPos(TOR_X, y, HINTER_DEM_TOR_Z));
+        return startDrin ? List.of(innen, aussen, ziel) : List.of(aussen, innen, ziel);
+    }
+
+    private static boolean aufDemGrundstueck(de.moinmornhart.stinkendreich.villa.VillaPlatzierung.VillaInfo v, Vec3 p) {
+        double x = p.x - v.ursprung().getX(), z = p.z - v.ursprung().getZ();
+        return x >= 0 && x < v.plan().breiteX && z >= 0 && z < v.plan().breiteZ;
+    }
+
+    /** Wagen des Herrn, einer in der Nähe, oder einer, der vorfährt. */
+    private static AutoEntity wagenFinden(ButlerEntity butler, ServerPlayer herr) {
+        if (herr.getVehicle() instanceof AutoEntity eigener) {
+            return eigener;
+        }
+        // In der Nähe heißt auch: etwa auf gleicher Höhe (nicht in der Tiefgarage unter dem Herrn)
+        List<AutoEntity> nah = butler.level().getEntitiesOfClass(AutoEntity.class, herr.getBoundingBox().inflate(NAH),
+                a -> (a.getPassengers().isEmpty() || a.chauffeurFaehrt()) && Math.abs(a.getY() - herr.getY()) < 4);
+        if (!nah.isEmpty()) {
+            nah.sort(Comparator.comparingDouble(a -> a.distanceToSqr(herr)));
+            return nah.get(0);
+        }
+        List<AutoEntity> weit = butler.level().getEntitiesOfClass(AutoEntity.class, herr.getBoundingBox().inflate(VORFAHREN),
+                a -> a.getPassengers().isEmpty());
+        if (weit.isEmpty()) {
+            return null;
+        }
+        // Am liebsten die Stretch-Limo, sonst der nächste Wagen
+        weit.sort(Comparator.comparing((AutoEntity a) -> a.art != Autotyp.STRETCHLIMO).thenComparingDouble(a -> a.distanceToSqr(herr)));
+        AutoEntity wagen = weit.get(0);
+        BlockPos platz = Chauffeur.parkplatz(herr.level(), herr.blockPosition(), 4, 10);
+        if (platz == null) {
+            return null;
+        }
+        // Der Wagen steht in der Blickrichtung des Herrn
+        float blick = herr.getYRot();
+        Kompat.versetzen(wagen, platz.getX() + 0.5, platz.getY(), platz.getZ() + 0.5, blick, 0.0F);
+        wagen.setYBodyRot(blick);
+        butler.teleportiereNahe(platz);
+        ansSteuer(butler, wagen);
+        wagen.level().playSound(null, wagen.blockPosition(), ModSounds.HUPE, SoundSource.NEUTRAL, 2.0F, 1.0F);
+        butler.sagen(Component.translatable("stinkendreich.butler.fahren.vorgefahren", wagen.getName()));
+        return wagen;
+    }
+
+    /** Setzt den Butler ans Steuer; sitzt der Herr am Steuer, rutscht er dadurch nach hinten (siehe AutoEntity). */
+    private static void ansSteuer(ButlerEntity butler, AutoEntity auto) {
+        if (butler.getVehicle() == auto) {
+            return;
+        }
+        butler.stopRiding();
+        Kompat.einsteigen(butler, auto);
+        auto.level().playSound(null, auto.blockPosition(), ModSounds.ANLASSER, SoundSource.NEUTRAL, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void abbrechen(ButlerEntity butler) {
+        if (auto != null) {
+            auto.chauffeurEingabe(0, 0);
+        }
+    }
+
+    @Override
+    public Component status() {
+        if (phase == Phase.FAHREN && auto != null && chauffeur != null) {
+            Vec3 p = auto.position();
+            int rest = (int) Math.sqrt(Math.pow(ziel.x - p.x, 2) + Math.pow(ziel.z - p.z, 2));
+            return Component.translatable("stinkendreich.butler.status.faehrt", zielName, rest);
+        }
+        return Component.translatable(phase == Phase.WARTEN ? "stinkendreich.butler.status.wartetimwagen" : "stinkendreich.butler.status.holtwagen");
+    }
+
+    @Override
+    public String typ() {
+        return TYP;
+    }
+
+    @Override
+    public void schreiben(JsonObject j) {
+        if (ziel != null) {
+            j.addProperty("x", ziel.x);
+            j.addProperty("y", ziel.y);
+            j.addProperty("z", ziel.z);
+        }
+        j.addProperty("name", zielName);
+    }
+
+    static FahrAuftrag ausJson(JsonObject j) {
+        Vec3 z = j.has("x") ? new Vec3(j.get("x").getAsDouble(), j.get("y").getAsDouble(), j.get("z").getAsDouble()) : null;
+        return new FahrAuftrag(z, text(j, "name", ""));
+    }
+}

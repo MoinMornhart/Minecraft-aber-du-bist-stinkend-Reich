@@ -82,6 +82,8 @@ public class ButlerEntity extends PathfinderMob {
     private BlockPos liefertruhe;
     private final Taschen taschen = new Taschen();
     private final Deque<Auftrag> auftraege = new ArrayDeque<>();
+    /** Gespeicherte Orte für den Chauffeur (Name klein geschrieben, ohne Umlaute → Position). */
+    private final java.util.Map<String, BlockPos> orte = new java.util.LinkedHashMap<>();
 
     // Wegfindung (nicht gespeichert)
     private BlockPos wegZiel;
@@ -127,7 +129,7 @@ public class ButlerEntity extends PathfinderMob {
         goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.6) {
             @Override
             public boolean canUse() {
-                return untaetig() && !folgt() && nahAmZuhause(6) && super.canUse();
+                return untaetig() && !folgt() && !isPassenger() && nahAmZuhause(6) && super.canUse();
             }
         });
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -181,6 +183,11 @@ public class ButlerEntity extends PathfinderMob {
             if (auftraege.isEmpty()) {
                 statusSetzen();
             }
+        }
+        // Am Steuer ohne Fahrauftrag und ohne Gast im Wagen: aussteigen
+        if (tickCount % 20 == 0 && getVehicle() instanceof de.moinmornhart.stinkendreich.auto.AutoEntity wagen && !faehrtGerade()
+                && wagen.getPassengers().stream().noneMatch(e -> e instanceof Player)) {
+            stopRiding();
         }
         // Steckt er in einem Block fest (z. B. nach herabfallendem Kies), gräbt er sich frei
         if (tickCount % 10 == 0 && isInWall() && !auftraege.isEmpty()) {
@@ -325,6 +332,32 @@ public class ButlerEntity extends PathfinderMob {
 
     public Auftrag aktuellerAuftrag() {
         return auftraege.peek();
+    }
+
+    /** Sitzt er gerade als Chauffeur mit Auftrag am Steuer? */
+    public boolean faehrtGerade() {
+        return auftraege.peek() instanceof de.moinmornhart.stinkendreich.butler.auftrag.FahrAuftrag;
+    }
+
+    // ------------------------------------------------------------------
+    // Orte für den Chauffeur
+    // ------------------------------------------------------------------
+
+    public BlockPos ort(String name) {
+        return orte.get(Sprache.normalisieren(name));
+    }
+
+    public void ortMerken(String name, BlockPos pos) {
+        orte.put(Sprache.normalisieren(name), pos.immutable());
+    }
+
+    public boolean ortVergessen(String name) {
+        return orte.remove(Sprache.normalisieren(name)) != null;
+    }
+
+    /** Alle gespeicherten Orte (nur lesen). */
+    public java.util.Map<String, BlockPos> orte() {
+        return java.util.Collections.unmodifiableMap(orte);
     }
 
     public int offeneAuftraege() {
@@ -579,7 +612,7 @@ public class ButlerEntity extends PathfinderMob {
         @Override
         public boolean canUse() {
             ServerPlayer p = besitzerOnline();
-            return folgt() && untaetig() && p != null && p.level() == level() && !p.isSpectator() && distanceToSqr(p) > 3.5 * 3.5;
+            return folgt() && untaetig() && !isPassenger() && p != null && p.level() == level() && !p.isSpectator() && distanceToSqr(p) > 3.5 * 3.5;
         }
 
         @Override
@@ -615,7 +648,7 @@ public class ButlerEntity extends PathfinderMob {
 
         @Override
         public boolean canUse() {
-            return untaetig() && !folgt() && !nahAmZuhause(8);
+            return untaetig() && !folgt() && !isPassenger() && !nahAmZuhause(8);
         }
 
         @Override
@@ -656,6 +689,9 @@ public class ButlerEntity extends PathfinderMob {
             j.add("liefertruhe", posJson(liefertruhe));
         }
         j.addProperty("folgt", folgt());
+        JsonObject o = new JsonObject();
+        orte.forEach((name, pos) -> o.add(name, posJson(pos)));
+        j.add("orte", o);
         JsonArray liste = new JsonArray();
         for (Auftrag a : auftraege) {
             liste.add(a.alsJson());
@@ -678,6 +714,10 @@ public class ButlerEntity extends PathfinderMob {
             zuhause = j.has("zuhause") ? posAusJson(j.getAsJsonArray("zuhause")) : null;
             liefertruhe = j.has("liefertruhe") ? posAusJson(j.getAsJsonArray("liefertruhe")) : null;
             setzeFolgen(j.has("folgt") && j.get("folgt").getAsBoolean());
+            orte.clear();
+            if (j.has("orte")) {
+                j.getAsJsonObject("orte").entrySet().forEach(e -> orte.put(e.getKey(), posAusJson(e.getValue().getAsJsonArray())));
+            }
             auftraege.clear();
             if (j.has("auftraege")) {
                 for (JsonElement e : j.getAsJsonArray("auftraege")) {

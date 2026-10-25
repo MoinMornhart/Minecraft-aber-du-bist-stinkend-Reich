@@ -125,7 +125,9 @@ public class DrehtellerEntity extends Mob {
         double w = Math.toRadians(-grad);
         double cos = Math.cos(w), sin = Math.sin(w);
         for (AutoEntity auto : level().getEntitiesOfClass(AutoEntity.class, flaeche(), this::drauf)) {
-            boolean zustaendig = level().isClientSide() ? de.moinmornhart.stinkendreich.Kompat.lokalGesteuert(auto) : auto.getControllingPassenger() == null;
+            // Spieler-Wagen dreht der Klient des Fahrers, alle anderen (leer oder mit Chauffeur) der Server
+            boolean zustaendig = level().isClientSide() ? de.moinmornhart.stinkendreich.Kompat.lokalGesteuert(auto)
+                    : !(auto.getControllingPassenger() instanceof net.minecraft.world.entity.player.Player);
             if (!zustaendig) {
                 continue;
             }

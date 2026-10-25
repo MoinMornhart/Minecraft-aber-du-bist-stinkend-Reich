@@ -246,6 +246,14 @@ public final class ButlerKI {
                 case "herkommen" -> Sprache.Befehl.von(Sprache.Art.KOMMEN);
                 case "aufhoeren" -> Sprache.Befehl.von(Sprache.Art.STOPP);
                 case "taschen_zeigen" -> Sprache.Befehl.von(Sprache.Art.INVENTAR);
+                case "fahren" -> new Sprache.Befehl(Sprache.Art.FAHREN, switch (String.valueOf(e.get("ziel"))) {
+                    case "villa" -> Sprache.ZIEL_VILLA;
+                    case "blick" -> Sprache.ZIEL_BLICK;
+                    case "abholen" -> Sprache.ZIEL_ABHOLEN;
+                    default -> String.valueOf(e.get("ziel"));
+                }, -1, false);
+                case "ort_merken" -> new Sprache.Befehl(Sprache.Art.ORT_MERKEN, String.valueOf(e.get("name")), -1, false);
+                case "orte_zeigen" -> Sprache.Befehl.von(Sprache.Art.ORTE);
                 default -> Sprache.Befehl.von(Sprache.Art.UNBEKANNT);
             };
         }
@@ -283,6 +291,13 @@ public final class ButlerKI {
             t.add(werkzeug("herkommen", "Der Butler kommt sofort zum Herrn.", Map.of()));
             t.add(werkzeug("aufhoeren", "Bricht alle laufenden Aufträge ab.", Map.of()));
             t.add(werkzeug("taschen_zeigen", "Öffnet die Taschen des Butlers, damit der Herr hineinsehen und Dinge herausnehmen kann.", Map.of()));
+            t.add(werkzeug("fahren", "Der Butler chauffiert den Herrn mit dem Auto: setzt sich ans Steuer, wartet, bis der Herr "
+                    + "eingestiegen ist, und fährt zum Ziel. Ohne Auto in der Nähe lässt er einen Wagen vorfahren.",
+                    Map.of("ziel", Map.of("type", "string", "description", "\"villa\" = nach Hause, \"blick\" = die Stelle, auf die der Herr "
+                            + "gerade schaut, \"abholen\" = nur den Wagen vorfahren lassen, sonst der Name eines gespeicherten Ortes"))));
+            t.add(werkzeug("ort_merken", "Merkt sich die Stelle, an der der Herr gerade steht, unter einem Namen (für spätere Fahrten).",
+                    Map.of("name", Map.of("type", "string", "description", "Kurzer Name des Ortes, z. B. strand"))));
+            t.add(werkzeug("orte_zeigen", "Nennt alle gespeicherten Orte.", Map.of()));
             werkzeuge = t;
             return t;
         }

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.Konfig;
+import de.moinmornhart.stinkendreich.butler.auftrag.FahrAuftrag;
 import de.moinmornhart.stinkendreich.butler.auftrag.GehAuftrag;
 import de.moinmornhart.stinkendreich.butler.auftrag.SortierAuftrag;
 import de.moinmornhart.stinkendreich.netz.Netz;
@@ -20,6 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,9 @@ import java.util.Locale;
  *   <li>{@code /butler} – Status und Hilfe</li>
  *   <li>{@code /butler rufen} – Butler herbeiholen (oder den ersten eigenen einstellen)</li>
  *   <li>{@code /butler truhe} – die angeschaute Truhe wird seine Lieferkiste</li>
+ *   <li>{@code /butler ort merken <Name>}, {@code /butler ort vergessen <Name>}, {@code /butler orte} – Orte für den Chauffeur</li>
+ *   <li>Chauffeur: „Butler, fahr mich zum Strand“, „fahr mich dahin“ (wohin man schaut), „fahr mich nach Hause“,
+ *       „hol den Wagen“</li>
  *   <li>{@code /butler <Auftrag>} – z. B. {@code /butler hol 32 eisen}</li>
  *   <li>Chat: „Butler, hol mir 32 Eisen“ (oder mit seinem Namen anreden)</li>
  *   <li>Rechtsklick auf den Butler: Menü mit Knöpfen und Textfeld</li>
@@ -49,6 +54,28 @@ public final class ButlerBefehle {
                             return 1;
                         }))
                         .then(Commands.literal("truhe").executes(ButlerBefehle::truheFestlegen))
+                        .then(Commands.literal("orte").executes(k -> {
+                            ServerPlayer p = k.getSource().getPlayerOrException();
+                            ausfuehren(ButlerVerwaltung.vonSpieler(p), p, Sprache.Befehl.von(Sprache.Art.ORTE));
+                            return 1;
+                        }))
+                        .then(Commands.literal("ort")
+                                .then(Commands.literal("merken").then(Commands.argument("name", StringArgumentType.greedyString()).executes(k -> {
+                                    ServerPlayer p = k.getSource().getPlayerOrException();
+                                    ausfuehren(ButlerVerwaltung.vonSpieler(p), p, new Sprache.Befehl(Sprache.Art.ORT_MERKEN,
+                                            StringArgumentType.getString(k, "name"), -1, false));
+                                    return 1;
+                                })))
+                                .then(Commands.literal("vergessen").then(Commands.argument("name", StringArgumentType.greedyString()).executes(k -> {
+                                    ServerPlayer p = k.getSource().getPlayerOrException();
+                                    ButlerEntity b = ButlerVerwaltung.vonSpieler(p);
+                                    String name = StringArgumentType.getString(k, "name");
+                                    if (b != null) {
+                                        b.sagen(Component.translatable(b.ortVergessen(name) ? "stinkendreich.butler.ort.vergessen"
+                                                : "stinkendreich.butler.ort.unbekannt", name, ortListe(b)));
+                                    }
+                                    return 1;
+                                }))))
                         .then(Commands.argument("auftrag", StringArgumentType.greedyString()).executes(k -> {
                             verarbeiten(k.getSource().getPlayerOrException(), StringArgumentType.getString(k, "auftrag"), false);
                             return 1;
@@ -143,7 +170,52 @@ public final class ButlerBefehle {
 
     /** Führt einen verstandenen Auftrag aus und lässt den Butler antworten. */
     public static void ausfuehren(ButlerEntity b, ServerPlayer p, Sprache.Befehl bf) {
+        if (b == null) {
+            Kompat.nachricht(p, Component.translatable("stinkendreich.butler.keiner").withStyle(ChatFormatting.YELLOW), false);
+            ButlerVerwaltung.rufen(p);
+            return;
+        }
         b.sagen(befolgen(b, p, bf).text());
+    }
+
+    /** Gespeicherte Orte als Text, z. B. „strand, bar, mine“ (oder „keine“). */
+    static String ortListe(ButlerEntity b) {
+        return b.orte().isEmpty() ? "–" : String.join(", ", b.orte().keySet());
+    }
+
+    /** Fahrbefehl: Ziel bestimmen und den Chauffeur losschicken. */
+    private static Antwort fahren(ButlerEntity b, ServerPlayer p, String ziel) {
+        // Weit weg „schläft“ der Butler (außerhalb der Simulationsweite): dann springt er zum Herrn
+        if (b.level() != p.level() || b.distanceTo(p) > 32) {
+            b.teleportiereNahe(p.blockPosition());
+        }
+        if (Sprache.ZIEL_ABHOLEN.equals(ziel)) {
+            b.neueAuftraege(List.of(new FahrAuftrag(null, "")));
+            return Antwort.ok("stinkendreich.butler.fahren.holt");
+        }
+        if (Sprache.ZIEL_VILLA.equals(ziel)) {
+            var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
+            BlockPos heim = villa.map(v -> v.spawn()).orElse(b.heimat());
+            String name = Component.translatable("stinkendreich.butler.fahren.villa").getString();
+            b.neueAuftraege(List.of(new FahrAuftrag(Vec3.atBottomCenterOf(heim), name)));
+            return Antwort.ok("stinkendreich.butler.fahren.heim");
+        }
+        if (Sprache.ZIEL_BLICK.equals(ziel)) {
+            HitResult blick = p.pick(300.0, 1.0F, false);
+            if (!(blick instanceof BlockHitResult bt) || blick.getType() != HitResult.Type.BLOCK) {
+                return new Antwort(Component.translatable("stinkendreich.butler.fahren.nichtgesehen"), true);
+            }
+            BlockPos pos = bt.getBlockPos().above();
+            String name = pos.getX() + " " + pos.getY() + " " + pos.getZ();
+            b.neueAuftraege(List.of(new FahrAuftrag(Vec3.atBottomCenterOf(pos), name)));
+            return Antwort.ok("stinkendreich.butler.fahren.blick", pos.getX(), pos.getY(), pos.getZ());
+        }
+        BlockPos ort = b.ort(ziel);
+        if (ort == null) {
+            return new Antwort(Component.translatable("stinkendreich.butler.ort.unbekannt", ziel, ortListe(b)), true);
+        }
+        b.neueAuftraege(List.of(new FahrAuftrag(Vec3.atBottomCenterOf(ort), ziel)));
+        return Antwort.ok("stinkendreich.butler.fahren.ort", ziel);
     }
 
     /** Führt einen Auftrag aus und gibt die Antwort zurück (ohne sie auszusprechen). */
@@ -204,6 +276,21 @@ public final class ButlerBefehle {
             }
             case HILFE -> {
                 return Antwort.ok("stinkendreich.butler.hilfe");
+            }
+            case FAHREN -> {
+                return fahren(b, p, bf.quelle());
+            }
+            case ORT_MERKEN -> {
+                String name = bf.quelle() == null ? "" : Sprache.normalisieren(bf.quelle());
+                if (name.isEmpty()) {
+                    return new Antwort(Component.translatable("stinkendreich.butler.ort.ohnename"), true);
+                }
+                b.ortMerken(name, p.blockPosition());
+                return Antwort.ok("stinkendreich.butler.ort.gemerkt", name);
+            }
+            case ORTE -> {
+                return b.orte().isEmpty() ? Antwort.ok("stinkendreich.butler.ort.keine")
+                        : Antwort.ok("stinkendreich.butler.ort.liste", ortListe(b));
             }
             default -> {
                 return new Antwort(Component.translatable("stinkendreich.butler.verstehtnicht"), true);
