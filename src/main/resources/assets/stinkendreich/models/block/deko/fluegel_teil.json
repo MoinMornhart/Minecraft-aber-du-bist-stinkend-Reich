@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/deko/lack_schwarz"
+  },
+  "elements": []
+}

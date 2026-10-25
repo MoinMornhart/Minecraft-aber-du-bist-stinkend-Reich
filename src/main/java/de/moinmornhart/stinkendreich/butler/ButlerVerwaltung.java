@@ -281,6 +281,8 @@ public final class ButlerVerwaltung {
         } else if (b.distanceToSqr(p) > 6 * 6) {
             b.teleportiereNahe(p.blockPosition());
         }
+        // Wer ihn ruft, dem folgt er; sonst würde ihn das Heimgehen gleich wieder nach Hause teleportieren
+        b.setzeFolgen(true);
         b.sagen(Component.translatable("stinkendreich.butler.zurstelle"));
     }
 

@@ -17,7 +17,7 @@ import json
 import sys
 from pathlib import Path
 
-from bau import Bau, zustand
+from bau import Bau, RICHTUNG_VEKTOR, basisname, eigenschaften, ist_voll, zustand
 from moebel import (badewanne, kingsize_bett, reihe, strandliege, aquarium, baum, bett, bilderrahmen, blumenbeet, brunnen_kuppel, deko, doppeltuer, fass, gemaelde,
                     hecke, kronleuchter, laterne, pflanze, sofa, stuhl, tisch, truhe, tuer)
 
@@ -185,13 +185,23 @@ def garten() -> None:
         baum(b, x, G + 1, z, art, hoehe=6 + (x + z) % 3)
     blumenbeet(b, 16, G + 1, 50, 26, 56)
     blumenbeet(b, 84, G + 1, 30, 94, 36)
-    # Pavillon im Westgarten
+    # Pavillon im Westgarten: Lounge unter einem Marmordach mit Goldkante. Weiße Sofas als U (nach Süden offen),
+    # Marmortisch mit Sekt in der Mitte, Kronleuchter, Pflanzen zwischen den Säulen, Holzdeck mit Marmorrand
     for x, z in ((15, 64), (23, 64), (15, 72), (23, 72)):
         b.quader(x, G + 1, z, x, G + 4, z, "quartz_pillar")
     b.quader(14, G + 5, 63, 24, G + 5, 73, zustand("smooth_quartz_slab", type="bottom", waterlogged="false"))
+    b.ring(14, 63, 24, 73, G + 5, "gold_block")
+    b.quader(15, G, 64, 23, G, 72, QUARZ)
     b.quader(16, G, 65, 22, G, 71, "stripped_dark_oak_wood")
-    sofa(b, 17, G + 1, 66, 5, "south")
-    tisch(b, 18, G + 1, 69, 20, 69)
+    reihe(b, 21, G + 1, 65, 5, "sofa_weiss", "south")                      # hinten, x 21 … 17
+    reihe(b, 16, G + 1, 67, 3, "sofa_weiss", "east")                       # links, z 67 … 69
+    reihe(b, 22, G + 1, 69, 3, "sofa_weiss", "west")                       # rechts, z 69 … 67
+    tisch(b, 18, G + 1, 67, 20, 68, "smooth_quartz_slab")
+    deko(b, 18, G + 2, 67, "champagner")
+    deko(b, 20, G + 2, 68, "cocktail")
+    kronleuchter(b, 19, G + 4, 68)
+    for x, z in ((15, 66), (15, 70), (23, 66), (23, 70)):
+        pflanze(b, x, G + 1, z, "potted_azalea_bush")
 
 
 def tuerrahmen(x0: int, y0: int, z: int, x1: int, y1: int, gold: int | None = None) -> None:
@@ -309,9 +319,12 @@ def erdgeschoss() -> None:
             b.setze(x, y, z, "chiseled_quartz_block")
             b.quader(x, y + 1, z, x, OG - 2, z, zustand("quartz_pillar", axis="y"))
             b.setze(x, OG - 1, z, "gold_block")
-    deko(b, 57, y, 63, "fluegel_tasten", "north")
-    deko(b, 57, y, 64, "fluegel_korpus", "north")
-    deko(b, 57, y, 62, "barhocker")
+    # Konzertflügel (3 × 3, spielbar): großes Modell im mittleren Block, acht unsichtbare Teile drumherum; die Bank
+    # davor, wer darauf sitzt, schaut nach Süden auf die Tasten
+    for x in range(57, 60):
+        for z in range(62, 65):
+            deko(b, x, y, z, "konzertfluegel" if (x, z) == (58, 63) else "fluegel_teil", "north")
+    deko(b, 58, y, 61, "klavierbank", "south")
     b.setze(52, y, 64, "gold_block")
     deko(b, 52, y + 1, 64, "sektturm")
     pflanze(b, 51, y, HZ1 - 1, "potted_bamboo")
@@ -325,7 +338,7 @@ def erdgeschoss() -> None:
     # Trennwand Wohnzimmer | Ballsaal mit Aquarium
     b.quader(49, y, HZ0 + 1, 49, OG - 1, HZ1 - 1, WEISS)
     aquarium(b, 47, y, 52, 49, OG - 1, 63)
-    b.luft(49, y, 64, 49, y + 2, 66)
+    doppeltuer(b, 49, y, 65, "west", "stinkendreich:prunktuer")            # ins Wohnzimmer (Flügel bei z 65 und 64)
 
     # --- Wohnzimmer: Kamin mit Gemälde, Fernsehwand mit Goldrahmen, weiße Sofas, großer Teppich ---
     b.quader(HX0 + 1, EG, HZ0 + 1, 48, EG, HZ1 - 1, HOLZBODEN)
@@ -449,8 +462,7 @@ def obergeschoss() -> None:
     # Wände der Räume
     b.quader(49, y, HZ0 + 1, 49, DACH - 1, HZ1 - 1, WEISS)
     b.quader(60, y, HZ0 + 1, 60, DACH - 1, HZ1 - 1, WEISS)
-    b.luft(49, y, 63, 49, y + 1, 64)
-    doppeltuer(b, 49, y, 63, "west", "stinkendreich:prunktuer")            # Gästezimmer
+    doppeltuer(b, 49, y, 63, "west", "stinkendreich:prunktuer")            # Gästezimmer (Flügel bei z 63 und 62)
     # Büro: Sicherheitstür mit Kartenleser auf beiden Seiten (nur mit Zugangskarte)
     b.luft(60, y, 58, 60, y + 1, 58)
     tuer(b, 60, y, 58, "east", "stinkendreich:sicherheitstuer")
@@ -461,8 +473,7 @@ def obergeschoss() -> None:
     # Bettbank, Fernseher gegenüber, Leseecke am Fenster, Kommode, Pflanzen, Kronleuchter
     b.quader(HX0 + 1, OG, 50, 48, OG, HZ1 - 1, HOLZBODEN)
     b.quader(HX0 + 1, y, 49, 48, DACH - 1, 49, WEISS)
-    b.luft(44, y, 49, 45, y + 1, 49)
-    doppeltuer(b, 45, y, 49, "north", "stinkendreich:prunktuer")            # ins Bad
+    doppeltuer(b, 45, y, 49, "north", "stinkendreich:prunktuer")            # ins Bad (Flügel bei x 45 und 46)
     b.quader(HX0 + 1, OG, 54, 37, OG, 60, "white_wool")
     kingsize_bett(b, HX0 + 1, y, 58, 3, "west")
     for z in (56, 57, 58):
@@ -1096,11 +1107,12 @@ def geheimclub() -> None:
     deko(b, 11, y + 5, 71, "discokugel")
     deko(b, 11, y + 5, 75, "discokugel")
     # Samtnischen mit Blick auf die Bühne, Tische davor
-    for zl in (69, 78):
+    # Die Nische an der Bar beginnt bei z 67, so bleibt zwischen Barhockern (z 66) und Sofa ein Block frei
+    for zl in (71, 78):
         reihe(b, 15, y, zl, 4, "sofa_samt", "west")
-    tisch(b, 13, y, 67, 13, 68)
+    tisch(b, 13, y, 69, 13, 70)
     tisch(b, 13, y, 76, 13, 77)
-    deko(b, 13, y + 1, 67, "champagner")
+    deko(b, 13, y + 1, 69, "champagner")
     deko(b, 13, y + 1, 77, "cocktail")
     # Bar im Norden des Raums (bei z 63–64 liegt der Eingang): Theke, Flaschenregale, Hocker
     b.quader(10, y, 65, 15, y, 65, "polished_blackstone")
@@ -1155,10 +1167,10 @@ def bunker() -> None:
     b.quader(63, y, 50, x1 - 1, y1 - 1, 50, "deepslate_tiles")
     for (tx, tz) in ((53, 44), (53, 58), (62, 44), (62, 58)):
         b.luft(tx, y, tz, tx, y + 2, tz + 1)
-    # Türen: Kommandozentrale (Stahltür), Geldspeicher (Bunkertür mit Kartenleser); Waffenkammer und Panikraum
+    # Türen: Kommandozentrale (Banktür mit Kartenleser), Geldspeicher (Bunkertür mit Kartenleser); Waffenkammer und Panikraum
     # haben ihre Türen in mechanismen()
     b.quader(53, y + 2, 44, 53, y + 2, 45, "deepslate_tiles")
-    doppeltuer(b, 53, y, 45, "west", "stinkendreich:stahltuer")
+    doppeltuer(b, 53, y, 45, "west", "stinkendreich:banktuer")              # nur mit Zugangskarte (Kartenleser in mechanismen())
     b.quader(62, y, 59, 62, y + 2, 59, "deepslate_tiles")
     b.setze(62, y + 2, 58, "deepslate_tiles")
     tuer(b, 62, y, 58, "east", "stinkendreich:bunkertuer")
@@ -1217,9 +1229,10 @@ def bunker() -> None:
     b.quader(67, y + 3, 54, 67, y + 3, 57, zustand("smooth_quartz_slab", type="top", waterlogged="false"))
     for x in (66, 68):
         b.setze(x, y + 4, 52, "iron_bars")
-    for yy in range(y, y + 4):
-        b.setze(69, yy, 53, zustand("ladder", facing="east", waterlogged="false"))
+    # Leiter an der Eisensäule östlich davon (zeigt nach Westen, sonst hätte sie keinen Halt und fiele ab)
     b.quader(70, y, 53, 70, y + 3, 53, "iron_block")
+    for yy in range(y, y + 4):
+        b.setze(69, yy, 53, zustand("ladder", facing="west", waterlogged="false"))
     for x, z in ((64, 53), (71, 53), (64, 55)):
         deko(b, x, y, z, "geldstapel", "north")
     for x, z in ((63, 54), (71, 55)):
@@ -1292,9 +1305,9 @@ def mechanismen() -> None:
     mech(54, G - 1, n - 13, "torsteuerung", modus="tor", ziel="stinkendreich:tor", radius=6)
     mech(59, G + 2, n - 11, "tuerklingel", "south")
 
-    # Automatische Schiebetüren: Haustür und Durchgang zur Garage
-    fluegel(54, EG + 1, HZ1, 55, EG + 3, HZ1, "schiebetuer", False)
-    mech(54, EG - 1, HZ1, "torsteuerung", modus="schiebetuer", ziel="stinkendreich:schiebetuer", radius=4)
+    # Automatische Türen: Haustür (große weiß-goldene Portaltür) und Glas-Schiebetür zur Garage
+    fluegel(54, EG + 1, HZ1, 55, EG + 3, HZ1, "portaltuer", False)
+    mech(54, EG - 1, HZ1, "torsteuerung", modus="schiebetuer", ziel="stinkendreich:portaltuer", radius=3)
     fluegel(HX1, EG + 1, 60, HX1, EG + 3, 61, "schiebetuer", False)
     mech(HX1, EG - 1, 60, "torsteuerung", modus="schiebetuer", ziel="stinkendreich:schiebetuer", radius=3)
 
@@ -1320,6 +1333,9 @@ def mechanismen() -> None:
     mech(61, yo + 1, 57, "kartenleser", "east")
     mech(69, yo + 1, 52, "kartenleser", "south")
     mech(69, yo + 1, 50, "kartenleser", "north")
+    # Banktür der Kommandozentrale im Bunker: Kartenleser im Flur und drinnen
+    mech(54, BUNKER + 2, 43, "kartenleser", "east")
+    mech(52, BUNKER + 2, 43, "kartenleser", "west")
     mech(45, BUNKER + 1, 44, "sicherheitszentrale", "north")
     for m in b.marken["monitor"] + b.marken["bunker_monitor"]:
         mech(m[0], m[1], m[2], "monitor", "south", {"winkel": "wand"})
@@ -1330,17 +1346,14 @@ def mechanismen() -> None:
     truhe(b, 77, yo, 66, "north", [("stinkendreich:zugangskarte", 1)] * 4)
 
     # Bewegungsmelder (Alarm bei Eindringlingen, Lichtautomatik), Sirenen, Warnleuchten
-    mech(52, EG + 4, HZ0 + 1, "bewegungsmelder", "south")
+    mech(52, EG + 5, HZ0 + 1, "bewegungsmelder", "south")                   # über dem Fensterband
     mech(50, G + 3, n - 11, "bewegungsmelder", "south")
     mech(60, BUNKER + 3, 31, "bewegungsmelder", "south")
     mech(91, EG + 3, 47, "bewegungsmelder", "south")                       # Garage: Licht an, wenn jemand kommt
     for (x, y) in ((90, EG + 3), (92, EG + 3), (91, EG + 4)):
         b.setze(x, y, 46, "redstone_lamp")
-    mech(16, G + 4, 64, "bewegungsmelder", "east")                         # Pavillon: Licht an
-    for z in (63, 65):
-        b.setze(15, G + 4, z, "redstone_lamp")
-    mech(56, OG + 4, HZ1 + 1, "alarmsirene", "south")
-    mech(52, yo + 3, HZ0 + 1, "alarmsirene", "south")
+    mech(58, OG + 4, HZ1 + 1, "alarmsirene", "south")                       # am Pfeiler, nicht vor dem Glas
+    mech(52, OG + 5, HZ0 + 1, "alarmsirene", "south")                       # über dem Fensterband
     mech(57, BUNKER + 4, 31, "alarmsirene", "south")
     for x in (50, 59):
         mech(x, G + 7, n - 13, "warnleuchte")
@@ -1429,6 +1442,43 @@ def lichter() -> None:
     haengen(82, 92, 48, 64, OG - 1, 3)                           # Garage
 
 
+def decken_weiss() -> None:
+    """Weiße Decken in Haus und Penthouse: Wo man einen Boden aus Holz, Teppich, Gold, Beton oder Stein von unten
+    sieht, kommt der Deckenblock der Mod hin. Er sieht oben und an den Seiten aus wie vorher, unten ist er weiß
+    (register/ModDecken.java). Gilt für die Decken im Erdgeschoss, im Obergeschoss und im Penthouse."""
+    tausch = {"dark_oak_planks": "holz", "white_wool": "teppich_weiss", "red_wool": "teppich_rot",
+              "yellow_wool": "teppich_gelb", "gray_concrete": "grau", "gold_block": "gold",
+              "polished_blackstone": "schwarz", "polished_deepslate": "schiefer"}
+    for y in (OG, DACH, PH_DACH):
+        for x in range(HX0 - 3, HX1 + 4):
+            for z in range(HZ0 - 3, HZ1 + 8):
+                block, unten = b.hole(x, y, z), b.hole(x, y - 1, z)
+                if block is None or basisname(block).removeprefix("minecraft:") not in tausch or "[" in block:
+                    continue
+                if unten is None or not ist_voll(unten):
+                    b.setze(x, y, z, f"stinkendreich:decke_{tausch[basisname(block).removeprefix('minecraft:')]}")
+
+
+def pruefe_vor_glas() -> list[str]:
+    """Alarmanlagen, Kameras und Kartenleser dürfen nicht vor einer Glasscheibe hängen (sieht von außen und innen
+    unschön aus). Liefert die Stellen, an denen das doch so ist."""
+    an_der_wand = ("alarmsirene", "bewegungsmelder", "kamera", "kartenleser", "tastenfeld", "tuerklingel",
+                   "aufzugstafel", "kaminsteuerung")
+    fehler = []
+    for (x, y, z), block in b.bloecke.items():
+        name = basisname(block).removeprefix("stinkendreich:")
+        if not block.startswith("stinkendreich:") or name not in an_der_wand:
+            continue
+        richtung = eigenschaften(block).get("facing")
+        if richtung not in RICHTUNG_VEKTOR:
+            continue
+        vx, _, vz = RICHTUNG_VEKTOR[richtung]
+        hinten = b.hole(x - vx, y, z - vz) or ""
+        if "glass" in hinten:
+            fehler.append(f"{name} bei ({x}, {y}, {z}) hängt vor {hinten}")
+    return fehler
+
+
 def main() -> None:
     grundstueck()
     tor_und_bruecke()
@@ -1462,7 +1512,15 @@ def main() -> None:
     # Lieferkiste des Butlers in der Halle (Bestellungen „… in die Truhe“)
     truhe(b, 59, EG + 1, 62, "west", [])
     b.marke("lieferkiste", 59, EG + 1, 62)
+    decken_weiss()
     b.verbinden()
+
+    vor_glas = pruefe_vor_glas()
+    if vor_glas:
+        print(f"{len(vor_glas)} Geräte vor Glas, Villa wird nicht gespeichert:")
+        for f in vor_glas:
+            print("  " + f)
+        sys.exit(1)
 
     # Dichtheitsprüfung: kein Wasser und keine Lava darf auslaufen, kein Raum unter der Erde offen sein
     probleme = b.pruefe_dichtheit(G)

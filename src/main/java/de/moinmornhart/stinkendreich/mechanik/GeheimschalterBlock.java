@@ -29,10 +29,14 @@ public class GeheimschalterBlock extends MechanikBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (welt instanceof ServerLevel server) {
-            MechanikBlockEntity d = daten(welt, pos);
-            boolean offen = d == null || d.zahl("offen", 0) == 0;
-            if (d != null) {
-                d.setze("offen", offen ? 1 : 0);
+            // Gegenteil von dem, was das Regal gerade ist (es kann auch magisch per Schleichen aufgegangen sein)
+            boolean offen = true;
+            for (BlockPos p : BlockPos.betweenClosed(pos.offset(-4, -4, -4), pos.offset(4, 4, 4))) {
+                BlockState s = welt.getBlockState(p);
+                if (s.is(ModBloecke.GEHEIMREGAL)) {
+                    offen = !s.getValue(Eigenschaften.OFFEN);
+                    break;
+                }
             }
             TorsteuerungBlock.umschalten(server, pos, 4, ModBloecke.GEHEIMREGAL, offen);
             welt.playSound(null, pos, ModSounds.TRESOR, SoundSource.BLOCKS, 0.6F, 1.4F);

@@ -18,9 +18,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
 /**
- * Getarnte Bodenplatte im Schmuck-Tresor. Wer sie betritt, während das System scharf ist
- * (Stufe ≥ 1) und die Fallen nicht entschärft sind, löst die Falle aus:
- * Alarm, Gitter vor der Tür (15 Sekunden), Giftgas und kurze Blindheit.
+ * Getarnte Bodenplatte im Schmuck-Tresor. Wer sie als Eindringling betritt (kein Bewohner, keine Zugangskarte),
+ * während das System scharf ist (Stufe ≥ 1) und die Fallen nicht entschärft sind, löst die Falle aus:
+ * Alarm, Gitter vor der Tür (15 Sekunden), Giftgas und kurze Blindheit. Bewohner gehen einfach hinein.
  */
 public class FallenplatteBlock extends MechanikBlock {
     private static final int RADIUS_GITTER = 10;
@@ -43,7 +43,8 @@ public class FallenplatteBlock extends MechanikBlock {
         VillaZustand z = VillaZustand.get(server.getServer());
         MechanikBlockEntity daten = daten(welt, pos);
         long jetzt = welt.getGameTime();
-        if (z.stufe() < 1 || z.tresorEntschaerft() || daten == null || jetzt - daten.zahl("zuletzt", -1000) < 100) {
+        if (z.stufe() < 1 || !z.istEindringling(spieler) || z.tresorEntschaerft() || daten == null
+                || jetzt - daten.zahl("zuletzt", -1000) < 100) {
             return;
         }
         daten.setze("zuletzt", (int) jetzt);

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/klavierbank"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/klavierbank",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/klavierbank",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/klavierbank",
+      "y": 270
+    }
+  }
+}

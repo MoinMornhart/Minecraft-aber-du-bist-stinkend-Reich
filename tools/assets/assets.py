@@ -410,6 +410,27 @@ def B(name: str) -> str:
     return f"{NS}:block/{name}"
 
 
+# Deckenblöcke (register/ModDecken.java): oben und seitlich wie das Vorbild, unten weiß
+# Kurzname: (Textur des Vorbilds, Werkzeug oder None, Deutsch, Englisch)
+DECKEN = {
+    "holz": ("dark_oak_planks", "axe", "Holzboden mit weißer Decke", "Wood Floor with White Ceiling"),
+    "teppich_weiss": ("white_wool", None, "Weißer Teppich mit weißer Decke", "White Carpet with White Ceiling"),
+    "teppich_rot": ("red_wool", None, "Roter Teppich mit weißer Decke", "Red Carpet with White Ceiling"),
+    "teppich_gelb": ("yellow_wool", None, "Gelber Teppich mit weißer Decke", "Yellow Carpet with White Ceiling"),
+    "grau": ("gray_concrete", "pickaxe", "Grauer Beton mit weißer Decke", "Gray Concrete with White Ceiling"),
+    "gold": ("gold_block", "pickaxe", "Goldboden mit weißer Decke", "Gold Floor with White Ceiling"),
+    "schwarz": ("polished_blackstone", "pickaxe", "Schwarzer Stein mit weißer Decke", "Blackstone Floor with White Ceiling"),
+    "schiefer": ("polished_deepslate", "pickaxe", "Tiefenschiefer mit weißer Decke", "Deepslate Floor with White Ceiling"),
+}
+
+
+def m_decke(vorbild: str) -> dict:
+    t = f"minecraft:block/{vorbild}"
+    return {"parent": "minecraft:block/cube",
+            "textures": {"particle": t, "up": t, "north": t, "south": t, "east": t, "west": t,
+                         "down": "minecraft:block/white_concrete"}}
+
+
 # Name -> (Blockmodelle {modellname: json}, Blockzustand, Item-Modell, Werkzeug, Deutsch, Englisch)
 BLOECKE: dict[str, dict] = {
     "sicherheitszentrale": dict(modelle={"sicherheitszentrale": m_orientierbar(B("sicherheitszentrale"))},
@@ -494,6 +515,14 @@ TEXTE_DE = {
     "stinkendreich.zugang.code_nicht_geaendert": "Code nicht geändert (alter Code falsch, kein Bewohner oder neuer Code nicht 4–8 Ziffern).",
     "stinkendreich.tresor.falle": "FALLE! Der Tresor ist verriegelt.",
     "stinkendreich.privattuer.verweigert": "Privat! Nur Bewohner der Villa kommen hier durch.",
+    "stinkendreich.sicherheitstuer.karte": "Halte die Zugangskarte an den Kartenleser neben der Tür.",
+    "stinkendreich.geheimgang.offen": "✨ Ein magischer Eingang öffnet sich …",
+    "stinkendreich.geheimgang.nichts": "Die Bücher flüstern … aber das Regal bleibt zu.",
+    "stinkendreich.klavier.lied.fuer_elise": "Für Elise",
+    "stinkendreich.klavier.lied.ode": "Ode an die Freude",
+    "stinkendreich.klavier.lied.kanon": "Kanon in D",
+    "stinkendreich.klavier.stopp": "Stopp",
+    "stinkendreich.klavier.hinweis": "Tasten anklicken oder spielen: Y–M, Q–U, I–+  (schwarz: S D G H J · 2 3 5 6 7 · 9 0 ´)",
     "stinkendreich.graben.lava": "Alarmanlage an und du bist zu Hause: Der Graben füllt sich mit Lava.",
     "stinkendreich.graben.wasser": "Der Graben ist wieder voller Wasser.",
     "stinkendreich.tresor.entschaerft": "Tresorfallen für 60 Sekunden entschärft.",
@@ -538,6 +567,14 @@ TEXTE_EN = {
     "stinkendreich.zugang.code_nicht_geaendert": "Code not changed (old code wrong, not a resident, or new code not 4–8 digits).",
     "stinkendreich.tresor.falle": "TRAP! The vault is locked.",
     "stinkendreich.privattuer.verweigert": "Private! Residents of the villa only.",
+    "stinkendreich.sicherheitstuer.karte": "Hold your key card to the card reader next to the door.",
+    "stinkendreich.geheimgang.offen": "✨ A magical entrance opens …",
+    "stinkendreich.geheimgang.nichts": "The books whisper … but the shelf stays shut.",
+    "stinkendreich.klavier.lied.fuer_elise": "Für Elise",
+    "stinkendreich.klavier.lied.ode": "Ode to Joy",
+    "stinkendreich.klavier.lied.kanon": "Canon in D",
+    "stinkendreich.klavier.stopp": "Stop",
+    "stinkendreich.klavier.hinweis": "Click the keys or play with Z–M, Q–U, I–]  (black: S D G H J · 2 3 5 6 7 · 9 0 =)",
     "stinkendreich.graben.lava": "Alarm armed and you are home: the moat fills with lava.",
     "stinkendreich.graben.wasser": "The moat is filled with water again.",
     "stinkendreich.tresor.entschaerft": "Vault traps disarmed for 60 seconds.",
@@ -587,6 +624,22 @@ def main() -> None:
         TEXTE_DE[f"block.{NS}.{name}"] = b["de"]
         TEXTE_EN[f"block.{NS}.{name}"] = b["en"]
 
+    for kurz, (vorbild, werkzeug, de, en) in DECKEN.items():
+        name = f"decke_{kurz}"
+        schreibe_json(ASSETS / "models/block" / f"{name}.json", m_decke(vorbild))
+        schreibe_json(ASSETS / "blockstates" / f"{name}.json", bs_einfach(B(name)))
+        schreibe_json(ASSETS / "models/item" / f"{name}.json", {"parent": B(name)})
+        schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": B(name)}})
+        schreibe_json(RES / f"data/{NS}/loot_table/blocks/{name}.json", {
+            "type": "minecraft:block",
+            "pools": [{"rolls": 1, "entries": [{"type": "minecraft:item", "name": f"{NS}:{name}"}],
+                       "conditions": [{"condition": "minecraft:survives_explosion"}]}],
+        })
+        if werkzeug:
+            werkzeuge[werkzeug].append(f"{NS}:{name}")
+        TEXTE_DE[f"block.{NS}.{name}"] = de
+        TEXTE_EN[f"block.{NS}.{name}"] = en
+
     schreibe_json(ASSETS / "models/item/zugangskarte.json",
                   {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/zugangskarte"}})
     schreibe_json(ASSETS / "items/zugangskarte.json",
@@ -615,7 +668,8 @@ def main() -> None:
         pfad = RES / f"data/minecraft/tags/block/mineable/{werkzeug}.json"
         # Einträge anderer Generatoren (z. B. musik.py) behalten
         alt = json.loads(pfad.read_text(encoding="utf-8"))["values"] if pfad.exists() else []
-        fremde = [v for v in alt if v not in liste and v.removeprefix(f"{NS}:") not in BLOECKE]
+        fremde = [v for v in alt if v not in liste and v.removeprefix(f"{NS}:") not in BLOECKE
+                  and not v.startswith(f"{NS}:decke_")]
         schreibe_json(pfad, {"replace": False, "values": liste + fremde})
 
     # Sprachdateien ergänzen (vorhandene Einträge bleiben)

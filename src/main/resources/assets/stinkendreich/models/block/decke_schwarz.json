@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "minecraft:block/polished_blackstone",
+    "up": "minecraft:block/polished_blackstone",
+    "north": "minecraft:block/polished_blackstone",
+    "south": "minecraft:block/polished_blackstone",
+    "east": "minecraft:block/polished_blackstone",
+    "west": "minecraft:block/polished_blackstone",
+    "down": "minecraft:block/white_concrete"
+  }
+}

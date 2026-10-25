@@ -80,6 +80,8 @@ public final class ModBloecke {
     public static final Block GARAGENTOR = fluegel("garagentor", false, Form.DUENN, technik().strength(50.0F, 1200.0F));
     public static final Block ROLLLADEN = fluegel("rollladen", true, Form.DUENN, technik().strength(50.0F, 1200.0F));
     public static final Block SCHIEBETUER = fluegel("schiebetuer", false, Form.DUENN, technik().sound(SoundType.GLASS).strength(50.0F, 1200.0F));
+    /** Große Haustür: weiß-goldene Flügel mit Glas, die wie die Schiebetür automatisch zur Seite gleiten. */
+    public static final Block PORTALTUER = fluegel("portaltuer", false, Form.DUENN, technik().sound(SoundType.WOOD).strength(50.0F, 1200.0F));
     public static final Block PANZERTUER = fluegel("panzertuer", true, Form.DUENN, technik().strength(80.0F, 3600000.0F));
     public static final Block TRESORTUER = fluegel("tresortuer", false, Form.DUENN, technik().strength(80.0F, 3600000.0F));
     public static final Block POOLABDECKUNG = fluegel("poolabdeckung", true, Form.FLACH, technik());
@@ -120,7 +122,12 @@ public final class ModBloecke {
             de.moinmornhart.stinkendreich.mechanik.PrivattuerBlock::new);
     /** Sicherheitstür fürs Büro: Metall mit Goldkante, öffnet nur über den Kartenleser (Zugangskarte). */
     public static final Block SICHERHEITSTUER = ModRegister.tuer("sicherheitstuer", BlockSetType.IRON,
-            tuer(MapColor.COLOR_GRAY, SoundType.METAL).strength(50.0F, 1200.0F).requiresCorrectToolForDrops());
+            tuer(MapColor.COLOR_GRAY, SoundType.METAL).strength(50.0F, 1200.0F).requiresCorrectToolForDrops(),
+            de.moinmornhart.stinkendreich.mechanik.SicherheitstuerBlock::new);
+    /** Banktür im Bunker: Tresorstahl mit goldenem Handrad, wie die Sicherheitstür nur mit Zugangskarte. */
+    public static final Block BANKTUER = ModRegister.tuer("banktuer", BlockSetType.IRON,
+            tuer(MapColor.METAL, SoundType.METAL).strength(80.0F, 3600000.0F).requiresCorrectToolForDrops(),
+            de.moinmornhart.stinkendreich.mechanik.SicherheitstuerBlock::new);
     /** Clubtür: schwarzes Steppleder mit Goldknöpfen und lila Bullauge, öffnet von Hand. */
     public static final Block CLUBTUER = ModRegister.tuer("clubtuer", BlockSetType.DARK_OAK, tuer(MapColor.COLOR_BLACK, SoundType.WOOD).strength(3.0F));
 

@@ -17,6 +17,8 @@ public final class KlientBruecke {
     public static Consumer<BlockPos> musikanlage = p -> { };
     /** Öffnet das Butler-Menü; bekommt die Entity-Nummer des Butlers. */
     public static java.util.function.IntConsumer butler = id -> { };
+    /** Spielfenster des Konzertflügels öffnen (Position des mittleren Blocks). */
+    public static Consumer<BlockPos> klavier = p -> { };
     /** Fernseher-Menü öffnen (Entity-ID). */
     public static java.util.function.IntConsumer fernseher = id -> { };
     /** Hält der Fahrer gerade die Handbremse (Sprungtaste)? */

@@ -242,6 +242,31 @@ def midi(n: float) -> float:
     return 440.0 * 2 ** ((n - 69) / 12)
 
 
+def klavier(note: int) -> np.ndarray:
+    """Konzertflügel: ein angeschlagener Ton (MIDI-Nummer). Leicht unharmonische Obertöne wie bei echten Saiten,
+    je zwei minimal verstimmte Saiten (Schwebung), zweistufiges Abklingen (erst schnell, dann lang nachklingend),
+    hohe Obertöne klingen schneller ab, dazu das kurze Geräusch des Hammers. Tiefe Töne klingen länger."""
+    f = midi(note)
+    dauer = 4.0 - (note - 36) / 48 * 2.0
+    t = zeit(dauer)
+    unharmonisch = 0.00015 * 2 ** ((note - 36) / 24)
+    tau = 2.4 * (130.0 / f) ** 0.5
+    s = np.zeros_like(t)
+    for n in range(1, 20):
+        fn = n * f * np.sqrt(1 + unharmonisch * n * n)
+        if fn > 15000:
+            break
+        staerke = n ** -1.15 * np.exp(-(n - 1) * f / 4200)
+        tn = tau / (1 + 0.38 * (n - 1))
+        huelle_n = 0.72 * np.exp(-t / (tn * 0.35)) + 0.28 * np.exp(-t / (tn * 2.6))
+        verstimmt = 0.00035
+        s += staerke * huelle_n * 0.5 * (np.sin(2 * np.pi * fn * (1 + verstimmt) * t) + np.sin(2 * np.pi * fn * (1 - verstimmt) * t))
+    rnd = np.random.default_rng(note)
+    hammer = np.convolve(rnd.normal(0, 1, len(t)), np.ones(6) / 6, mode="same") * np.exp(-t / 0.005) * 0.12
+    anschlag = np.clip(t / 0.002, 0, 1)
+    return (s * anschlag + hammer) * huelle(len(t), an=0.001, ab=0.35)
+
+
 def aufzug_musik() -> np.ndarray:
     """Fahrstuhlmusik: entspannter Bossa nova in F-Dur, 8 Takte, nahtlos wiederholbar.
 
@@ -337,6 +362,9 @@ GERAEUSCHE = {
     "geldregen": (geldregen, "Geldkanone feuert", "Money cannon fires"),
     "toilette": (toilette, "Toilettenspülung", "Toilet flushes"),
 }
+# Konzertflügel: fünf Grundtöne (C2 … C6); alle anderen Tasten spielt das Spiel mit verschobener Tonhöhe
+for _oktave in range(2, 7):
+    GERAEUSCHE[f"klavier_c{_oktave}"] = (lambda n=12 * (_oktave + 1): klavier(n), "Flügel spielt", "Grand piano plays")
 # Lange Stücke werden gestreamt statt ganz in den Speicher geladen
 GESTREAMT = {"aufzug_musik"}
 

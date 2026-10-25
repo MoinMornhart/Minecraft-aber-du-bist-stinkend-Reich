@@ -405,6 +405,26 @@ def m_fluegel_tasten():
     return img
 
 
+def m_fluegel_innen():
+    """Innenleben des Flügels von oben: goldene Gussplatte mit Löchern, darüber die Saiten."""
+    img, d = neu((200, 156, 44))
+    rauschen(img, 5, 31)
+    for x in range(1, 16, 3):
+        d.line([(x, 0), (x, 15)], fill=(214, 206, 188))
+    return img
+
+
+def m_noten():
+    """Notenblatt: weißes Papier mit fünf Notenlinien und ein paar Noten."""
+    img, d = neu((246, 244, 236))
+    for y in (3, 5, 7, 9, 11):
+        d.line([(1, y), (14, y)], fill=(70, 70, 70))
+    for x, y in ((3, 8), (6, 6), (9, 9), (12, 5)):
+        d.point((x, y), fill=(10, 10, 10))
+        d.point((x + 1, y), fill=(10, 10, 10))
+    return img
+
+
 def m_samt_knoepfe():
     """Gepolstertes Kopfteil: roter Samt mit goldenen Knöpfen im Rautenmuster, Goldkante."""
     img, d = neu((140, 18, 32))
@@ -653,7 +673,7 @@ MATERIALIEN = {
     "geld_oben": m_geld_oben, "geld_seite": m_geld_seite, "flaschen": m_flaschen, "herd_oben": m_herd_oben,
     "ofen_front": m_ofen_front, "kuehl_front": m_kuehl_front, "weinkuehl_front": m_weinkuehl_front,
     "champagner": m_champagner, "cocktail": m_cocktail, "sekt": m_sekt, "fluegel_tasten": m_fluegel_tasten,
-    "lack_schwarz": m_lack_schwarz, "tastatur": m_tastatur, "maus": m_maus, "samt_knoepfe": m_samt_knoepfe,
+    "lack_schwarz": m_lack_schwarz, "fluegel_innen": m_fluegel_innen, "noten": m_noten, "tastatur": m_tastatur, "maus": m_maus, "samt_knoepfe": m_samt_knoepfe,
     "neon_bar": lambda: neon("BAR", (255, 40, 160)), "neon_vip": lambda: neon("VIP", (255, 200, 40)),
     "neon_club": lambda: neon("CLUB", (40, 220, 255)),
     "neon_wein": lambda: neon("WEIN", (255, 70, 90)),
@@ -851,6 +871,72 @@ def fluegel_korpus():
 
 
 
+def g(von, bis, mat, drehung=None, **flaechen):
+    """Kasten für große Modelle über mehrere Blöcke (-16 … 32): Texturausschnitt nach Lage modulo 16, damit sich
+    die Textur wiederholt statt gestreckt zu werden."""
+    uv = {}
+    for f in ("north", "south", "east", "west", "up", "down"):
+        a, b2 = {"north": (0, 1), "south": (0, 1), "east": (2, 1), "west": (2, 1), "up": (0, 2), "down": (0, 2)}[f]
+        u0, u1 = von[a] % 16, (von[a] % 16) + min(16, bis[a] - von[a])
+        v0, v1 = von[b2] % 16, (von[b2] % 16) + min(16, bis[b2] - von[b2])
+        if u1 > 16:
+            u0, u1 = 0, min(16, bis[a] - von[a])
+        if v1 > 16:
+            v0, v1 = 0, min(16, bis[b2] - von[b2])
+        uv[f] = [round(u0, 3), round(v0, 3), round(max(u1, u0 + 0.5), 3), round(max(v1, v0 + 0.5), 3)]
+    return k(von, bis, mat, uv=uv, drehung=drehung, **flaechen)
+
+
+def konzertfluegel():
+    """Großer Konzertflügel über 3 × 3 Blöcke, alles im Modell des mittleren Blocks (x und z von -16 bis 32).
+    Tastatur vorn (Norden), wer davor sitzt, schaut nach Süden; die lange gerade Seite liegt links vom Spieler
+    (Osten), die geschwungene Seite rechts (Westen), das Ende zeigt nach Süden. Deckel offen auf einer Stütze,
+    innen goldene Platte mit Saiten, Notenpult mit Noten, Pedale aus Gold, drei Beine mit goldenen Rollen."""
+    lack, gold = "lack_schwarz", "gold"
+    teile = []
+    # Gehäuse (Zarge) in Stufen, die geschwungene Seite nach Westen
+    zarge = [(-16, -6, 32, 8), (-14, 8, 32, 12), (-11, 12, 32, 16), (-7, 16, 32, 19), (-3, 19, 32, 22), (1, 22, 32, 25),
+             (6, 25, 32, 27.5), (11, 27.5, 32, 29.5), (17, 29.5, 31.5, 31), (23, 31, 30.5, 32)]
+    for x0, z0, x1, z1 in zarge:
+        teile.append(g([x0, 10, z0], [x1, 18, z1], lack, up="fluegel_innen"))
+    # Goldene Leiste rundherum oben auf der Zarge (vorn)
+    teile.append(g([-16, 17, -6.2], [32, 18, -6], gold))
+    # Deckel: eine Platte in denselben Stufen, an der geraden Ostseite angeschlagen und schräg geöffnet
+    for x0, z0, x1, z1 in zarge:
+        teile.append(g([x0, 18, z0], [x1, 19, z1], lack, drehung=gedreht("z", -22.5, [32, 18, 8])))
+    # Deckelstütze auf der geschwungenen Seite
+    teile.append(g([-3, 18, 13], [-2, 31, 14], gold))
+    # Spieltisch: Tastenbett, Tasten (drei Oktaven je 14 Pixel), Wangen, Tastenklappe mit Goldstreifen
+    teile.append(g([-13, 10, -15], [29, 13, -6], lack))
+    for i in range(3):
+        x0 = -13 + i * 14
+        teile.append(k([x0, 13, -15], [x0 + 14, 14, -8], lack, uv={"up": [0, 14, 14, 0]}, up="fluegel_tasten"))
+    teile.append(g([-16, 10, -16], [-13, 17, -6], lack))
+    teile.append(g([29, 10, -16], [32, 17, -6], lack))
+    teile.append(g([-13, 13, -8], [29, 17, -6], lack))
+    teile.append(g([2, 15.5, -8.2], [14, 16.5, -8], gold))
+    # Notenpult mit Notenblatt, leicht nach hinten geneigt
+    teile.append(g([-4, 17, -7], [20, 25, -6], lack, drehung=gedreht("x", -22.5, [8, 17, -6])))
+    teile.append(g([-2, 18, -7.3], [18, 24, -7], "noten", drehung=gedreht("x", -22.5, [8, 17, -6])))
+    # Beine mit goldenen Rollen
+    for x0, z0 in ((-14, -13), (26, -13), (22, 24)):
+        teile.append(g([x0, 1, z0], [x0 + 4, 10, z0 + 4], lack))
+        teile.append(g([x0 + 0.5, 0, z0 + 0.5], [x0 + 3.5, 1, z0 + 3.5], gold))
+    # Pedale: Lyra unter der Tastatur, drei goldene Pedale
+    teile.append(g([6, 1, -6], [10, 10, -4], lack))
+    for x0 in (5.5, 7.5, 9.5):
+        teile.append(g([x0, 1, -9], [x0 + 1, 1.6, -6], gold))
+    return teile
+
+
+def klavierbank():
+    """Klavierbank: schwarzer Lack, gepolsterte Sitzfläche aus rotem Samt mit Goldknöpfen, 1,25 Blöcke breit."""
+    return [k([-2, 8, 3], [18, 10, 13], "lack_schwarz"), k([-1.5, 10, 3.5], [17.5, 12, 12.5], "samt_knoepfe"),
+            k([-1, 0, 4], [1, 8, 6], "lack_schwarz"), k([15, 0, 4], [17, 8, 6], "lack_schwarz"),
+            k([-1, 0, 10], [1, 8, 12], "lack_schwarz"), k([15, 0, 10], [17, 8, 12], "lack_schwarz"),
+            k([-2, 9.5, 2.8], [18, 10, 3], "gold")]
+
+
 def tastatur():
     """Schreibunterlage aus Leder, flache Tastatur mit Ziffernblock und Maus (rechts aus Sicht des Sitzenden,
     der von Norden auf den Tisch schaut). Tastatur und Maus nutzen die feine Bürotextur."""
@@ -1001,7 +1087,7 @@ def sonnenschirm():
 
 # Name: (Teile, Kollisionsform oder None = aus den Teilen, Licht, fest, Klang, Werkzeug, Deutsch, Englisch)
 BLOECKE = {
-    "tanzflaeche": ([k([0, 0, 0], [16, 16, 16], "schwarzglas", up="tanz")], None, 12, True, "glas", "pickaxe", "Tanzfläche", "Dance Floor"),
+    "tanzflaeche": ([k([0, 0, 0], [16, 16, 16], "schwarzglas", up="tanz", down="lack_weiss")], None, 12, True, "glas", "pickaxe", "Tanzfläche", "Dance Floor"),
     "discokugel": ([k([7.5, 11, 7.5], [8.5, 16, 8.5], "chrom"), k([3, 3, 5], [13, 9, 11], "spiegel"),
                     k([5, 1, 5], [11, 11, 11], "spiegel"), k([5, 3, 3], [11, 9, 13], "spiegel"),
                     k([4, 2, 4], [12, 10, 12], "spiegel")], [[3, 1, 3, 13, 16, 13]], 10, False, "glas", "pickaxe", "Discokugel", "Disco Ball"),
@@ -1040,13 +1126,18 @@ BLOECKE = {
     "neon_show": (neonschild("neon_show"), None, 10, False, "glas", "pickaxe", "Leuchtschrift SHOW", "Neon Sign SHOW"),
     "wanne_kopf": (_wanne(True), [[1, 0, 0, 15, 10, 16]], 0, True, "stein", "pickaxe", "Badewanne (Kopfteil)", "Bathtub (Head)"),
     "wanne_fuss": (_wanne(False), [[1, 0, 0, 15, 10, 16]], 0, True, "stein", "pickaxe", "Badewanne (Fußteil)", "Bathtub (Foot)"),
+    "konzertfluegel": (konzertfluegel(), [[0, 0, 0, 16, 16, 16]], 0, True, "holz", "axe", "Konzertflügel", "Grand Piano"),
+    "fluegel_teil": ([], [[0, 0, 0, 16, 16, 16]], 0, True, "holz", "axe", "Konzertflügel (Teil)", "Grand Piano (Part)"),
+    "klavierbank": (klavierbank(), [[0, 0, 3, 16, 12, 13]], 0, True, "holz", "axe", "Klavierbank", "Piano Bench"),
     "tanzstange": (tanzstange(), [[7, 0, 7, 9, 16, 9]], 0, True, "metall", "pickaxe", "Tanzstange", "Dance Pole"),
     "goldmuenzen": ([k([0, 0, 0], [16, 16, 16], "goldmuenzen")], None, 0, False, "metall", "pickaxe",
                     "Goldmünzen (zum Hineinspringen)", "Gold Coins (jump in)"),
 }
 
 # Sitzhöhe in Pixeln für Sitzmöbel (Rechtsklick setzt sich drauf)
-SITZE = {"liege_kopf": 7, "wanne_kopf": 4}
+SITZE = {"liege_kopf": 7, "wanne_kopf": 4, "klavierbank": 11}
+# Rechtsklick öffnet das Spielfenster des Flügels (KlavierBlock)
+KLAVIER = {"konzertfluegel", "fluegel_teil"}
 # Blöcke mit eigener Funktion beim Rechtsklick (siehe ModDeko): Toilette spült
 SPUELEN = {"goldtoilette"}
 
@@ -1106,7 +1197,7 @@ def modell(teile) -> dict:
             e["rotation"] = t["drehung"]
         elemente.append(e)
     texturen = {m: tex(m) for m in mats}
-    texturen["particle"] = tex(teile[0]["flaechen"].get("north", teile[0]["mat"]))
+    texturen["particle"] = tex(teile[0]["flaechen"].get("north", teile[0]["mat"])) if teile else tex("lack_schwarz")
     return {"parent": "minecraft:block/block", "textures": texturen, "elements": elemente}
 
 
@@ -1182,6 +1273,8 @@ def main() -> dict:
             eintrag["sitz"] = SITZE[name]
         if name in SPUELEN:
             eintrag["spuelen"] = True
+        if name in KLAVIER:
+            eintrag["klavier"] = True
         liste.append(eintrag)
         werkzeuge[werkzeug].append(f"{NS}:{name}")
         de[f"block.{NS}.{name}"], en[f"block.{NS}.{name}"] = name_de, name_en

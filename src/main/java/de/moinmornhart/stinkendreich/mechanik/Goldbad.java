@@ -1,16 +1,16 @@
 package de.moinmornhart.stinkendreich.mechanik;
 
-import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.register.ModDeko;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.phys.Vec3;
 
 /**
- * Bad in Goldmünzen wie im Geldspeicher: Der Block „goldmuenzen“ hat keine feste Oberfläche. Wer hineinspringt,
- * sinkt langsam ein, wird gebremst und nimmt keinen Fallschaden.
+ * Bad in Goldmünzen wie im Geldspeicher: Der Block „goldmuenzen“ hat keine feste Oberfläche und ist kletterbar
+ * (Block-Tag minecraft:climbable, wie ein Gerüst): Wer hineinspringt, sinkt langsam ein, mit Schleichen bleibt man
+ * stehen, mit der Leertaste kommt man wieder hoch. Hier sorgt der Server nur dafür, dass niemand Fallschaden nimmt
+ * (die Bewegung selbst steuert das Spiel des Spielers).
  */
 public final class Goldbad {
     private Goldbad() {
@@ -31,10 +31,6 @@ public final class Goldbad {
                 continue;
             }
             p.resetFallDistance();
-            Vec3 v = p.getDeltaMovement();
-            // Langsam einsinken, zur Seite nur gebremst; wer sich nach oben bewegt, wird nicht aufgehalten
-            p.setDeltaMovement(v.x * 0.6, Math.max(v.y, -0.08), v.z * 0.6);
-            Kompat.bewegungSenden(p);
         }
     }
 }

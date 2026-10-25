@@ -110,6 +110,36 @@
       "stinkendreich:toilette"
     ]
   },
+  "klavier_c2": {
+    "subtitle": "stinkendreich.ton.klavier_c2",
+    "sounds": [
+      "stinkendreich:klavier_c2"
+    ]
+  },
+  "klavier_c3": {
+    "subtitle": "stinkendreich.ton.klavier_c3",
+    "sounds": [
+      "stinkendreich:klavier_c3"
+    ]
+  },
+  "klavier_c4": {
+    "subtitle": "stinkendreich.ton.klavier_c4",
+    "sounds": [
+      "stinkendreich:klavier_c4"
+    ]
+  },
+  "klavier_c5": {
+    "subtitle": "stinkendreich.ton.klavier_c5",
+    "sounds": [
+      "stinkendreich:klavier_c5"
+    ]
+  },
+  "klavier_c6": {
+    "subtitle": "stinkendreich.ton.klavier_c6",
+    "sounds": [
+      "stinkendreich:klavier_c6"
+    ]
+  },
   "musik": {
     "subtitle": "stinkendreich.ton.musik",
     "sounds": [

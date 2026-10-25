@@ -1,0 +1,96 @@
+# 0.2.3 (zweite Runde): Haustür, Türen und Wände, weiße Decken, Alarmanlagen nicht vor Glas, Garten-Lounge,
+# Club-Sofa mit Abstand zur Bar, Drehteller, Whirlpool (taut auf, dampft), Banktür und Sicherheitstür mit Karte
+# (bleiben offen, von innen schließen), magischer Eingang per Schleichen
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+# Haustür von außen (Zuschauer öffnen sie nicht)
+server /villa ort 55 26.5 75 180 5
+warte 8
+bild t01_haustuer_zu
+server /villa ort 53.5 26 65 90 10
+warte 2
+bild t02_tuer_wohnzimmer
+server /villa ort 54 32 63 90 10
+warte 2
+bild t03_gaestezimmer_tuer
+server /villa ort 45.5 32 54 180 10
+warte 2
+bild t04_badtuer
+server /villa ort 40.5 27 50.5 0 -80
+warte 2
+bild t05_decke_wohnzimmer
+server /villa ort 40.5 33 58.5 0 -80
+warte 2
+bild t06_decke_gaestezimmer
+server /villa ort 52.5 33 41 180 -25
+warte 2
+bild t07_sirene
+server /villa ort 19.5 28 78 180 20
+warte 3
+bild t08_pavillon
+server /villa ort 16.5 9 80 150 30
+warte 3
+bild t09_club_sofa
+server /villa ort 86.5 17.5 49 180 35
+warte 3
+bild t10_drehteller
+server /villa ort 57.5 6 44.5 90 10
+warte 3
+bild t11_banktuer
+# Whirlpool: Eis aufs Wasser, es muss gleich wieder Wasser sein; Dampf darüber
+server /villa ort 74.5 40 39.5 0 90
+warte 2
+server /fill ~-3 ~-2 ~-2 ~3 ~-2 ~3 minecraft:ice replace minecraft:water
+warte 2
+server /execute if block ~1 ~-2 ~1 minecraft:water run say WHIRLPOOL_WASSER
+server /execute if block ~1 ~-2 ~1 minecraft:ice run say WHIRLPOOL_EIS
+server /villa ort 70.5 40 44 -138 25
+warte 3
+bild t12_whirlpool
+# Ab hier zu Fuß: Haustür geht auf, wenn man davor steht
+server /gamemode survival
+server /villa stufe 1
+server /give @p stinkendreich:zugangskarte
+server /villa ort 55 26 69.5 180 5
+warte 3
+bild t13_haustuer_offen
+# Banktür im Bunker: Karte an den Leser, die Tür bleibt offen
+server /villa ort 55.5 6 43.5 90 7
+warte 2
+klick
+warte 1.5
+bild t14_banktuer_offen
+warte 5
+server /villa ort 57.5 6 44.5 90 10
+warte 1
+bild t15_banktuer_noch_offen
+# Sicherheitstür Büro: mit Karte auf, bleibt offen, drinnen per Rechtsklick zu
+server /villa ort 58.3 32 57.5 -90 10
+warte 2
+klick
+warte 6
+server /villa ort 56.5 32 58.5 -90 10
+warte 1
+bild t16_buero_offen
+server /villa ort 61.5 32 58.5 90 25
+warte 1
+klick
+warte 1.5
+server /villa ort 63.5 32 58.5 90 10
+warte 1
+bild t17_buero_innen_zu
+# Magischer Eingang: vor dem Regal im Nachtclub schleichen
+server /villa ort 31.5 16 64 90 5
+warte 2
+bild t18_regal_zu
+druecke shift
+warte 1.2
+bild t19_regal_magie
+loslassen shift
+warte 1.5
+bild t20_regal_offen
+server /villa stufe 0

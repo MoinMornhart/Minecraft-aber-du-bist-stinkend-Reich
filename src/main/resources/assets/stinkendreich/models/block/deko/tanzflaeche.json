@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
+    "lack_weiss": "stinkendreich:block/deko/lack_weiss",
     "schwarzglas": "stinkendreich:block/deko/schwarzglas",
     "tanz": "stinkendreich:block/deko/tanz",
     "particle": "stinkendreich:block/deko/schwarzglas"
@@ -70,7 +71,7 @@
             16.0,
             16.0
           ],
-          "texture": "#schwarzglas"
+          "texture": "#lack_weiss"
         }
       }
     }

@@ -116,8 +116,29 @@ public class DrehtellerEntity extends Mob {
         yBodyRotO = yRotO;
         yHeadRot = getYRot();
         if (!level().isClientSide()) {
+            if (tickCount % 20 == 0) {
+                mittigHalten();
+            }
             steuern(tempo);
         }
+    }
+
+    /**
+     * Hält den Teller genau in der Mitte seines Goldrings (Marke „drehteller“ im Bauplan). Sonst könnte er nach
+     * vielen Fahrten oder beim Laden ein Stück verrutschen und säße schief im Boden.
+     */
+    private void mittigHalten() {
+        de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa().ifPresent(villa -> {
+            for (com.google.gson.JsonArray m : villa.plan().marke("drehteller")) {
+                double x = villa.ursprung().getX() + m.get(0).getAsDouble();
+                double y = villa.ursprung().getY() + m.get(1).getAsDouble();
+                double z = villa.ursprung().getZ() + m.get(2).getAsDouble();
+                double abstand = Math.abs(getX() - x) + Math.abs(getZ() - z);
+                if (abstand < 6 && Math.abs(getY() - y) < 3 && (abstand > 0.01 || Math.abs(getY() - y) > 0.01)) {
+                    setPos(x, y, z);
+                }
+            }
+        });
     }
 
     /** Dreht alle Autos auf der Fläche um die Mitte – auf dem Server die ohne Fahrer, beim Klienten den eigenen. */

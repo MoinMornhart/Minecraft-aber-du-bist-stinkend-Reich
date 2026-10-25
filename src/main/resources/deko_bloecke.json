@@ -1027,6 +1027,57 @@
     "klang": "stein"
   },
   {
+    "name": "konzertfluegel",
+    "form": [
+      [
+        0,
+        0,
+        0,
+        16,
+        16,
+        16
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz",
+    "klavier": true
+  },
+  {
+    "name": "fluegel_teil",
+    "form": [
+      [
+        0,
+        0,
+        0,
+        16,
+        16,
+        16
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz",
+    "klavier": true
+  },
+  {
+    "name": "klavierbank",
+    "form": [
+      [
+        0,
+        0,
+        3,
+        16,
+        12,
+        13
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz",
+    "sitz": 11
+  },
+  {
     "name": "tanzstange",
     "form": [
       [

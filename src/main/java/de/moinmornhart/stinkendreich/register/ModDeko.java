@@ -62,8 +62,10 @@ public final class ModDeko {
                 double sitz = o.has("sitz") ? o.get("sitz").getAsDouble() : -1;
                 boolean verbund = o.has("verbund") && o.get("verbund").getAsBoolean();
                 boolean spuelen = o.has("spuelen") && o.get("spuelen").getAsBoolean();
+                boolean klavier = o.has("klavier") && o.get("klavier").getAsBoolean();
                 BLOECKE.put(name, ModRegister.block(name, q -> verbund ? new VerbundDekoBlock(q, kaesten, fest, sitz)
                         : spuelen ? new de.moinmornhart.stinkendreich.mechanik.ToiletteBlock(q, kaesten, fest, sitz)
+                        : klavier ? new de.moinmornhart.stinkendreich.klavier.KlavierBlock(q, kaesten, fest, sitz)
                         : new DekoBlock(q, kaesten, fest, sitz), p));
             }
             StinkendReich.LOGGER.info("{} Deko-Blöcke registriert", BLOECKE.size());

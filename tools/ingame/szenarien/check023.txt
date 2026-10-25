@@ -1,0 +1,74 @@
+# 0.2.3: Konzertflügel (Ansicht, Hinsetzen, Spielfenster, Tasten, selbstspielendes Stück), Tresor ohne Alarm für
+# Bewohner, Lava-Graben wenn ein Bewohner im Garten ist und im Lockdown immer
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+server /villa ort 54.5 27.8 58.5 -36 18
+warte 8
+bild f01_fluegel
+server /villa ort 55.5 28.5 66 -135 25
+warte 2
+bild f02_fluegel_hinten
+server /villa ort 59.5 29 59.5 160 35
+warte 2
+bild f03_fluegel_oben
+# Hinsetzen und spielen
+server /gamemode survival
+server /villa stufe 1
+server /villa ort 58.5 26 60.4 0 30
+warte 2
+klick
+warte 1.5
+bild f04_auf_der_bank
+klick
+warte 1.5
+taste F1
+bild f05_spielfenster
+taste q
+taste w
+taste e
+taste r
+taste t
+warte 0.2
+bild f06_tasten
+linksklick 376 292
+warte 2.5
+taste Escape
+warte 1
+bild f07_stueck_laeuft
+warte 4
+bild f08_stueck_noten
+taste shift
+warte 1
+# Tresor: als Bewohner über alle Fallenplatten laufen, es darf kein Alarm kommen
+server /villa ort 63.5 32 42.5 0 10
+warte 2
+server /villa ort 64.5 32 40.5 0 10
+warte 1
+server /villa ort 65.5 32 43.5 0 10
+warte 1
+server /villa ort 63.5 32 45.5 0 10
+warte 2
+bild f09_tresor
+# Lava-Graben: Stufe 1, Bewohner im Garten (nicht im Haus) → Lava
+server /villa ort 20.5 26 85.5 0 10
+warte 6
+server /execute if block ~ ~-2 ~18 minecraft:lava run say GRABEN_GARTEN_LAVA
+server /execute if block ~ ~-2 ~18 minecraft:water run say GRABEN_GARTEN_WASSER
+# Draußen vor dem Tor bei Stufe 1 → Wasser
+server /villa ort 45.5 26 112 0 30
+warte 6
+server /execute if block ~ ~-2 ~-9 minecraft:water run say GRABEN_DRAUSSEN_WASSER
+server /execute if block ~ ~-2 ~-9 minecraft:lava run say GRABEN_DRAUSSEN_LAVA
+# Lockdown (Stufe 2) draußen → Lava
+server /villa stufe 2
+warte 6
+server /execute if block ~ ~-2 ~-9 minecraft:lava run say GRABEN_LOCKDOWN_LAVA
+server /execute if block ~ ~-2 ~-9 minecraft:water run say GRABEN_LOCKDOWN_WASSER
+server /villa ort 45.5 30 113 180 30
+warte 2
+bild f10_graben_lockdown
+server /villa stufe 1

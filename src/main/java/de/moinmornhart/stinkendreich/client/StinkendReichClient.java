@@ -49,7 +49,7 @@ public class StinkendReichClient implements ClientModInitializer {
         // Türen und Tore mit durchsichtigen Stellen
         KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
                 ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER, ModBloecke.PRIVATTUER,
-                ModBloecke.SICHERHEITSTUER, ModBloecke.CLUBTUER);
+                ModBloecke.SICHERHEITSTUER, ModBloecke.CLUBTUER, ModBloecke.BANKTUER, ModBloecke.PORTALTUER);
         KompatClient.durchsichtig(de.moinmornhart.stinkendreich.register.ModDeko.BLOECKE.values().toArray(new net.minecraft.world.level.block.Block[0]));
 
         // Butler: eigenes Modell (Fabric hat die Klasse dafür in 26.x umbenannt) und Renderer
@@ -80,6 +80,8 @@ public class StinkendReichClient implements ClientModInitializer {
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(FernseherModell.SCHICHT, FernseherModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.FERNSEHER, FernseherRenderer::new);
         KlientBruecke.fernseher = id -> KompatClient.zeige(new FernseherBildschirm(id));
+        // Konzertflügel: Spielfenster mit Klaviatur
+        KlientBruecke.klavier = pos -> KompatClient.zeige(new de.moinmornhart.stinkendreich.client.klavier.KlavierBildschirm(pos));
         // Sitzplätze auf Möbeln sind unsichtbar
         EntityRendererRegistry.register(ModEntities.SITZ, net.minecraft.client.renderer.entity.NoopRenderer::new);
         // Drehteller in der Tiefgarage

@@ -15,7 +15,8 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Kartenleser neben einer Tür: Mit Zugangskarte (oder bei Stufe 0) gibt er für 3 Sekunden ein
- * Redstone-Signal und öffnet so die Eisentür daneben. Drei Fehlversuche lösen Alarm aus.
+ * Redstone-Signal und öffnet so die Eisentür daneben. Sicherheits- und Banktüren öffnet er direkt, sie bleiben
+ * offen, bis man sie schließt ({@link SicherheitstuerBlock}). Drei Fehlversuche lösen Alarm aus.
  */
 public class KartenleserBlock extends MechanikBlock {
     public KartenleserBlock(Properties eigenschaften) {
@@ -35,7 +36,10 @@ public class KartenleserBlock extends MechanikBlock {
         VillaZustand z = VillaZustand.get(welt.getServer());
         if (z.stufe() == 0 || Zugang.hatKarte(spieler)) {
             Zugang.erfolg(spieler);
-            impulsGeben(welt, pos, zustand, 60);
+            // Sicherheits- und Banktüren gehen direkt auf und bleiben offen; alle anderen Türen öffnet ein Impuls
+            if (!SicherheitstuerBlock.oeffnenBei(welt, pos, spieler)) {
+                impulsGeben(welt, pos, zustand, 60);
+            }
             welt.playSound(null, pos, ModSounds.PIEP_OK, SoundSource.BLOCKS, 1.0F, 1.0F);
             Kompat.nachricht(spieler, Component.translatable("stinkendreich.zugang.karte").withStyle(ChatFormatting.GREEN), true);
         } else {

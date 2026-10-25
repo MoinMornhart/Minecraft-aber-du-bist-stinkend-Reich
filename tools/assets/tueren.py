@@ -262,6 +262,43 @@ def tuer_club() -> Image.Image:
     return img
 
 
+def tuer_bank() -> Image.Image:
+    """Banktür: dicker, polierter Tresorstahl, goldenes Handrad mit Speichen, Schild „BANK“, Riegel zur Kante,
+    Kartenschlitz mit grüner Leuchte. Öffnet nur über den Kartenleser und bleibt offen, bis man sie schließt."""
+    img, d = leinwand(16, 32, (150, 156, 166))
+    for y in range(32):
+        d.line([(0, y), (15, y)], fill=rgba(heller((150, 156, 166), 8 if y % 4 == 0 else (-6 if y % 4 == 2 else 0))))
+    rauschen(img, 3, 37)
+    d.rectangle([0, 0, 15, 31], outline=rgba((70, 74, 82)))
+    d.rectangle([1, 1, 14, 30], outline=rgba(GOLD_DUNKEL))
+    # Schild „BANK“ oben als Goldplatte mit dunklen Buchstabenstrichen
+    d.rectangle([3, 2, 12, 5], fill=rgba(GOLD))
+    d.line([(3, 2), (12, 2)], fill=rgba(GOLD_HELL))
+    for x in (4, 6, 9, 11):
+        d.line([(x, 3), (x, 4)], fill=rgba((60, 40, 10)))
+    # Goldenes Handrad mit vier Speichen
+    d.ellipse([3, 8, 12, 17], outline=rgba(GOLD))
+    d.line([(7, 8), (7, 17)], fill=rgba(GOLD_DUNKEL))
+    d.line([(8, 8), (8, 17)], fill=rgba(GOLD))
+    d.line([(3, 12), (12, 12)], fill=rgba(GOLD))
+    d.line([(3, 13), (12, 13)], fill=rgba(GOLD_DUNKEL))
+    d.rectangle([6, 11, 9, 14], fill=rgba(GOLD_HELL), outline=rgba(GOLD_DUNKEL))
+    # Bolzen rundum
+    for x in (2, 13):
+        for y in (8, 13, 19, 25):
+            niete(d, x, y)
+    # Zwei Riegel zur Schlossseite
+    for y in (20, 24):
+        d.rectangle([5, y, 15, y + 1], fill=rgba(CHROM))
+        d.line([(5, y + 1), (15, y + 1)], fill=rgba(CHROM_DUNKEL))
+    # Kartenschlitz mit Leuchte
+    d.rectangle([9, 15, 12, 18], fill=rgba((24, 24, 28)), outline=rgba(GOLD))
+    d.point((10, 17), fill=rgba((80, 240, 120)))
+    d.rectangle([0, 29, 15, 31], fill=rgba(GOLD))
+    d.line([(0, 29), (15, 29)], fill=rgba(GOLD_HELL))
+    return img
+
+
 def item_aus_tuer(tuer: Image.Image) -> Image.Image:
     """Item-Bild: Tür auf 10×16 verkleinert, mittig."""
     klein = tuer.resize((10, 16), Image.NEAREST)
@@ -279,6 +316,7 @@ AUFKLAPPTUEREN = {
     "privattuer": (tuer_privat, "axe", "Privattür (nur Bewohner)", "Private Door (residents only)"),
     "sicherheitstuer": (tuer_sicherheit, "pickaxe", "Sicherheitstür (Zugangskarte)", "Security Door (key card)"),
     "clubtuer": (tuer_club, "axe", "Clubtür", "Club Door"),
+    "banktuer": (tuer_bank, "pickaxe", "Banktür (Zugangskarte)", "Bank Door (key card)"),
 }
 
 
@@ -407,6 +445,46 @@ def z_schiebetuer(w: int, h: int) -> Image.Image:
     return img
 
 
+def z_portaltuer(w: int, h: int) -> Image.Image:
+    """Große Haustür (Portal): je Flügel ein weiß lackierter Rahmen mit Goldleisten, oben Glas mit Sprossen,
+    unten eine Kassette mit Goldkrone, lange Griffstange an der Mittelfuge."""
+    W, H = w * 16, h * 16
+    img, d = leinwand(W, H, LEER)
+    weiss, schatten = (238, 234, 224), (204, 198, 186)
+    d.rectangle([0, 0, W - 1, H - 1], fill=rgba(weiss))
+    rauschen(img, 2, 38)
+    for cx in range(w):
+        ox = cx * 16
+        # Glasfeld oben (zwei Drittel), Kassette unten
+        glas_unten = max(4, int(H * 0.62))
+        d.rectangle([ox + 3, 3, ox + 12, glas_unten], fill=LEER)
+        for x, y in ((ox + 4, 6), (ox + 5, 5), (ox + 6, 4), (ox + 10, glas_unten - 5), (ox + 11, glas_unten - 6)):
+            d.point((x, y), fill=rgba((236, 246, 250)))
+        d.rectangle([ox + 3, 3, ox + 12, glas_unten], outline=rgba(GOLD))
+        d.line([(ox + 3, 3), (ox + 12, 3)], fill=rgba(GOLD_HELL))
+        for y in range(3 + 8, glas_unten, 8):                      # waagerechte Sprossen
+            d.line([(ox + 4, y), (ox + 11, y)], fill=rgba(GOLD))
+        k0, k1 = glas_unten + 3, H - 5
+        if k1 > k0 + 2:
+            d.rectangle([ox + 3, k0, ox + 12, k1], fill=rgba((228, 222, 210)), outline=rgba(GOLD))
+            d.line([(ox + 3, k0), (ox + 12, k0)], fill=rgba(GOLD_HELL))
+            my = (k0 + k1) // 2
+            for x, y in ((ox + 6, my), (ox + 7, my - 1), (ox + 8, my), (ox + 9, my - 1), (ox + 10, my),
+                         (ox + 6, my + 1), (ox + 7, my + 1), (ox + 8, my + 1), (ox + 9, my + 1), (ox + 10, my + 1)):
+                d.point((x, y), fill=rgba(GOLD))
+        # Kanten: hell links/oben, Schatten rechts
+        d.line([(ox, 0), (ox, H - 1)], fill=rgba((250, 248, 242)))
+        d.line([(ox + 15, 0), (ox + 15, H - 1)], fill=rgba(schatten))
+        d.line([(ox, 0), (ox + 15, 0)], fill=rgba(GOLD))
+        d.rectangle([ox, H - 3, ox + 15, H - 1], fill=rgba(GOLD))
+        d.line([(ox, H - 3), (ox + 15, H - 3)], fill=rgba(GOLD_HELL))
+        # Griffstange an der Seite zur Mitte der Tür
+        gx = ox + 13 if (cx < w / 2 - 0.5 or w == 1) else ox + 1
+        m = H // 2
+        griffstange(d, gx, m - 12, m + 11)
+    return img
+
+
 def z_panzertuer(w: int, h: int) -> Image.Image:
     """Schwerer Panzerstahl: Nieten am Rand, je Reihe ein Riegel über die Mittelfuge, Warnstreifen unten."""
     W, H = w * 16, h * 16
@@ -516,6 +594,7 @@ TORFLUEGEL = {
     "garagentor": (z_garagentor, "duenn", "hoch", "pickaxe", "Garagentor", "Garage Door"),
     "rollladen": (z_rollladen, "duenn", "hoch", "pickaxe", "Rollladen", "Security Shutter"),
     "schiebetuer": (z_schiebetuer, "duenn", "auseinander", "pickaxe", "Schiebetür", "Sliding Door"),
+    "portaltuer": (z_portaltuer, "duenn", "auseinander", "axe", "Portaltür (Haustür)", "Grand Entrance Door"),
     "panzertuer": (z_panzertuer, "duenn", "auseinander", "pickaxe", "Panzertür", "Blast Door"),
     "tresortuer": (z_tresortuer, "duenn", "seite", "pickaxe", "Tresortür", "Vault Door"),
     "gitterfalle": (z_gitter, "duenn", "runter", "pickaxe", "Gitterfalle", "Cage Trap"),

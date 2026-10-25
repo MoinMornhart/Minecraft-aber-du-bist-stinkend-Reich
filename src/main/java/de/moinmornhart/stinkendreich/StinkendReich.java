@@ -53,6 +53,7 @@ public class StinkendReich implements ModInitializer {
         ModItems.init();
         ModBloecke.init();
         ModDeko.init();
+        de.moinmornhart.stinkendreich.register.ModDecken.init();
         ModEntities.init();
         ModMusik.init();
         ModTab.init();
@@ -62,6 +63,8 @@ public class StinkendReich implements ModInitializer {
         de.moinmornhart.stinkendreich.mechanik.Graben.registrieren();
         de.moinmornhart.stinkendreich.mechanik.Rutsche.registrieren();
         de.moinmornhart.stinkendreich.mechanik.Goldbad.registrieren();
+        de.moinmornhart.stinkendreich.klavier.Klavier.registrieren();
+        de.moinmornhart.stinkendreich.mechanik.Geheimgang.registrieren();
         de.moinmornhart.stinkendreich.fernseher.FernseherEntity.registrieren();
         de.moinmornhart.stinkendreich.ausruestung.AgentKraefte.registrieren();
         SicherheitszentraleBlock.aktionenRegistrieren();
