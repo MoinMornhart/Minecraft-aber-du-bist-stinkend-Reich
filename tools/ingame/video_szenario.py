@@ -15,11 +15,20 @@ import math
 from pathlib import Path
 
 ZIEL = Path(__file__).resolve().parent / "szenarien" / "video.txt"
+# Zeitlupe: Minecraft läuft beim Dreh mit 1/ZEITLUPE der Geschwindigkeit (/tick rate), video.py spielt das Video
+# danach ZEITLUPE-mal so schnell ab. Ohne Grafikkarte schafft das Spiel nur ~7 Bilder pro Sekunde, so werden ~21.
+ZEITLUPE = 3
 zeilen: list[str] = []
 
 
 def z(*texte: str) -> None:
-    zeilen.extend(texte)
+    """Zeilen anhängen; Wartezeiten (warte, halte, bis) werden mit der Zeitlupe gestreckt."""
+    for t in texte:
+        teile = t.split(" ", 2)
+        if teile[0] in ("warte", "halte", "bis") and len(teile) > 1:
+            teile[1] = f"{float(teile[1]) * ZEITLUPE:g}"
+            t = " ".join(teile)
+        zeilen.append(t)
 
 
 def punkt(x, y, z_, gier, neigung) -> str:
@@ -40,15 +49,18 @@ def zufahren(sekunden: float, x, y, z_, gier, neigung, zurueck=3.5, schwenk=-15.
     fahrt(sekunden, start, (x, y, z_, gier, neigung))
 
 
-def kapitel(text: str) -> None:
+def kapitel(text: str, tag: bool = True) -> None:
+    # Die Tageszeit läuft weiter; jedes Kapitel spielt wieder mittags
+    if tag:
+        z("server /time set 6000")
     z(f"kapitel {text}")
 
 
 # ---------------------------------------------------------------------------
 z("# Video: Rundgang durch die ganze Villa mit allen Mechanismen (erzeugt von tools/ingame/video_szenario.py)",
   "server /gamemode spectator", "server /time set 6000", "server /weather clear", "server /difficulty peaceful",
-  "server /villa ort 118 58 128 139 19", "warte 30", "taste F1", "warte 5",
-  "video start rundgang")
+  "server /villa ort 118 58 128 139 19")
+zeilen += ["warte 30", "taste F1", f"server /tick rate {20 / ZEITLUPE:.3f}", "warte 5", "video start rundgang"]
 
 # Anflug
 kapitel("Das Anwesen")
@@ -99,17 +111,17 @@ z("warte 1", "server /villa ort 62 31 47", "server /setblock ~ ~ ~ minecraft:air
 # Sicherheit
 kapitel("Sicherheitsstufe 3: Rollläden runter, Laser an")
 z("server /villa ort 56 33 90 180 6", "warte 2", "server /villa stufe 3", "warte 5")
-z("server /villa ort 23 28.5 52 180 20", "warte 1.5")
-fahrt(5, (23, 28.5, 52, 180, 20), (23, 28.5, 49, 185, 22))
+z("server /villa ort 23 28.5 49 180 20", "warte 1.5")
+fahrt(5, (23, 28.5, 49, 170, 20), (23, 28.5, 47.5, 190, 22))
 
 # Bunker
 kapitel("Untergrundbasis: Laser im Gang")
 zufahren(5, 57.5, 7, 52, 180, 8, zurueck=3)
 kapitel("Waffenkammer")
-zufahren(7, 64.2, 7.5, 40, 270, 10, zurueck=3, schwenk=10)
+zufahren(7, 64.2, 7.5, 40, 270, 10, zurueck=1, schwenk=10)
 fahrt(5, (64.2, 7.5, 40, 270, 10), (68.6, 7.4, 34.6, 235, 8))
 kapitel("Geldspeicher mit Goldberg")
-zufahren(6, 67.5, 10, 52, 0, 25, zurueck=3)
+zufahren(6, 67.5, 10, 52.6, 0, 25, zurueck=0.4, schwenk=-20, hoch=1.5)
 z("server /villa stufe 1", "warte 2")
 
 # Aufzug
@@ -182,10 +194,10 @@ z("server /execute as @p at @s run summon vindicator ^ ^ ^9 {NoAI:1b}",
   "server /kill @e[type=vindicator]", "server /gamemode spectator")
 
 # Abend
-kapitel("Abends über der Villa")
+kapitel("Abends über der Villa", tag=False)
 z("server /time set 12650", "server /villa ort 56 52 142 180 22", "warte 3")
 fahrt(14, (56, 52, 142, 180, 22), (90, 56, 140, 150, 19), (118, 58, 128, 120, 17))
-z("warte 2", "video stopp")
+z("warte 2", "video stopp", "server /tick rate 20")
 
 ZIEL.write_text("\n".join(zeilen) + "\n", encoding="utf-8")
 print(f"{ZIEL}: {len(zeilen)} Zeilen")

@@ -6,263 +6,296 @@ server /difficulty peaceful
 server /villa ort 118 58 128 139 19
 warte 30
 taste F1
+server /tick rate 6.667
 warte 5
 video start rundgang
+server /time set 6000
 kapitel Das Anwesen
 merke
 server fahrt 16 | 118.00 58.00 128.00 139.0 19.0 | 95.00 54.00 140.00 158.0 18.0 | 62.00 46.00 142.00 178.0 17.0 | 56.00 33.00 112.00 180.0 9.0
-bis 68 Fahrt fertig
+bis 204 Fahrt fertig
+server /time set 6000
 kapitel Einfahrtstor öffnet sich (Sicherheitsstufe 0)
 server /villa ort 55.9 27 106 180 4
-warte 2
+warte 6
 server /villa stufe 0
-warte 3.5
+warte 10.5
 merke
 server fahrt 6 | 55.90 27.00 106.00 180.0 4.0 | 55.70 27.30 92.00 180.0 3.0 | 55.20 27.20 80.00 180.0 2.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Gläserne Schiebetür
 server /gamemode creative
 server /villa ort 55 26.5 76 180 2
-warte 1.5
+warte 4.5
 server /villa ort 55 26 71.5 180 2
-warte 3
+warte 9
 server /gamemode spectator
 merke
 server fahrt 4 | 55.00 27.60 71.50 180.0 2.0 | 55.50 27.60 66.50 195.0 5.0
-bis 32 Fahrt fertig
+bis 96 Fahrt fertig
+server /time set 6000
 kapitel Butler James wartet in der Halle
 server /villa ort 57.5 26 66 180 5
-warte 1
+warte 3
 server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:butler,limit=1] ^ ^ ^3.2 facing entity @p feet
 server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
 server /villa ort 57.5 27.4 66 180 8
-warte 3
+warte 9
 server /gamemode creative
-warte 1
+warte 3
 klient butlermenue
-warte 4
+warte 12
 klient schliessen
-warte 1
+warte 3
 server /gamemode spectator
 server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:0b}
+server /time set 6000
 kapitel Ballsaal
 server /villa ort 54.90 26.50 68.50 170.0 2.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 7 | 54.90 26.50 68.50 170.0 2.0 | 54.90 26.50 66.00 180.0 2.0
-bis 41 Fahrt fertig
+bis 123 Fahrt fertig
 merke
 server fahrt 6 | 54.90 26.50 66.00 180.0 2.0 | 52.00 31.00 63.00 165.0 20.0 | 51.00 33.00 61.00 160.0 25.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Luxusküche
 server /villa ort 70.00 27.50 53.50 165.0 15.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 6 | 70.00 27.50 53.50 165.0 15.0 | 70.00 27.50 50.00 180.0 15.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Personalküche für James
 server /villa ort 76.00 27.00 45.50 165.0 10.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 5 | 76.00 27.00 45.50 165.0 10.0 | 76.00 27.00 43.00 180.0 10.0
-bis 35 Fahrt fertig
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Esszimmer
 server /villa ort 70.00 27.50 67.50 165.0 15.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 6 | 70.00 27.50 67.50 165.0 15.0 | 70.00 27.50 64.00 180.0 15.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Wohnzimmer mit Kamin
 server /villa ort 47.03 27.50 55.75 105.0 10.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 6 | 47.03 27.50 55.75 105.0 10.0 | 44.00 27.50 54.00 120.0 10.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
 merke
 server fahrt 4 | 44.00 27.50 54.00 120.0 10.0 | 40.00 27.50 49.00 175.0 6.0 | 39.00 27.50 46.00 180.0 5.0
-bis 32 Fahrt fertig
+bis 96 Fahrt fertig
+server /time set 6000
 kapitel Obergeschoss: Schlafzimmer mit Himmelbett
 server /villa ort 39.50 33.60 57.50 75.0 15.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 6 | 39.50 33.60 57.50 75.0 15.0 | 37.00 33.60 57.50 90.0 15.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Bad mit goldener Wanne
 server /villa ort 45.77 33.50 47.77 120.0 15.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 5 | 45.77 33.50 47.77 120.0 15.0 | 44.00 33.50 46.00 135.0 15.0
-bis 35 Fahrt fertig
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Büro mit Überwachungsmonitoren
 server /villa ort 69.00 34.20 54.60 -15.0 25.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 6 | 69.00 34.20 54.60 -15.0 25.0 | 69.00 34.20 57.60 0.0 25.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Tresortür öffnet sich
 server /villa ort 62 31 47
 server /setblock ~ ~ ~ minecraft:redstone_block
 server /villa ort 63.9 32 51 180 4
-warte 4
+warte 12
 merke
 server fahrt 4 | 63.90 32.00 51.00 180.0 4.0 | 64.50 33.50 46.30 180.0 25.0
-bis 32 Fahrt fertig
-warte 1
+bis 96 Fahrt fertig
+warte 3
 server /villa ort 62 31 47
 server /setblock ~ ~ ~ minecraft:air
+server /time set 6000
 kapitel Sicherheitsstufe 3: Rollläden runter, Laser an
 server /villa ort 56 33 90 180 6
-warte 2
+warte 6
 server /villa stufe 3
-warte 5
-server /villa ort 23 28.5 52 180 20
-warte 1.5
+warte 15
+server /villa ort 23 28.5 49 180 20
+warte 4.5
 merke
-server fahrt 5 | 23.00 28.50 52.00 180.0 20.0 | 23.00 28.50 49.00 185.0 22.0
-bis 35 Fahrt fertig
+server fahrt 5 | 23.00 28.50 49.00 170.0 20.0 | 23.00 28.50 47.50 190.0 22.0
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Untergrundbasis: Laser im Gang
 server /villa ort 57.50 7.00 55.00 165.0 8.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 5 | 57.50 7.00 55.00 165.0 8.0 | 57.50 7.00 52.00 180.0 8.0
-bis 35 Fahrt fertig
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Waffenkammer
-server /villa ort 61.20 7.50 40.00 280.0 10.0
-warte 1.5
+server /villa ort 63.20 7.50 40.00 280.0 10.0
+warte 4.5
 merke
-server fahrt 7 | 61.20 7.50 40.00 280.0 10.0 | 64.20 7.50 40.00 270.0 10.0
-bis 41 Fahrt fertig
+server fahrt 7 | 63.20 7.50 40.00 280.0 10.0 | 64.20 7.50 40.00 270.0 10.0
+bis 123 Fahrt fertig
 merke
 server fahrt 5 | 64.20 7.50 40.00 270.0 10.0 | 68.60 7.40 34.60 235.0 8.0
-bis 35 Fahrt fertig
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Geldspeicher mit Goldberg
-server /villa ort 67.50 10.00 49.00 -15.0 25.0
-warte 1.5
+server /villa ort 67.50 11.50 52.20 -20.0 25.0
+warte 4.5
 merke
-server fahrt 6 | 67.50 10.00 49.00 -15.0 25.0 | 67.50 10.00 52.00 0.0 25.0
-bis 38 Fahrt fertig
+server fahrt 6 | 67.50 11.50 52.20 -20.0 25.0 | 67.50 10.00 52.60 0.0 25.0
+bis 114 Fahrt fertig
 server /villa stufe 1
-warte 2
+warte 6
+server /time set 6000
 kapitel Aufzug: aus dem Bunker bis ins Penthouse
 server /gamemode creative
 server /villa ort 58 6 42 180 8
-warte 3
+warte 9
 klient aufzug Penthouse
-warte 2
-taste F5
-warte 3
-taste F5
-warte 4
-taste F5
 warte 6
+taste F5
+warte 9
+taste F5
+warte 12
+taste F5
+warte 18
 server /gamemode spectator
+server /time set 6000
 kapitel Penthouse: XXL-Kingsize-Bett
 server /villa ort 62.50 39.40 45.70 192.0 22.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 7 | 62.50 39.40 45.70 192.0 22.0 | 62.50 39.40 43.20 180.0 22.0
-bis 41 Fahrt fertig
+bis 123 Fahrt fertig
+server /time set 6000
 kapitel XXL-Fernseher
 server /data merge entity @e[type=stinkendreich:fernseher,limit=1] {stinkendreich_video:"aqz-KE-bpKQ"}
 server /villa ort 62.50 39.60 37.50 -15.0 4.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 5 | 62.50 39.60 37.50 -15.0 4.0 | 62.50 39.60 39.50 0.0 4.0
-bis 35 Fahrt fertig
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Kinosofa: Rechtsklick zum Hinsetzen
 server /gamemode creative
 server /villa ort 62.5 38 45.6 180 50
-warte 1.5
+warte 4.5
 klick
-warte 1.5
+warte 4.5
 taste F5
-warte 4
+warte 12
 taste F5
 taste F5
-halte 0.4 shift
+halte 1.2 shift
 server /gamemode spectator
+server /time set 6000
 kapitel Lounge und Hausbar
 server /villa ort 54.47 40.50 54.47 120.0 15.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 6 | 54.47 40.50 54.47 120.0 15.0 | 52.00 40.50 52.00 135.0 15.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Dachparty mit DJ-Pult
 server /villa ort 54.00 40.50 79.50 165.0 18.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 7 | 54.00 40.50 79.50 165.0 18.0 | 54.00 40.50 76.00 180.0 18.0
-bis 41 Fahrt fertig
+bis 123 Fahrt fertig
+server /time set 6000
 kapitel Whirlpool und Strandliegen auf dem Dach
 server /villa ort 68.20 41.00 50.00 196.0 19.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 6 | 68.20 41.00 50.00 196.0 19.0 | 70.00 41.00 47.00 211.0 19.0
-bis 38 Fahrt fertig
+bis 114 Fahrt fertig
+server /time set 6000
 kapitel Luxus-Hubschrauber: selbst fliegen
 server /villa ort 66 47.5 60 135 18
-warte 2
+warte 6
 server /gamemode creative
 server /villa ort 58 43 50.5 90 0
-warte 1
-server /ride @p mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]
-warte 6
-halte 3.5 space
-halte 5 w
-druecke w a
 warte 3
+server /ride @p mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]
+warte 18
+halte 10.5 space
+halte 15 w
+druecke w a
+warte 9
 loslassen w a
-halte 3 w
-warte 2
+halte 9 w
+warte 6
 server /gamemode spectator
+server /time set 6000
 kapitel Poolparty mit Rutsche
 server /villa ort 55.20 30.00 37.29 145.0 20.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 7 | 55.20 30.00 37.29 145.0 20.0 | 54.00 30.00 34.00 160.0 20.0
-bis 41 Fahrt fertig
+bis 123 Fahrt fertig
 merke
 server fahrt 5 | 54.00 30.00 34.00 160.0 20.0 | 76.00 30.00 22.00 100.0 20.0
-bis 35 Fahrt fertig
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Poolabdeckung fährt zu
 server /villa ort 70.5 26 22.5 0 0
 server /setblock ~ ~ ~ minecraft:lever[face=floor,facing=north,powered=true]
 server /villa ort 55 36 31 180 40
-warte 7
+warte 21
+server /time set 6000
 kapitel Nachtclub im Keller
 server /villa ort 42.00 17.60 61.50 165.0 8.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 7 | 42.00 17.60 61.50 165.0 8.0 | 42.00 17.60 58.00 180.0 8.0
-bis 41 Fahrt fertig
+bis 123 Fahrt fertig
 merke
 server fahrt 5 | 42.00 17.60 58.00 180.0 8.0 | 50.00 17.60 54.00 90.0 5.0
-bis 35 Fahrt fertig
+bis 105 Fahrt fertig
+server /time set 6000
 kapitel Tiefgarage mit Fuhrpark
 server /villa ort 75.00 19.50 53.00 165.0 20.0
-warte 1.5
+warte 4.5
 merke
 server fahrt 7 | 75.00 19.50 53.00 165.0 20.0 | 75.00 19.50 49.00 180.0 20.0
-bis 41 Fahrt fertig
+bis 123 Fahrt fertig
+server /time set 6000
 kapitel Drehteller wendet das Auto
 server /gamemode creative
 server /villa ort 91.5 17 45.2 180 30
-warte 1
+warte 3
 server /execute at @p run summon stinkendreich:bonzenauto ~ ~ ~-4.7 {Rotation:[0f,0f],stinkendreich:"{\"farbe\":4}"}
-warte 2
+warte 6
 klick
-warte 8
-halte 0.4 shift
+warte 24
+halte 1.2 shift
 server /gamemode spectator
+server /time set 6000
 kapitel James als Chauffeur: „Butler, hol den Wagen“
 server /gamemode creative
 server /villa ort 55.5 26 86 0 15
-warte 2
+warte 6
 merke
 server Butler, hol den Wagen
-bis 40 vorgefahren
-warte 3
+bis 120 vorgefahren
+warte 9
 server /gamemode spectator
+server /time set 6000
 kapitel Agenten-Anzug: Bond-Sonnenbrille, Smoking, Lackschuhe
 server /gamemode survival
 server /difficulty normal
@@ -272,33 +305,35 @@ server /item replace entity @p armor.legs with stinkendreich:anzughose
 server /item replace entity @p armor.feet with stinkendreich:lackschuhe
 server /item replace entity @p weapon.mainhand with stinkendreich:goldene_pistole
 server /villa ort 55.5 26 93.5 0 0
-warte 2
+warte 6
 taste F5
 taste F5
-warte 4
+warte 12
 taste F5
+server /time set 6000
 kapitel Goldene Pistole, Laser-Uhr, Geldkanone
 server /execute as @p at @s run summon vindicator ^ ^ ^9 {NoAI:1b}
 server /execute as @p at @s run summon vindicator ^1.5 ^ ^11 {NoAI:1b}
-warte 2
+warte 6
 klick
-warte 1.5
+warte 4.5
 server /item replace entity @p weapon.mainhand with stinkendreich:laseruhr
-warte 1
+warte 3
 klick
-warte 2
+warte 6
 server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
 server /execute as @e[type=vindicator] run data merge entity @s {NoAI:0b}
 klick
-warte 3
+warte 9
 server /kill @e[type=vindicator]
 server /gamemode spectator
 kapitel Abends über der Villa
 server /time set 12650
 server /villa ort 56 52 142 180 22
-warte 3
+warte 9
 merke
 server fahrt 14 | 56.00 52.00 142.00 180.0 22.0 | 90.00 56.00 140.00 150.0 19.0 | 118.00 58.00 128.00 120.0 17.0
-bis 62 Fahrt fertig
-warte 2
+bis 186 Fahrt fertig
+warte 6
 video stopp
+server /tick rate 20

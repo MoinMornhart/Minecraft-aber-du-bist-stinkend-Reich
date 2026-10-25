@@ -36,7 +36,24 @@ _Zuletzt aktualisiert: 2026-10-25, 17:00 Uhr_
   Test: `tools/ingame/szenarien/agent.txt` und `agent_waffen.txt`.
 - Achtung bei Testfotos: Kamera nicht in Kronleuchter stellen (die Kristalle sahen aus wie schwebende Flächen).
   Wüstenzombies geben Hunger (grüne Ringe im Bild) – für Waffenbilder Diener (Vindicator) nehmen.
-- Offen für 0.2: Test in allen 17 Versionen, README-Fotos (`fotos.txt`, `fotos2.txt` neu aufnehmen), Release 0.2.0.
+- README-Fotos neu (`fotos.txt` + `fotos2.txt`, mit `warte 30` vor F1, sonst kommt F1 beim Laden nicht an).
+- Video-Werkzeug: `fahrt` im Testmodus (Kamerafahrt über Wegpunkte), `video start/stopp` und `kapitel` in
+  `test.sh`, `tools/ingame/video.py` (Titel, Kapitel, Musik), Drehbuch aus `tools/ingame/video_szenario.py`.
+  Für flüssige Bilder keinen zweiten Spieltest parallel laufen lassen (sonst nur ~6 Bilder/s).
+- Rundgang aller Versionen (mit Agent und Waffenkammer): 1.21, 1.21.2, 1.21.3, 1.21.4 OK. 1.21.1 brach ab, weil
+  `test.sh` während des Laufs geändert wurde (nie während eines Laufs ändern!) – muss neu. Rest ab 1.21.5 offen.
+- Offen für 0.2: restliche Versionen testen, Video an Philip, Release 0.2.0 (`mod.version` und
+  `.github/release-version` auf 0.2.0; Neuigkeiten stehen in `.github/neu.md`).
+
+## Version 0.3 (geplant, Philips Wünsche vom 25.10.)
+
+- **Straßennetz:** Vor der ersten Fahrt zu einem Ziel baut der Chauffeur eine echte Straße (Kreisel vor der Villa,
+  Abzweigungen). Ziele: Mine, Endportal, nächstes Dorf, Netherportal und alle gemerkten Orte; das Netz wächst
+  weiter wie ein echtes Straßennetz und ist selbst befahrbar. Nichts an Villa oder Spielerbauten abreißen.
+- **Handy:** Butler anrufen (kommt wirklich mit Limo oder Hubschrauber, kurze Wartezeit), Aufträge geben,
+  Lieferservice (z. B. Tiere).
+- **Mitarbeiter:** übers Handy bestellen → Mitarbeiterkiste ins Inventar → platzieren → Mitarbeiter erscheinen;
+  jeder bekommt eine Aufgabe (Diamanten, Kohle, Eisen …), die Beute landet in der Kiste; James oder Philip holt ab.
 
 ## Release
 
