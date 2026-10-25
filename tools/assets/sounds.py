@@ -4,11 +4,12 @@
 Schreibt Ogg-Vorbis-Dateien (mono, 44,1 kHz) nach assets/stinkendreich/sounds/ und die
 passende sounds.json. Braucht ffmpeg mit libvorbis.
 
-Aufruf: python3 tools/assets/sounds.py
+Aufruf: python3 tools/assets/sounds.py [--alle]   (ohne --alle nur fehlende Dateien)
 """
 from __future__ import annotations
 
 import json
+import sys
 import subprocess
 import tempfile
 import wave
@@ -98,6 +99,76 @@ def tresor() -> np.ndarray:
     return (rumms + klirr + hall) * huelle(len(t), ab=0.1)
 
 
+def gloeckchen() -> np.ndarray:
+    """Helles Tischglöckchen, zweimal angeschlagen."""
+    aus = np.zeros(int(RATE * 1.3))
+    for start in (0.0, 0.28):
+        g = ton(2093.0, 0.9, (1.0, 0.0, 0.35, 0.0, 0.18), abklingen=0.22)
+        s = int(RATE * start)
+        aus[s:s + len(g)] += g[:len(aus) - s]
+    return aus
+
+
+def motor() -> np.ndarray:
+    """Sportwagen-Motor im Leerlauf, nahtlos wiederholbar (alle Anteile passen genau in 2 Sekunden).
+    Die Mod hebt beim Fahren die Tonhöhe an."""
+    t = zeit(2.0)
+    grund = 41.0                                            # Zündfrequenz (82 Schwingungen in 2 s)
+    s = np.zeros_like(t)
+    for k, staerke in enumerate((1.0, 0.7, 0.55, 0.4, 0.3, 0.22, 0.15, 0.1), start=1):
+        s += staerke * np.sin(2 * np.pi * grund * k * t + k * 0.7)
+    blubbern = 0.75 + 0.25 * np.sin(2 * np.pi * 10.5 * t)   # 21 Wellen in 2 s
+    s *= blubbern
+    s += 0.12 * np.sign(np.sin(2 * np.pi * grund * 2 * t)) * blubbern
+    return s
+
+
+def anlasser() -> np.ndarray:
+    """Anlasser orgelt kurz, dann springt der Motor an und heult auf."""
+    t1 = zeit(0.55)
+    orgeln = np.sign(np.sin(2 * np.pi * (180 + 60 * np.sin(2 * np.pi * 6 * t1)) * t1)) * 0.35 * huelle(len(t1))
+    t2 = zeit(1.1)
+    freq = 40 + 70 * np.exp(-((t2 - 0.35) ** 2) / 0.03) + 10 * t2
+    phase = 2 * np.pi * np.cumsum(freq) / RATE
+    roehren = sum(st * np.sin(k * phase) for k, st in enumerate((1.0, 0.7, 0.5, 0.35, 0.2), start=1))
+    roehren *= np.minimum(1.0, t2 * 8) * np.exp(-t2 / 1.4)
+    return np.concatenate([orgeln, roehren * huelle(len(t2), ab=0.15)])
+
+
+def hupe() -> np.ndarray:
+    """Zweiklang-Hupe (Fanfare), kurz und kräftig."""
+    t = zeit(0.7)
+    s = np.zeros_like(t)
+    for f in (415.0, 523.0):
+        phase = 2 * np.pi * f * t
+        s += np.sign(np.sin(phase)) * 0.35 + np.sin(2 * phase) * 0.2 + np.sin(3 * phase) * 0.1
+    return s * huelle(len(t), an=0.01, ab=0.06)
+
+
+def reifen() -> np.ndarray:
+    """Quietschende Reifen: schwankender hoher Ton mit Rauschen."""
+    t = zeit(0.45)
+    rnd = np.random.default_rng(11)
+    freq = 1650 + 120 * np.sin(2 * np.pi * 9 * t)
+    phase = 2 * np.pi * np.cumsum(freq) / RATE
+    s = np.sin(phase) * 0.6 + np.sin(2 * phase) * 0.15 + rnd.normal(0, 0.25, len(t))
+    return s * huelle(len(t), an=0.03, ab=0.12)
+
+
+def crash() -> np.ndarray:
+    """Aufprall: dumpfer Schlag, Blech und klirrende Splitter."""
+    t = zeit(0.9)
+    rnd = np.random.default_rng(5)
+    schlag = np.sin(2 * np.pi * 55 * t) * np.exp(-t / 0.09)
+    blech = (np.sin(2 * np.pi * 620 * t) + 0.7 * np.sin(2 * np.pi * 977 * t) + 0.5 * np.sin(2 * np.pi * 1530 * t)) * np.exp(-t / 0.18) * 0.35
+    splitter = rnd.normal(0, 1, len(t)) * np.exp(-t / 0.05) * 0.5
+    klirr = np.zeros_like(t)
+    for start, f in ((0.08, 3100), (0.15, 4200), (0.22, 3600), (0.3, 5100)):
+        k = (t >= start) * np.sin(2 * np.pi * f * t) * np.exp(-np.maximum(0, t - start) / 0.04) * 0.25
+        klirr += k
+    return (schlag + blech + splitter + klirr) * huelle(len(t), ab=0.1)
+
+
 GERAEUSCHE = {
     "piep_ok": (piep_ok, "Piepen", "Beep"),
     "piep_fehler": (piep_fehler, "Fehlerton", "Error buzz"),
@@ -105,6 +176,12 @@ GERAEUSCHE = {
     "gong": (gong, "Aufzug-Gong", "Elevator chime"),
     "klingel": (klingel, "Türklingel", "Doorbell"),
     "tresor": (tresor, "Schwere Tür", "Heavy door"),
+    "gloeckchen": (gloeckchen, "Glöckchen klingelt", "Bell rings"),
+    "motor": (motor, "Motor brummt", "Engine hums"),
+    "anlasser": (anlasser, "Motor startet", "Engine starts"),
+    "hupe": (hupe, "Hupe", "Horn"),
+    "reifen": (reifen, "Reifen quietschen", "Tyres squeal"),
+    "crash": (crash, "Blech kracht", "Metal crunches"),
 }
 
 
@@ -126,8 +203,10 @@ def main() -> None:
     ZIEL.mkdir(parents=True, exist_ok=True)
     sounds_json = {}
     untertitel_de, untertitel_en = {}, {}
+    alle = "--alle" in sys.argv
     for name, (fabrik, de, en) in GERAEUSCHE.items():
-        speichern(name, fabrik())
+        if alle or not (ZIEL / f"{name}.ogg").exists():
+            speichern(name, fabrik())
         sounds_json[name] = {"subtitle": f"stinkendreich.ton.{name}", "sounds": [f"stinkendreich:{name}"]}
         untertitel_de[f"stinkendreich.ton.{name}"] = de
         untertitel_en[f"stinkendreich.ton.{name}"] = en

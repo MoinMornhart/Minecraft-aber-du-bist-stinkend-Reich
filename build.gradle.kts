@@ -22,7 +22,23 @@ repositories {
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
 }
 
+// Offizielle Anthropic-Bibliothek für den optionalen Claude-Butler. Sie kommt samt ihren
+// Abhängigkeiten als eingebettete Bibliothek in die .jar (Fabric lädt sie von dort).
+val mitliefern: Configuration by configurations.creating
+configurations.named("implementation") { extendsFrom(mitliefern) }
+afterEvaluate {
+    // "include" bettet nur direkt genannte Bibliotheken ein, deshalb jede Abhängigkeit einzeln
+    // (slf4j bringt Minecraft selbst mit)
+    mitliefern.resolvedConfiguration.resolvedArtifacts.forEach { artefakt ->
+        val id = artefakt.moduleVersion.id
+        if (id.group != "org.slf4j") {
+            dependencies.add("include", "${id.group}:${id.name}:${id.version}")
+        }
+    }
+}
+
 dependencies {
+    mitliefern("com.anthropic:anthropic-java:${property("deps.anthropic_java")}")
     minecraft("com.mojang:minecraft:${sc.current.version}")
     // Mojangs offizielle Namen auch für die verschleierten 1.21.x-Versionen
     loomx.applyMojangMappings()

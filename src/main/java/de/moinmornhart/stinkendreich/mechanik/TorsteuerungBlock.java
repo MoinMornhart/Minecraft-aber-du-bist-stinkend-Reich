@@ -6,6 +6,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
+import de.moinmornhart.stinkendreich.butler.ButlerEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -66,6 +67,7 @@ public class TorsteuerungBlock extends MechanikBlock {
                 AABB nah = new AABB(pos).inflate(radius);
                 offen = z.stufe() < 2
                         ? !welt.getEntitiesOfClass(Player.class, nah, p -> !p.isSpectator()).isEmpty()
+                                || !welt.getEntitiesOfClass(ButlerEntity.class, nah, b -> true).isEmpty()
                         : berechtigteInDerNaehe(welt, pos, radius, z);
             }
             default -> {
@@ -95,8 +97,10 @@ public class TorsteuerungBlock extends MechanikBlock {
     }
 
     private static boolean berechtigteInDerNaehe(ServerLevel welt, BlockPos pos, int radius, VillaZustand z) {
-        return !welt.getEntitiesOfClass(Player.class, new AABB(pos).inflate(radius),
-                p -> !p.isSpectator() && (z.istBewohner(p) || Zugang.hatKarte(p))).isEmpty();
+        AABB nah = new AABB(pos).inflate(radius);
+        // Bewohner, Gäste mit Zugangskarte und der Butler dürfen durch
+        return !welt.getEntitiesOfClass(Player.class, nah, p -> !p.isSpectator() && (z.istBewohner(p) || Zugang.hatKarte(p))).isEmpty()
+                || !welt.getEntitiesOfClass(ButlerEntity.class, nah, b -> true).isEmpty();
     }
 
     /** Setzt alle Flügel des Typs im Umkreis; true, wenn sich etwas geändert hat. */

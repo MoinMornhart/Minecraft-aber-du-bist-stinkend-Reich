@@ -116,6 +116,38 @@ public final class Kompat {
         /*return net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(id);*/
     }
 
+    /** Text-ID eines Registerschlüssels, z. B. „minecraft:overworld“ (Methode heißt ab 1.21.11 anders). */
+    public static String schluesselId(net.minecraft.resources.ResourceKey<?> schluessel) {
+        //? if >=1.21.11 {
+        return schluessel.identifier().toString();
+        //?} else
+        /*return schluessel.location().toString();*/
+    }
+
+    /** Lässt eine Entity mit der Haupthand ausholen (Arbeits- oder Schlaganimation). */
+    public static void schwingen(net.minecraft.world.entity.LivingEntity e) {
+        //? if >=26.3 {
+        e.swing(net.minecraft.world.InteractionHand.MAIN_HAND, net.minecraft.world.item.component.SwingAnimation.DEFAULT, true);
+        //?} else
+        /*e.swing(net.minecraft.world.InteractionHand.MAIN_HAND, true);*/
+    }
+
+    /** Nahkampfschaden einer Entity an einer anderen (z. B. Butler auf der Jagd). */
+    public static void angreifen(net.minecraft.world.entity.LivingEntity angreifer, net.minecraft.world.entity.Entity ziel, ServerLevel welt, float menge) {
+        //? if >=1.21.2 {
+        ziel.hurtServer(welt, welt.damageSources().mobAttack(angreifer), menge);
+        //?} else
+        /*ziel.hurt(welt.damageSources().mobAttack(angreifer), menge);*/
+    }
+
+    /** Farbe eines Farbstoffs, oder null (ab 26.1 eine Eigenschaft des Gegenstands). */
+    public static net.minecraft.world.item.DyeColor farbstoff(net.minecraft.world.item.ItemStack stapel) {
+        //? if >=26.1 {
+        return stapel.get(net.minecraft.core.component.DataComponents.DYE);
+        //?} else
+        /*return stapel.getItem() instanceof net.minecraft.world.item.DyeItem d ? d.getDyeColor() : null;*/
+    }
+
     /** Führt einen Befehl als Server aus, ohne Ausgabe im Chat. */
     public static void befehl(MinecraftServer server, String befehl) {
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), befehl);

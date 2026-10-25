@@ -21,13 +21,18 @@ public abstract class MenueBildschirm extends Screen {
 
     @Override
     protected void init() {
-        naechstesY = Math.max(20, height / 2 - 100);
+        naechstesY = Math.max(10, height / 2 - gesamtHoehe() / 2);
         StringWidget titelText = new StringWidget(getTitle(), font);
         titelText.setX(width / 2 - font.width(getTitle()) / 2);
         titelText.setY(naechstesY);
         addRenderableWidget(titelText);
         naechstesY += 18;
         knoepfe();
+    }
+
+    /** Ungefähre Höhe des Inhalts in Pixeln, damit er senkrecht mittig steht. */
+    protected int gesamtHoehe() {
+        return 200;
     }
 
     /** Unterklassen fügen hier ihre Knöpfe mit {@link #knopf} hinzu. */

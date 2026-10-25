@@ -13,6 +13,10 @@ public final class KlientBruecke {
     public static Consumer<BlockPos> tastenfeld = p -> { };
     public static Consumer<BlockPos> aufzug = p -> { };
     public static Consumer<BlockPos> monitor = p -> { };
+    /** Öffnet das Butler-Menü; bekommt die Entity-Nummer des Butlers. */
+    public static java.util.function.IntConsumer butler = id -> { };
+    /** Hält der Fahrer gerade die Handbremse (Sprungtaste)? */
+    public static java.util.function.BooleanSupplier handbremse = () -> false;
 
     private KlientBruecke() {
     }

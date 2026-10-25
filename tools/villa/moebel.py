@@ -142,3 +142,10 @@ def truhe(b: Bau, x: int, y: int, z: int, facing: str, inhalt: list[tuple[str, i
              for i, (name, anzahl) in enumerate(inhalt)]
     b.setze(x, y, z, zustand("chest", facing=facing, type="single", waterlogged="false"),
             {"id": "minecraft:chest", "Items": items})
+
+
+def fass(b: Bau, x: int, y: int, z: int, facing: str, inhalt: list[tuple[str, int]]) -> None:
+    """Fass mit Inhalt (Gegenstand, Anzahl), z. B. als Küchenschrank oder Vorratsbehälter."""
+    items = [{"Slot": ("b", i), "id": name if ":" in name else f"minecraft:{name}", "count": anzahl}
+             for i, (name, anzahl) in enumerate(inhalt)]
+    b.setze(x, y, z, zustand("barrel", facing=facing, open="false"), {"id": "minecraft:barrel", "Items": items})

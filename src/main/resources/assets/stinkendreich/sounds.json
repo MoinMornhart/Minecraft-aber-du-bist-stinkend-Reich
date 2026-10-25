@@ -34,5 +34,41 @@
     "sounds": [
       "stinkendreich:tresor"
     ]
+  },
+  "gloeckchen": {
+    "subtitle": "stinkendreich.ton.gloeckchen",
+    "sounds": [
+      "stinkendreich:gloeckchen"
+    ]
+  },
+  "motor": {
+    "subtitle": "stinkendreich.ton.motor",
+    "sounds": [
+      "stinkendreich:motor"
+    ]
+  },
+  "anlasser": {
+    "subtitle": "stinkendreich.ton.anlasser",
+    "sounds": [
+      "stinkendreich:anlasser"
+    ]
+  },
+  "hupe": {
+    "subtitle": "stinkendreich.ton.hupe",
+    "sounds": [
+      "stinkendreich:hupe"
+    ]
+  },
+  "reifen": {
+    "subtitle": "stinkendreich.ton.reifen",
+    "sounds": [
+      "stinkendreich:reifen"
+    ]
+  },
+  "crash": {
+    "subtitle": "stinkendreich.ton.crash",
+    "sounds": [
+      "stinkendreich:crash"
+    ]
   }
 }

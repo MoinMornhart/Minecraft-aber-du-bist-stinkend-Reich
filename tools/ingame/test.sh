@@ -8,6 +8,7 @@
 #
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
 #                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
+#                   halte <sek> <taste…>   (z. B. „halte 3 w space“)
 set -uo pipefail
 
 V="${1:?Minecraft-Version angeben, z. B. 26.3}"
@@ -28,6 +29,7 @@ echo "eula=true" > "$RUN/eula.txt"
 cat > "$RUN/server.properties" <<EOF
 level-name=testwelt
 level-seed=${SEED:-stinkendreich}
+server-port=${PORT:-25565}
 online-mode=false
 gamemode=creative
 difficulty=peaceful
@@ -131,11 +133,12 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     ""|\#*) ;;
     warte) sleep "$rest" ;;
     taste) xdotool key $rest; sleep 0.5 ;;
-    befehl) xdotool key t; sleep 1; xdotool type --delay 30 "$rest"; sleep 0.4; xdotool key Return; sleep 1.5 ;;
+    befehl) xdotool key t; sleep "${TIPP_PAUSE:-1}"; xdotool type --delay 30 "$rest"; sleep 0.4; xdotool key Return; sleep 1.5 ;;
     bild) bild "$rest" ;;
     klick) xdotool click 3; sleep 1 ;;                                   # Rechtsklick (Block benutzen)
     linksklick) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3; xdotool click 1; sleep 1 ;;
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
+    halte) set -- $rest; dauer="$1"; shift; xdotool keydown "$@"; sleep "$dauer"; xdotool keyup "$@"; sleep 0.3 ;;   # Tasten gedrückt halten
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac
 done < "$SZENARIO"

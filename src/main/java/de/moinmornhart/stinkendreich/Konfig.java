@@ -32,10 +32,29 @@ public final class Konfig {
     public int tresorKnoepfe = 2;
 
     // ---------- Butler ----------
+    /** Name des Butlers (steht über seinem Kopf und vor seinen Nachrichten). */
+    public String butlerName = "James";
+    /** Arbeitstempo des Butlers (1.0 = so schnell wie ein Spieler mit Eisenwerkzeug). */
+    public double butlerTempo = 1.0;
+    /** Wie weit der Butler um seinen Startpunkt nach Erzen, Bäumen und Tieren sucht (Blöcke). */
+    public int butlerSuchradius = 48;
+    /** Darf der Butler für „Essen holen“ Tiere jagen? Es bleiben immer mindestens zwei Tiere je Art übrig. */
+    public boolean butlerJagen = true;
+    /** Umkreis um den Spieler, in dem „Truhen sortieren“ die Truhen und Fässer einsammelt (Blöcke). */
+    public int butlerSortierRadius = 8;
+    /** Jeder Spieler darf sich mit /butler rufen einen eigenen Butler holen. */
+    public boolean butlerFuerJeden = true;
+    /** Chat-Nachrichten, die mit diesem Wort (oder dem Namen des Butlers) beginnen, gehen an den Butler. */
+    public String butlerAnrede = "Butler";
+
     /** Anthropic-API-Key für den Chat mit dem Butler. Leer = Butler nur über Befehle und Menü. */
     public String anthropicApiKey = "";
     /** Claude-Modell für den Butler-Chat. */
-    public String butlerModell = "claude-sonnet-5-5";
+    public String butlerModell = "claude-opus-5-5";
+
+    // ---------- Bonzenauto ----------
+    /** Höchstgeschwindigkeit des Bonzenautos in km/h. */
+    public double autoHoechstTempo = 110.0;
 
     // ---------- Update ----------
     /** Beim Start auf GitHub nach einer neuen Version suchen. */
@@ -75,8 +94,16 @@ public final class Konfig {
         erklaerung.put("villaAnblendung", "Breite des Übergangs vom ebenen Grundstück ins Gelände in Blöcken");
         erklaerung.put("villaSpawnSetzen", "Spieler beim ersten Betreten vor die Villa stellen");
         erklaerung.put("tresorKnoepfe", "Anzahl versteckter Knöpfe, die zum Entschärfen der Tresorfallen nötig sind");
+        erklaerung.put("butlerName", "Name des Butlers");
+        erklaerung.put("butlerTempo", "Arbeitstempo des Butlers, 1.0 = wie ein Spieler mit Eisenwerkzeug");
+        erklaerung.put("butlerSuchradius", "Suchradius des Butlers für Erze, Bäume und Tiere in Blöcken");
+        erklaerung.put("butlerJagen", "Butler darf für Essen Tiere jagen (es bleiben immer mindestens zwei je Art übrig)");
+        erklaerung.put("butlerSortierRadius", "Umkreis für „Truhen sortieren“ in Blöcken");
+        erklaerung.put("butlerFuerJeden", "Jeder Spieler darf sich mit /butler rufen einen eigenen Butler holen");
+        erklaerung.put("butlerAnrede", "Chat-Nachrichten, die mit diesem Wort oder dem Butler-Namen beginnen, gehen an den Butler");
         erklaerung.put("anthropicApiKey", "API-Key von console.anthropic.com für den Butler-Chat. Leer lassen = ohne Claude");
         erklaerung.put("butlerModell", "Claude-Modell für den Butler");
+        erklaerung.put("autoHoechstTempo", "Höchstgeschwindigkeit des Bonzenautos in km/h (zum Vergleich: Sprinten sind etwa 20 km/h)");
         erklaerung.put("updatePruefen", "Beim Start nach neuen Versionen auf GitHub suchen");
         erklaerung.put("githubToken", "Nur nötig, wenn das GitHub-Repo privat ist");
         JsonObject mitErklaerung = new JsonObject();

@@ -2,8 +2,12 @@
   "required": true,
   "package": "de.moinmornhart.stinkendreich.mixin",
   "compatibilityLevel": "${java}",
-  "mixins": [],
-  "client": [],
+  "mixins": [
+    "BlockItemMixin"
+  ],
+  "client": [
+    "client.CameraMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

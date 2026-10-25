@@ -18,8 +18,8 @@ import sys
 from pathlib import Path
 
 from bau import Bau, zustand
-from moebel import (aquarium, baum, bett, blumenbeet, brunnen_kuppel, doppeltuer, hecke, laterne, pflanze, sofa,
-                    stuhl, tisch, truhe, tuer)
+from moebel import (aquarium, baum, bett, blumenbeet, brunnen_kuppel, doppeltuer, fass, hecke, laterne, pflanze,
+                    sofa, stuhl, tisch, truhe, tuer)
 
 WURZEL = Path(__file__).resolve().parents[2]
 ZIEL = WURZEL / "src/main/resources/data/stinkendreich/structure/villa"
@@ -303,8 +303,18 @@ def erdgeschoss() -> None:
         b.setze(x, y, HZ0 + 1, "polished_deepslate")
         b.setze(x, y + 1, HZ0 + 1, zustand("smooth_quartz_slab", type="bottom", waterlogged="false"))
     b.setze(66, y, HZ0 + 1, zustand("water_cauldron", level="3"))
+    # Herd: Räucherofen, Ofen und Hochofen – der Butler kocht und schmilzt hier
     b.setze(69, y, HZ0 + 1, zustand("smoker", facing="south", lit="false"))
     b.setze(70, y, HZ0 + 1, zustand("furnace", facing="south", lit="false"))
+    b.setze(71, y, HZ0 + 1, zustand("blast_furnace", facing="south", lit="false"))
+    for x in (69, 70, 71):
+        b.marke("ofen", x, y, HZ0 + 1)
+    # Speisekammer (Fässer als Küchenschränke): Essen und Brennstoff für den Butler
+    fass(b, 63, y, HZ0 + 1, "south", [("cooked_beef", 32), ("bread", 32), ("baked_potato", 32), ("golden_carrot", 16),
+                                       ("cooked_salmon", 16), ("pumpkin_pie", 8)])
+    fass(b, 64, y, HZ0 + 1, "south", [("coal", 64), ("coal", 64), ("charcoal", 32)])
+    b.marke("vorrat", 63, y, HZ0 + 1)
+    b.marke("brennstoff", 64, y, HZ0 + 1)
     b.quader(HX1 - 1, y, HZ0 + 1, HX1 - 1, y + 2, HZ0 + 2, "iron_block")   # Kühlschrank
     b.quader(65, y, 44, 72, y, 45, "polished_deepslate")                  # Kochinsel
     b.quader(65, y + 1, 44, 72, y + 1, 45, zustand("smooth_quartz_slab", type="bottom", waterlogged="false"))
@@ -443,10 +453,15 @@ def garage() -> None:
     b.luft(x0 + 2, EG + 1, z1, x1 - 2, EG + 4, z1)
     b.marke("garagentor", x0 + 2, EG + 1, z1, x1 - 2, EG + 4, z1)
     b.marke("auto", (x0 + x1) / 2 + 0.5, EG + 1, 56.5)
-    # Werkbank und Werkzeugwand
+    # Werkbank und Werkzeugwand, zwei Hochöfen und ein Kohlenfass für den Butler
     b.setze(x1 - 1, EG + 1, z0 + 1, "crafting_table")
     b.setze(x1 - 1, EG + 1, z0 + 2, "anvil")
     b.setze(x1 - 1, EG + 1, z0 + 3, "smithing_table")
+    for z in (z0 + 4, z0 + 5):
+        b.setze(x1 - 1, EG + 1, z, zustand("blast_furnace", facing="west", lit="false"))
+        b.marke("ofen", x1 - 1, EG + 1, z)
+    fass(b, x1 - 1, EG + 1, z0 + 6, "west", [("coal", 64), ("coal", 64)])
+    b.marke("brennstoff", x1 - 1, EG + 1, z0 + 6)
     b.quader(x0 + 1, EG + 2, z0 + 1, x0 + 6, EG + 3, z0 + 1, "spruce_planks")
     b.luft(HX1 + 1, EG + 1, 60, x0, EG + 2, 60)
     b.quader(HX1 + 1, EG, 60, x0, EG, 60, "polished_andesite")
@@ -677,6 +692,9 @@ def main() -> None:
     # Spawnpunkt vor dem Haus, Blick nach Norden auf den Eingang
     b.marke("spawn", 55.5, G + 1, 93.5, 180.0)
     b.marke("butler", 57.5, EG + 1, 60.5)
+    # Lieferkiste des Butlers in der Halle (Bestellungen „… in die Truhe“)
+    truhe(b, 59, EG + 1, 62, "west", [])
+    b.marke("lieferkiste", 59, EG + 1, 62)
     b.verbinden()
 
     ZIEL.mkdir(parents=True, exist_ok=True)

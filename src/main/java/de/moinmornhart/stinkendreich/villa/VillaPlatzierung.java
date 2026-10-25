@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.Konfig;
 import de.moinmornhart.stinkendreich.StinkendReich;
+import de.moinmornhart.stinkendreich.butler.ButlerVerwaltung;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -150,6 +151,23 @@ public final class VillaPlatzierung {
         VillaInfo villa = new VillaInfo(ursprung, plan);
         Kompat.setzeSpawnPunkt(welt, villa.spawn(), villa.spawnBlick());
         Kompat.befehl(server, Kompat.spawnRadiusBefehl(0));
+        // Der Butler wartet in der Halle auf seinen Herrn
+        JsonArray b = plan.ersteMarke("butler");
+        ButlerVerwaltung.villaButlerErzeugen(welt, villa.weltPos(b.get(0).getAsDouble(), b.get(1).getAsDouble(), b.get(2).getAsDouble()));
+        // Das Bonzenauto steht in der Garage, mit der Schnauze zum Tor
+        JsonArray a = plan.ersteMarke("auto");
+        de.moinmornhart.stinkendreich.auto.AutoEntity auto = de.moinmornhart.stinkendreich.register.ModEntities.AUTO.create(welt
+                //? if >=1.21.2
+                , net.minecraft.world.entity.EntitySpawnReason.STRUCTURE
+        );
+        if (auto != null) {
+            auto.teleportTo(ursprung.getX() + a.get(0).getAsDouble(), ursprung.getY() + a.get(1).getAsDouble(), ursprung.getZ() + a.get(2).getAsDouble());
+            auto.setYRot(0.0F);
+            auto.setYHeadRot(0.0F);
+            auto.yBodyRot = 0.0F;
+            auto.setzeFarbe(4);
+            welt.addFreshEntity(auto);
+        }
         return villa;
     }
 
