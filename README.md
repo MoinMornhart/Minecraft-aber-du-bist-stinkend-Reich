@@ -36,7 +36,11 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 </tr>
 <tr>
 <td><img src="docs/bilder/villa_nacht.jpg" alt="Die Villa bei Nacht"><br><sub><b>Nachts:</b> alles beleuchtet</sub></td>
-<td><img src="docs/bilder/whirlpool.jpg" alt="Whirlpool auf der Dachterrasse"><br><sub><b>Dachterrasse:</b> Whirlpool mit Ausblick</sub></td>
+<td><img src="docs/bilder/whirlpool.jpg" alt="Whirlpool auf der Dachterrasse"><br><sub><b>Dachterrasse:</b> beheizter Whirlpool mit Ausblick – er dampft und friert nie zu</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/haustuer.jpg" alt="Haustür"><br><sub><b>Haustür:</b> weiß-goldene Portaltür, die aufgleitet, wenn du davorstehst</sub></td>
+<td><img src="docs/bilder/garten_lounge.jpg" alt="Garten-Lounge"><br><sub><b>Garten-Lounge</b> im Westgarten mit Sofas, Marmortisch und Kronleuchter</sub></td>
 </tr>
 </table>
 
@@ -51,6 +55,10 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td><img src="docs/bilder/kueche.jpg" alt="Luxusküche"><br><sub><b>Luxusküche</b> mit Kochinsel</sub></td>
 <td><img src="docs/bilder/dachparty.jpg" alt="Dachparty"><br><sub><b>Dachparty</b> mit DJ-Pult und Tanzfläche</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/fluegel_spielen.jpg" alt="Konzertflügel spielen"><br><sub><b>Konzertflügel zum Spielen:</b> drei Oktaven mit Maus oder Tastatur, drei Stücke spielt er selbst</sub></td>
+<td><img src="docs/bilder/geheimclub.jpg" alt="Geheimclub"><br><sub><b>Geheimclub</b> hinter dem Bücherregal: Show-Bühne mit Tänzerinnen an den Stangen</sub></td>
+</tr>
 </table>
 
 ### 🛏️ Penthouse: dein privater Schlafbereich
@@ -58,7 +66,7 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <table>
 <tr>
 <td width="50%"><img src="docs/bilder/penthouse_bett.jpg" alt="XXL-Kingsize-Bett"><br><sub><b>XXL-Kingsize-Bett</b> aus einem Stück – man kann darin schlafen</sub></td>
-<td width="50%"><img src="docs/bilder/kinosofa.jpg" alt="Kinosofa vor dem Fernseher"><br><sub><b>Kinosofa</b> für zwei vor dem XXL-Fernseher</sub></td>
+<td width="50%"><img src="docs/bilder/kinosofa.jpg" alt="Kino vor dem Fernseher"><br><sub><b>Kino:</b> drei Samtsofas vor dem XXL-Fernseher</sub></td>
 </tr>
 <tr>
 <td><img src="docs/bilder/fernseher.jpg" alt="XXL-Fernseher"><br><sub><b>XXL-Fernseher:</b> YouTube-Link einfügen, Video startet im Browser</sub></td>
@@ -81,15 +89,20 @@ Auf Sofas, Liegen und der Bettbank kann man sich mit **Rechtsklick** hinsetzen, 
 <td><img src="docs/bilder/ueberwachung.jpg" alt="Überwachungsmonitor"><br><sub><b>Überwachung:</b> acht Kameras am Monitor</sub></td>
 <td><img src="docs/bilder/aufzug.jpg" alt="Aufzug"><br><sub><b>Aufzug</b> zu allen Etagen und in den Bunker</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/magischer_eingang.jpg" alt="Magischer Eingang"><br><sub><b>Magischer Eingang:</b> vor dem Regal im Nachtclub schleichen – es funkelt und gleitet auf</sub></td>
+<td><img src="docs/bilder/banktuer.jpg" alt="Banktür"><br><sub><b>Banktür:</b> nur mit Zugangskarte, bleibt offen, bis du sie schließt</sub></td>
+<td><img src="docs/bilder/goldspeicher.jpg" alt="Goldspeicher"><br><sub><b>Goldspeicher:</b> vom Sprungbrett in die Münzen, mit der Leertaste wieder hoch</sub></td>
+</tr>
 </table>
 
 | Bereich | Was drin ist |
 |---|---|
-| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 · Lava-Graben, solange die Anlage an und du zu Hause bist · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat |
-| 🪪 **Zugang** | Zugangskarte · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Rollläden · Schiebetüren · Privattür (nur Bewohner) · Sicherheitstüren für Büro und Kontrollraum (nur mit Zugangskarte) |
-| 🛗 **Im Haus** | Aufzug zu allen Etagen und in den Bunker · Überwachungsraum mit Kameras · Geheimgang hinter dem Bücherregal · Panikraum · Fluchttunnel |
+| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 · Lava-Graben, solange die Anlage an und du auf dem Grundstück bist (im Lockdown immer) · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat |
+| 🪪 **Zugang** | Zugangskarte · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Portaltür als Haustür · Rollläden · Schiebetüren · Privattür (nur Bewohner) · Sicherheitstüren für Büro und Kontrollraum und Banktür im Bunker (nur mit Zugangskarte, bleiben offen, bis du sie schließt) |
+| 🛗 **Im Haus** | Aufzug zu allen Etagen und in den Bunker · Überwachungsraum mit Kameras · Geheimgang hinter dem Bücherregal · magischer Eingang zum Geheimclub (schleichen) · Panikraum · Fluchttunnel |
 | 💎 **Tresor** | Schmuck-Tresor mit Fallen und versteckten Entschärfknöpfen |
-| 🛁 **Komfort** | Poolabdeckung · Wasserrutsche mit Schub · Whirlpool · Badewanne zum Reinsetzen · Toilette mit Spülung · Kamin · Garagentor |
+| 🛁 **Komfort** | Konzertflügel zum Spielen · Poolabdeckung · Wasserrutsche mit Schub · beheizter Whirlpool · Badewanne zum Reinsetzen · Toilette mit Spülung · Kamin · Garagentor |
 
 Alles funktioniert für jeden Spieler – auch auf einem Server mit Freunden.
 

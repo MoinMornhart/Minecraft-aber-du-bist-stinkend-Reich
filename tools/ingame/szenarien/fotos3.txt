@@ -1,0 +1,70 @@
+# README-Fotos für 0.2.3 (Bildnamen = Dateinamen in docs/bilder): Haustür, Ballsaal mit Konzertflügel und
+# Spielfenster, Geheimclub, magischer Eingang, Banktür, Goldspeicher, Garten-Lounge, Whirlpool, Kino, Waffenkammer,
+# Drehteller, Nachtclub.
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos3.txt
+server /gamemode spectator
+server /weather clear
+server /time set 6000
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+server /villa ort 55.5 28.5 86 180 4
+warte 12
+bild villa_vorn
+server /villa ort 55 27 73.5 180 2
+warte 3
+bild haustuer
+server /villa ort 51.5 29 66 200 14
+warte 3
+bild ballsaal
+server /villa ort 54.5 27.8 58.5 -36 18
+warte 2
+bild konzertfluegel
+server /villa ort 42 17.6 58 180 8
+warte 3
+bild club
+server /villa ort 16 7 66 60 5
+warte 4
+bild geheimclub
+server /villa ort 57.5 6 44.5 90 10
+warte 2
+bild banktuer
+server /villa ort 67.5 10 52.6 0 25
+warte 2
+bild goldspeicher
+server /villa ort 64.2 7.5 40 270 10
+warte 3
+bild waffenkammer
+server /villa ort 28.5 28 68.5 90 15
+warte 3
+bild garten_lounge
+server /villa ort 70 41 47 211 19
+warte 4
+bild whirlpool
+server /villa ort 63.0 38.5 40.8 0 15
+warte 3
+bild kinosofa
+server /villa ort 91.5 19 47 180 30
+warte 3
+bild drehteller
+# Zu Fuß: magischer Eingang und Spielfenster des Flügels
+server /gamemode survival
+server /villa stufe 1
+server /villa ort 32.5 16 64 90 3
+warte 2
+druecke shift
+warte 1.0
+bild magischer_eingang
+loslassen shift
+server /villa ort 58.5 26 60.4 0 30
+warte 2
+klick
+warte 1.5
+klick
+warte 1.5
+taste F1
+linksklick 376 292
+warte 1.5
+bild fluegel_spielen
+taste Escape
+server /villa stufe 0

@@ -1,0 +1,87 @@
+# Kurzprüfung 0.2.3 für alle Versionen: Flügel (Ansicht, Spielfenster, Stück), Portaltür, weiße Decke, Banktür und
+# Bürotür mit Karte (bleiben offen), magischer Eingang, Whirlpool (taut auf), Goldmünzen (Leertaste), James.
+# Prüfmeldungen im Chat: ..._OK; Weltkoordinaten = Villa + (-56, 62, -56)
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+server /villa ort 54.5 27.8 58.5 -36 18
+warte 8
+bild k01_fluegel
+server /villa ort 55 26.5 75 180 5
+warte 2
+bild k02_haustuer
+server /villa ort 40.5 27 50.5 0 -80
+warte 2
+bild k03_decke
+server /villa ort 13 8.5 74 -100 10
+warte 3
+bild k04_geheimclub
+# Whirlpool: Spiel anhalten, Eis setzen, prüfen; weiterlaufen lassen, nach 2 s muss es wieder Wasser sein
+server /villa ort 74.5 40 39.5 0 90
+warte 2
+server /tick freeze
+server /fill ~-3 ~-2 ~-2 ~3 ~-2 ~3 minecraft:ice replace minecraft:water
+server /execute if block ~1 ~-2 ~1 minecraft:ice run say WHIRLPOOL_EIS_GESETZT_OK
+server /tick unfreeze
+warte 2
+server /execute if block ~1 ~-2 ~1 minecraft:water run say WHIRLPOOL_WASSER_OK
+server /gamemode survival
+server /villa stufe 1
+server /give @p stinkendreich:zugangskarte
+# Flügel spielen
+server /villa ort 58.5 26 60.4 0 30
+warte 2
+klick
+warte 1.5
+bild k05_spielfenster
+linksklick 376 292
+warte 2
+taste Escape
+warte 3
+bild k06_stueck
+# Banktür
+server /villa ort 55.5 6 43.5 90 7
+warte 2
+klick
+warte 5
+server /execute if block -3 68 -12 stinkendreich:banktuer[open=true] run say BANKTUER_OFFEN_OK
+server /execute if block -3 68 -11 stinkendreich:banktuer[open=true] run say BANKTUER_ZWEITER_FLUEGEL_OK
+server /villa ort 57.5 6 44.5 90 10
+warte 1
+bild k07_banktuer
+# Bürotür: auf, bleibt offen, innen zu
+server /villa ort 58.3 32 57.5 -90 10
+warte 2
+klick
+warte 5
+server /execute if block 4 94 2 stinkendreich:sicherheitstuer[open=true] run say BUEROTUER_OFFEN_OK
+server /villa ort 62.5 32 58.1 90 20
+warte 1
+klick
+warte 1.5
+server /execute if block 4 94 2 stinkendreich:sicherheitstuer[open=false] run say BUEROTUER_INNEN_ZU_OK
+# Magischer Eingang
+server /villa ort 31.5 16 64 90 5
+warte 2
+druecke shift
+warte 1.2
+bild k08_magie
+loslassen shift
+warte 1
+server /execute if block -26 78 7 stinkendreich:geheimregal[open=true] run say REGAL_MAGISCH_OFFEN_OK
+# Goldmünzen: unten in der Grube, Leertaste → oben
+server /villa ort 67.5 3 62.5 0 0
+warte 1
+halte 3 space
+server /execute if entity @p[y=66,dy=10] run say MUENZEN_OBEN_OK
+# James rufen
+server /villa ort 55.5 26 95.5 180 5
+warte 2
+server /butler rufen
+warte 25
+server /execute at @p if entity @e[type=stinkendreich:butler,distance=..10] run say JAMES_BLEIBT_OK
+bild k09_james
+server /villa stufe 0
