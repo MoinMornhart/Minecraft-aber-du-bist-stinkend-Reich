@@ -1,10 +1,15 @@
-# Baut bei jedem Versions-Tag (z. B. v0.1.0) die .jar für jede Minecraft-Version und legt
-# ein GitHub-Release mit allen Dateien an. Die Update-Funktion der Mod liest genau diese Releases.
+# Baut die .jar für jede Minecraft-Version und legt ein GitHub-Release mit allen Dateien an.
+# Die Update-Funktion der Mod liest genau diese Releases. Auslöser:
+#  - ein Versions-Tag (z. B. v0.1.0) wird gepusht, oder
+#  - die Datei .github/release-version (enthält z. B. 0.1.0) ändert sich auf einem Branch;
+#    dann legt dieser Ablauf das Tag v0.1.0 selbst an.
 name: Release
 
 on:
   push:
     tags: ["v*"]
+    branches: ["**"]
+    paths: [".github/release-version"]
   workflow_dispatch:
 
 permissions:
@@ -31,6 +36,20 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
+      # Versionsnummer aus dem Tag oder aus .github/release-version; sie muss zu mod.version passen
+      - name: Version bestimmen
+        run: |
+          if [[ "$GITHUB_REF_TYPE" == "tag" ]]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION="$(tr -d '[:space:]' < .github/release-version)"
+          fi
+          MOD="$(sed -n 's/^mod\.version *= *"\(.*\)"/\1/p' stonecutter.properties.toml)"
+          if [[ "$VERSION" != "$MOD" ]]; then
+            echo "::error::Release-Version $VERSION passt nicht zu mod.version $MOD"; exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
       - name: Alle Versionen bauen
         run: >-
           ./gradlew buildAndCollect --no-daemon --stacktrace
@@ -38,7 +57,6 @@ jobs:
 
       - name: Release-Text
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
           {
             echo "## Minecraft, aber du bist stinkend reich ${VERSION}"
             echo
@@ -56,6 +74,9 @@ jobs:
 
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ env.VERSION }}
+          name: Stinkend Reich ${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
           body_path: release.md
           files: build/libs/*/*.jar
           fail_on_unmatched_files: true

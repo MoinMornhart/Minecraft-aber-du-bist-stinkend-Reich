@@ -94,6 +94,8 @@ Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter a
 
 Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen und Geräusche aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots.
 
+**Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
+
 ## ⚖️ Hinweis zur Villa
 
 Die Villa ist ein eigener Entwurf im Stil der „Super Safe Modern Mansion“ von chamo572. Die Original-Map ist weder in diesem Repo noch in den Releases enthalten.
