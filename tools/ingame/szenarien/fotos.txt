@@ -1,0 +1,82 @@
+# Fotos für die README: ohne Anzeigen (F1), im Zuschauermodus, zu passenden Tageszeiten.
+# Aufruf mit größerer Sichtweite: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos.txt
+server /gamemode spectator
+server /weather clear
+server /time set 6000
+taste F1
+# Drohne schräg von vorn rechts und gerade von vorn
+server /villa ort 118 58 128 139 19
+warte 14
+bild f01_drohne
+server /villa ort 56 52 142 180 22
+warte 10
+bild f02_drohne_vorn
+# Abendstimmung
+server /time set 12650
+server /villa ort 118 58 128 139 19
+warte 10
+bild f03_abend
+# Titelbild der README: Abendstimmung, Villa im rechten Drittel (links Platz für den Schriftzug)
+server /villa ort 118 58 128 108 16
+warte 6
+bild f10_banner
+# Held: das goldene Bonzenauto auf dem roten Teppich, James daneben
+server /time set 6000
+server /villa ort 56 26.4 91 180 2
+warte 3
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^-1.3 ^-0.4 ^5.5 {stinkendreich:"{\"farbe\":4}"}
+server /execute as @e[type=stinkendreich:bonzenauto,sort=nearest,limit=1] at @s facing entity @p feet run tp @s ~ ~ ~ ~35 0
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:butler,limit=1] ^2.0 ^-0.4 ^4.6 facing entity @p eyes
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+warte 4
+bild f04_held
+# Nacht: Villa beleuchtet, das Auto mit eingeschalteten Scheinwerfern
+server /time set 18000
+server /villa ort 56 27 95 180 8
+server /execute as @e[type=stinkendreich:bonzenauto,sort=nearest,limit=1] at @s facing entity @p feet run tp @s ~ ~ ~ ~10 0
+server /data merge entity @e[type=stinkendreich:bonzenauto,sort=nearest,limit=1] {stinkendreich:"{\"farbe\":4,\"licht\":true}"}
+warte 6
+bild f05_nacht
+# Fuhrpark: fünf Lackfarben vor der Villa
+server /time set 6000
+server /kill @e[type=stinkendreich:bonzenauto,distance=..20]
+server /villa ort 56 27 97 180 6
+warte 2
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^-8 ^-1 ^10 {stinkendreich:"{\"farbe\":2}"}
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^-4 ^-1 ^10 {stinkendreich:"{\"farbe\":5}"}
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^ ^-1 ^10 {stinkendreich:"{\"farbe\":4}"}
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^4 ^-1 ^10 {stinkendreich:"{\"farbe\":1}"}
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^8 ^-1 ^10 {stinkendreich:"{\"farbe\":7}"}
+server /execute as @e[type=stinkendreich:bonzenauto,distance=..16] at @s facing entity @p feet run tp @s ~ ~ ~ ~30 0
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:butler,limit=1] ^ ^-1 ^6.5 facing entity @p eyes
+warte 4
+bild f06_fuhrpark
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:0b}
+# Dachterrasse mit Whirlpool
+server /villa ort 70 41 47 211 19
+warte 5
+bild f07_whirlpool
+# Drift auf einer freien Fläche südlich der Villa, Blick zur Villa
+server /gamemode creative
+server /villa ort 75 26 215 180 30
+server /fill ~-60 ~-1 ~-100 ~60 ~-1 ~20 gray_concrete
+server /fill ~-60 ~ ~-100 ~60 ~5 ~-56 air
+server /fill ~-60 ~6 ~-100 ~60 ~11 ~-56 air
+server /fill ~-60 ~12 ~-100 ~60 ~17 ~-56 air
+server /fill ~-60 ~ ~-55 ~60 ~5 ~-11 air
+server /fill ~-60 ~6 ~-55 ~60 ~11 ~-11 air
+server /fill ~-60 ~12 ~-55 ~60 ~17 ~-11 air
+server /fill ~-60 ~ ~-10 ~60 ~5 ~20 air
+server /fill ~-60 ~6 ~-10 ~60 ~11 ~20 air
+server /fill ~-60 ~12 ~-10 ~60 ~17 ~20 air
+server /summon stinkendreich:bonzenauto ~ ~ ~ {stinkendreich:"{\"farbe\":4}"}
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:bonzenauto,sort=nearest,limit=1] ^ ^ ^3 ~ ~
+warte 3
+klick
+warte 2
+halte 1.8 w
+druecke w a space
+warte 1.1
+bild f09_drift
+loslassen w a space
+halte 1 s
