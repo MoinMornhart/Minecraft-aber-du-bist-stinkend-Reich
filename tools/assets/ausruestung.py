@@ -30,6 +30,13 @@ GOLD = (232, 186, 52, 255)
 GOLD_DUNKEL = (160, 112, 22, 255)
 GLAS = (30, 34, 44, 255)
 GLANZ = (120, 130, 150, 255)
+# Pixel-Sonnenbrille in Goldgelb: Grundfarbe, Schatten unten, Lichtreflex
+BRILLE = (246, 198, 32, 255)
+BRILLE_SCHATTEN = (196, 140, 14, 255)
+BRILLE_GLANZ = (255, 246, 196, 255)
+
+# Auflösung der Körperschicht 1 (Kopf, Smoking, Schuhe): vierfach, damit die Brille fein genug wird
+FEIN = 4
 
 TEXTE = {
     "de": {
@@ -79,16 +86,29 @@ def neu():
     return img, ImageDraw.Draw(img)
 
 
+# Die berühmte Pixel-Sonnenbrille („Deal with it“), spiegelgleich, 16 Brillenpixel breit:
+# B Balken/Glas, L Lichtreflex, S Schatten, . frei. Zeile 0 ist der Balken über die ganze Breite.
+BRILLE_MUSTER = [
+    "BBBBBBBBBBBBBBBB",
+    ".BLLBBB..BBBLLB.",
+    "..BLBB....BBLB..",
+    "...SS......SS...",
+]
+BRILLE_FARBE = {"B": BRILLE, "L": BRILLE_GLANZ, "S": BRILLE_SCHATTEN}
+
+
+def brille_zeichnen(d: ImageDraw.ImageDraw, x0: int, y0: int, pixel: int) -> None:
+    """Zeichnet das Brillenmuster ab (x0, y0), jedes Brillenpixel pixel × pixel groß."""
+    for zy, zeile in enumerate(BRILLE_MUSTER):
+        for zx, zeichen in enumerate(zeile):
+            if zeichen in BRILLE_FARBE:
+                d.rectangle([x0 + zx * pixel, y0 + zy * pixel, x0 + (zx + 1) * pixel - 1, y0 + (zy + 1) * pixel - 1],
+                            fill=BRILLE_FARBE[zeichen])
+
+
 def i_brille():
     img, d = neu()
-    d.line([(1, 7), (14, 7)], fill=GOLD)
-    for x0 in (1, 9):
-        d.rectangle([x0, 7, x0 + 5, 10], fill=GLAS)
-        d.rectangle([x0, 7, x0 + 5, 10], outline=GOLD)
-        d.point((x0 + 1, 8), fill=GLANZ)
-    d.line([(7, 8), (8, 8)], fill=GOLD)
-    d.line([(0, 6), (1, 7)], fill=GOLD_DUNKEL)
-    d.line([(15, 6), (14, 7)], fill=GOLD_DUNKEL)
+    brille_zeichnen(d, 0, 6, 1)
     return img
 
 
@@ -200,14 +220,6 @@ def schicht_1() -> Image.Image:
     Körper ab (16, 16), Arme ab (40, 16), Beine ab (0, 16). Durchsichtig bleibt unsichtbar."""
     img = Image.new("RGBA", (64, 32), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
-    # --- Bond-Sonnenbrille: goldene Fassung oben, zwei dunkle Gläser über den Augen, Steg, Bügel bis zum Ohr ---
-    for x0 in (8, 13):
-        d.rectangle([x0, 12, x0 + 2, 13], fill=GLAS)
-        d.line([(x0, 11), (x0 + 2, 11)], fill=GOLD)
-        d.point((x0, 12), fill=GLANZ)                     # Lichtreflex
-    d.line([(11, 12), (12, 12)], fill=GOLD)               # Steg
-    d.line([(4, 11), (7, 11)], fill=GOLD)                 # Bügel rechts (Kopfseite, vorn bei x 7)
-    d.line([(16, 11), (19, 11)], fill=GOLD)               # Bügel links (vorn bei x 16)
     # --- Smoking ---
     d.rectangle([16, 20, 39, 31], fill=SCHWARZ)           # Seiten und Rücken
     d.rectangle([20, 16, 35, 19], fill=SCHWARZ)           # Schultern oben, Saum unten
@@ -229,6 +241,13 @@ def schicht_1() -> Image.Image:
     d.point((5, 30), fill=(70, 76, 92, 255))
     d.line([(0, 31), (15, 31)], fill=(30, 22, 18, 255))   # Sohlenkante
     d.rectangle([8, 16, 11, 19], fill=(40, 28, 20, 255))  # Sohle (Unterseite)
+    # --- Vierfache Auflösung (Minecraft rechnet die Lage auf dem Körper anteilig um), dann die Brille:
+    #     Gesicht bei x 32–63, y 32–63; ein Brillenpixel = 2 × 2; Balken knapp über den Augen ---
+    img = img.resize((64 * FEIN, 32 * FEIN), Image.NEAREST)
+    d = ImageDraw.Draw(img)
+    brille_zeichnen(d, 8 * FEIN, 46, 2)
+    d.rectangle([4 * FEIN, 46, 8 * FEIN - 1, 47], fill=BRILLE)     # Bügel rechts (Kopfseite, vorn bei x 31)
+    d.rectangle([16 * FEIN, 46, 20 * FEIN - 1, 47], fill=BRILLE)   # Bügel links (vorn bei x 64)
     return img
 
 
