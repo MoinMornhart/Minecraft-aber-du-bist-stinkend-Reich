@@ -1,0 +1,146 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "champagner": "stinkendreich:block/deko/champagner",
+    "chrom": "stinkendreich:block/deko/chrom",
+    "particle": "stinkendreich:block/deko/chrom"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        6,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            10,
+            11,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "south": {
+          "uv": [
+            5,
+            10,
+            11,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "east": {
+          "uv": [
+            5,
+            10,
+            11,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "west": {
+          "uv": [
+            5,
+            10,
+            11,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "up": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#chrom"
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#chrom"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        4,
+        7
+      ],
+      "to": [
+        9,
+        13,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            3,
+            9,
+            12
+          ],
+          "texture": "#champagner"
+        },
+        "south": {
+          "uv": [
+            7,
+            3,
+            9,
+            12
+          ],
+          "texture": "#champagner"
+        },
+        "east": {
+          "uv": [
+            7,
+            3,
+            9,
+            12
+          ],
+          "texture": "#champagner"
+        },
+        "west": {
+          "uv": [
+            7,
+            3,
+            9,
+            12
+          ],
+          "texture": "#champagner"
+        },
+        "up": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#champagner"
+        },
+        "down": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#champagner"
+        }
+      }
+    }
+  ]
+}

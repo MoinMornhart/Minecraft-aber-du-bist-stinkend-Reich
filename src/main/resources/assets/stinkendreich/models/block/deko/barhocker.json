@@ -1,0 +1,282 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "gold": "stinkendreich:block/deko/gold",
+    "samt_rot": "stinkendreich:block/deko/samt_rot",
+    "particle": "stinkendreich:block/deko/gold"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        1,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            15,
+            12,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            4,
+            15,
+            12,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            4,
+            15,
+            12,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            4,
+            15,
+            12,
+            16.0
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        1,
+        7
+      ],
+      "to": [
+        9,
+        9,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            7,
+            9,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            7,
+            7,
+            9,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            7,
+            7,
+            9,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            7,
+            7,
+            9,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        4,
+        5
+      ],
+      "to": [
+        11,
+        5,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            11,
+            11,
+            12
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            5,
+            11,
+            11,
+            12
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            5,
+            11,
+            11,
+            12
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            5,
+            11,
+            11,
+            12
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        9,
+        4
+      ],
+      "to": [
+        12,
+        11,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#samt_rot"
+        },
+        "south": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#samt_rot"
+        },
+        "east": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#samt_rot"
+        },
+        "west": {
+          "uv": [
+            4,
+            5,
+            12,
+            7
+          ],
+          "texture": "#samt_rot"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#samt_rot"
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#samt_rot"
+        }
+      }
+    }
+  ]
+}

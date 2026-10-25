@@ -1,0 +1,417 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "goldbarren": "stinkendreich:block/deko/goldbarren",
+    "particle": "stinkendreich:block/deko/goldbarren"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        3
+      ],
+      "to": [
+        6,
+        3,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            10,
+            13,
+            14,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "south": {
+          "uv": [
+            2,
+            13,
+            6,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "east": {
+          "uv": [
+            3,
+            13,
+            13,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "west": {
+          "uv": [
+            3,
+            13,
+            13,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "up": {
+          "uv": [
+            2,
+            3,
+            6,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "down": {
+          "uv": [
+            2,
+            3,
+            6,
+            13
+          ],
+          "texture": "#goldbarren"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        0,
+        3
+      ],
+      "to": [
+        10,
+        3,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            13,
+            10,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "south": {
+          "uv": [
+            6,
+            13,
+            10,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "east": {
+          "uv": [
+            3,
+            13,
+            13,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "west": {
+          "uv": [
+            3,
+            13,
+            13,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "up": {
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "down": {
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ],
+          "texture": "#goldbarren"
+        }
+      }
+    },
+    {
+      "from": [
+        10,
+        0,
+        3
+      ],
+      "to": [
+        14,
+        3,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            13,
+            6,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "south": {
+          "uv": [
+            10,
+            13,
+            14,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "east": {
+          "uv": [
+            3,
+            13,
+            13,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "west": {
+          "uv": [
+            3,
+            13,
+            13,
+            16.0
+          ],
+          "texture": "#goldbarren"
+        },
+        "up": {
+          "uv": [
+            10,
+            3,
+            14,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "down": {
+          "uv": [
+            10,
+            3,
+            14,
+            13
+          ],
+          "texture": "#goldbarren"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        3
+      ],
+      "to": [
+        8,
+        6,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            10,
+            12,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "south": {
+          "uv": [
+            4,
+            10,
+            8,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "east": {
+          "uv": [
+            3,
+            10,
+            13,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "west": {
+          "uv": [
+            3,
+            10,
+            13,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "up": {
+          "uv": [
+            4,
+            3,
+            8,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "down": {
+          "uv": [
+            4,
+            3,
+            8,
+            13
+          ],
+          "texture": "#goldbarren"
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        3,
+        3
+      ],
+      "to": [
+        12,
+        6,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            10,
+            8,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "south": {
+          "uv": [
+            8,
+            10,
+            12,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "east": {
+          "uv": [
+            3,
+            10,
+            13,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "west": {
+          "uv": [
+            3,
+            10,
+            13,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "up": {
+          "uv": [
+            8,
+            3,
+            12,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "down": {
+          "uv": [
+            8,
+            3,
+            12,
+            13
+          ],
+          "texture": "#goldbarren"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        6,
+        3
+      ],
+      "to": [
+        10,
+        9,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            7,
+            10,
+            10
+          ],
+          "texture": "#goldbarren"
+        },
+        "south": {
+          "uv": [
+            6,
+            7,
+            10,
+            10
+          ],
+          "texture": "#goldbarren"
+        },
+        "east": {
+          "uv": [
+            3,
+            7,
+            13,
+            10
+          ],
+          "texture": "#goldbarren"
+        },
+        "west": {
+          "uv": [
+            3,
+            7,
+            13,
+            10
+          ],
+          "texture": "#goldbarren"
+        },
+        "up": {
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ],
+          "texture": "#goldbarren"
+        },
+        "down": {
+          "uv": [
+            6,
+            3,
+            10,
+            13
+          ],
+          "texture": "#goldbarren"
+        }
+      }
+    }
+  ]
+}

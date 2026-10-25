@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/champagner"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/champagner",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/champagner",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/champagner",
+      "y": 270
+    }
+  }
+}

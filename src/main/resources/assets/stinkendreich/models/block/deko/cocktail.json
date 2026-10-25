@@ -1,0 +1,284 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "cocktail": "stinkendreich:block/deko/cocktail",
+    "glas": "stinkendreich:block/deko/glas",
+    "holz_dunkel": "stinkendreich:block/deko/holz_dunkel",
+    "pink": "stinkendreich:block/deko/pink",
+    "particle": "stinkendreich:block/deko/glas"
+  },
+  "elements": [
+    {
+      "from": [
+        7.5,
+        0,
+        7.5
+      ],
+      "to": [
+        8.5,
+        3,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            13,
+            8.5,
+            16.0
+          ],
+          "texture": "#glas"
+        },
+        "south": {
+          "uv": [
+            7.5,
+            13,
+            8.5,
+            16.0
+          ],
+          "texture": "#glas"
+        },
+        "east": {
+          "uv": [
+            7.5,
+            13,
+            8.5,
+            16.0
+          ],
+          "texture": "#glas"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            13,
+            8.5,
+            16.0
+          ],
+          "texture": "#glas"
+        },
+        "up": {
+          "uv": [
+            7.5,
+            7.5,
+            8.5,
+            8.5
+          ],
+          "texture": "#glas"
+        },
+        "down": {
+          "uv": [
+            7.5,
+            7.5,
+            8.5,
+            8.5
+          ],
+          "texture": "#glas"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        3,
+        6
+      ],
+      "to": [
+        10,
+        6,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            10,
+            10,
+            13
+          ],
+          "texture": "#cocktail"
+        },
+        "south": {
+          "uv": [
+            6,
+            10,
+            10,
+            13
+          ],
+          "texture": "#cocktail"
+        },
+        "east": {
+          "uv": [
+            6,
+            10,
+            10,
+            13
+          ],
+          "texture": "#cocktail"
+        },
+        "west": {
+          "uv": [
+            6,
+            10,
+            10,
+            13
+          ],
+          "texture": "#cocktail"
+        },
+        "up": {
+          "uv": [
+            6,
+            6,
+            10,
+            10
+          ],
+          "texture": "#cocktail"
+        },
+        "down": {
+          "uv": [
+            6,
+            6,
+            10,
+            10
+          ],
+          "texture": "#cocktail"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        6,
+        8
+      ],
+      "to": [
+        10,
+        9,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            7,
+            7,
+            10
+          ],
+          "texture": "#holz_dunkel"
+        },
+        "south": {
+          "uv": [
+            9,
+            7,
+            10,
+            10
+          ],
+          "texture": "#holz_dunkel"
+        },
+        "east": {
+          "uv": [
+            7,
+            7,
+            8,
+            10
+          ],
+          "texture": "#holz_dunkel"
+        },
+        "west": {
+          "uv": [
+            8,
+            7,
+            9,
+            10
+          ],
+          "texture": "#holz_dunkel"
+        },
+        "up": {
+          "uv": [
+            9,
+            8,
+            10,
+            9
+          ],
+          "texture": "#holz_dunkel"
+        },
+        "down": {
+          "uv": [
+            9,
+            7,
+            10,
+            8
+          ],
+          "texture": "#holz_dunkel"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        9,
+        6
+      ],
+      "to": [
+        12,
+        10,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            6,
+            9,
+            7
+          ],
+          "texture": "#pink"
+        },
+        "south": {
+          "uv": [
+            7,
+            6,
+            12,
+            7
+          ],
+          "texture": "#pink"
+        },
+        "east": {
+          "uv": [
+            5,
+            6,
+            10,
+            7
+          ],
+          "texture": "#pink"
+        },
+        "west": {
+          "uv": [
+            6,
+            6,
+            11,
+            7
+          ],
+          "texture": "#pink"
+        },
+        "up": {
+          "uv": [
+            7,
+            6,
+            12,
+            11
+          ],
+          "texture": "#pink"
+        },
+        "down": {
+          "uv": [
+            7,
+            5,
+            12,
+            10
+          ],
+          "texture": "#pink"
+        }
+      }
+    }
+  ]
+}

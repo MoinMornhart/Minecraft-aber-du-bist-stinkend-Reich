@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/spuele"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/spuele",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/spuele",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/spuele",
+      "y": 270
+    }
+  }
+}

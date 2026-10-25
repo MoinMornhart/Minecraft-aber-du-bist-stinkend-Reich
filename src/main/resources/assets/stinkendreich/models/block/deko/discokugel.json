@@ -1,0 +1,350 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "chrom": "stinkendreich:block/deko/chrom",
+    "spiegel": "stinkendreich:block/deko/spiegel",
+    "particle": "stinkendreich:block/deko/chrom"
+  },
+  "elements": [
+    {
+      "from": [
+        7.5,
+        11,
+        7.5
+      ],
+      "to": [
+        8.5,
+        16,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.5,
+            0.0,
+            8.5,
+            5
+          ],
+          "texture": "#chrom"
+        },
+        "south": {
+          "uv": [
+            7.5,
+            0.0,
+            8.5,
+            5
+          ],
+          "texture": "#chrom"
+        },
+        "east": {
+          "uv": [
+            7.5,
+            0.0,
+            8.5,
+            5
+          ],
+          "texture": "#chrom"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            0.0,
+            8.5,
+            5
+          ],
+          "texture": "#chrom"
+        },
+        "up": {
+          "uv": [
+            7.5,
+            7.5,
+            8.5,
+            8.5
+          ],
+          "texture": "#chrom"
+        },
+        "down": {
+          "uv": [
+            7.5,
+            7.5,
+            8.5,
+            8.5
+          ],
+          "texture": "#chrom"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        5
+      ],
+      "to": [
+        13,
+        9,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            7,
+            13,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "south": {
+          "uv": [
+            3,
+            7,
+            13,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "east": {
+          "uv": [
+            5,
+            7,
+            11,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "west": {
+          "uv": [
+            5,
+            7,
+            11,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "up": {
+          "uv": [
+            3,
+            5,
+            13,
+            11
+          ],
+          "texture": "#spiegel"
+        },
+        "down": {
+          "uv": [
+            3,
+            5,
+            13,
+            11
+          ],
+          "texture": "#spiegel"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        1,
+        5
+      ],
+      "to": [
+        11,
+        11,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            5,
+            11,
+            15
+          ],
+          "texture": "#spiegel"
+        },
+        "south": {
+          "uv": [
+            5,
+            5,
+            11,
+            15
+          ],
+          "texture": "#spiegel"
+        },
+        "east": {
+          "uv": [
+            5,
+            5,
+            11,
+            15
+          ],
+          "texture": "#spiegel"
+        },
+        "west": {
+          "uv": [
+            5,
+            5,
+            11,
+            15
+          ],
+          "texture": "#spiegel"
+        },
+        "up": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#spiegel"
+        },
+        "down": {
+          "uv": [
+            5,
+            5,
+            11,
+            11
+          ],
+          "texture": "#spiegel"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        3,
+        3
+      ],
+      "to": [
+        11,
+        9,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            7,
+            11,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "south": {
+          "uv": [
+            5,
+            7,
+            11,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "east": {
+          "uv": [
+            3,
+            7,
+            13,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "west": {
+          "uv": [
+            3,
+            7,
+            13,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "up": {
+          "uv": [
+            5,
+            3,
+            11,
+            13
+          ],
+          "texture": "#spiegel"
+        },
+        "down": {
+          "uv": [
+            5,
+            3,
+            11,
+            13
+          ],
+          "texture": "#spiegel"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        2,
+        4
+      ],
+      "to": [
+        12,
+        10,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            6,
+            12,
+            14
+          ],
+          "texture": "#spiegel"
+        },
+        "south": {
+          "uv": [
+            4,
+            6,
+            12,
+            14
+          ],
+          "texture": "#spiegel"
+        },
+        "east": {
+          "uv": [
+            4,
+            6,
+            12,
+            14
+          ],
+          "texture": "#spiegel"
+        },
+        "west": {
+          "uv": [
+            4,
+            6,
+            12,
+            14
+          ],
+          "texture": "#spiegel"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#spiegel"
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#spiegel"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "chrom": "stinkendreich:block/deko/chrom",
+    "led": "stinkendreich:block/deko/led",
+    "particle": "stinkendreich:block/deko/chrom"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        2
+      ],
+      "to": [
+        15,
+        5,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            11,
+            15,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "south": {
+          "uv": [
+            1,
+            11,
+            15,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            11,
+            14,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "west": {
+          "uv": [
+            2,
+            11,
+            16.0,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "up": {
+          "uv": [
+            1,
+            2,
+            15,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "down": {
+          "uv": [
+            1,
+            0.0,
+            15,
+            14
+          ],
+          "texture": "#led"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        5,
+        9
+      ],
+      "to": [
+        11,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            0.0,
+            11,
+            11
+          ],
+          "texture": "#chrom"
+        },
+        "south": {
+          "uv": [
+            5,
+            0.0,
+            11,
+            11
+          ],
+          "texture": "#chrom"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            0.0,
+            7,
+            11
+          ],
+          "texture": "#chrom"
+        },
+        "west": {
+          "uv": [
+            9,
+            0.0,
+            16.0,
+            11
+          ],
+          "texture": "#chrom"
+        },
+        "up": {
+          "uv": [
+            5,
+            9,
+            11,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "down": {
+          "uv": [
+            5,
+            0.0,
+            11,
+            7
+          ],
+          "texture": "#chrom"
+        }
+      }
+    }
+  ]
+}

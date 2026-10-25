@@ -4,6 +4,11 @@
     "stinkendreich:geheimschalter",
     "stinkendreich:prunktuer",
     "stinkendreich:glastuer",
-    "stinkendreich:geheimregal"
+    "stinkendreich:geheimregal",
+    "stinkendreich:flaschenregal",
+    "stinkendreich:geldstapel",
+    "stinkendreich:flamingo",
+    "stinkendreich:fluegel_tasten",
+    "stinkendreich:fluegel_korpus"
   ]
 }

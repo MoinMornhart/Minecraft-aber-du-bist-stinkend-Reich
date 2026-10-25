@@ -32,6 +32,30 @@ public final class AutotestKlient {
         ClientTickEvents.END_CLIENT_TICK.register(AutotestKlient::tick);
     }
 
+    /** Wie ein Klick auf die nächste Aufzugstafel und die Wahl der Haltestelle mit diesem Namen. */
+    private static void aufzug(Minecraft client, String ziel) {
+        net.minecraft.core.BlockPos mitte = client.player.blockPosition();
+        net.minecraft.core.BlockPos tafel = null;
+        for (net.minecraft.core.BlockPos p : net.minecraft.core.BlockPos.betweenClosed(mitte.offset(-5, -3, -5), mitte.offset(5, 3, 5))) {
+            if (client.level.getBlockState(p).getBlock() instanceof de.moinmornhart.stinkendreich.mechanik.AufzugstafelBlock
+                    && (tafel == null || p.distSqr(mitte) < tafel.distSqr(mitte))) {
+                tafel = p.immutable();
+            }
+        }
+        if (tafel == null) {
+            StinkendReich.LOGGER.warn("Autotest: keine Aufzugstafel in der Nähe");
+            return;
+        }
+        for (net.minecraft.core.BlockPos halt : de.moinmornhart.stinkendreich.mechanik.AufzugstafelBlock.haltestellen(client.level, tafel)) {
+            if (de.moinmornhart.stinkendreich.mechanik.AufzugstafelBlock.name(client.level, halt).equalsIgnoreCase(ziel)) {
+                KompatClient.sende("aufzug", tafel, String.valueOf(halt.asLong()));
+                StinkendReich.LOGGER.info("Autotest: Aufzug nach {} bestellt", ziel);
+                return;
+            }
+        }
+        StinkendReich.LOGGER.warn("Autotest: Haltestelle {} nicht gefunden", ziel);
+    }
+
     private static void tick(Minecraft client) {
         if (client.player == null || client.level == null || client.player.tickCount % 5 != 0) {
             return;
@@ -50,6 +74,9 @@ public final class AutotestKlient {
                             .stream().min(Comparator.comparingDouble(client.player::distanceToSqr))
                             .ifPresent(b -> KlientBruecke.butler.accept(b.getId()));
                     default -> {
+                        if (z.startsWith("aufzug ")) {
+                            aufzug(client, z.substring(7).trim());
+                        }
                     }
                 }
             }

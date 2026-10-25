@@ -2,40 +2,28 @@ package de.moinmornhart.stinkendreich.mechanik;
 
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.netz.Netz;
-import de.moinmornhart.stinkendreich.register.ModSounds;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import de.moinmornhart.stinkendreich.register.ModEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
 
 /**
- * Fährt Spieler sanft von einer Aufzugstafel zur anderen (0,4 Blöcke pro Tick).
- * Mitfahrer in der Kabine fahren mit.
+ * Bestellt die Aufzugskabine. Die Tafel vor dem Schacht schickt Start- und Zielhaltestelle; die Kabine
+ * ({@link AufzugKabine}) kommt, nimmt alle vor der Tür mit und fährt zum Ziel.
+ *
+ * <p>Wo die Kabine steht, sagen Werte in der Block-Entity der Tafel (vom Bauplan gesetzt):
+ * {@code kabine_dx}, {@code kabine_dz} = Mitte der Kabine relativ zur Mitte des Tafelblocks,
+ * {@code kabine_dy} = Fußhöhe relativ zur Tafel. Ohne Werte liegt der Schacht direkt hinter der Tafel.</p>
  */
 public final class Aufzug {
-    private static final double TEMPO = 0.4;
-
-    private record Fahrt(UUID spieler, double x, double z, double zielY, float blick) {
-    }
-
-    private static final List<Fahrt> FAHRTEN = new ArrayList<>();
-    /** Wo stand der Spieler gerade? (Y pro Fahrt, nicht gespeichert) */
-    private static final java.util.Map<UUID, Double> HOEHE = new java.util.HashMap<>();
-
     private Aufzug() {
     }
 
     public static void registrieren() {
-        ServerTickEvents.END_SERVER_TICK.register(Aufzug::tick);
         Netz.bearbeiter("aufzug", 6, (spieler, start, wert) -> {
             try {
                 BlockPos ziel = BlockPos.of(Long.parseLong(wert));
@@ -44,52 +32,61 @@ public final class Aufzug {
                         || !(spieler.level().getBlockState(start).getBlock() instanceof AufzugstafelBlock)) {
                     return;
                 }
-                starten(spieler, start, ziel);
+                bestellen(spieler, start, ziel);
             } catch (NumberFormatException ignoriert) {
                 // ungültiges Ziel
             }
         });
     }
 
-    private static void starten(ServerPlayer spieler, BlockPos start, BlockPos ziel) {
-        Direction vorne = spieler.level().getBlockState(ziel).getValue(Eigenschaften.RICHTUNG);
-        // Die Kabine liegt vor der Tafel; die Füße auf Höhe der Tafel
-        double x = ziel.getX() + 0.5 + vorne.getStepX();
-        double z = ziel.getZ() + 0.5 + vorne.getStepZ();
-        AABB kabine = new AABB(start.relative(vorne)).inflate(1.0, 1.5, 1.0);
-        for (ServerPlayer p : spieler.level().getEntitiesOfClass(ServerPlayer.class, kabine, p -> true)) {
-            FAHRTEN.removeIf(f -> f.spieler().equals(p.getUUID()));
-            FAHRTEN.add(new Fahrt(p.getUUID(), x, z, ziel.getY(), p.getYRot()));
-            HOEHE.put(p.getUUID(), p.getY());
-        }
-        if (FAHRTEN.stream().noneMatch(f -> f.spieler().equals(spieler.getUUID()))) {
-            FAHRTEN.add(new Fahrt(spieler.getUUID(), x, z, ziel.getY(), spieler.getYRot()));
-            HOEHE.put(spieler.getUUID(), spieler.getY());
-        }
-        spieler.level().playSound(null, start, ModSounds.GONG, SoundSource.BLOCKS, 0.8F, 1.2F);
+    /** Lage der Kabine zu einer Tafel. */
+    private record Schacht(double x, double z, double fuss, Direction tuer) {
     }
 
-    private static void tick(MinecraftServer server) {
-        Iterator<Fahrt> it = FAHRTEN.iterator();
-        while (it.hasNext()) {
-            Fahrt f = it.next();
-            ServerPlayer p = server.getPlayerList().getPlayer(f.spieler());
-            if (p == null) {
-                it.remove();
-                continue;
+    private static Schacht schacht(ServerLevel welt, BlockPos tafel) {
+        Direction vorne = welt.getBlockState(tafel).getValue(Eigenschaften.RICHTUNG);
+        MechanikBlockEntity d = MechanikBlock.daten(welt, tafel);
+        double dx = -vorne.getStepX() * 1.5, dz = -vorne.getStepZ() * 1.5, dy = -1;
+        if (d != null) {
+            dx = zahl(d.text("kabine_dx", ""), dx);
+            dz = zahl(d.text("kabine_dz", ""), dz);
+            dy = zahl(d.text("kabine_dy", ""), dy);
+        }
+        return new Schacht(tafel.getX() + 0.5 + dx, tafel.getZ() + 0.5 + dz, tafel.getY() + dy, vorne);
+    }
+
+    private static double zahl(String text, double sonst) {
+        try {
+            return text.isEmpty() ? sonst : Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return sonst;
+        }
+    }
+
+    private static void bestellen(ServerPlayer spieler, BlockPos start, BlockPos ziel) {
+        ServerLevel welt = (ServerLevel) spieler.level();
+        Schacht von = schacht(welt, start);
+        Schacht nach = schacht(welt, ziel);
+        AABB saeule = new AABB(von.x() - 1.2, Kompat.minY(welt), von.z() - 1.2, von.x() + 1.2, Kompat.maxY(welt), von.z() + 1.2);
+        List<AufzugKabine> kabinen = welt.getEntitiesOfClass(AufzugKabine.class, saeule, k -> true);
+        AufzugKabine kabine;
+        if (kabinen.isEmpty()) {
+            kabine = ModEntities.AUFZUG.create(welt
+                    //? if >=1.21.2
+                    , net.minecraft.world.entity.EntitySpawnReason.TRIGGERED
+            );
+            if (kabine == null) {
+                return;
             }
-            double y = HOEHE.getOrDefault(f.spieler(), p.getY());
-            double rest = f.zielY() - y;
-            boolean angekommen = Math.abs(rest) <= TEMPO;
-            y = angekommen ? f.zielY() : y + Math.signum(rest) * TEMPO;
-            HOEHE.put(f.spieler(), y);
-            p.fallDistance = 0;
-            Kompat.befehl(server, String.format(Locale.ROOT, "tp %s %.3f %.3f %.3f", p.getScoreboardName(), f.x(), y, f.z()));
-            if (angekommen) {
-                it.remove();
-                HOEHE.remove(f.spieler());
-                p.level().playSound(null, p.blockPosition(), ModSounds.GONG, SoundSource.BLOCKS, 1.0F, 1.0F);
+            kabine.aufstellen(von.x(), von.fuss(), von.z(), von.tuer());
+            welt.addFreshEntity(kabine);
+        } else {
+            kabine = kabinen.get(0);
+            // Doppelte Kabinen (z. B. nach /summon) aufräumen
+            for (int i = 1; i < kabinen.size(); i++) {
+                kabinen.get(i).discard();
             }
         }
+        kabine.bestellen(von.fuss(), nach.fuss());
     }
 }

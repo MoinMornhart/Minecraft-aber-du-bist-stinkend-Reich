@@ -23,6 +23,11 @@ public final class ModEntities {
             EntityType.Builder.of(de.moinmornhart.stinkendreich.auto.AutoEntity::new, MobCategory.MISC).sized(2.5F, 1.2F)
                     .clientTrackingRange(10).fireImmune());
 
+    /** Die gläserne Aufzugskabine: 2 × 2 Blöcke, knapp 3 hoch; jede Bewegung sofort an die Klienten. */
+    public static final EntityType<de.moinmornhart.stinkendreich.mechanik.AufzugKabine> AUFZUG = registrieren("aufzugkabine",
+            EntityType.Builder.of(de.moinmornhart.stinkendreich.mechanik.AufzugKabine::new, MobCategory.MISC).sized(1.75F, 2.85F)
+                    .clientTrackingRange(8).updateInterval(1).fireImmune());
+
     private ModEntities() {
     }
 
@@ -39,5 +44,6 @@ public final class ModEntities {
     public static void init() {
         FabricDefaultAttributeRegistry.register(BUTLER, ButlerEntity.attribute());
         FabricDefaultAttributeRegistry.register(AUTO, de.moinmornhart.stinkendreich.auto.AutoEntity.attribute());
+        FabricDefaultAttributeRegistry.register(AUFZUG, de.moinmornhart.stinkendreich.mechanik.AufzugKabine.attribute());
     }
 }

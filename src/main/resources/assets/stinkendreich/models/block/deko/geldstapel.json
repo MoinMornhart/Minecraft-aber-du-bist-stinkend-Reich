@@ -1,0 +1,214 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "geld_oben": "stinkendreich:block/deko/geld_oben",
+    "geld_seite": "stinkendreich:block/deko/geld_seite",
+    "particle": "stinkendreich:block/deko/geld_seite"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        2
+      ],
+      "to": [
+        8,
+        7,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            9,
+            15,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "south": {
+          "uv": [
+            1,
+            9,
+            8,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "east": {
+          "uv": [
+            2,
+            9,
+            14,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "west": {
+          "uv": [
+            2,
+            9,
+            14,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "up": {
+          "uv": [
+            1,
+            2,
+            8,
+            14
+          ],
+          "texture": "#geld_oben"
+        },
+        "down": {
+          "uv": [
+            1,
+            2,
+            8,
+            14
+          ],
+          "texture": "#geld_seite"
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0,
+        2
+      ],
+      "to": [
+        15,
+        4,
+        14
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            12,
+            8,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "south": {
+          "uv": [
+            8,
+            12,
+            15,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "east": {
+          "uv": [
+            2,
+            12,
+            14,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "west": {
+          "uv": [
+            2,
+            12,
+            14,
+            16.0
+          ],
+          "texture": "#geld_seite"
+        },
+        "up": {
+          "uv": [
+            8,
+            2,
+            15,
+            14
+          ],
+          "texture": "#geld_oben"
+        },
+        "down": {
+          "uv": [
+            8,
+            2,
+            15,
+            14
+          ],
+          "texture": "#geld_seite"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        4,
+        4
+      ],
+      "to": [
+        14,
+        6,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            10,
+            7,
+            12
+          ],
+          "texture": "#geld_seite"
+        },
+        "south": {
+          "uv": [
+            9,
+            10,
+            14,
+            12
+          ],
+          "texture": "#geld_seite"
+        },
+        "east": {
+          "uv": [
+            3,
+            10,
+            12,
+            12
+          ],
+          "texture": "#geld_seite"
+        },
+        "west": {
+          "uv": [
+            4,
+            10,
+            13,
+            12
+          ],
+          "texture": "#geld_seite"
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            14,
+            13
+          ],
+          "texture": "#geld_oben"
+        },
+        "down": {
+          "uv": [
+            9,
+            3,
+            14,
+            12
+          ],
+          "texture": "#geld_seite"
+        }
+      }
+    }
+  ]
+}

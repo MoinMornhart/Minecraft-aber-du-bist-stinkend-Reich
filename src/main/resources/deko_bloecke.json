@@ -1,0 +1,602 @@
+[
+  {
+    "name": "tanzflaeche",
+    "form": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        16.0,
+        16.0,
+        16.0
+      ]
+    ],
+    "licht": 12,
+    "fest": true,
+    "klang": "glas"
+  },
+  {
+    "name": "discokugel",
+    "form": [
+      [
+        3,
+        1,
+        3,
+        13,
+        16,
+        13
+      ]
+    ],
+    "licht": 10,
+    "fest": false,
+    "klang": "glas"
+  },
+  {
+    "name": "kronleuchter",
+    "form": [
+      [
+        2,
+        2,
+        2,
+        14,
+        16,
+        14
+      ]
+    ],
+    "licht": 15,
+    "fest": false,
+    "klang": "kette"
+  },
+  {
+    "name": "flaschenregal",
+    "form": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        16.0,
+        16.0,
+        16.0
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz"
+  },
+  {
+    "name": "goldbarren",
+    "form": [
+      [
+        2,
+        0.0,
+        3,
+        6,
+        3,
+        13
+      ],
+      [
+        6,
+        0.0,
+        3,
+        10,
+        3,
+        13
+      ],
+      [
+        10,
+        0.0,
+        3,
+        14,
+        3,
+        13
+      ],
+      [
+        4,
+        3,
+        3,
+        8,
+        6,
+        13
+      ],
+      [
+        8,
+        3,
+        3,
+        12,
+        6,
+        13
+      ],
+      [
+        6,
+        6,
+        3,
+        10,
+        9,
+        13
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "geldstapel",
+    "form": [
+      [
+        1,
+        0.0,
+        2,
+        8,
+        7,
+        14
+      ],
+      [
+        8,
+        0.0,
+        2,
+        15,
+        4,
+        14
+      ],
+      [
+        9,
+        4,
+        4,
+        14,
+        6,
+        13
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "wolle"
+  },
+  {
+    "name": "pokal",
+    "form": [
+      [
+        4,
+        0.0,
+        4,
+        12,
+        2,
+        12
+      ],
+      [
+        5,
+        2,
+        5,
+        11,
+        4,
+        11
+      ],
+      [
+        7,
+        4,
+        7,
+        9,
+        8,
+        9
+      ],
+      [
+        5,
+        8,
+        5,
+        11,
+        14,
+        11
+      ],
+      [
+        3,
+        9,
+        7.5,
+        5,
+        13,
+        8.5
+      ],
+      [
+        11,
+        9,
+        7.5,
+        13,
+        13,
+        8.5
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "kaffeemaschine",
+    "form": [
+      [
+        3,
+        0.0,
+        6,
+        13,
+        12,
+        14
+      ],
+      [
+        3,
+        0.0,
+        3,
+        13,
+        1,
+        6
+      ],
+      [
+        6,
+        5,
+        3,
+        10,
+        6,
+        6
+      ],
+      [
+        6,
+        1,
+        3.5,
+        8,
+        3,
+        5.5
+      ],
+      [
+        4,
+        12,
+        7,
+        12,
+        13,
+        13
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "herd",
+    "form": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        16.0,
+        16.0,
+        16.0
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "spuele",
+    "form": [
+      [
+        0,
+        0,
+        0,
+        16,
+        16,
+        16
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "stein"
+  },
+  {
+    "name": "kuehlschrank",
+    "form": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        16.0,
+        16.0,
+        16.0
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "weinkuehlschrank",
+    "form": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        16.0,
+        16.0,
+        16.0
+      ]
+    ],
+    "licht": 4,
+    "fest": true,
+    "klang": "glas"
+  },
+  {
+    "name": "dunstabzug",
+    "form": [
+      [
+        1,
+        0.0,
+        2,
+        15,
+        5,
+        16.0
+      ],
+      [
+        5,
+        5,
+        9,
+        11,
+        16.0,
+        16.0
+      ]
+    ],
+    "licht": 8,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "goldtoilette",
+    "form": [
+      [
+        4,
+        0.0,
+        2,
+        12,
+        7,
+        12
+      ],
+      [
+        3.5,
+        7,
+        1.5,
+        12.5,
+        8,
+        12
+      ],
+      [
+        3,
+        7,
+        12,
+        13,
+        15,
+        16.0
+      ],
+      [
+        7,
+        15,
+        13,
+        9,
+        16.0,
+        15
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "barhocker",
+    "form": [
+      [
+        4,
+        0.0,
+        4,
+        12,
+        1,
+        12
+      ],
+      [
+        7,
+        1,
+        7,
+        9,
+        9,
+        9
+      ],
+      [
+        5,
+        4,
+        5,
+        11,
+        5,
+        11
+      ],
+      [
+        4,
+        9,
+        4,
+        12,
+        11,
+        12
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "metall"
+  },
+  {
+    "name": "cocktail",
+    "form": [
+      [
+        6,
+        0,
+        6,
+        10,
+        10,
+        10
+      ]
+    ],
+    "licht": 0,
+    "fest": false,
+    "klang": "glas"
+  },
+  {
+    "name": "champagner",
+    "form": [
+      [
+        5,
+        0.0,
+        5,
+        11,
+        6,
+        11
+      ],
+      [
+        7,
+        4,
+        7,
+        9,
+        13,
+        9
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "glas"
+  },
+  {
+    "name": "sektturm",
+    "form": [
+      [
+        1,
+        0.0,
+        1,
+        15,
+        4,
+        15
+      ],
+      [
+        3,
+        4,
+        3,
+        13,
+        8,
+        13
+      ],
+      [
+        5,
+        8,
+        5,
+        11,
+        12,
+        11
+      ],
+      [
+        7,
+        12,
+        7,
+        9,
+        15,
+        9
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "glas"
+  },
+  {
+    "name": "flamingo",
+    "form": [
+      [
+        1,
+        12,
+        1,
+        15,
+        15,
+        15
+      ]
+    ],
+    "licht": 0,
+    "fest": false,
+    "klang": "wolle"
+  },
+  {
+    "name": "neon_bar",
+    "form": [
+      [
+        0.0,
+        3,
+        15,
+        16.0,
+        13,
+        16.0
+      ]
+    ],
+    "licht": 10,
+    "fest": false,
+    "klang": "glas"
+  },
+  {
+    "name": "neon_vip",
+    "form": [
+      [
+        0.0,
+        3,
+        15,
+        16.0,
+        13,
+        16.0
+      ]
+    ],
+    "licht": 10,
+    "fest": false,
+    "klang": "glas"
+  },
+  {
+    "name": "neon_club",
+    "form": [
+      [
+        0.0,
+        3,
+        15,
+        16.0,
+        13,
+        16.0
+      ]
+    ],
+    "licht": 10,
+    "fest": false,
+    "klang": "glas"
+  },
+  {
+    "name": "fluegel_tasten",
+    "form": [
+      [
+        0,
+        0,
+        0,
+        16,
+        12,
+        16
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz"
+  },
+  {
+    "name": "fluegel_korpus",
+    "form": [
+      [
+        0,
+        0,
+        0,
+        16,
+        13,
+        15
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz"
+  }
+]

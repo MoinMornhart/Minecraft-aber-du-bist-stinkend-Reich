@@ -151,3 +151,42 @@ def fass(b: Bau, x: int, y: int, z: int, facing: str, inhalt: list[tuple[str, in
     items = [{"Slot": ("b", i), "id": name if ":" in name else f"minecraft:{name}", "count": anzahl}
              for i, (name, anzahl) in enumerate(inhalt)]
     b.setze(x, y, z, zustand("barrel", facing=facing, open="false"), {"id": "minecraft:barrel", "Items": items})
+
+
+# ---------------------------------------------------------------------------
+# Eigene Deko der Mod, Gemälde, Bilderrahmen
+# ---------------------------------------------------------------------------
+
+GEGEN_UHRZEIGER = {"south": "east", "east": "north", "north": "west", "west": "south"}
+RICHTUNG_2D = {"south": 0, "west": 1, "north": 2, "east": 3}
+RICHTUNG_3D = {"down": 0, "up": 1, "north": 2, "south": 3, "west": 4, "east": 5}
+
+
+def deko(b: Bau, x: int, y: int, z: int, name: str, blick: str = "north", nass: bool = False) -> None:
+    """Deko-Block der Mod (tools/assets/deko.py); blick = Richtung, in die die Vorderseite zeigt."""
+    b.setze(x, y, z, zustand(f"stinkendreich:{name}", facing=blick, waterlogged=str(nass).lower()))
+
+
+def gemaelde(b: Bau, x: int, y: int, z: int, blick: str, name: str, breite: int, hoehe: int) -> None:
+    """Gemälde der Mod. (x, y, z) = Block unten links, so wie man davor steht; blick = Richtung, in die das
+    Bild schaut. Hinter allen Feldern muss eine feste Wand sein."""
+    rx, _, rz = RICHTUNG_VEKTOR[GEGEN_UHRZEIGER[blick]]
+    versatz = (breite - 1) // 2
+    ax, ay, az = x + rx * versatz, y + (hoehe - 1) // 2, z + rz * versatz
+    b.entity(ax + 0.5, ay + 0.5, az + 0.5, {"id": "minecraft:painting", "facing": ("b", RICHTUNG_2D[blick]),
+                                            "variant": f"stinkendreich:{name}"})
+
+
+def bilderrahmen(b: Bau, x: int, y: int, z: int, blick: str, gegenstand: str, unsichtbar: bool = False) -> None:
+    """Fester Rahmen mit Gegenstand an der Wand (lässt sich nicht herausnehmen); blick = weg von der Wand."""
+    b.entity(x + 0.5, y + 0.5, z + 0.5, {
+        "id": "minecraft:item_frame", "Facing": ("b", RICHTUNG_3D[blick]), "Fixed": ("b", 1),
+        "Invisible": ("b", 1 if unsichtbar else 0),
+        "Item": {"id": gegenstand if ":" in gegenstand else f"minecraft:{gegenstand}", "count": 1}})
+
+
+def kronleuchter(b: Bau, x: int, y_decke: int, z: int, kette: int = 0) -> None:
+    """Kronleuchter unter der Decke (y_decke = erster freier Block darunter), wahlweise an einer Kette."""
+    for i in range(kette):
+        b.setze(x, y_decke - i, z, zustand("chain", axis="y", waterlogged="false"))
+    deko(b, x, y_decke - kette, z, "kronleuchter")

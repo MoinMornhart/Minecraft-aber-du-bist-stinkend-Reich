@@ -22,6 +22,14 @@ public final class Kompat {
     private Kompat() {
     }
 
+    /** Setzt Position und Blickrichtung sofort (ohne Gleiten). Heißt ab 1.21.5 snapTo. */
+    public static void versetzen(net.minecraft.world.entity.Entity e, double x, double y, double z, float gier, float neigung) {
+        //? if >=1.21.5 {
+        e.snapTo(x, y, z, gier, neigung);
+        //?} else
+        /*e.moveTo(x, y, z, gier, neigung);*/
+    }
+
     /** Unterste baubare Y-Koordinate. */
     public static int minY(LevelHeightAccessor welt) {
         //? if >=1.21.2 {

@@ -61,7 +61,8 @@ def ist_voll(block: str | None) -> bool:
     if block is None:
         return False
     n = basisname(block)
-    if n.endswith("sea_lantern"):
+    # Volle Leuchtblöcke, deren Name sonst wie Laterne oder Licht klingt
+    if n.endswith(("sea_lantern", "froglight", "redstone_lamp", "glowstone", "shroomlight")):
         return True
     return not any(t in n for t in NICHT_VOLL)
 

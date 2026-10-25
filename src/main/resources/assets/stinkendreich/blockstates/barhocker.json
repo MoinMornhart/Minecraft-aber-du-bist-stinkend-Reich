@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/barhocker"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/barhocker",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/barhocker",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/barhocker",
+      "y": 270
+    }
+  }
+}

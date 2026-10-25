@@ -17,6 +17,8 @@ public final class ModSounds {
     public static final SoundEvent HUPE = ModRegister.sound("hupe");
     public static final SoundEvent REIFEN = ModRegister.sound("reifen");
     public static final SoundEvent CRASH = ModRegister.sound("crash");
+    // Aufzug
+    public static final SoundEvent AUFZUG_MUSIK = ModRegister.sound("aufzug_musik");
 
     private ModSounds() {
     }

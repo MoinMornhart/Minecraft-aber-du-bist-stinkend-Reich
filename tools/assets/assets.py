@@ -20,6 +20,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
+import deko
 import gemaelde
 import tueren
 
@@ -549,6 +550,11 @@ def main() -> None:
         werkzeuge[werkzeug] += liste
     TEXTE_DE.update(t["de"])
     TEXTE_EN.update(t["en"])
+    dk = deko.main()
+    for werkzeug, liste in dk["werkzeuge"].items():
+        werkzeuge[werkzeug] += liste
+    TEXTE_DE.update(dk["de"])
+    TEXTE_EN.update(dk["en"])
     g = gemaelde.main()
     TEXTE_DE.update(g["de"])
     TEXTE_EN.update(g["en"])

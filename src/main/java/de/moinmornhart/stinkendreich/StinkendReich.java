@@ -11,6 +11,7 @@ import de.moinmornhart.stinkendreich.mechanik.TastenfeldBlock;
 import de.moinmornhart.stinkendreich.mechanik.VillaZustand;
 import de.moinmornhart.stinkendreich.netz.Netz;
 import de.moinmornhart.stinkendreich.register.ModBloecke;
+import de.moinmornhart.stinkendreich.register.ModDeko;
 import de.moinmornhart.stinkendreich.register.ModEntities;
 import de.moinmornhart.stinkendreich.register.ModItems;
 import de.moinmornhart.stinkendreich.register.ModSounds;
@@ -49,6 +50,7 @@ public class StinkendReich implements ModInitializer {
         ModSounds.init();
         ModItems.init();
         ModBloecke.init();
+        ModDeko.init();
         ModEntities.init();
         ModTab.init();
         Netz.registrieren();

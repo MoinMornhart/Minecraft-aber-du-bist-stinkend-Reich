@@ -1,0 +1,46 @@
+# Alle Deko-Blöcke auf einer Bühne (Vorderseite zur Kamera)
+server /gamemode creative
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 30 26 92 0 0
+warte 1
+server /fill ~-2 ~-1 ~-2 ~14 ~-1 ~8 minecraft:polished_andesite
+server /fill ~-2 ~ ~-2 ~14 ~5 ~8 minecraft:air
+server /fill ~-2 ~4 ~4 ~14 ~4 ~8 minecraft:white_concrete
+server /fill ~-2 ~ ~8 ~14 ~3 ~8 minecraft:white_concrete
+server /setblock ~0 ~ ~0 stinkendreich:tanzflaeche[facing=north]
+server /setblock ~1 ~ ~0 stinkendreich:flaschenregal[facing=north]
+server /setblock ~2 ~ ~0 stinkendreich:goldbarren[facing=north]
+server /setblock ~3 ~ ~0 stinkendreich:geldstapel[facing=north]
+server /setblock ~4 ~ ~0 stinkendreich:pokal[facing=north]
+server /setblock ~5 ~ ~0 stinkendreich:kaffeemaschine[facing=north]
+server /setblock ~6 ~ ~0 stinkendreich:herd[facing=north]
+server /setblock ~7 ~ ~0 stinkendreich:spuele[facing=north]
+server /setblock ~8 ~ ~0 stinkendreich:kuehlschrank[facing=north]
+server /setblock ~9 ~ ~0 stinkendreich:weinkuehlschrank[facing=north]
+server /setblock ~10 ~ ~0 stinkendreich:goldtoilette[facing=north]
+server /setblock ~11 ~ ~0 stinkendreich:barhocker[facing=north]
+server /setblock ~0 ~ ~2 stinkendreich:cocktail[facing=north]
+server /setblock ~1 ~ ~2 stinkendreich:champagner[facing=north]
+server /setblock ~2 ~ ~2 stinkendreich:sektturm[facing=north]
+server /setblock ~3 ~ ~2 stinkendreich:fluegel_tasten[facing=north]
+server /setblock ~4 ~ ~2 stinkendreich:fluegel_korpus[facing=north]
+server /setblock ~2 ~3 ~6 stinkendreich:discokugel[facing=north]
+server /setblock ~5 ~3 ~6 stinkendreich:dunstabzug[facing=north]
+server /setblock ~8 ~3 ~6 stinkendreich:kronleuchter[facing=north]
+server /setblock ~2 ~1 ~7 stinkendreich:neon_bar[facing=north]
+server /setblock ~5 ~1 ~7 stinkendreich:neon_club[facing=north]
+server /setblock ~8 ~1 ~7 stinkendreich:neon_vip[facing=north]
+server /fill ~11 ~-1 ~5 ~13 ~-1 ~7 minecraft:water
+server /setblock ~12 ~-1 ~6 stinkendreich:flamingo[facing=north,waterlogged=true]
+server /gamemode spectator
+server /villa ort 35.5 27.8 89.2 0 18
+warte 4
+bild d01_deko_vorne
+server /villa ort 36 28.5 93 0 25
+warte 3
+bild d02_deko_hinten
+server /villa ort 38 26.2 99 160 -5
+warte 3
+bild d03_deko_wand

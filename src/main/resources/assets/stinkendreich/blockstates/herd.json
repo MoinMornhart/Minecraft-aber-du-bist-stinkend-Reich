@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/herd"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/herd",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/herd",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/herd",
+      "y": 270
+    }
+  }
+}

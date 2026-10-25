@@ -1,6 +1,9 @@
 package de.moinmornhart.stinkendreich.client;
 
 import de.moinmornhart.stinkendreich.StinkendReich;
+import de.moinmornhart.stinkendreich.client.aufzug.AufzugModell;
+import de.moinmornhart.stinkendreich.client.aufzug.AufzugMusik;
+import de.moinmornhart.stinkendreich.client.aufzug.AufzugRenderer;
 import de.moinmornhart.stinkendreich.client.auto.AutoKlient;
 import de.moinmornhart.stinkendreich.client.auto.AutoModell;
 import de.moinmornhart.stinkendreich.client.auto.AutoRenderer;
@@ -39,6 +42,7 @@ public class StinkendReichClient implements ClientModInitializer {
         // Türen und Tore mit durchsichtigen Stellen
         KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
                 ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER);
+        KompatClient.durchsichtig(de.moinmornhart.stinkendreich.register.ModDeko.BLOECKE.values().toArray(new net.minecraft.world.level.block.Block[0]));
 
         // Butler: eigenes Modell (Fabric hat die Klasse dafür in 26.x umbenannt) und Renderer
         //? if >=26.1 {
@@ -52,6 +56,13 @@ public class StinkendReichClient implements ClientModInitializer {
         //?} else
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(AutoModell.SCHICHT, AutoModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.AUTO, AutoRenderer::new);
+        // Aufzugskabine: Modell, Renderer, Fahrstuhlmusik
+        //? if >=26.1 {
+        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(AufzugModell.SCHICHT, AufzugModell::schicht);
+        //?} else
+        /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(AufzugModell.SCHICHT, AufzugModell::schicht);*/
+        EntityRendererRegistry.register(ModEntities.AUFZUG, AufzugRenderer::new);
+        AufzugMusik.registrieren();
         AutoKlient.registrieren();
         UpdateKlient.registrieren();
         AutotestKlient.registrieren();

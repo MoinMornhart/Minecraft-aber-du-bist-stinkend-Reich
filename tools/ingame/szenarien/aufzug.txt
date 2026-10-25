@@ -1,0 +1,28 @@
+# Aufzug: Kabine im Bunker bestellen, einsteigen, bis ins Penthouse fahren (Fotos unterwegs)
+server /gamemode creative
+server /time set noon
+server /weather clear
+taste F1
+# Schacht von außen (Erdgeschoss-Halle)
+server /villa ort 57.5 27 47 180 12
+warte 6
+bild a01_schacht
+# Im Bunker vor der Tür stehen und ins Penthouse fahren
+server /villa ort 58 6 42 180 8
+warte 3
+bild a02_bunker_tuer
+klient aufzug Penthouse
+warte 0.6
+bild a03_eingestiegen
+warte 1
+bild a04_fahrt_innen
+taste F5
+warte 1.5
+bild a05_fahrt_hinten
+taste F5
+bild a06_fahrt_vorne
+taste F5
+warte 5
+bild a07_angekommen
+warte 2
+bild a08_ausgestiegen

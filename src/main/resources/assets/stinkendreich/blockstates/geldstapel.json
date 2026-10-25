@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/geldstapel"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/geldstapel",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/geldstapel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/geldstapel",
+      "y": 270
+    }
+  }
+}

@@ -169,6 +169,85 @@ def crash() -> np.ndarray:
     return (schlag + blech + splitter + klirr) * huelle(len(t), ab=0.1)
 
 
+def midi(n: float) -> float:
+    return 440.0 * 2 ** ((n - 69) / 12)
+
+
+def aufzug_musik() -> np.ndarray:
+    """Fahrstuhlmusik: entspannter Bossa nova in F-Dur, 8 Takte, nahtlos wiederholbar.
+
+    E-Piano spielt Septakkorde im Bossa-Rhythmus, darüber ein Vibraphon, unten ein weicher Bass,
+    dazu Besen auf jedem Achtel. Ausklingende Töne am Ende werden an den Anfang gefaltet.
+    """
+    tempo = 112
+    schlag = 60 / tempo
+    laenge = int(RATE * schlag * 4 * 8)
+    puffer = np.zeros(laenge + RATE * 3)
+
+    def setze(start_schlag: float, signal: np.ndarray, lautstaerke: float) -> None:
+        a = int(RATE * start_schlag * schlag)
+        puffer[a:a + len(signal)] += signal * lautstaerke
+
+    def epiano(f: float, dauer: float) -> np.ndarray:
+        t = zeit(dauer + 1.2)
+        s = (np.sin(2 * np.pi * f * t) + 0.28 * np.sin(2 * np.pi * 2 * f * t)
+             + 0.12 * np.sin(2 * np.pi * 7 * f * t) * np.exp(-t / 0.05)) * np.exp(-t / 0.9)
+        s *= 1 + 0.15 * np.sin(2 * np.pi * 4.5 * t)
+        aus = np.ones_like(t)
+        n = int(RATE * dauer)
+        aus[n:] = np.exp(-(t[n:] - t[n]) / 0.15)
+        return s * aus * huelle(len(t), an=0.004, ab=0.05)
+
+    def vibraphon(f: float, dauer: float) -> np.ndarray:
+        t = zeit(dauer + 1.5)
+        s = (np.sin(2 * np.pi * f * t) + 0.22 * np.sin(2 * np.pi * 4 * f * t) * np.exp(-t / 0.3)) * np.exp(-t / 1.3)
+        s *= 1 + 0.35 * np.sin(2 * np.pi * 5.2 * t)
+        return s * huelle(len(t), an=0.003, ab=0.1)
+
+    def bass(f: float, dauer: float) -> np.ndarray:
+        t = zeit(dauer)
+        return (np.sin(2 * np.pi * f * t) + 0.25 * np.sin(2 * np.pi * 2 * f * t)) * np.exp(-t / 0.7) * huelle(len(t), an=0.01, ab=0.08)
+
+    def besen(stark: bool) -> np.ndarray:
+        t = zeit(0.12)
+        rnd = np.random.default_rng(int(stark) + 7)
+        rauschen = rnd.normal(0, 1, len(t))
+        rauschen = np.convolve(rauschen, np.ones(6) / 6, mode="same") - np.convolve(rauschen, np.ones(40) / 40, mode="same")
+        return rauschen * np.exp(-t / (0.05 if stark else 0.025))
+
+    akkorde = [(53, 57, 60, 64), (53, 57, 60, 62), (55, 58, 62, 65), (52, 55, 58, 60),
+               (53, 57, 60, 64), (53, 57, 58, 62), (55, 58, 62, 65), (52, 55, 58, 64)]
+    grundtoene = [(41, 48), (38, 45), (43, 50), (36, 43), (41, 48), (46, 41), (43, 50), (36, 43)]
+    rhythmus = [(0.0, 0.9), (1.5, 0.45), (3.0, 0.8)]
+    melodie = [
+        [(0, 69, 1.5), (1.5, 72, 1), (2.5, 76, 1.5)],
+        [(0, 74, 1), (1, 72, 1), (2, 69, 2)],
+        [(0, 70, 1.5), (1.5, 74, 1), (2.5, 77, 1.5)],
+        [(0, 76, 1), (1, 74, 0.5), (1.5, 72, 0.5), (2, 70, 2)],
+        [(0, 69, 1), (1, 72, 1), (2, 77, 1), (3, 76, 1)],
+        [(0, 74, 2), (2, 77, 1), (3, 81, 1)],
+        [(0, 79, 1.5), (1.5, 77, 0.5), (2, 74, 2)],
+        [(0, 76, 1), (1, 67, 1), (2, 70, 1), (3, 72, 1)],
+    ]
+    for takt in range(8):
+        b0 = takt * 4
+        for start, dauer in rhythmus:
+            for note in akkorde[takt]:
+                setze(b0 + start, epiano(midi(note), dauer * schlag), 0.09)
+        wurzel, quinte = grundtoene[takt]
+        setze(b0, bass(midi(wurzel), 1.4 * schlag), 0.5)
+        setze(b0 + 2, bass(midi(quinte), 1.4 * schlag), 0.42)
+        for start, note, dauer in melodie[takt]:
+            setze(b0 + start, vibraphon(midi(note), dauer * schlag), 0.28)
+        for achtel in range(8):
+            setze(b0 + achtel / 2, besen(achtel % 4 == 2), 0.05 if achtel % 4 == 2 else 0.03)
+    # Nachhall der letzten Töne an den Anfang falten, damit die Schleife nahtlos ist
+    ergebnis = puffer[:laenge].copy()
+    rest = puffer[laenge:]
+    ergebnis[:len(rest)] += rest
+    return ergebnis
+
+
 GERAEUSCHE = {
     "piep_ok": (piep_ok, "Piepen", "Beep"),
     "piep_fehler": (piep_fehler, "Fehlerton", "Error buzz"),
@@ -182,7 +261,10 @@ GERAEUSCHE = {
     "hupe": (hupe, "Hupe", "Horn"),
     "reifen": (reifen, "Reifen quietschen", "Tyres squeal"),
     "crash": (crash, "Blech kracht", "Metal crunches"),
+    "aufzug_musik": (aufzug_musik, "Fahrstuhlmusik", "Elevator music"),
 }
+# Lange Stücke werden gestreamt statt ganz in den Speicher geladen
+GESTREAMT = {"aufzug_musik"}
 
 
 def speichern(name: str, signal: np.ndarray) -> None:
@@ -207,7 +289,8 @@ def main() -> None:
     for name, (fabrik, de, en) in GERAEUSCHE.items():
         if alle or not (ZIEL / f"{name}.ogg").exists():
             speichern(name, fabrik())
-        sounds_json[name] = {"subtitle": f"stinkendreich.ton.{name}", "sounds": [f"stinkendreich:{name}"]}
+        eintrag = {"name": f"stinkendreich:{name}", "stream": True} if name in GESTREAMT else f"stinkendreich:{name}"
+        sounds_json[name] = {"subtitle": f"stinkendreich.ton.{name}", "sounds": [eintrag]}
         untertitel_de[f"stinkendreich.ton.{name}"] = de
         untertitel_en[f"stinkendreich.ton.{name}"] = en
     (ZIEL.parent / "sounds.json").write_text(json.dumps(sounds_json, indent=2) + "\n", encoding="utf-8")

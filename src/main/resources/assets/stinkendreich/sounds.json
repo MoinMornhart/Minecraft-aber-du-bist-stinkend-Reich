@@ -70,5 +70,14 @@
     "sounds": [
       "stinkendreich:crash"
     ]
+  },
+  "aufzug_musik": {
+    "subtitle": "stinkendreich.ton.aufzug_musik",
+    "sounds": [
+      {
+        "name": "stinkendreich:aufzug_musik",
+        "stream": true
+      }
+    ]
   }
 }

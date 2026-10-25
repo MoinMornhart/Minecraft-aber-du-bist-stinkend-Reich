@@ -37,6 +37,8 @@ BUNKER = 5             # Bunker-Boden
 HX0, HX1, HZ0, HZ1 = 30, 79, 36, 67
 # Aufzugsschacht (außen 4x4, innen 2x2), Tür nach Süden
 AX0, AX1, AZ0, AZ1 = 56, 59, 37, 40
+# Haltestellen des Aufzugs: Name -> Höhe des Bodens
+AUFZUG_HALTE = {"bunker": BUNKER, "eg": EG, "og": OG, "dach": DACH}
 
 # Materialien
 WEISS = "white_concrete"
@@ -258,28 +260,26 @@ def treppe_und_aufzug() -> None:
         b.setze(52, OG + 1, z, GLAS)
     b.setze(50, OG + 1, 51, GLAS)
     b.setze(51, OG + 1, 51, GLAS)
-    # Aufzugsschacht: schwarze Ecken, Glaswände, bis unter das Penthouse-Dach
+    # Aufzugsschacht: Glaswände, in den Ecken warm leuchtende Lichtsäulen, bis unter das Penthouse-Dach.
+    # Darin fährt die gläserne Kabine (Entity, siehe AufzugKabine.java).
     for y in range(BUNKER + 1, PH_DACH):
         for x in range(AX0, AX1 + 1):
             for z in range(AZ0, AZ1 + 1):
                 rand = x in (AX0, AX1) or z in (AZ0, AZ1)
                 ecke = x in (AX0, AX1) and z in (AZ0, AZ1)
                 if ecke:
-                    b.setze(x, y, z, SCHWARZ)
+                    b.setze(x, y, z, zustand("ochre_froglight", axis="y"))
                 elif rand:
                     b.setze(x, y, z, "glass")
                 else:
                     b.setze(x, y, z, "air")
-    # Haltestellen: Boden in der Kabine, Öffnung nach Süden
-    halte = {"bunker": BUNKER, "eg": EG, "og": OG, "dach": DACH}
-    for name, y in halte.items():
+    # Haltestellen: Boden im Schacht (die Kabine nimmt ihn beim Durchfahren kurz heraus), Öffnung nach Süden
+    for name, y in AUFZUG_HALTE.items():
         b.quader(AX0 + 1, y, AZ0 + 1, AX1 - 1, y, AZ1 - 1, "polished_deepslate")
         b.luft(AX0 + 1, y + 1, AZ1, AX1 - 1, y + 3, AZ1)
-        b.marke("aufzug", name, AX0 + 1, y + 1, AZ0 + 1)
-    # Zwischen den Haltestellen ist der Kabinenboden offen (Schacht)
-    for y in range(BUNKER + 1, PH_DACH):
-        if y not in halte.values():
-            b.luft(AX0 + 1, y, AZ0 + 1, AX1 - 1, y, AZ1 - 1)
+        b.setze(AX0 + 1, y + 4, AZ1, "gold_block")
+        b.setze(AX1 - 1, y + 4, AZ1, "gold_block")
+        b.marke("aufzug", name, AX0 + 2, y + 1, AZ1 + 1)
 
 
 def erdgeschoss() -> None:
@@ -675,9 +675,12 @@ def mechanismen() -> None:
     mech(61, BUNKER + 2, 43, "kartenleser", "west")
     mech(63, BUNKER + 2, 43, "kartenleser", "east")
 
-    # Aufzug: Bedientafel an jeder Haltestelle
-    for y, text in ((BUNKER, "Untergrundbasis"), (EG, "Erdgeschoss"), (OG, "Obergeschoss"), (DACH, "Penthouse")):
-        mech(AX0 + 1, y + 1, AZ0 + 1, "aufzugstafel", "south", name=text)
+    # Aufzug: Ruftafel rechts neben der Tür an jeder Haltestelle; die Kabine steht 1,5 Blöcke links
+    # und 2,5 Blöcke hinter der Tafel
+    namen = {"bunker": "Untergrundbasis", "eg": "Erdgeschoss", "og": "Obergeschoss", "dach": "Penthouse"}
+    for name, y in AUFZUG_HALTE.items():
+        mech(AX1, y + 2, AZ1 + 1, "aufzugstafel", "south", name=namen[name],
+             kabine_dx="-1.5", kabine_dz="-2.5", kabine_dy="-1")
 
     # Geheimgang: Bücherwand im Panikraum vor dem Fluchttunnel
     b.luft(35, BUNKER + 1, 60, 35, BUNKER + 3, 61)
@@ -729,8 +732,9 @@ def main() -> None:
     erdgeschoss()
     obergeschoss()
     penthouse()
-    treppe_und_aufzug()
     bunker()
+    # Treppe und Aufzug nach allen Räumen, die beim Bau Luft schaffen (sonst fehlte der Schacht im Bunker)
+    treppe_und_aufzug()
     mechanismen()
     licht_im_garten()
     lichter()

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/fluegel_tasten"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/fluegel_tasten",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/fluegel_tasten",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/fluegel_tasten",
+      "y": 270
+    }
+  }
+}
