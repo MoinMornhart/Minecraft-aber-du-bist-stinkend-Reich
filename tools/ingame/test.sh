@@ -10,6 +10,9 @@
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
 #                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
 #                   klickbild <name>     (Rechtsklick und gleich danach ein Bild, z. B. Schuss mit Strahl)
+#                   video start <name> | video stopp   (Bildschirm als Video aufnehmen: <name>_roh.mp4)
+#                   kapitel <text>       (Kapitelmarke im laufenden Video, für tools/ingame/video.py)
+#                   server fahrt <sek> | x y z gier neigung | …   (flüssige Kamerafahrt, siehe Autotest)
 #                   halte <sek> <taste…>   (z. B. „halte 3 w space“)
 #                   druecke <taste…> | loslassen <taste…>   (Tasten festhalten, z. B. für ein Bild mitten im Drift)
 #                   server </befehl oder Chattext>   (über eine Datei, ohne Tippen)
@@ -140,6 +143,23 @@ bild() {
   fi
 }
 
+# Videoaufnahme des virtuellen Bildschirms (ohne Mauszeiger); Kapitel mit Sekunden seit dem Start
+VIDEO_PID=""
+video() {
+  case "$1" in
+    start)
+      VIDEO_NAME="$2"; : > "$AUS/${VIDEO_NAME}_kapitel.txt"
+      ffmpeg -y -loglevel error -f x11grab -framerate "${VIDEO_FPS:-25}" -video_size 1280x720 -draw_mouse 0 -i "$DISPLAY" \
+        -c:v libx264 -preset ultrafast -crf 18 -pix_fmt yuv420p "$AUS/${VIDEO_NAME}_roh.mp4" </dev/null &
+      VIDEO_PID=$!; VIDEO_START=$(date +%s.%N); melde "Video läuft: $AUS/${VIDEO_NAME}_roh.mp4" ;;
+    stopp)
+      if [[ -n "$VIDEO_PID" ]]; then kill -INT "$VIDEO_PID" 2>/dev/null; wait "$VIDEO_PID" 2>/dev/null; VIDEO_PID=""; melde "Video gespeichert"; fi ;;
+  esac
+}
+kapitel() {
+  [[ -n "$VIDEO_PID" ]] && printf '%.1f|%s\n' "$(echo "$(date +%s.%N) - $VIDEO_START" | bc)" "$1" >> "$AUS/${VIDEO_NAME}_kapitel.txt"
+}
+
 # Kopie lesen: so darf das Szenario während eines Laufs bearbeitet werden
 cp "$SZENARIO" "$RUN/szenario.txt"
 while read -r wort rest || [[ -n "$wort" ]]; do
@@ -164,8 +184,11 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     druecke) xdotool keydown $rest ;;
     loslassen) xdotool keyup $rest; sleep 0.3 ;;
     halte) set -- $rest; dauer="$1"; shift; xdotool keydown "$@"; sleep "$dauer"; xdotool keyup "$@"; sleep 0.3 ;;   # Tasten gedrückt halten
+    video) video $rest ;;
+    kapitel) kapitel "$rest" ;;
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac
 done < "$RUN/szenario.txt"
+video stopp
 
 melde "Fertig"
