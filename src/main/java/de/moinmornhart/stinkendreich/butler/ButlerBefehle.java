@@ -98,6 +98,11 @@ public final class ButlerBefehle {
         }
     }
 
+    /** Für den Autotest: wie {@link #anrede}, öffentlich. */
+    public static String anredeTest(String text) {
+        return anrede(text);
+    }
+
     /** Ist die Nachricht an den Butler gerichtet? Dann der Text ohne Anrede, sonst null. */
     static String anrede(String text) {
         String t = text.trim();

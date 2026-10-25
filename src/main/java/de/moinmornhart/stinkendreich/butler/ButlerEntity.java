@@ -178,6 +178,9 @@ public class ButlerEntity extends PathfinderMob {
         }
         if (tickCount % 20 == 0) {
             ButlerVerwaltung.pflegen(this);
+            if (auftraege.isEmpty()) {
+                statusSetzen();
+            }
         }
         // Steckt er in einem Block fest (z. B. nach herabfallendem Kies), gräbt er sich frei
         if (tickCount % 10 == 0 && isInWall() && !auftraege.isEmpty()) {

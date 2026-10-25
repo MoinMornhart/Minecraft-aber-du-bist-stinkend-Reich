@@ -5,6 +5,7 @@ import de.moinmornhart.stinkendreich.client.auto.AutoKlient;
 import de.moinmornhart.stinkendreich.client.auto.AutoModell;
 import de.moinmornhart.stinkendreich.client.auto.AutoRenderer;
 import de.moinmornhart.stinkendreich.client.bildschirm.AufzugBildschirm;
+import de.moinmornhart.stinkendreich.client.update.UpdateKlient;
 import de.moinmornhart.stinkendreich.client.bildschirm.ButlerBildschirm;
 import de.moinmornhart.stinkendreich.client.butler.ButlerModell;
 import de.moinmornhart.stinkendreich.client.butler.ButlerRenderer;
@@ -47,6 +48,8 @@ public class StinkendReichClient implements ClientModInitializer {
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(AutoModell.SCHICHT, AutoModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.AUTO, AutoRenderer::new);
         AutoKlient.registrieren();
+        UpdateKlient.registrieren();
+        AutotestKlient.registrieren();
 
         // Begrüßung im Chat, sobald man eine Welt betritt
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> client.execute(() ->

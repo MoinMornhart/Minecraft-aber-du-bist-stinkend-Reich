@@ -1,84 +1,88 @@
 # Butler: Nahaufnahme, Menü, Chat-Auftrag „hol mir 32 Eisen“, Arbeit beobachten, Lieferung, Truhen sortieren
-befehl /gamemode creative
-befehl /time set noon
+server /gamemode creative
+server /time set noon
 taste F1
 # In der Halle: der Butler wartet an seinem Platz
-befehl /villa ort 57.5 26 66 180 5
+server /villa ort 57.5 26 66 180 5
 warte 3
 bild u01_halle
 # Nahaufnahme: Butler kurz anhalten und vor den Spieler stellen
-befehl /execute at @p run tp @e[type=stinkendreich:butler,limit=1] ^ ^ ^2.5 facing entity @p feet
-befehl /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:butler,limit=1] ^ ^ ^3.5 facing entity @p feet
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+server /villa ort 57.5 26 66 180 8
 warte 2
 bild u02_butler_nah
-klick
-warte 2
+klient butlermenue
+warte 3
 bild u03_menue
-taste Escape
-befehl /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:0b}
+klient schliessen
+warte 1
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:0b}
 # Auftrag im Chat
 taste F1
-befehl Butler, hol mir 32 Eisen
+server Butler, hol mir 32 Eisen
 warte 3
 taste t
-warte 1
+warte 2
 bild u04_chat_auftrag
-taste Escape
+klient schliessen
+warte 1
 taste F1
-befehl /gamemode spectator
+server /gamemode spectator
+server /effect give @p night_vision infinite 0 true
 warte 20
-befehl /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3 ^-5 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3 ^-5 facing entity @e[type=stinkendreich:butler,limit=1] eyes
 warte 4
 bild u05_unterwegs
 warte 60
-befehl /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3.3 ^-3 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
 warte 4
 bild u06_arbeit_1
 warte 80
-befehl /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3.3 ^-3 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
 warte 4
 bild u07_arbeit_2
 warte 80
-befehl /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3.3 ^-3 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
 warte 4
 bild u08_arbeit_3
 warte 80
-befehl /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3.3 ^-3 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
 warte 4
 bild u09_arbeit_4
 warte 80
-befehl /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3.3 ^-3 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
 warte 4
 bild u10_arbeit_5
 warte 80
-befehl /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3.3 ^-3 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
 warte 4
 bild u11_arbeit_6
 # Zurück in die Halle und auf die Lieferung warten
-befehl /gamemode creative
-befehl /villa ort 57.5 26 66 180 5
+server /gamemode creative
+server /villa ort 57.5 26 66 180 5
 warte 90
 taste F1
 taste t
-warte 1
+warte 2
 bild u12_chat_lieferung
-taste Escape
+klient schliessen
 # Truhen sortieren: zwei Fässer mit durcheinander gelegten Sachen
-befehl /setblock ~2 ~ ~ barrel
-befehl /setblock ~2 ~ ~2 barrel
-befehl /item replace block ~2 ~ ~ container.0 with minecraft:dirt 10
-befehl /item replace block ~2 ~ ~ container.1 with minecraft:cobblestone 30
-befehl /item replace block ~2 ~ ~ container.2 with minecraft:dirt 20
-befehl /item replace block ~2 ~ ~ container.3 with minecraft:bread 5
-befehl /item replace block ~2 ~ ~2 container.0 with minecraft:cobblestone 40
-befehl /item replace block ~2 ~ ~2 container.1 with minecraft:iron_ingot 3
-befehl /item replace block ~2 ~ ~2 container.2 with minecraft:dirt 40
-befehl /item replace block ~2 ~ ~2 container.3 with minecraft:apple 4
-befehl Butler, sortier die Truhen
+server /setblock ~2 ~ ~ barrel
+server /setblock ~2 ~ ~2 barrel
+server /item replace block ~2 ~ ~ container.0 with minecraft:dirt 10
+server /item replace block ~2 ~ ~ container.1 with minecraft:cobblestone 30
+server /item replace block ~2 ~ ~ container.2 with minecraft:dirt 20
+server /item replace block ~2 ~ ~ container.3 with minecraft:bread 5
+server /item replace block ~2 ~ ~2 container.0 with minecraft:cobblestone 40
+server /item replace block ~2 ~ ~2 container.1 with minecraft:iron_ingot 3
+server /item replace block ~2 ~ ~2 container.2 with minecraft:dirt 40
+server /item replace block ~2 ~ ~2 container.3 with minecraft:apple 4
+server Butler, sortier die Truhen
 warte 30
-befehl /data get block ~2 ~ ~ Items
-befehl /data get block ~2 ~ ~2 Items
+server /data get block ~2 ~ ~ Items
+server /data get block ~2 ~ ~2 Items
 taste t
-warte 1
+warte 2
 bild u13_sortiert
-taste Escape
+klient schliessen

@@ -98,7 +98,8 @@ public class OfenAuftrag extends Auftrag {
                     plaetze.add(new Platz(p));
                 }
                 // Brennstoff reicht? Sonst erst aus dem Vorrat der Villa holen
-                if (brennwert(butler, q) < rest * 2) {
+                // (je Ofen ein Stück Kohle Reserve, weil sie nur ganz eingelegt werden kann)
+                if (brennwert(butler, q) < bedarf(rest)) {
                     phase = Phase.BRENNSTOFF;
                     brennstoffTruhe = 0;
                 } else {
@@ -108,7 +109,8 @@ public class OfenAuftrag extends Auftrag {
             }
             case BRENNSTOFF -> {
                 List<BlockPos> truhen = Umgebung.villaMarken(welt, "brennstoff");
-                if (brennstoffTruhe >= truhen.size() || brennwert(butler, q) >= (menge - fertig) * 2) {
+                int rest = Math.min(menge - fertig, butler.taschen().zaehlen(q.passt()));
+                if (brennstoffTruhe >= truhen.size() || brennwert(butler, q) >= bedarf(rest)) {
                     phase = Phase.BELADEN;
                     index = 0;
                     return Stand.LAEUFT;
@@ -119,7 +121,7 @@ public class OfenAuftrag extends Auftrag {
                     brennstoffTruhe++;
                 } else if (w == ButlerEntity.Weg.DA) {
                     if (welt.getBlockEntity(t) instanceof Container c) {
-                        int fehlt = ((menge - fertig) * 2 - brennwert(butler, q) + 15) / 16;
+                        int fehlt = (bedarf(rest) - brennwert(butler, q) + 15) / 16;
                         for (ItemStack s : Taschen.entnehmen(c, st -> st.is(net.minecraft.world.item.Items.COAL)
                                 || st.is(net.minecraft.world.item.Items.CHARCOAL), fehlt)) {
                             butler.taschen().einpacken(s);
@@ -187,6 +189,11 @@ public class OfenAuftrag extends Auftrag {
             }
         }
         return Stand.LAEUFT;
+    }
+
+    /** Brennwert (halbe Schmelzvorgänge), der für {@code stueck} Gegenstände in den gewählten Öfen nötig ist. */
+    private int bedarf(int stueck) {
+        return stueck * 2 + 16 * Math.max(1, plaetze.size());
     }
 
     /** Ein Beispiel-Gegenstand der Rohware aus den Taschen. */

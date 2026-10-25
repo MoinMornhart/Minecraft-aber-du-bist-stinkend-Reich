@@ -56,6 +56,12 @@ public class StinkendReich implements ModInitializer {
         ButlerBefehle.registrieren();
         AutoSteuerung.registrieren();
         Autotest.registrieren();
+        // Dedizierter Server: neue Versionen nur ins Protokoll schreiben (Spieler sehen den Hinweis im Client)
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            if (server.isDedicatedServer()) {
+                de.moinmornhart.stinkendreich.update.UpdatePruefer.pruefen();
+            }
+        });
     }
 
     /** Erzeugt eine ID im Namensraum der Mod, z. B. {@code stinkendreich:villa}. */

@@ -37,6 +37,22 @@ public final class KompatClient {
         /*client.setScreen(bildschirm);*/
     }
 
+    /** Klick im Chat führt einen Befehl aus (ab 1.21.5 eigene Klassen je Klickart). */
+    public static net.minecraft.network.chat.ClickEvent klickBefehl(String befehl) {
+        //? if >=1.21.5 {
+        return new net.minecraft.network.chat.ClickEvent.RunCommand(befehl);
+        //?} else
+        /*return new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND, befehl);*/
+    }
+
+    /** Klick im Chat öffnet eine Internetseite. */
+    public static net.minecraft.network.chat.ClickEvent klickLink(String adresse) {
+        //? if >=1.21.5 {
+        return new net.minecraft.network.chat.ClickEvent.OpenUrl(java.net.URI.create(adresse));
+        //?} else
+        /*return new net.minecraft.network.chat.ClickEvent(net.minecraft.network.chat.ClickEvent.Action.OPEN_URL, adresse);*/
+    }
+
     /** Schickt eine Aktion an den Server. */
     public static void sende(String art, BlockPos pos, String wert) {
         ClientPlayNetworking.send(new Aktion(art, pos, wert));

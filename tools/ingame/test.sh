@@ -9,6 +9,8 @@
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
 #                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
 #                   halte <sek> <taste…>   (z. B. „halte 3 w space“)
+#                   server </befehl oder Chattext>   (über eine Datei, ohne Tippen)
+#                   klient schliessen|butlermenue      (Bildschirm schließen / Butler-Menü öffnen)
 set -uo pipefail
 
 V="${1:?Minecraft-Version angeben, z. B. 26.3}"
@@ -89,7 +91,8 @@ aufraeumen() {
 trap aufraeumen EXIT
 
 melde "Client startet …"
-./gradlew ":$V:runClient" --console=plain \
+rm -f "$RUN/stinkendreich-befehle.txt" "$RUN/stinkendreich-klient.txt"
+STINKENDREICH_AUTOTEST=befehle ./gradlew ":$V:runClient" --console=plain \
   --args="--quickPlaySingleplayer testwelt --width 1280 --height 720 --username Philip" \
   > "$LOGS/client.log" 2>&1 </dev/null &
 CLIENT=$!
@@ -128,6 +131,8 @@ bild() {
   fi
 }
 
+# Kopie lesen: so darf das Szenario während eines Laufs bearbeitet werden
+cp "$SZENARIO" "$RUN/szenario.txt"
 while read -r wort rest || [[ -n "$wort" ]]; do
   case "$wort" in
     ""|\#*) ;;
@@ -138,9 +143,11 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     klick) xdotool click 3; sleep 1 ;;                                   # Rechtsklick (Block benutzen)
     linksklick) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3; xdotool click 1; sleep 1 ;;
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
+    server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;   # Befehl ohne Tippen (Autotest-Modus)
+    klient) printf '%s\n' "$rest" >> "$RUN/stinkendreich-klient.txt"; sleep 1 ;;   # schliessen | butlermenue
     halte) set -- $rest; dauer="$1"; shift; xdotool keydown "$@"; sleep "$dauer"; xdotool keyup "$@"; sleep 0.3 ;;   # Tasten gedrückt halten
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac
-done < "$SZENARIO"
+done < "$RUN/szenario.txt"
 
 melde "Fertig"

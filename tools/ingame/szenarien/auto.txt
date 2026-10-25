@@ -1,8 +1,8 @@
 # Bonzenauto: Garage, einsteigen, losfahren, Kurve, Drift, Licht bei Nacht, Kameraarten, Lackfarben
-befehl /gamemode creative
-befehl /time set noon
+server /gamemode creative
+server /time set noon
 taste F1
-befehl /villa ort 87.5 26 61.5 180 15
+server /villa ort 87.5 26 61.5 180 15
 warte 4
 bild a01_garage
 klick
@@ -20,7 +20,7 @@ halte 2 w a space
 bild a05_drift
 halte 2 s
 taste l
-befehl /time set midnight
+server /time set midnight
 warte 3
 bild a06_licht_nacht
 taste v
@@ -31,20 +31,20 @@ warte 2
 bild a08_kamera_weit
 taste v
 taste h
-befehl /time set noon
+server /time set noon
 halte 1 shift
 warte 1
 # Lackfarben: vier Autos nebeneinander vor dem Haus
 taste F1
-befehl /villa ort 55.5 26 86 0 20
-befehl /summon stinkendreich:bonzenauto ~-6 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":2}"}
-befehl /summon stinkendreich:bonzenauto ~-2 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":5}"}
-befehl /summon stinkendreich:bonzenauto ~2 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":1}"}
-befehl /summon stinkendreich:bonzenauto ~6 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":7}"}
+server /villa ort 55.5 26 86 0 20
+server /summon stinkendreich:bonzenauto ~-6 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":2}"}
+server /summon stinkendreich:bonzenauto ~-2 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":5}"}
+server /summon stinkendreich:bonzenauto ~2 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":1}"}
+server /summon stinkendreich:bonzenauto ~6 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":7}"}
 warte 3
 bild a09_farben
 taste F1
 taste t
-warte 1
+warte 2
 bild a10_chat
-taste Escape
+klient schliessen

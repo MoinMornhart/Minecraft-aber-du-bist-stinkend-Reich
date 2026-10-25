@@ -1,0 +1,61 @@
+# Baut bei jedem Versions-Tag (z. B. v0.1.0) die .jar für jede Minecraft-Version und legt
+# ein GitHub-Release mit allen Dateien an. Die Update-Funktion der Mod liest genau diese Releases.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      # Java 21 für Minecraft 1.21.x, Java 25 für 26.x (Gradle selbst läuft auf 25)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            21
+            25
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Alle Versionen bauen
+        run: >-
+          ./gradlew buildAndCollect --no-daemon --stacktrace
+          -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64,JAVA_HOME_25_X64
+
+      - name: Release-Text
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          {
+            echo "## Minecraft, aber du bist stinkend reich ${VERSION}"
+            echo
+            echo "Nimm die Datei, deren Name zu deiner Minecraft-Version passt, z. B. \`stinkendreich-${VERSION}+mc1.21.4.jar\`, und leg sie mit der Fabric API in den \`mods\`-Ordner."
+            echo
+            echo "| Minecraft | Datei |"
+            echo "|---|---|"
+            for f in build/libs/*/*.jar; do
+              n="$(basename "$f")"; mc="${n##*+mc}"; mc="${mc%.jar}"
+              echo "| ${mc} | \`${n}\` |"
+            done
+            echo
+            echo "Verfasst mit Claude 🤖"
+          } > release.md
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: release.md
+          files: build/libs/*/*.jar
+          fail_on_unmatched_files: true
