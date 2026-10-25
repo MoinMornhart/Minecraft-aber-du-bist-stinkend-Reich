@@ -240,7 +240,7 @@ def huelle() -> None:
         b.setze(HX1, OG + 1, z, GLAS)
     b.luft(54, OG + 1, HZ1, 55, OG + 2, HZ1)
     tuerrahmen(53, OG + 1, HZ1, 56, OG + 3)
-    doppeltuer(b, 54, OG + 1, HZ1, "south", "stinkendreich:glastuer")
+    doppeltuer(b, 55, OG + 1, HZ1, "south", "stinkendreich:glastuer")      # Flügel bei x 55 und 54
     # Dachplatte mit großem Überstand (2 seitlich, 6 nach Süden)
     b.quader(HX0 - 2, DACH, HZ0 - 2, HX1 + 2, DACH, HZ1 + 6, WEISS)
     b.quader(HX0 - 2, DACH - 1, HZ1 + 6, HX1 + 2, DACH - 1, HZ1 + 6, WEISS)
@@ -534,7 +534,7 @@ def penthouse() -> None:
         b.setze(x, PH_DACH, z1 + 3, LICHT)
     b.luft(54, y, z1, 55, y + 1, z1)
     tuerrahmen(53, y, z1, 56, y + 2)
-    doppeltuer(b, 54, y, z1, "south", "stinkendreich:glastuer")
+    doppeltuer(b, 55, y, z1, "south", "stinkendreich:glastuer")            # Flügel bei x 55 und 54
     # Hausbar an der Nordwand: Theke mit Goldkante, Flaschenregale, Barhocker
     b.quader(x0 + 2, y, z0 + 3, x0 + 10, y, z0 + 3, "polished_blackstone")
     b.quader(x0 + 2, y, z0 + 4, x0 + 10, y, z0 + 4, "gold_block")

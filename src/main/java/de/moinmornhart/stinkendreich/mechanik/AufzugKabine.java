@@ -61,6 +61,8 @@ public class AufzugKabine extends Mob {
     public static final int SITZE = 3;
     /** Ticks Halt an einer Haltestelle, bevor es weitergeht bzw. alle aussteigen. */
     private static final int HALT_TICKS = 16;
+    /** So lange (Ticks) wartet die Kabine beim Abholen auf Fahrgäste; kommt keiner, bleibt sie stehen. */
+    private static final int ABHOLEN_TICKS = 20 * 6;
 
     /** Ein bestellter Halt: dort wird eingestiegen (abholen) oder ausgestiegen. */
     private record Halt(double y, boolean abholen) {
@@ -71,6 +73,8 @@ public class AufzugKabine extends Mob {
     private final Map<BlockPos, BlockState> entfernt = new HashMap<>();
     private Direction tuer = Direction.SOUTH;
     private int wartet;
+    /** Ticks, die die Kabine beim Abholen schon auf Fahrgäste gewartet hat. */
+    private int abholWarten;
     /** Ticks seit Abfahrt, auf jeder Seite selbst gezählt (-1 = steht). */
     private int fahrtZaehler = -1;
 
@@ -111,6 +115,11 @@ public class AufzugKabine extends Mob {
     @Override
     public boolean isPushable() {
         return false;
+    }
+
+    /** Die Kabine schiebt niemanden weg (sonst ruckelt man beim Hineinlaufen hin und her). */
+    @Override
+    protected void pushEntities() {
     }
 
     /** Durchklickbar: Klicks gehen an die Tafeln und Wände dahinter. */
@@ -298,7 +307,6 @@ public class AufzugKabine extends Mob {
             }
             return;
         }
-        halte.pollFirst();
         if (h.abholen()) {
             for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, vorDerTuer(),
                     e -> (e instanceof Player p && !p.isSpectator()) || e instanceof ButlerEntity)) {
@@ -306,7 +314,20 @@ public class AufzugKabine extends Mob {
                     e.startRiding(this);
                 }
             }
+            if (getPassengers().isEmpty()) {
+                // Noch keiner da: kurz warten; kommt niemand, fährt die Kabine nicht leer los
+                if (++abholWarten < ABHOLEN_TICKS) {
+                    wartet = 1;
+                } else {
+                    halte.clear();
+                    abholWarten = 0;
+                }
+                return;
+            }
+            abholWarten = 0;
+            halte.pollFirst();
         } else {
+            halte.pollFirst();
             allesAussteigen();
         }
         Halt naechster = halte.peekFirst();
@@ -347,6 +368,10 @@ public class AufzugKabine extends Mob {
             if (y + 1 <= unten + 0.01 || y >= oben) {
                 if (level().getBlockState(e.getKey()).isAir()) {
                     level().setBlock(e.getKey(), e.getValue(), Block.UPDATE_CLIENTS);
+                    // Wer im Schacht steht, kommt auf den Boden statt hineinzustecken
+                    for (Entity im : level().getEntities(this, new AABB(e.getKey()), x -> !x.isPassenger() && x != this)) {
+                        im.teleportTo(im.getX(), e.getKey().getY() + 1.0, im.getZ());
+                    }
                 }
                 it.remove();
             }
@@ -359,6 +384,13 @@ public class AufzugKabine extends Mob {
                 Mth.floor(getX() + halb), y1, Mth.floor(getZ() + halb))) {
             BlockState s = level().getBlockState(p);
             if (!s.isAir() && !(s.getBlock() instanceof AufzugstafelBlock) && !entfernt.containsKey(p)) {
+                // Wer auf diesem Boden im Schacht steht, wird vor die Tür gestellt, statt hinunterzufallen
+                AABB darueber = new AABB(p).expandTowards(0, 2, 0);
+                for (Entity steht : level().getEntities(this, darueber, x -> !x.isPassenger() && x != this && !(x instanceof AufzugKabine))) {
+                    Vec3 raus = ausstieg(p.getY() + 1.0);
+                    steht.teleportTo(raus.x, raus.y, raus.z);
+                    steht.resetFallDistance();
+                }
                 entfernt.put(p.immutable(), s);
                 level().setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
             }

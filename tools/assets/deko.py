@@ -739,23 +739,33 @@ def tastatur():
 
 
 def sofa(spalte, polster="leder_weiss", kissen="leder_weiss", deko_kissen=None):
-    """Sofastück (Sitzrichtung Norden): Sockel, Sitzkissen, Rückenlehne mit geneigtem Rückenkissen,
-    Armlehne nur am Ende (links = Westen aus Sicht des Sitzenden), goldene Füße an den Enden."""
+    """Sofastück (Sitzrichtung Norden): Polster bis zum Boden (kein Spalt, sonst wirkt es schwebend), Sitzkissen,
+    Rückenlehne mit geneigtem Rückenkissen, Armlehne nur am Ende (links = Westen aus Sicht des Sitzenden)."""
     links, rechts = spalte in ("links", "einzeln"), spalte in ("rechts", "einzeln")
     x0, x1 = (3 if links else 0), (13 if rechts else 16)
-    t = [k([0, 0, 2], [16, 1.5, 15], "lack_schwarz"),
-         k([0, 1.5, 1], [16, 5, 16], polster),
+    t = [k([0, 0, 1], [16, 5, 16], polster),
          k([x0 + 0.2, 5, 1.2], [x1 - 0.2, 8, 12.5], kissen),
          k([0, 5, 12.5], [16, 13, 16], polster),
          k([x0 + 0.4, 8, 10.5], [x1 - 0.4, 14, 12.5], kissen, drehung=gedreht("x", 22.5, [8, 8, 10.5]))]
     if links:
-        t += [k([0, 1.5, 1], [3, 11, 16], polster), k([0.5, 0, 1.5], [2.5, 1.5, 3.5], "gold"), k([0.5, 0, 13], [2.5, 1.5, 15], "gold")]
+        t.append(k([0, 0, 1], [3, 11, 16], polster))
         if deko_kissen:
             t.append(k([3.2, 8, 7], [7.5, 12.5, 10], deko_kissen, drehung=gedreht("z", -22.5, [3.2, 8, 8])))
     if rechts:
-        t += [k([13, 1.5, 1], [16, 11, 16], polster), k([13.5, 0, 1.5], [15.5, 1.5, 3.5], "gold"), k([13.5, 0, 13], [15.5, 1.5, 15], "gold")]
+        t.append(k([13, 0, 1], [16, 11, 16], polster))
         if deko_kissen:
             t.append(k([8.5, 8, 7], [12.8, 12.5, 10], deko_kissen, drehung=gedreht("z", 22.5, [12.8, 8, 8])))
+    return t
+
+
+def tafel(spalte, platte="marmor", beine="gold", zarge="gold"):
+    """Tisch aus einem Stück (verbindet sich in der Reihe): volle Platte oben (bündig, damit Deko darauf nicht
+    schwebt), schmale Zarge darunter, Beine nur an den Enden der Reihe."""
+    t = [k([0, 14, 0], [16, 16, 16], platte), k([0, 12.5, 0.5], [16, 14, 1.5], zarge), k([0, 12.5, 14.5], [16, 14, 15.5], zarge)]
+    if spalte in ("links", "einzeln"):
+        t += [k([1, 0, 1], [3, 14, 3], beine), k([1, 0, 13], [3, 14, 15], beine), k([0.5, 12.5, 1.5], [1.5, 14, 14.5], zarge)]
+    if spalte in ("rechts", "einzeln"):
+        t += [k([13, 0, 1], [15, 14, 3], beine), k([13, 0, 13], [15, 14, 15], beine), k([14.5, 12.5, 1.5], [15.5, 14, 14.5], zarge)]
     return t
 
 
@@ -921,6 +931,10 @@ VERBUND = {
                      "wolle", "axe", "Samtsofa (schwarz)", "Velvet Sofa (Black)", 8),
     "bett_ende": (bett_ende, [[0, 0, 0, 16, 11, 16]], 0, True, "wolle", "axe", "Kingsize-Bett (Fußende)", "King-Size Bed (Foot End)", None),
     "bettbank": (bettbank, [[0, 0, 3, 16, 9, 13]], 0, True, "wolle", "axe", "Bettbank", "Bed Bench", 9),
+    "tafel_marmor": (lambda sp: tafel(sp), [[0, 14, 0, 16, 16, 16]], 0, True, "stein", "pickaxe",
+                     "Marmortafel", "Marble Table", None),
+    "tafel_holz": (lambda sp: tafel(sp, "teak", "lack_schwarz", "lack_schwarz"), [[0, 14, 0, 16, 16, 16]], 0, True, "holz", "axe",
+                   "Holztafel", "Wooden Table", None),
 }
 
 FLAECHEN = ("north", "south", "east", "west", "up", "down")

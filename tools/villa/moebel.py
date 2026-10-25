@@ -74,8 +74,17 @@ def strandliege(b: Bau, x: int, y: int, z: int, blick: str) -> None:
 
 
 def tisch(b: Bau, x0: int, y: int, z0: int, x1: int, z1: int, platte: str = "dark_oak_slab") -> None:
-    """Tischplatte als obere Stufenhälfte; Beine an den Ecken."""
-    b.quader(x0, y, z0, x1, y, z1, zustand(platte, type="top", waterlogged="false"))
+    """Tisch der Mod über die Fläche x0…x1 × z0…z1: durchgehende Platte, Beine an den Enden jeder Reihe
+    (früher halbe Stufen, die in der Luft zu schweben schienen). Holzplatte bei Eiche/Fichte, sonst Marmor."""
+    name = "tafel_holz" if ("oak" in platte or "spruce" in platte) else "tafel_marmor"
+    xa, xb = sorted((x0, x1))
+    za, zb = sorted((z0, z1))
+    if xb - xa >= zb - za:
+        for z in range(za, zb + 1):                   # Reihen entlang x (Blick nach Norden: links = Westen)
+            reihe(b, xa, y, z, xb - xa + 1, name, "north")
+    else:
+        for x in range(xa, xb + 1):                   # Reihen entlang z (Blick nach Osten: links = Norden)
+            reihe(b, x, y, za, zb - za + 1, name, "east")
 
 
 def stuhl(b: Bau, x: int, y: int, z: int, blick: str, material: str = "dark_oak_stairs") -> None:

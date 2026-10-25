@@ -185,6 +185,16 @@ def i_geldkanone():
     return img
 
 
+# Pistole und Geldkanone: Lauf zeigt im Bild nach rechts. So gehalten zeigt die Mündung vom Körper weg, der Griff
+# nach unten (im Spiel mit Rüstungsständern und aus eigener Sicht ermittelt, siehe tools/ingame/szenarien/)
+WAFFEN = ("goldene_pistole", "geldkanone")
+WAFFEN_HALTUNG = {
+    "thirdperson_righthand": {"rotation": [0, -90, 100], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
+    "thirdperson_lefthand": {"rotation": [0, 90, -100], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
+    "firstperson_righthand": {"rotation": [0, 90, -10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
+    "firstperson_lefthand": {"rotation": [0, -90, 10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
+}
+
 ITEMS = {"bond_sonnenbrille": i_brille, "smoking": i_smoking, "anzughose": i_hose, "lackschuhe": i_schuhe,
          "goldene_pistole": i_pistole, "laseruhr": i_laseruhr, "geldkanone": i_geldkanone}
 
@@ -277,9 +287,10 @@ def main() -> dict:
         pfad = ASSETS / "textures/item" / f"{name}.png"
         pfad.parent.mkdir(parents=True, exist_ok=True)
         fabrik().save(pfad)
-        schreibe_json(ASSETS / "models/item" / f"{name}.json",
-                      {"parent": "minecraft:item/generated" if name not in ("goldene_pistole", "geldkanone") else "minecraft:item/handheld",
-                       "textures": {"layer0": f"{NS}:item/{name}"}})
+        modell = {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/{name}"}}
+        if name in WAFFEN:
+            modell["display"] = WAFFEN_HALTUNG
+        schreibe_json(ASSETS / "models/item" / f"{name}.json", modell)
         schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
     s1, s2 = schicht_1(), schicht_2()
     for pfad, bild in ((ASSETS / "textures/models/armor/agent_layer_1.png", s1), (ASSETS / "textures/models/armor/agent_layer_2.png", s2),
