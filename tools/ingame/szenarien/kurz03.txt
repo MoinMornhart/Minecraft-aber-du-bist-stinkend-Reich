@@ -1,0 +1,79 @@
+# Kurztest 0.3 für alle Versionen: Handy-Geschenk, Lieferservice, Mitarbeiterkiste, Bodyguards gegen einen Zombie,
+# Kreisel und Straße zum Dorf, Fahrt mit James über die Straße. Erfolg = Zeilen mit „_OK“ im Server-Protokoll und
+# „Wir sind da“ im Chat. Handy-Knöpfe: Startseite y 188 + 42 je Knopf, Lieferservice y 185 + 34 je Knopf.
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+server /gamerule advance_time false
+warte 30
+server /execute if entity @p[nbt={Inventory:[{id:"stinkendreich:handy"}]}] run say HANDY_GESCHENK_OK
+server /butler strasse dorf
+server /villa ort 55.5 26 90 180 -6
+warte 4
+# Lieferservice: zwei Kühe
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+bild k01_handy
+linksklick 640 314
+warte 1
+merke
+linksklick 640 185
+bis 60 Lieferung
+warte 2
+server /execute as @p at @s if entity @e[type=minecraft:cow,distance=..24] run say KUEHE_OK
+bild k02_lieferung
+# Mitarbeiterkiste im Vorgarten
+server /villa ort 30.5 26 86.5 0 55
+warte 2
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+klick
+warte 1.5
+linksklick 640 398
+warte 1.5
+server /item replace entity @p weapon.mainhand with stinkendreich:mitarbeiterkiste
+warte 1
+klick
+warte 2
+server /execute if entity @e[type=stinkendreich:mitarbeiter] run say MITARBEITER_OK
+bild k03_mitarbeiter
+# Bodyguards gegen einen Zombie
+server /difficulty easy
+server /gamemode survival
+server /effect give @p minecraft:resistance 60 4 true
+server /villa ort 55.5 26 92 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+merke
+linksklick 640 440
+bis 15 Bodyguards sind da
+server /execute if entity @e[type=stinkendreich:bodyguard] run say BODYGUARDS_OK
+server /execute as @p at @s run summon minecraft:zombie ^ ^ ^8
+warte 12
+server /execute as @p at @s unless entity @e[type=minecraft:zombie,distance=..40] run say ZOMBIE_WEG_OK
+bild k04_bodyguards
+server /difficulty peaceful
+server /gamemode creative
+# Kreisel und Straße
+server /execute if block -1 88 75 minecraft:gold_block run say KREISEL_OK
+server /execute if block -1 89 75 minecraft:gold_block run say KREISEL_OK
+server /butler strassen
+# Fahrt zum Dorf
+server /villa ort 55.5 26 86 0 15
+warte 2
+merke
+server Butler, hol den Wagen
+bis 40 vorgefahren
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
+warte 2
+merke
+server Butler, fahr mich zum Dorf
+warte 20
+bild k05_unterwegs
+bis 200 Wir sind da|nicht weiter|fast da
+bild k06_angekommen

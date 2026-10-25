@@ -1,0 +1,205 @@
+# Trailer (erzeugt von tools/ingame/trailer_szenario.py)
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /difficulty peaceful
+server /villa stufe 0
+server /butler strasse dorf
+server /villa ort 160 80 175 139 22
+warte 30
+taste F1
+server /tick rate 6.667
+warte 5
+video start trailer
+server /time set 6000
+kapitel Jede neue Welt startet hier
+merke
+server fahrt 9 | 160.00 80.00 175.00 139.0 22.0 | 118.00 58.00 128.00 139.0 19.0 | 80.00 48.00 138.00 165.0 16.0 | 56.00 36.00 118.00 180.0 10.0
+bis 141 Fahrt fertig
+server /time set 6000
+kapitel Mit eigenem Tor
+server /villa ort 55.9 27 106 180 4
+warte 6
+merke
+server fahrt 4 | 55.90 27.00 106.00 180.0 4.0 | 55.60 27.20 88.00 180.0 2.0
+bis 96 Fahrt fertig
+server /time set 6000
+kapitel … und einer Haustür aus Gold
+server /gamemode creative
+server /villa ort 55 26.5 76 180 2
+warte 3
+server /villa ort 55 26 70 180 2
+warte 7.5
+server /gamemode spectator
+merke
+server fahrt 3 | 55.00 27.60 70.00 180.0 2.0 | 55.50 27.60 65.50 192.0 5.0
+bis 87 Fahrt fertig
+server /time set 6000
+kapitel Ein Ballsaal mit Konzertflügel, der wirklich spielt
+server /villa ort 58.5 26 60.4 0 30
+server /gamemode creative
+warte 3
+klick
+warte 3
+linksklick 376 292
+warte 3
+taste Escape
+server /gamemode spectator
+server /villa ort 53.03 27.80 56.48 -48.0 18.0
+warte 3
+merke
+server fahrt 6 | 53.03 27.80 56.48 -48.0 18.0 | 54.50 27.80 58.50 -36.0 18.0
+bis 114 Fahrt fertig
+server /time set 6000
+kapitel Ein Butler, der für dich arbeitet
+server /villa ort 57.5 26 66 180 5
+warte 3
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:butler,limit=1] ^ ^ ^3.2 facing entity @p feet
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+server /villa ort 57.5 27.4 66 180 8
+warte 7.5
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:0b}
+server /time set 6000
+kapitel Ein Penthouse über den Wolken
+server /villa ort 62.50 39.40 45.70 192.0 22.0
+warte 3
+merke
+server fahrt 5 | 62.50 39.40 45.70 192.0 22.0 | 62.50 39.40 43.20 180.0 22.0
+bis 105 Fahrt fertig
+server /time set 6000
+kapitel Whirlpool auf dem Dach
+server /villa ort 68.20 41.00 50.00 196.0 19.0
+warte 3
+merke
+server fahrt 4 | 68.20 41.00 50.00 196.0 19.0 | 70.00 41.00 47.00 211.0 19.0
+bis 96 Fahrt fertig
+server /time set 6000
+kapitel Ein Nachtclub im Keller
+server /villa ort 42.00 17.60 61.50 165.0 8.0
+warte 3
+merke
+server fahrt 4 | 42.00 17.60 61.50 165.0 8.0 | 42.00 17.60 58.00 180.0 8.0
+bis 96 Fahrt fertig
+server /time set 6000
+kapitel … und ein Geheimclub hinter dem Bücherregal
+server /gamemode survival
+server /villa ort 31.5 16 64 90 5
+warte 3
+druecke shift
+warte 3.6
+loslassen shift
+warte 4.5
+server /gamemode spectator
+server /villa ort 17.50 9.00 81.73 135.0 30.0
+warte 3
+merke
+server fahrt 4 | 17.50 9.00 81.73 135.0 30.0 | 16.50 9.00 80.00 150.0 30.0
+bis 96 Fahrt fertig
+server /time set 6000
+kapitel Ein Bunker mit Waffenkammer
+server /villa ort 63.20 7.50 40.00 280.0 10.0
+warte 3
+merke
+server fahrt 5 | 63.20 7.50 40.00 280.0 10.0 | 64.20 7.50 40.00 270.0 10.0
+bis 105 Fahrt fertig
+server /time set 6000
+kapitel Und ein Berg aus Gold
+server /villa ort 67.50 11.50 52.20 -20.0 25.0
+warte 3
+merke
+server fahrt 4 | 67.50 11.50 52.20 -20.0 25.0 | 67.50 10.00 52.60 0.0 25.0
+bis 96 Fahrt fertig
+server /time set 6000
+kapitel Tiefgarage mit Drehteller
+server /gamemode creative
+server /villa ort 91.5 17 45.2 180 30
+warte 3
+server /execute at @p run summon stinkendreich:bonzenauto ~ ~ ~-4.7 {Rotation:[0f,0f],stinkendreich:"{\"farbe\":4}"}
+warte 4.5
+klick
+warte 18
+halte 1.2 shift
+server /gamemode spectator
+server /time set 6000
+kapitel James fährt dich – auf Straßen, die er selbst baut
+server /gamemode creative
+server /villa ort 55.5 26 86 0 15
+warte 4.5
+merke
+server Butler, hol den Wagen
+bis 120 vorgefahren
+warte 3
+server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
+warte 3
+server Butler, fahr mich zum Dorf
+warte 27
+server /gamemode spectator
+server /time set 6000
+kapitel … oder fliegt dich
+server /villa ort 66 47.5 60 135 18
+warte 4.5
+server /gamemode creative
+server /villa ort 58 43 50.5 90 0
+warte 3
+server /ride @p mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]
+warte 12
+halte 9 space
+halte 12 w
+druecke w a
+warte 6
+loslassen w a
+server /gamemode spectator
+server /time set 6000
+kapitel Ein goldenes Handy
+server /gamemode creative
+server /villa ort 55.5 26 90 180 -6
+warte 4.5
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1.5
+klick
+warte 7.5
+server /time set 6000
+kapitel Bodyguards im Smoking
+merke
+linksklick 640 440
+bis 30 Bodyguards sind da
+warte 3
+server /gamemode spectator
+server /execute at @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] run tp @p ^ ^1.6 ^5 facing entity @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] eyes
+warte 9
+server /time set 6000
+kapitel Agenten-Anzug, goldene Pistole, Geldkanone
+server /gamemode survival
+server /difficulty normal
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p armor.chest with stinkendreich:smoking
+server /item replace entity @p armor.legs with stinkendreich:anzughose
+server /item replace entity @p armor.feet with stinkendreich:lackschuhe
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /villa ort 55.5 26 93.5 0 0
+warte 4.5
+taste F5
+taste F5
+warte 6
+taste F5
+server /execute as @p at @s run summon vindicator ^ ^ ^9 {NoAI:1b}
+server /execute as @p at @s run summon vindicator ^1.5 ^ ^11
+warte 3
+klick
+warte 3
+klick
+warte 6
+server /kill @e[type=vindicator]
+server /gamemode spectator
+server /difficulty peaceful
+kapitel Minecraft, aber du bist stinkend reich
+server /time set 12650
+server /villa ort 56 52 142 180 22
+warte 6
+merke
+server fahrt 10 | 56.00 52.00 142.00 180.0 22.0 | 90.00 56.00 140.00 150.0 19.0 | 118.00 58.00 128.00 120.0 17.0
+bis 150 Fahrt fertig
+kapitel Jetzt auf GitHub – Fabric, Minecraft 1.21 bis 26.3
+warte 12
+video stopp
+server /tick rate 20

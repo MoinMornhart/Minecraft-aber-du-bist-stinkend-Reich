@@ -1,4 +1,4 @@
-### Neu in 0.3 – das XXL-Update
+### Neu in 0.3.0 – das XXL-Update
 
 - **Goldenes Handy:** Rechtsklick öffnet ein Luxus-Handy mit Uhr und Akku. Damit rufst du James an – er kommt wirklich mit der Stretch-Limo vorgefahren oder landet mit dem Hubschrauber neben dir. Dazu Navigation (Villa, Dorf, Mine, Endportal, Netherportal und alle gemerkten Orte), Aufträge per Knopfdruck, Mitarbeiter und Bodyguards.
 - **Lieferservice:** Kühe, Schweine, Schafe, Hühner, ein gezähmter Hund, eine Katze oder ein Papagei, ein Festessen, 64 Feuerwerksraketen oder ein Sack Gold – James bringt die Bestellung mit der Limo vorbei.

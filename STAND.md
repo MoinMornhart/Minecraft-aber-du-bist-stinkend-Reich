@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-25, 23:45 Uhr (Nachtschicht, Philip schläft)_
+_Zuletzt aktualisiert: 2026-10-26, 00:30 Uhr (Nachtschicht, Philip schläft)_
 
 ## Erledigt
 
@@ -136,10 +136,11 @@ _Zuletzt aktualisiert: 2026-10-25, 23:45 Uhr (Nachtschicht, Philip schläft)_
   mindestens einen Block hoch), `StrassenZiele` (Dorf, Mine, Endportal, Netherportal). Wegpunkte alle 3 Blöcke;
   `Chauffeur` fährt bei dichten Wegpunkten „auf Schienen“ (Ziel 6 Blöcke voraus, bremst vor Kurven).
   Befehle: `/butler strassen`, `/butler strasse <ziel>`, `/butler strassenpunkt <strasse> <punkt>` (Test-Teleport).
-  Test: `strasse2.txt` (Bau, Fotos von oben, Fahrt zum Dorf). Stand: Straße sauber, Fahrt noch nicht bis ins Dorf.
-- Noch offen für 0.3: Fahrt bis ins Dorf, Mitarbeiter-/Bodyguard-Fotos für das README (`docs/bilder/handy.jpg`,
-  `lieferservice.jpg`, `bodyguards.jpg`, `mitarbeiter.jpg`, `mitarbeiter_kiste.jpg`, `kreisel.jpg` sind im README
-  schon eingetragen), alle 17 Versionen bauen und testen, Release (`.github/neu.md` ist geschrieben).
+  Test: `strasse2.txt` (Bau, Fotos von oben, Fahrt zum Dorf): James fährt in 26.3 bis ins Dorf („Wir sind da“).
+- README-Abschnitt „Goldenes Handy“ mit Fotos aus `fotos03.txt` und `fotos03_lieferung.txt` (Kiste-Bild ist ein
+  Ausschnitt aus dem Mitarbeiter-Test). Alle 17 Versionen lassen sich bauen.
+- **Release 0.3.0 angestoßen** (26.10. nachts). Kurztest für alle Versionen: `kurz03.txt` (Handy-Geschenk,
+  Lieferung, Mitarbeiter, Bodyguards gegen Zombie, Kreisel, Fahrt ins Dorf).
 
 ## Release
 

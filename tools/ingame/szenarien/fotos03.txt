@@ -1,0 +1,88 @@
+# README-Fotos für 0.3 (Bildnamen = Dateinamen in docs/bilder): Handy, Lieferservice, Mitarbeiter, Bodyguards,
+# Kreisel, Mitarbeiterkiste mit Beute. Handy-Knöpfe: Startseite y 188 + 42 je Knopf, Lieferservice y 185 + 34.
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos03.txt
+server /gamemode creative
+server /weather clear
+server /time set 6000
+server /gamerule doDaylightCycle false
+server /gamerule advance_time false
+warte 30
+server /butler strasse dorf
+taste F1
+# Handy vor der Villa
+server /villa ort 55.5 26 90 180 -6
+warte 8
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 2
+bild handy
+# Lieferservice: zwei Kühe
+linksklick 640 314
+warte 1
+merke
+linksklick 640 185
+bis 60 Lieferung
+warte 3
+server /execute as @e[type=minecraft:cow] run data merge entity @s {NoAI:1b}
+server /gamemode spectator
+server /execute as @p at @s run tp @s ~ ~1.2 ~ facing entity @e[type=minecraft:cow,limit=1,sort=nearest]
+warte 3
+bild lieferservice
+server /execute as @p at @s run tp @s ~4 ~2 ~4 facing entity @e[type=minecraft:cow,limit=1,sort=nearest]
+warte 2
+bild lieferservice2
+# Mitarbeiterkiste im Vorgarten aufstellen
+server /gamemode creative
+server /villa ort 30.5 26 86.5 0 55
+warte 2
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+klick
+warte 1.5
+linksklick 640 398
+warte 1.5
+server /item replace entity @p weapon.mainhand with stinkendreich:mitarbeiterkiste
+warte 1
+klick
+server /execute as @e[type=stinkendreich:mitarbeiter] run data merge entity @s {NoAI:1b}
+server /execute at @p run summon marker ~ ~ ~1 {Tags:["kiste"]}
+server /gamemode spectator
+server /villa ort 33.5 28.2 93.5 150 22
+warte 3
+bild mitarbeiter
+server /execute as @e[type=stinkendreich:mitarbeiter] run data merge entity @s {NoAI:0b}
+# Bodyguards rufen
+server /gamemode creative
+server /villa ort 55.5 26 92 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+merke
+linksklick 640 440
+bis 15 Bodyguards sind da
+warte 2
+# Für das Foto vor dem Haus aufstellen (und festhalten, sonst laufen sie der Kamera hinterher)
+server /gamemode spectator
+server /villa ort 55.5 26 84 180 -4
+warte 1
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] ^-1.3 ^ ^4 facing entity @p feet
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=furthest] ^1.3 ^ ^4 facing entity @p feet
+server /execute as @e[type=stinkendreich:bodyguard] run data merge entity @s {NoAI:1b}
+warte 2.5
+bild bodyguards
+# Kreisel von oben
+server /villa ort 55 44 154 180 32
+warte 8
+bild kreisel
+# Nach gut fünf Minuten: Beute in der Mitarbeiterkiste
+warte 200
+server /gamemode creative
+server /item replace entity @p weapon.mainhand with air
+server /execute at @e[type=marker,tag=kiste] run tp @p ~ ~ ~-1.5 0 50
+warte 2
+klick
+warte 2
+bild mitarbeiter_kiste
+taste Escape
+warte 1

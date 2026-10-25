@@ -3,7 +3,7 @@
 
 Kürzer und schneller als der Rundgang (video_szenario.py): etwa 90 Sekunden, kurze Kamerafahrten mit großen
 Schlagzeilen, dazwischen die besten Vorführungen (Tor, Portaltür, Konzertflügel, Geheimclub, Butler, Auto,
-Hubschrauber, Agenten-Waffen) und am Ende die Villa bei Sonnenuntergang.
+Hubschrauber, Handy, Bodyguards, Straße zum Dorf, Agenten-Waffen) und am Ende die Villa bei Sonnenuntergang.
 
 Aufruf: python3 tools/ingame/trailer_szenario.py
 Danach: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer.txt
@@ -58,7 +58,7 @@ def titel(text: str, tag: bool = True) -> None:
 # ---------------------------------------------------------------------------
 z("# Trailer (erzeugt von tools/ingame/trailer_szenario.py)",
   "server /gamemode spectator", "server /time set 6000", "server /weather clear", "server /difficulty peaceful",
-  "server /villa stufe 0", "server /villa ort 160 80 175 139 22")
+  "server /villa stufe 0", "server /butler strasse dorf", "server /villa ort 160 80 175 139 22")
 zeilen += ["warte 30", "taste F1", f"server /tick rate {20 / ZEITLUPE:.3f}", "warte 5", "video start trailer"]
 
 titel("Jede neue Welt startet hier")
@@ -104,13 +104,22 @@ titel("Tiefgarage mit Drehteller")
 z("server /gamemode creative", "server /villa ort 91.5 17 45.2 180 30", "warte 1",
   "server /execute at @p run summon stinkendreich:bonzenauto ~ ~ ~-4.7 {Rotation:[0f,0f],stinkendreich:\"{\\\"farbe\\\":4}\"}",
   "warte 1.5", "klick", "warte 6", "halte 0.4 shift", "server /gamemode spectator")
-titel("James fährt dich überall hin")
+titel("James fährt dich – auf Straßen, die er selbst baut")
 z("server /gamemode creative", "server /villa ort 55.5 26 86 0 15", "warte 1.5", "merke", "server Butler, hol den Wagen",
-  "bis 40 vorgefahren", "warte 2", "server /gamemode spectator")
+  "bis 40 vorgefahren", "warte 1", "server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]",
+  "warte 1", "server Butler, fahr mich zum Dorf", "warte 9", "server /gamemode spectator")
 titel("… oder fliegt dich")
 z("server /villa ort 66 47.5 60 135 18", "warte 1.5", "server /gamemode creative", "server /villa ort 58 43 50.5 90 0", "warte 1",
   "server /ride @p mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]", "warte 4",
   "halte 3 space", "halte 4 w", "druecke w a", "warte 2", "loslassen w a", "server /gamemode spectator")
+
+titel("Ein goldenes Handy")
+z("server /gamemode creative", "server /villa ort 55.5 26 90 180 -6", "warte 1.5",
+  "server /item replace entity @p weapon.mainhand with stinkendreich:handy", "warte 0.5", "klick", "warte 2.5")
+titel("Bodyguards im Smoking")
+z("merke", "linksklick 640 440", "bis 10 Bodyguards sind da", "warte 1", "server /gamemode spectator",
+  "server /execute at @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] run tp @p ^ ^1.6 ^5 facing entity "
+  "@e[type=stinkendreich:bodyguard,limit=1,sort=nearest] eyes", "warte 3")
 
 titel("Agenten-Anzug, goldene Pistole, Geldkanone")
 z("server /gamemode survival", "server /difficulty normal",

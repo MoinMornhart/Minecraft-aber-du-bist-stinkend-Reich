@@ -1,0 +1,36 @@
+# README-Foto Lieferservice (0.3): James bringt zwei Kühe, Kamera vor der Limo, Kühe davor aufgestellt.
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos03_lieferung.txt
+server /gamemode creative
+server /weather clear
+server /time set 6000
+server /gamerule doDaylightCycle false
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 55.5 26 90 180 -6
+warte 6
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+linksklick 640 314
+warte 1
+merke
+linksklick 640 185
+bis 60 Lieferung
+warte 3
+server /gamemode spectator
+server /tag @e[type=minecraft:cow,limit=1] add kuh1
+server /execute at @e[type=stinkendreich:stretchlimo,limit=1] run tp @p ~7 ~2.4 ~5 facing entity @e[type=stinkendreich:stretchlimo,limit=1] feet
+warte 1
+server /execute as @p at @s positioned ^-1.4 ^ ^4.5 positioned over motion_blocking_no_leaves run tp @e[type=minecraft:cow,tag=kuh1] ~ ~ ~ facing entity @p feet
+server /execute as @p at @s positioned ^1.6 ^ ^5.5 positioned over motion_blocking_no_leaves run tp @e[type=minecraft:cow,tag=!kuh1,limit=1] ~ ~ ~ facing entity @p feet
+server /execute as @e[type=minecraft:cow] run data merge entity @s {NoAI:1b}
+warte 2.5
+bild lieferservice
+server /execute at @e[type=stinkendreich:stretchlimo,limit=1] run tp @p ~-7 ~2.4 ~5 facing entity @e[type=stinkendreich:stretchlimo,limit=1] feet
+warte 1
+server /execute as @p at @s positioned ^-1.4 ^ ^4.5 positioned over motion_blocking_no_leaves run tp @e[type=minecraft:cow,tag=kuh1] ~ ~ ~ facing entity @p feet
+server /execute as @p at @s positioned ^1.6 ^ ^5.5 positioned over motion_blocking_no_leaves run tp @e[type=minecraft:cow,tag=!kuh1,limit=1] ~ ~ ~ facing entity @p feet
+warte 2.5
+bild lieferservice2
