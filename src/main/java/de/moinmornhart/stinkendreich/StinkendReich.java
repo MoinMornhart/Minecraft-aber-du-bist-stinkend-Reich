@@ -18,6 +18,7 @@ import de.moinmornhart.stinkendreich.register.ModTab;
 import de.moinmornhart.stinkendreich.villa.VillaBefehle;
 import de.moinmornhart.stinkendreich.villa.VillaPlatzierung;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,15 @@ public class StinkendReich implements ModInitializer {
     public static final String MOD_ID = "stinkendreich";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    /** Mod-Version, wird von Stonecutter beim Bauen eingesetzt. */
-    public static final String VERSION = /*$ mod_version*/ "0.1.0";
+    /** Ersatzwert, falls die Mod-Daten fehlen (Stonecutter setzt ihn nur in den nicht aktiven Versionen neu ein). */
+    private static final String VERSION_QUELLTEXT = /*$ mod_version*/ "0.1.0";
+    /**
+     * Mod-Version aus fabric.mod.json, z. B. „0.1.0“ aus „0.1.0+mc26.3“. Die Datei bekommt sie beim
+     * Bauen immer aus mod.version; die Update-Prüfung vergleicht mit genau diesem Wert.
+     */
+    public static final String VERSION = FabricLoader.getInstance().getModContainer(MOD_ID)
+            .map(m -> m.getMetadata().getVersion().getFriendlyString().replaceFirst("\\+.*$", ""))
+            .orElse(VERSION_QUELLTEXT);
     /** Minecraft-Version, für die diese .jar gebaut wurde. */
     public static final String MINECRAFT = /*$ minecraft*/ "26.3";
 
