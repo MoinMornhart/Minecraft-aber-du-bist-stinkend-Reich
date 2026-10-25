@@ -58,10 +58,14 @@ _Zuletzt aktualisiert: 2026-10-25, 21:00 Uhr_
   (`Autotyp.massstab`), Tische `tafel_marmor`/`tafel_holz` (moebel.tisch), Sofas ohne Spalt.
 - Rutsche (`Rutsche`, Marke „rutsche“): schiebt jetzt richtig (in 1 s unten im Pool). Wichtig: Bewegung an den
   Spieler geht ab 26.3 über `syncVelocity` (bis 26.2 `hurtMarked`), Hilfe `Kompat.bewegungSenden`.
-- Waffenhaltung endgültig (`WAFFEN_HALTUNG` in ausruestung.py, Stand 0.2.2): rechts [0,90,80], Maßstab 0,65,
-  Verschiebung [0,0.6,2.2] (Griff in der Faust wie ein Schwertgriff), links [0,-90,-80], Ich-Sicht [0,100,0] /
-  [0,-100,0]. Prüfen am besten an einer Schaufensterpuppe (`minecraft:mannequin`, ab 1.21.9) von der Seite
-  (Szenario `show.txt`); am Spieler steht der Körper nach einem Teleport schräg zum Kopf. Achsen in der Hand vor der Drehung:
+- Waffenhaltung endgültig (Stand 0.2.2, Philip: „Griff in der Hand wie beim Schwert“): Mit Pistole/Geldkanone
+  nimmt die Spielerfigur die Zielhaltung ein (`mixin/client/ArmHaltungMixin`: Armhaltung CROSSBOW_HOLD; bis 1.21.1
+  `PlayerRenderer.getArmPose(Spieler, Hand)`, 1.21.2–1.21.3 Merkmal `holdsChargedCrossbow` in `extractHandState`,
+  1.21.4–1.21.8 `getArmPose(Player, ItemStack, Hand)`, ab 1.21.9 `AvatarRenderer`). `WAFFEN_HALTUNG` von außen:
+  [0,90,0] / [0,-90,0], Maßstab 0,85, Verschiebung [0,1.8,-3.1] (Griff senkrecht durch die Faust), Ich-Sicht
+  [0,100,0] / [0,-100,0]. Rüstungsständer mit Waffe bekommen den Arm auf -90° (Waffenkammer). Prüfen an einer
+  Schaufensterpuppe (`minecraft:mannequin`, ab 1.21.9) von der Seite (Szenario `show.txt`), ältere Versionen mit
+  `check022.txt`; am Spieler steht der Körper nach einem Teleport schräg zum Kopf. Achsen in der Hand vor der Drehung:
   +y vorn, +z oben, x seitlich; Drehfolge erst z, dann y, dann x (Mojang-Standard). Zum Prüfen am Spieler: von
   hinten muss man das Ende ohne Mündung sehen, von vorn in die Mündung; die Ich-Sicht braucht eingeblendete
   Hand (kein F1). [0,-90,-80] zeigte nach hinten, [0,-90,100] hatte den Griff oben.
@@ -86,7 +90,7 @@ _Zuletzt aktualisiert: 2026-10-25, 21:00 Uhr_
 ## Version 0.2.1 (veröffentlicht 25.10., 17 Dateien) und 0.2.2 (in Arbeit)
 
 - 0.2.1: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.2.1
-- 0.2.2: Penthouse-Fernseher mittig (Marke x 63.0), Waffen von außen kleiner mit Griff in der Faust,
+- 0.2.2: Penthouse-Fernseher mittig (Marke x 63.0), Waffen mit Zielhaltung (Griff wie ein Schwertgriff),
   Show-Tänzerinnen im Geheimclub (`club/TaenzerinEntity`, `client/club/Taenzerin*`, Texturen aus
   `tools/assets/taenzerin.py`; im Bauplan als Entities in `geheimclub()` mit „stange|Kostüm“ oder „laufen|Kostüm“,
   den Anker setzt die Figur beim ersten Tick selbst). Tänzerinnen tragen Glitzer-Showkostüme (bewusst nicht

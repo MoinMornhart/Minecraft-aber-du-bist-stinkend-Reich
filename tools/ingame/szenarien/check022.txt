@@ -1,0 +1,41 @@
+# 0.2.2 Prüflauf (alle Versionen): Spielerfigur zielt mit den Waffen (von vorn und hinten nach ein paar Schritten),
+# Ich-Sicht, Waffenkammer, Show-Tänzerinnen im Geheimclub, Fernseher im Penthouse
+server /gamemode survival
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+server /villa ort 55.5 26 80.5 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /item replace entity @p weapon.offhand with stinkendreich:goldene_pistole
+warte 2
+bild w01_ich_sicht
+taste F1
+taste F5
+halte 1 w
+warte 0.3
+bild w02_hinten
+taste F5
+warte 0.3
+bild w03_vorn
+taste F5
+server /item replace entity @p weapon.offhand with minecraft:air
+taste F5
+taste F5
+halte 0.5 w
+warte 0.3
+bild w04_vorn_eine
+taste F5
+server /gamemode spectator
+server /villa ort 64.2 7.5 40 270 10
+warte 4
+bild w05_waffenkammer
+server /villa ort 16 7 66 60 5
+warte 4
+bild w06_geheimclub
+server /villa ort 11.5 7.6 71.5 90 8
+warte 2
+bild w07_stange
+server /villa ort 63.0 38.5 40.8 0 15
+warte 3
+bild w08_kino

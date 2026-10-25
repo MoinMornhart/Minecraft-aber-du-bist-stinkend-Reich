@@ -185,18 +185,17 @@ def i_geldkanone():
     return img
 
 
-# Pistole und Geldkanone: Lauf zeigt im Bild nach rechts, Griff unten links. In der Hand gilt (vor der Drehung):
-# +y = nach vorn, +z = nach oben, x = zur Seite. Drehung [0, 90, 80] legt den Lauf nach vorn (leicht nach unten,
-# weil der Arm beim Halten schräg nach vorn zeigt) und den Griff nach unten. Von außen ist die Waffe auf 0,65
-# verkleinert (sonst ist sie so lang wie der ganze Arm), die Verschiebung [0, 0.6, 2.2] setzt den Griff in die Faust.
-# In der eigenen Sicht zeigt die Mündung mit [0, 100, 0] nach vorn, leicht zur Bildmitte. Ausgemessen an einer
-# Schaufensterpuppe von der Seite (Spielerfigur, Arm wie beim Halten) und in der eigenen Sicht. Achtung beim Prüfen am
-# Spieler: Nach einem Teleport steht der Körper schräg zum Kopf, dann zeigen auch die Waffen schräg; erst ein paar
-# Schritte laufen. Die linke Hand ist das Spiegelbild der rechten wie bei den Werkzeugen im Spiel.
+# Pistole und Geldkanone: Lauf zeigt im Bild nach rechts, Griff unten links. Von außen zielt die Figur mit ihnen
+# (ArmHaltungMixin: Haltung wie mit geladener Armbrust, der Arm zeigt nach vorn). In der Hand gilt dann (vor der
+# Drehung): -z = nach vorn (den Arm entlang), +y = nach oben, x = zur Seite. Drehung [0, 90, 0] legt den Lauf nach
+# vorn und den Griff senkrecht nach unten durch die Faust, genau wie ein Schwertgriff; die Verschiebung [0, 1.8, -3.1]
+# setzt die Griffmitte in die Faust. In der eigenen Sicht zeigt die Mündung mit [0, 100, 0] nach vorn, leicht zur
+# Bildmitte. Ausgemessen an einer Schaufensterpuppe (Spielerfigur) von der Seite, schräg und von hinten, verglichen
+# mit einem Diamantschwert. Die linke Hand ist das Spiegelbild der rechten wie bei den Werkzeugen im Spiel.
 WAFFEN = ("goldene_pistole", "geldkanone")
 WAFFEN_HALTUNG = {
-    "thirdperson_righthand": {"rotation": [0, 90, 80], "translation": [0, 0.6, 2.2], "scale": [0.65, 0.65, 0.65]},
-    "thirdperson_lefthand": {"rotation": [0, -90, -80], "translation": [0, 0.6, 2.2], "scale": [0.65, 0.65, 0.65]},
+    "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [0, 1.8, -3.1], "scale": [0.85, 0.85, 0.85]},
+    "thirdperson_lefthand": {"rotation": [0, -90, 0], "translation": [0, 1.8, -3.1], "scale": [0.85, 0.85, 0.85]},
     "firstperson_righthand": {"rotation": [0, 100, 0], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
     "firstperson_lefthand": {"rotation": [0, -100, 0], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
 }

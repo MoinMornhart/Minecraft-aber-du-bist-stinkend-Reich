@@ -62,6 +62,15 @@ public class AgentWaffe extends Item {
         this.art = art;
     }
 
+    /**
+     * Wird diese Waffe in der Hand zum Zielen gehalten (Pistole und Geldkanone, nicht die Laseruhr)? Dann hebt die
+     * Spielerfigur von außen gesehen den Arm wie mit einer geladenen Armbrust (ArmHaltungMixin), und der Griff liegt
+     * wie ein Schwertgriff in der Faust.
+     */
+    public static boolean zielt(ItemStack stapel) {
+        return stapel.getItem() instanceof AgentWaffe waffe && waffe.art != Art.LASER;
+    }
+
     private void feuern(Level welt, Player spieler, ItemStack stapel) {
         //? if >=1.21.2 {
         spieler.getCooldowns().addCooldown(stapel, art.nachladen);

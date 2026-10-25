@@ -1,7 +1,7 @@
 ### Neu in 0.2.2
 
 - **Show-Tänzerinnen im Geheimclub:** Drei tanzen an den Stangen und drehen sich langsam darum, drei laufen durch den Club und tanzen, wenn sie stehen bleiben. Vier Glitzer-Showkostüme mit Federschmuck. Sie sind unverwundbar wie James.
-- **Waffen von außen:** Pistole und Geldkanone sind in der Hand etwas kleiner, der Griff steckt in der Faust wie ein Schwertgriff, die Mündung zeigt nach vorn. Die Ich-Sicht bleibt wie in 0.2.1.
+- **Waffen wie ein Schwert in der Hand:** Mit Pistole oder Geldkanone nimmt deine Figur die Zielhaltung ein (Arme nach vorn wie mit geladener Armbrust). Der braune Griff steckt senkrecht in der Faust wie ein Schwertgriff, die Mündung zeigt geradeaus. Die Rüstungsständer in der Waffenkammer zielen auch. Die Ich-Sicht bleibt wie in 0.2.1.
 - **Penthouse:** Der Fernseher hängt jetzt genau mittig über den drei Samtsofas.
 
 ### Neu in 0.2.1 (Fehler und Wünsche aus Philips Bildern und Sprachnachricht)

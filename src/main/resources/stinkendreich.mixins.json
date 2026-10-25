@@ -6,6 +6,7 @@
     "BlockItemMixin"
   ],
   "client": [
+    "client.ArmHaltungMixin",
     "client.CameraMixin"
   ],
   "injectors": {

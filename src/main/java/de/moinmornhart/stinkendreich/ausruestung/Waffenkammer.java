@@ -68,6 +68,11 @@ public final class Waffenkammer {
         staender.setYHeadRot(blick);
         staender.setShowArms(true);
         ausruesten(welt, staender, set);
+        // Mit Pistole oder Geldkanone zielt der Ständer wie die Spielerfigur (Arm waagerecht nach vorn), sonst
+        // zeigte der Lauf zum Boden
+        if (AgentWaffe.zielt(staender.getItemBySlot(EquipmentSlot.MAINHAND))) {
+            staender.setRightArmPose(new net.minecraft.core.Rotations(-90.0F, -8.0F, 0.0F));
+        }
         welt.addFreshEntity(staender);
     }
 
