@@ -114,6 +114,10 @@ public final class ModBloecke {
             .pushReaction(Kompat.ZERBRICHT_BEIM_SCHIEBEN));
     public static final Block BUNKERTUER = ModRegister.tuer("bunkertuer", BlockSetType.IRON,
             tuer(MapColor.METAL, SoundType.METAL).strength(80.0F, 3600000.0F).requiresCorrectToolForDrops());
+    /** Privattür: schwarz mit Gold, nur Bewohner öffnen und schließen sie (bleibt offen stehen). */
+    public static final Block PRIVATTUER = ModRegister.tuer("privattuer", BlockSetType.OAK,
+            tuer(MapColor.COLOR_BLACK, SoundType.WOOD).strength(6.0F, 1200.0F),
+            de.moinmornhart.stinkendreich.mechanik.PrivattuerBlock::new);
 
     /** Eine gemeinsame Block-Entity für alle Mechanik-Blöcke. */
     public static final BlockEntityType<MechanikBlockEntity> MECHANIK_TYP = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,

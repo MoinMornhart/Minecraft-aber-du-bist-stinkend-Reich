@@ -1,0 +1,26 @@
+# Agent aus der Nähe: Waffen in der Hand (Ich-Sicht und von vorn), goldene Pixel-Sonnenbrille
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 30
+taste F1
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p armor.chest with stinkendreich:smoking
+server /item replace entity @p armor.legs with stinkendreich:anzughose
+server /item replace entity @p armor.feet with stinkendreich:lackschuhe
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /item replace entity @p weapon.offhand with stinkendreich:goldene_pistole
+server /villa ort 55.5 26 93.5 0 0
+warte 4
+bild n01_ich_sicht
+taste F5
+taste F5
+warte 2
+bild n02_vorn
+taste F5
+server /villa ort 55.5 26 93.5 90 0
+taste F5
+warte 2
+bild n03_seite
+taste F5
+taste F5

@@ -313,7 +313,8 @@ def neon(text: str, farbe) -> Image.Image:
         "R": ["110", "101", "110", "101", "101"], "V": ["101", "101", "101", "101", "010"],
         "I": ["111", "010", "010", "010", "111"], "P": ["110", "101", "110", "100", "100"],
         "C": ["011", "100", "100", "100", "011"], "L": ["100", "100", "100", "100", "111"],
-        "U": ["101", "101", "101", "101", "111"],
+        "U": ["101", "101", "101", "101", "111"], "W": ["101", "101", "101", "111", "101"],
+        "E": ["111", "100", "110", "100", "111"], "N": ["101", "111", "111", "101", "101"],
     }
     img, d = neu((0, 0, 0), 0)
     breite = len(text) * 4 - 1
@@ -594,6 +595,7 @@ MATERIALIEN = {
     "lack_schwarz": m_lack_schwarz, "tastatur": m_tastatur, "maus": m_maus, "samt_knoepfe": m_samt_knoepfe,
     "neon_bar": lambda: neon("BAR", (255, 40, 160)), "neon_vip": lambda: neon("VIP", (255, 200, 40)),
     "neon_club": lambda: neon("CLUB", (40, 220, 255)),
+    "neon_wein": lambda: neon("WEIN", (255, 70, 90)),
     "leder_weiss": m_leder_weiss, "samt_schwarz": m_samt_schwarz, "satin_gold": m_satin_gold, "satin_schwarz": m_satin_schwarz, "laken": m_laken,
     "matratze": m_matratze, "kissen_weiss": m_kissen_weiss, "fell": m_fell, "teak": m_teak,
     "polster_weiss": m_polster_weiss, "handtuch": m_handtuch, "schirm": m_schirm, "schirm_glatt": m_schirm_glatt, "lampenschirm": m_lampenschirm,
@@ -903,6 +905,7 @@ BLOECKE = {
     "neon_bar": (neonschild("neon_bar"), None, 10, False, "glas", "pickaxe", "Leuchtschrift BAR", "Neon Sign BAR"),
     "neon_vip": (neonschild("neon_vip"), None, 10, False, "glas", "pickaxe", "Leuchtschrift VIP", "Neon Sign VIP"),
     "neon_club": (neonschild("neon_club"), None, 10, False, "glas", "pickaxe", "Leuchtschrift CLUB", "Neon Sign CLUB"),
+    "neon_wein": (neonschild("neon_wein"), None, 10, False, "glas", "pickaxe", "Leuchtschrift WEIN", "Neon Sign WINE"),
     "kopfteil": ([k([0, 0, 0], [16, 16, 16], "samt_rot", north="samt_knoepfe")], None, 0, True, "wolle", "axe", "Gepolstertes Kopfteil", "Tufted Headboard"),
     "tastatur": (tastatur(), [[0, 0, 2.5, 16, 1.4, 13.5]], 0, False, "stein", "pickaxe", "Tastatur, Maus und Schreibunterlage", "Keyboard, Mouse and Desk Mat"),
     "nachttisch": (nachttisch(), [[1, 0, 1, 15, 14, 15]], 0, True, "holz", "axe", "Nachttisch", "Nightstand"),

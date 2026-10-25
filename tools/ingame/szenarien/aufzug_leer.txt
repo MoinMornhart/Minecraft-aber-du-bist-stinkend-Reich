@@ -1,0 +1,21 @@
+# Aufzug fährt nicht leer los: im Obergeschoss das Penthouse bestellen und gleich weggehen. Die Kabine kommt,
+# wartet kurz an der Tür und bleibt dann im Obergeschoss stehen. Danach eine richtige Fahrt.
+server /gamemode creative
+server /time set 6000
+server /weather clear
+warte 30
+taste F1
+server /villa ort 58 32 42.5 180 8
+warte 3
+klient aufzug Penthouse
+warte 0.3
+server /villa ort 57.5 32 49 180 8
+warte 25
+bild e01_aufzug_wartet_og
+warte 10
+bild e02_aufzug_noch_og
+server /villa ort 58 32 42.5 180 8
+warte 1
+klient aufzug Penthouse
+warte 14
+bild e03_penthouse_angekommen

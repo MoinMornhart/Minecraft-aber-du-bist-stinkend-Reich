@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "neon_wein": "stinkendreich:block/deko/neon_wein",
+    "particle": "stinkendreich:block/deko/neon_wein"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        3,
+        15
+      ],
+      "to": [
+        16,
+        13,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#neon_wein"
+        },
+        "south": {
+          "uv": [
+            0.0,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#neon_wein"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            3,
+            1,
+            13
+          ],
+          "texture": "#neon_wein"
+        },
+        "west": {
+          "uv": [
+            15,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#neon_wein"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            15,
+            16.0,
+            16.0
+          ],
+          "texture": "#neon_wein"
+        },
+        "down": {
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            1
+          ],
+          "texture": "#neon_wein"
+        }
+      }
+    }
+  ]
+}

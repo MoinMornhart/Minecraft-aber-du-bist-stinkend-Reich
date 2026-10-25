@@ -16,7 +16,8 @@ public class AutoRenderer extends MobRenderer<AutoEntity, AutoRenderState, Fahrz
     private final Identifier[] texturen = new Identifier[AutoEntity.FARBEN.length];
 
     public AutoRenderer(EntityRendererProvider.Context kontext, Autotyp typ) {
-        super(kontext, new FahrzeugModell(kontext.bakeLayer(FahrzeugModell.schicht(typ.name))), typ.fliegt() ? 2.2F : 1.6F);
+        super(kontext, new FahrzeugModell(kontext.bakeLayer(FahrzeugModell.schicht(typ.name)), typ.massstab),
+                1.6F * typ.massstab);
         for (int i = 0; i < texturen.length; i++) {
             texturen[i] = StinkendReich.id("textures/entity/" + typ.name + "/" + AutoEntity.FARBEN[i] + ".png");
         }

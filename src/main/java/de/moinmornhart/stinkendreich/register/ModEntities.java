@@ -56,9 +56,10 @@ public final class ModEntities {
     private ModEntities() {
     }
 
+    /** Trefferbox in Blöcken des Modells; wächst mit dem Maßstab (in der Breite höchstens 3, wegen der Rampe). */
     private static EntityType<AutoEntity> auto(Autotyp art, float breite, float hoehe) {
         return registrieren(art.name, EntityType.Builder.<AutoEntity>of((t, w) -> new AutoEntity(t, w, art), MobCategory.MISC)
-                .sized(breite, hoehe).clientTrackingRange(10).updateInterval(1).fireImmune());
+                .sized(Math.min(breite * art.massstab, 3.0F), hoehe * art.massstab).clientTrackingRange(10).updateInterval(1).fireImmune());
     }
 
     /** Entity-Typ zu einem Fahrzeug. */

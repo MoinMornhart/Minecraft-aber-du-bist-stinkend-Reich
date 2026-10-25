@@ -40,11 +40,14 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
     private final ModelPart radVL, radVR, radHL, radHR;
     /** Nur Hubschrauber: Haupt- und Heckrotor. */
     private final ModelPart rotor, heckrotor;
+    /** So viel größer wird das Modell gezeichnet (siehe Autotyp.massstab). */
+    private final float massstab;
 
-    public FahrzeugModell(ModelPart wurzel) {
+    public FahrzeugModell(ModelPart wurzel, float massstab) {
         //? if >=1.21.2
         super(wurzel);
         this.wurzel = wurzel;
+        this.massstab = massstab;
         this.radVL = kind(wurzel, "rad_vl");
         this.radVR = kind(wurzel, "rad_vr");
         this.radHL = kind(wurzel, "rad_hl");
@@ -103,14 +106,16 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
         if (heckrotor != null) {
             heckrotor.xRot = rotorWinkel * 3.0F;
         }
-        // Größer zeichnen; der Boden (Modell-y 24) bleibt dabei am Boden
-        float s = de.moinmornhart.stinkendreich.auto.Autotyp.HUBSCHRAUBER_MASSSTAB;
-        wurzel.xScale = s;
-        wurzel.yScale = s;
-        wurzel.zScale = s;
-        wurzel.y = 24.0F * (1.0F - s);
         wurzel.xRot = -neigung * net.minecraft.util.Mth.DEG_TO_RAD;
         wurzel.zRot = rollen * net.minecraft.util.Mth.DEG_TO_RAD;
+    }
+
+    /** Größer zeichnen; der Boden (Modell-y 24) bleibt dabei am Boden. */
+    private void skalieren() {
+        wurzel.xScale = massstab;
+        wurzel.yScale = massstab;
+        wurzel.zScale = massstab;
+        wurzel.y = 24.0F * (1.0F - massstab);
     }
 
     /** Räder drehen und Vorderräder einschlagen. */
@@ -132,6 +137,7 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
     @Override
     public void setupAnim(AutoRenderState zustand) {
         super.setupAnim(zustand);
+        skalieren();
         raeder(zustand.radWinkel, zustand.lenkWinkel);
         fliegen(zustand.rotorWinkel, zustand.neigung, zustand.rollen);
     }
@@ -144,6 +150,7 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
     @Override
     public void setupAnim(AutoEntity auto, float a, float b, float alter, float kopfY, float kopfX) {
         float zwischen = alter - (float) auto.tickCount;
+        skalieren();
         raeder(net.minecraft.util.Mth.lerp(zwischen, auto.radWinkelAlt, auto.radWinkel), auto.lenkWinkel);
         fliegen(net.minecraft.util.Mth.lerp(zwischen, auto.rotorWinkelAlt, auto.rotorWinkel), auto.neigung, auto.rollen);
     }

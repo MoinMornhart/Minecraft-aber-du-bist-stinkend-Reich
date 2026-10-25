@@ -1,85 +1,15 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "gold": "stinkendreich:block/deko/gold",
-    "lack_schwarz": "stinkendreich:block/deko/lack_schwarz",
     "samt_rot": "stinkendreich:block/deko/samt_rot",
     "satin_gold": "stinkendreich:block/deko/satin_gold",
-    "particle": "stinkendreich:block/deko/lack_schwarz"
+    "particle": "stinkendreich:block/deko/samt_rot"
   },
   "elements": [
     {
       "from": [
         0,
         0,
-        2
-      ],
-      "to": [
-        16,
-        1.5,
-        15
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0.0,
-            14.5,
-            16.0,
-            16.0
-          ],
-          "texture": "#lack_schwarz"
-        },
-        "south": {
-          "uv": [
-            0.0,
-            14.5,
-            16.0,
-            16.0
-          ],
-          "texture": "#lack_schwarz"
-        },
-        "east": {
-          "uv": [
-            1,
-            14.5,
-            14,
-            16.0
-          ],
-          "texture": "#lack_schwarz"
-        },
-        "west": {
-          "uv": [
-            2,
-            14.5,
-            15,
-            16.0
-          ],
-          "texture": "#lack_schwarz"
-        },
-        "up": {
-          "uv": [
-            0.0,
-            2,
-            16.0,
-            15
-          ],
-          "texture": "#lack_schwarz"
-        },
-        "down": {
-          "uv": [
-            0.0,
-            1,
-            16.0,
-            14
-          ],
-          "texture": "#lack_schwarz"
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        1.5,
         1
       ],
       "to": [
@@ -93,7 +23,7 @@
             0.0,
             11,
             16.0,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -102,7 +32,7 @@
             0.0,
             11,
             16.0,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -111,7 +41,7 @@
             0.0,
             11,
             15,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -120,7 +50,7 @@
             1,
             11,
             16.0,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -360,7 +290,7 @@
     {
       "from": [
         0,
-        1.5,
+        0,
         1
       ],
       "to": [
@@ -374,7 +304,7 @@
             13,
             5,
             16.0,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -383,7 +313,7 @@
             0.0,
             5,
             3,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -392,7 +322,7 @@
             0.0,
             5,
             15,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -401,7 +331,7 @@
             1,
             5,
             16.0,
-            14.5
+            16.0
           ],
           "texture": "#samt_rot"
         },
@@ -422,142 +352,6 @@
             15
           ],
           "texture": "#samt_rot"
-        }
-      }
-    },
-    {
-      "from": [
-        0.5,
-        0,
-        1.5
-      ],
-      "to": [
-        2.5,
-        1.5,
-        3.5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            13.5,
-            14.5,
-            15.5,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "south": {
-          "uv": [
-            0.5,
-            14.5,
-            2.5,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "east": {
-          "uv": [
-            12.5,
-            14.5,
-            14.5,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "west": {
-          "uv": [
-            1.5,
-            14.5,
-            3.5,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "up": {
-          "uv": [
-            0.5,
-            1.5,
-            2.5,
-            3.5
-          ],
-          "texture": "#gold"
-        },
-        "down": {
-          "uv": [
-            0.5,
-            12.5,
-            2.5,
-            14.5
-          ],
-          "texture": "#gold"
-        }
-      }
-    },
-    {
-      "from": [
-        0.5,
-        0,
-        13
-      ],
-      "to": [
-        2.5,
-        1.5,
-        15
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            13.5,
-            14.5,
-            15.5,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "south": {
-          "uv": [
-            0.5,
-            14.5,
-            2.5,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "east": {
-          "uv": [
-            1,
-            14.5,
-            3,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "west": {
-          "uv": [
-            13,
-            14.5,
-            15,
-            16.0
-          ],
-          "texture": "#gold"
-        },
-        "up": {
-          "uv": [
-            0.5,
-            13,
-            2.5,
-            15
-          ],
-          "texture": "#gold"
-        },
-        "down": {
-          "uv": [
-            0.5,
-            1,
-            2.5,
-            3
-          ],
-          "texture": "#gold"
         }
       }
     },

@@ -1,0 +1,119 @@
+# 0.2.1: alle Stellen aus Philips 20 Bildern nachprüfen (Fotos), dazu Lava-Graben, Rutsche, Privattür,
+# G-Klasse die Rampe hinauf und Aufzug ohne Leerfahrt
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+# Bild 1: Personalküche mit Südwand und Gartentür
+server /villa ort 67.5 26 50.5 -135 8
+warte 8
+bild b01_personalkueche
+server /villa ort 76.5 26 43.5 180 5
+warte 2
+bild b01_gartentuer
+# Bild 2: Schmucktresor wie auf Philips Bild
+server /villa ort 64 32 46.3 180 15
+warte 3
+bild b02_tresor
+# Bild 3: Durchgang zur Garage
+server /villa ort 73.5 26 61 -90 5
+warte 2
+bild b03_garagendurchgang
+# Bild 4: Balkontür im Obergeschoss
+server /villa ort 55 32 62.5 0 5
+warte 2
+bild b04_balkontuer
+# Bild 6, 9, 10: Foyer im Untergeschoss (Privattür zur Tiefgarage, Clubtür, Weinlounge)
+server /villa ort 57.5 16 44.5 -90 5
+warte 3
+bild b06_privattuer
+server /villa ort 58.5 16 44.5 90 5
+warte 2
+bild b09_clubtuer
+server /villa ort 57.5 16 45.5 0 10
+warte 2
+bild b10_weinlounge_eingang
+server /villa ort 58 16 51.5 0 15
+warte 2
+bild b10_weinlounge
+# Bild 7, 8: VIP-Lounge und DJ-Pult im Club
+server /villa ort 45.5 16 55 -90 10
+warte 3
+bild b07_vip
+server /villa ort 42.5 16 45.5 180 10
+warte 2
+bild b08_dj
+# Bild 11–13: Penthouse-Lounge, Tür frei, Ostecke
+server /villa ort 54.5 38 43 30 15
+warte 3
+bild b11_penthouse_lounge
+server /villa ort 55 38 47 0 10
+warte 2
+bild b13_penthouse_tuer
+server /villa ort 57.5 38 52.5 -90 10
+warte 2
+bild b12_penthouse_ost
+# Bild 17: Haustür von außen
+server /villa ort 55 26 74 180 0
+warte 2
+bild b17_haustuer
+# Bild 18, 19: Wohnzimmer (Sofas als U, Kamin symmetrisch)
+server /villa ort 45.5 27 50.5 90 12
+warte 2
+bild b18_wohnzimmer
+server /villa ort 39 26 47 180 -5
+warte 2
+bild b19_kamin
+# Bild 16: Lager im Bunker
+server /villa ort 57.5 6 36 180 5
+warte 3
+bild b16_bunkerlager
+# Bild 20: Rutsche von der Seite
+server /villa ort 64 30 31 180 15
+warte 3
+bild b20_rutsche
+# Rutsche benutzen: oben in die Rinne setzen, nach 3 Sekunden sollte man im Pool sein
+server /gamemode survival
+server /villa ort 69.5 32 21.5 90 10
+warte 0.5
+taste F5
+warte 0.5
+bild b20_rutsche_fahrt
+warte 3
+server /data get entity @p Pos
+bild b20_rutsche_unten
+taste F5
+taste F5
+# Bild 5: Lava-Graben. Bewohner im Haus (Penthouse) bei Stufe 1 → Lava
+server /villa ort 55.5 38 57.5 0 17
+warte 6
+server /execute if block ~ ~-14 ~46 minecraft:lava run say GRABEN_LAVA_OK
+server /execute if block ~ ~-14 ~46 minecraft:water run say GRABEN_NOCH_WASSER
+bild b05_graben_lava
+# Draußen (vor dem Tor) wird der Graben wieder zu Wasser
+server /villa ort 55.5 26 112 0 30
+warte 6
+server /villa ort 55.5 26 112 180 35
+warte 2
+bild b05_graben_wasser
+# G-Klasse aus der Tiefgarage die Rampe hinauf
+server /gamemode creative
+server /villa ort 91.5 16 42 0 10
+server /summon stinkendreich:gelaendewagen ~ ~ ~
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:gelaendewagen,sort=nearest,limit=1] ^ ^ ^3 ~ ~
+warte 3
+klick
+warte 2
+halte 2.5 w
+bild g01_rampe
+halte 2 w
+bild g02_garage
+server /data get entity @e[type=stinkendreich:gelaendewagen,sort=nearest,limit=1] Pos
+halte 1 s
+halte 1 shift
+warte 1
+server /villa ort 91.5 27 50 0 35
+warte 2
+bild g03_garage_von_oben

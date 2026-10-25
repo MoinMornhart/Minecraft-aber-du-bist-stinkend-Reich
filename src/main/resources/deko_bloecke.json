@@ -568,6 +568,22 @@
     "klang": "glas"
   },
   {
+    "name": "neon_wein",
+    "form": [
+      [
+        0.0,
+        3,
+        15,
+        16.0,
+        13,
+        16.0
+      ]
+    ],
+    "licht": 10,
+    "fest": false,
+    "klang": "glas"
+  },
+  {
     "name": "kopfteil",
     "form": [
       [
@@ -856,5 +872,39 @@
     "klang": "wolle",
     "verbund": true,
     "sitz": 9
+  },
+  {
+    "name": "tafel_marmor",
+    "form": [
+      [
+        0,
+        14,
+        0,
+        16,
+        16,
+        16
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "stein",
+    "verbund": true
+  },
+  {
+    "name": "tafel_holz",
+    "form": [
+      [
+        0,
+        14,
+        0,
+        16,
+        16,
+        16
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz",
+    "verbund": true
   }
 ]

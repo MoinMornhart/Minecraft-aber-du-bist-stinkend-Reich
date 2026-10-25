@@ -1,0 +1,54 @@
+# Rutsche (mit Protokoll), Agent aus der Nähe, Aufzug ohne Leerfahrt
+server /gamemode survival
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+server /villa ort 69.5 32 21.5 90 10
+taste F5
+warte 0.3
+bild r01_start
+warte 0.7
+bild r02_nach_1s
+server /data get entity @p Pos
+warte 2
+server /data get entity @p Pos
+bild r03_nach_3s
+taste F5
+taste F5
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p armor.chest with stinkendreich:smoking
+server /item replace entity @p armor.legs with stinkendreich:anzughose
+server /item replace entity @p armor.feet with stinkendreich:lackschuhe
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /item replace entity @p weapon.offhand with stinkendreich:goldene_pistole
+server /villa ort 55.5 26 93.5 0 0
+warte 4
+bild n01_ich_sicht
+taste F5
+taste F5
+warte 2
+bild n02_vorn
+taste F5
+server /villa ort 55.5 26 93.5 90 0
+taste F5
+warte 2
+bild n03_seite
+taste F5
+taste F5
+server /gamemode creative
+server /villa ort 58 32 42.5 180 8
+warte 3
+klient aufzug Penthouse
+warte 0.3
+server /villa ort 57.5 32 49 180 8
+warte 25
+bild e01_aufzug_wartet_og
+warte 10
+bild e02_aufzug_noch_og
+server /villa ort 58 32 42.5 180 8
+warte 1
+klient aufzug Penthouse
+warte 14
+bild e03_penthouse_angekommen

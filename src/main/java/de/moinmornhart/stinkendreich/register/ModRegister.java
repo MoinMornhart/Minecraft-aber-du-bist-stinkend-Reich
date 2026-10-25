@@ -52,10 +52,16 @@ public final class ModRegister {
 
     /** Registriert eine zweiteilige Tür samt Item, das beide Hälften setzt. */
     public static Block tuer(String name, BlockSetType art, BlockBehaviour.Properties eigenschaften) {
+        return tuer(name, art, eigenschaften, ZiertuerBlock::new);
+    }
+
+    /** Wie {@link #tuer(String, BlockSetType, BlockBehaviour.Properties)}, aber mit eigener Türklasse. */
+    public static Block tuer(String name, BlockSetType art, BlockBehaviour.Properties eigenschaften,
+                             java.util.function.BiFunction<BlockSetType, BlockBehaviour.Properties, Block> fabrik) {
         Identifier id = StinkendReich.id(name);
         //? if >=1.21.2
         eigenschaften.setId(ResourceKey.create(Registries.BLOCK, id));
-        Block block = Registry.register(BuiltInRegistries.BLOCK, id, new ZiertuerBlock(art, eigenschaften));
+        Block block = Registry.register(BuiltInRegistries.BLOCK, id, fabrik.apply(art, eigenschaften));
         Item.Properties ip = new Item.Properties();
         //? if >=1.21.2
         ip = ip.setId(ResourceKey.create(Registries.ITEM, id)).useBlockDescriptionPrefix();

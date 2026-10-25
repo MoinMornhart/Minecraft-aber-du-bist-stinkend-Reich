@@ -30,6 +30,8 @@ public final class Konfig {
 
     /** Wie viele versteckte Entschärfknöpfe kurz hintereinander gedrückt werden müssen. */
     public int tresorKnoepfe = 2;
+    /** Lava statt Wasser im Graben, solange die Alarmanlage an und ein Bewohner zu Hause ist. */
+    public boolean lavaGraben = true;
 
     // ---------- Butler ----------
     /** Name des Butlers (steht über seinem Kopf und vor seinen Nachrichten). */

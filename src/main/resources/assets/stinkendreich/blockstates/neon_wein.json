@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/neon_wein"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/neon_wein",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/neon_wein",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/neon_wein",
+      "y": 270
+    }
+  }
+}

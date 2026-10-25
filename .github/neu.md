@@ -1,11 +1,13 @@
-### Neu in 0.2
+### Neu in 0.2.1 (Fehler aus Philips Bildern)
 
-- **Glow-up der ganzen Villa:** Ballsaal mit Kronleuchtern, Luxusküche, Nachtclub im Keller, Dachparty, Poolparty, Bad mit goldener Wanne, acht eigene Gemälde, neue Prunk-, Glas-, Stahl- und Bunkertüren, Aufzug mit Glaskabine und Fahrstuhlmusik bis aufs Dach.
-- **Penthouse als Schlafbereich:** XXL-Kingsize-Bett aus einem Stück, Kinosofa vor dem XXL-Fernseher (YouTube-Link einfügen), Strandliegen und Sonnenschirme. Auf Sofas und Liegen kann man sich setzen.
-- **Musik:** DJ-Pult mit eigenen Musikdateien und Spotify-Fernbedienung.
-- **Fuhrpark:** Tiefgarage mit Rampe und Drehteller, Geländewagen, Supersportwagen, Stretch-Limo, Bonzenauto; alle mit runden Goldfelgen.
-- **James als Chauffeur und Pilot:** „Butler, hol den Wagen“, „fahr mich zum Strand“, „flieg mich nach Hause“. Orte merken mit „merk dir den Ort als …“.
-- **Luxus-Hubschrauber** auf dem Landeplatz, selbst fliegen oder fliegen lassen.
-- **Agenten-Ausrüstung:** Bond-Sonnenbrille, Smoking, Anzughose und Lackschuhe mit Kräften, Goldene Pistole, Laser-Armbanduhr, Geldkanone, Waffenkammer mit sechs voll verzauberten Sets.
+- **Lava-Graben:** Ist die Alarmanlage an und du bist zu Hause, wird aus dem Wasser im Graben Lava. Gehst du raus, ist es wieder Wasser (abschaltbar in der Config: `lavaGraben`).
+- **Wasserrutsche zum Rutschen:** Leiter im Turm bis auf die Plattform, lange Glasrinne in fünf Stufen, man wird kräftig bergab geschoben und landet im Pool. Kein Wasser mehr auf der Poolabdeckung.
+- **Neue Türen:** Privattür vom Foyer in die Tiefgarage (nur Bewohner öffnen und schließen sie, sie bleibt offen stehen), Tür in den Club, Glastür aus der Personalküche in den Garten, Durchgang ins Haus aus der Garage (2 breit, automatische Schiebetür).
+- **Doppeltüren ohne Loch** am Balkon und im Penthouse.
+- **Möbel neu gestellt:** Wohnzimmer-Sofas als U vor dem Fernseher, Kamin symmetrisch zum Gemälde, Penthouse-Lounge (Weg vom Aufzug zur Terrasse frei) und eine wohnliche Ostecke, VIP-Sofa ganz auf dem Podest, DJ-Pult vorn, Sofas ohne Spalt am Boden, Tische aus einem Stück statt halber Stufen.
+- **Räume:** Personalküche mit eigener Wand, Schmucktresor mit Diamantberg und Tresoren, Weinlounge als echter Weinkeller (Flaschenwand, Probierfässer, Leuchtschrift), Lager im Bunker.
+- **Autos größer** (Bonzenauto und Supersportwagen 1,25-fach, Geländewagen 1,15-fach), die G-Klasse kommt jetzt die Rampe hinauf aus der Tiefgarage.
+- **Aufzug:** schiebt niemanden mehr, fährt nicht mehr leer los, wenn keiner einsteigt, und niemand steckt mehr im Schachtboden fest.
+- **Waffen** zeigen in der Hand vom Körper weg, die **Bond-Sonnenbrille** ist jetzt die goldene Pixel-Sonnenbrille.
 
-Hinweis: Die neue Villa entsteht nur in **neuen Welten**.
+Hinweis: Die geänderte Villa entsteht nur in **neuen Welten**.

@@ -27,7 +27,7 @@
 
 In **jeder neuen Welt** steht am Spawn deine Villa – egal welcher Welttyp. Das Gelände drumherum wird geebnet und weich an die Landschaft angeblendet. Du startest vor dem Tor, mit der Zugangskarte in der Tasche. Bestehende Welten bleiben unberührt.
 
-Wassergraben mit Brücke · zwei Glaskuppel-Brunnen · Pool mit Abdeckung und Strandliegen · Garten mit Grillecke · Ballsaal · Luxusküche · Nachtclub im Keller · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher.
+Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke · Ballsaal · Luxusküche · Nachtclub im Keller · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher.
 
 <table>
 <tr>
@@ -85,11 +85,11 @@ Auf Sofas, Liegen und der Bettbank kann man sich mit **Rechtsklick** hinsetzen, 
 
 | Bereich | Was drin ist |
 |---|---|
-| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat |
-| 🪪 **Zugang** | Zugangskarte · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Rollläden · Schiebetüren |
+| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 · Lava-Graben, solange die Anlage an und du zu Hause bist · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat |
+| 🪪 **Zugang** | Zugangskarte · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Rollläden · Schiebetüren · Privattür (nur Bewohner) |
 | 🛗 **Im Haus** | Aufzug zu allen Etagen und in den Bunker · Überwachungsraum mit Kameras · Geheimgang hinter dem Bücherregal · Panikraum · Fluchttunnel |
 | 💎 **Tresor** | Schmuck-Tresor mit Fallen und versteckten Entschärfknöpfen |
-| 🛁 **Komfort** | Poolabdeckung · Whirlpool · Kamin · Garagentor |
+| 🛁 **Komfort** | Poolabdeckung · Wasserrutsche mit Schub · Whirlpool · Kamin · Garagentor |
 
 Alles funktioniert für jeden Spieler – auch auf einem Server mit Freunden.
 
@@ -298,7 +298,7 @@ Die Zahl hinter `+mc` muss **genau** deiner Version entsprechen. 1.21 bis 1.21.1
 
 ## ⚙️ Einstellungen
 
-Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Name und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Höchstgeschwindigkeit des Autos, Tempo von Hubschrauber und Chauffeur, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port sowie die Update-Prüfung.
+Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Lava-Graben an/aus, Name und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Höchstgeschwindigkeit des Autos, Tempo von Hubschrauber und Chauffeur, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port sowie die Update-Prüfung.
 
 ## 🔄 Updates
 

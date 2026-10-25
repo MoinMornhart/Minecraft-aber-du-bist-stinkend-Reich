@@ -48,7 +48,7 @@ public class StinkendReichClient implements ClientModInitializer {
 
         // Türen und Tore mit durchsichtigen Stellen
         KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
-                ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER);
+                ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER, ModBloecke.PRIVATTUER);
         KompatClient.durchsichtig(de.moinmornhart.stinkendreich.register.ModDeko.BLOECKE.values().toArray(new net.minecraft.world.level.block.Block[0]));
 
         // Butler: eigenes Modell (Fabric hat die Klasse dafür in 26.x umbenannt) und Renderer

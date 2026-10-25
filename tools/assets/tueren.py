@@ -202,6 +202,30 @@ def tuer_bunker() -> Image.Image:
     return img
 
 
+def tuer_privat() -> Image.Image:
+    """Privattür: schwarzer Lack mit Goldkanten, Fingerabdruck-Scanner mit grüner Leuchte, Schild „PRIVAT“."""
+    img, d = leinwand(16, 32, (26, 26, 30))
+    rauschen(img, 2, 35)
+    d.rectangle([0, 0, 15, 31], outline=rgba(GOLD))
+    d.line([(0, 0), (15, 0)], fill=rgba(GOLD_HELL))
+    d.line([(0, 0), (0, 31)], fill=rgba(GOLD_HELL))
+    # Zwei tiefe Kassetten mit dünner Goldleiste
+    for (x0, y0, x1, y1) in ((3, 3, 12, 13), (3, 18, 12, 28)):
+        d.rectangle([x0, y0, x1, y1], fill=rgba((18, 18, 22)), outline=rgba(GOLD_DUNKEL))
+    # Schild „PRIVAT“ als goldener Balken mit dunklen Strichen
+    d.rectangle([4, 6, 11, 8], fill=rgba(GOLD))
+    for x in (5, 7, 9):
+        d.point((x, 7), fill=rgba((40, 30, 10)))
+    # Fingerabdruck-Scanner neben dem Griff: Glasfeld mit grüner Leuchte
+    d.rectangle([11, 14, 14, 17], fill=rgba((30, 40, 46)), outline=rgba(CHROM))
+    d.point((12, 15), fill=rgba((80, 240, 120)))
+    d.point((13, 16), fill=rgba((60, 200, 100)))
+    d.rectangle([12, 19, 13, 22], fill=rgba(GOLD))
+    d.point((12, 19), fill=rgba(GOLD_HELL))
+    d.rectangle([0, 30, 15, 31], fill=rgba(GOLD))
+    return img
+
+
 def item_aus_tuer(tuer: Image.Image) -> Image.Image:
     """Item-Bild: Tür auf 10×16 verkleinert, mittig."""
     klein = tuer.resize((10, 16), Image.NEAREST)
@@ -216,6 +240,7 @@ AUFKLAPPTUEREN = {
     "glastuer": (tuer_glas, "axe", "Glastür", "Glass Door"),
     "stahltuer": (tuer_stahl, "pickaxe", "Stahltür", "Steel Door"),
     "bunkertuer": (tuer_bunker, "pickaxe", "Bunkertür", "Bunker Door"),
+    "privattuer": (tuer_privat, "axe", "Privattür (nur Bewohner)", "Private Door (residents only)"),
 }
 
 
