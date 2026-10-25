@@ -12,6 +12,23 @@
 
 </div>
 
+## 📸 So sieht es aus
+
+<table>
+<tr>
+<td><img src="docs/bilder/villa.jpg" alt="Die Villa am Spawn"><br><sub>Die Villa am Spawn</sub></td>
+<td><img src="docs/bilder/tresor.jpg" alt="Schmuck-Tresor mit Lasern"><br><sub>Schmuck-Tresor mit Lasern</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/butler.jpg" alt="Butler James"><br><sub>Butler James in der Halle</sub></td>
+<td><img src="docs/bilder/butler_menue.jpg" alt="Butler-Menü"><br><sub>Sein Menü (Rechtsklick)</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/auto_drift.jpg" alt="Bonzenauto im Drift"><br><sub>Drift mit dem Bonzenauto</sub></td>
+<td><img src="docs/bilder/auto_farben.jpg" alt="Lackfarben"><br><sub>Vier der acht Lackfarben</sub></td>
+</tr>
+</table>
+
 ## ✨ Was die Mod macht
 
 | | Funktion | Kurz |
