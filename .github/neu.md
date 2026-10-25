@@ -1,13 +1,17 @@
-### Neu in 0.2.1 (Fehler aus Philips Bildern)
+### Neu in 0.2.1 (Fehler und Wünsche aus Philips Bildern und Sprachnachricht)
 
 - **Lava-Graben:** Ist die Alarmanlage an und du bist zu Hause, wird aus dem Wasser im Graben Lava. Gehst du raus, ist es wieder Wasser (abschaltbar in der Config: `lavaGraben`).
-- **Wasserrutsche zum Rutschen:** Leiter im Turm bis auf die Plattform, lange Glasrinne in fünf Stufen, man wird kräftig bergab geschoben und landet im Pool. Kein Wasser mehr auf der Poolabdeckung.
-- **Neue Türen:** Privattür vom Foyer in die Tiefgarage (nur Bewohner öffnen und schließen sie, sie bleibt offen stehen), Tür in den Club, Glastür aus der Personalküche in den Garten, Durchgang ins Haus aus der Garage (2 breit, automatische Schiebetür).
-- **Doppeltüren ohne Loch** am Balkon und im Penthouse.
-- **Möbel neu gestellt:** Wohnzimmer-Sofas als U vor dem Fernseher, Kamin symmetrisch zum Gemälde, Penthouse-Lounge (Weg vom Aufzug zur Terrasse frei) und eine wohnliche Ostecke, VIP-Sofa ganz auf dem Podest, DJ-Pult vorn, Sofas ohne Spalt am Boden, Tische aus einem Stück statt halber Stufen.
-- **Räume:** Personalküche mit eigener Wand, Schmucktresor mit Diamantberg und Tresoren, Weinlounge als echter Weinkeller (Flaschenwand, Probierfässer, Leuchtschrift), Lager im Bunker.
-- **Autos größer** (Bonzenauto und Supersportwagen 1,25-fach, Geländewagen 1,15-fach), die G-Klasse kommt jetzt die Rampe hinauf aus der Tiefgarage.
-- **Aufzug:** schiebt niemanden mehr, fährt nicht mehr leer los, wenn keiner einsteigt, und niemand steckt mehr im Schachtboden fest.
-- **Waffen** zeigen in der Hand vom Körper weg, die **Bond-Sonnenbrille** ist jetzt die goldene Pixel-Sonnenbrille.
+- **Geheimclub:** Hinter einem Bücherregal an der Bar des Nachtclubs (Schalter im Regal) führt eine Treppe hinab zu einem geheimen Club mit Show-Bühne, Tanzstangen, Samtnischen und eigener Bar.
+- **Goldspeicher zum Hineinspringen:** Münzgrube aus Goldmünzen, in die man weich einsinkt (kein Fallschaden), mit Sprungbrett und Leiter.
+- **Türen überall:** Sicherheitstüren mit Kartenleser fürs Büro und den Kontrollraum (nur mit Zugangskarte), Privattür vom Foyer in die Tiefgarage (nur Bewohner), Clubtür am Gartenzugang (vorher zugemauert), Tür in den Club, Glastür aus der Personalküche in den Garten, Türen im Bunker, Durchgang ins Haus aus der Garage (2 breit, Schiebetür).
+- **Haus symmetrisch:** Tor, Brücke, roter Teppich, Beete und Brunnen liegen jetzt genau auf der Achse der Haustür (vorher einen Block versetzt). Doppeltüren ohne Loch am Balkon und im Penthouse.
+- **Obergeschoss:** Lücke zum Kontrollraum geschlossen, Gaming-Stuhl am Schreibtisch, Sicherheitszentrale auf dem Schreibtisch, Gästezimmer neu eingerichtet (XXL-Bett, Fernseher, Leseecke, Kommode), Bad mit Badewanne zum Reinsetzen, Toilette mit Spülung, gefüllte Truhen.
+- **Penthouse:** Landeplatz eine Lage höher (von innen nur noch weiße Decke), drei Samtsofas vor dem Fernseher, Lounge neu (Weg vom Aufzug zur Tür frei), Ostecke eingerichtet. Feuerstelle auf der Dachterrasse nicht mehr im Beet.
+- **Tiefgarage:** Rampe mittig unter dem Garagentor, daneben eine Fahrspur zum Parken oben, neue Stellplätze in der Bucht neben der Rampe. Die G-Klasse kommt die Rampe hinauf.
+- **Räume:** Personalküche mit eigener Wand, Schmucktresor mit Diamantberg und Tresoren, Weinlounge als Weinkeller, Lager im Bunker, Wohnzimmer-Sofas als U vor dem Fernseher, Kamin symmetrisch zum Gemälde, VIP-Sofa ganz auf dem Podest, DJ-Pult vorn, Sektturm aus einzelnen Schalen, Tische aus einem Stück statt halber Stufen, Sofas ohne Spalt am Boden. Laser bündig in der Wand.
+- **Wasserrutsche zum Rutschen:** Leiter bis auf die Plattform, lange Glasrinne, man wird kräftig bergab geschoben und landet im Pool.
+- **Autos größer** (Bonzenauto und Supersportwagen 1,25-fach, Geländewagen 1,15-fach).
+- **Aufzug:** schiebt niemanden mehr, fährt nicht leer los, niemand steckt mehr im Schachtboden fest.
+- **Agenten-Ausrüstung:** Waffen mit Griff in der Hand und Mündung nach vorn, goldene Pixel-Sonnenbrille, das Totem der Unsterblichkeit ist ein Bündel Geldscheine.
 
 Hinweis: Die geänderte Villa entsteht nur in **neuen Welten**.

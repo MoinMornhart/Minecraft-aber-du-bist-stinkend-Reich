@@ -185,15 +185,18 @@ def i_geldkanone():
     return img
 
 
-# Pistole und Geldkanone: Lauf zeigt im Bild nach rechts. So gehalten zeigt die Mündung nach vorn vom Körper weg,
-# der Griff nach unten. Am Spieler selbst ausgemessen (von hinten, von vorn und aus eigener Sicht, je acht
-# Varianten nebeneinander); die linke Hand ist das Spiegelbild der rechten wie bei den Werkzeugen im Spiel.
+# Pistole und Geldkanone: Lauf zeigt im Bild nach rechts, Griff unten links. In der Hand gilt (vor der Drehung):
+# +y = nach vorn, +z = nach oben, x = zur Seite. Drehung [0, 90, 80] legt den Lauf nach vorn (leicht nach unten,
+# weil der Arm beim Halten schräg nach vorn zeigt) und den Griff nach unten; die Verschiebung [0, -0.5, 5] schiebt
+# den Griff genau in die Faust. In der eigenen Sicht zeigt die Mündung mit [0, 100, 0] nach vorn, leicht zur
+# Bildmitte. Am Spieler ausgemessen (von hinten, von oben, von vorn und aus eigener Sicht). Die linke Hand ist das
+# Spiegelbild der rechten wie bei den Werkzeugen im Spiel.
 WAFFEN = ("goldene_pistole", "geldkanone")
 WAFFEN_HALTUNG = {
-    "thirdperson_righthand": {"rotation": [0, -90, -80], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
-    "thirdperson_lefthand": {"rotation": [0, 90, 80], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
-    "firstperson_righthand": {"rotation": [0, -90, -10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
-    "firstperson_lefthand": {"rotation": [0, 90, 10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
+    "thirdperson_righthand": {"rotation": [0, 90, 80], "translation": [0, -0.5, 5], "scale": [0.85, 0.85, 0.85]},
+    "thirdperson_lefthand": {"rotation": [0, -90, -80], "translation": [0, -0.5, 5], "scale": [0.85, 0.85, 0.85]},
+    "firstperson_righthand": {"rotation": [0, 100, 0], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
+    "firstperson_lefthand": {"rotation": [0, -100, 0], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
 }
 
 ITEMS = {"bond_sonnenbrille": i_brille, "smoking": i_smoking, "anzughose": i_hose, "lackschuhe": i_schuhe,
@@ -222,6 +225,25 @@ SMOKING_FRONT = [
     "KKKKKKKK",
 ]
 FARBE = {"K": SCHWARZ, "S": SATIN, "W": WEISS, "B": (6, 6, 8, 255), "G": GOLD, "E": WEISS}
+
+
+def i_totem_geldbuendel() -> Image.Image:
+    """Ersatz für das Totem der Unsterblichkeit: ein dickes Bündel grüner Scheine mit goldener Banderole."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    gruen, hell, dunkel = (86, 150, 72), (150, 204, 120), (44, 92, 40)
+    # Stapel leicht schräg: vier Lagen Scheine übereinander
+    for i, y in enumerate((11, 9, 7, 5)):
+        x = 2 + (i % 2)
+        d.rectangle([x, y, x + 11, y + 3], fill=gruen, outline=dunkel)
+        d.line([(x + 1, y + 1), (x + 10, y + 1)], fill=hell)
+        d.ellipse([x + 4, y + 1, x + 7, y + 3], outline=dunkel)
+    # Goldene Banderole mit Glanz und Zahl
+    d.rectangle([6, 4, 9, 15], fill=(232, 186, 52), outline=(160, 112, 22))
+    d.line([(7, 5), (7, 14)], fill=(255, 228, 122))
+    d.point((8, 9), fill=(120, 80, 10))
+    d.point((8, 10), fill=(120, 80, 10))
+    return img
 
 
 def schicht_1() -> Image.Image:
@@ -299,6 +321,12 @@ def main() -> dict:
                        (ASSETS / "textures/entity/equipment/humanoid_leggings/agent.png", s2)):
         pfad.parent.mkdir(parents=True, exist_ok=True)
         bild.save(pfad)
+    # Totem der Unsterblichkeit sieht aus wie ein Bündel Scheine (ersetzt das Bild des Spiels, auch beim Auslösen)
+    totem = WURZEL / "src/main/resources/assets/minecraft/textures/item/totem_of_undying.png"
+    totem.parent.mkdir(parents=True, exist_ok=True)
+    i_totem_geldbuendel().save(totem)
+    for sprache, name in (("de_de", "Geldbündel der Unsterblichkeit"), ("en_us", "Bundle of Cash of Undying")):
+        schreibe_json(WURZEL / f"src/main/resources/assets/minecraft/lang/{sprache}.json", {"item.minecraft.totem_of_undying": name})
     ausruestung = {"layers": {"humanoid": [{"texture": f"{NS}:agent"}], "humanoid_leggings": [{"texture": f"{NS}:agent"}]}}
     schreibe_json(ASSETS / "models/equipment/agent.json", ausruestung)
     schreibe_json(ASSETS / "equipment/agent.json", ausruestung)

@@ -61,6 +61,7 @@ public class StinkendReich implements ModInitializer {
         Aufzug.registrieren();
         de.moinmornhart.stinkendreich.mechanik.Graben.registrieren();
         de.moinmornhart.stinkendreich.mechanik.Rutsche.registrieren();
+        de.moinmornhart.stinkendreich.mechanik.Goldbad.registrieren();
         de.moinmornhart.stinkendreich.fernseher.FernseherEntity.registrieren();
         de.moinmornhart.stinkendreich.ausruestung.AgentKraefte.registrieren();
         SicherheitszentraleBlock.aktionenRegistrieren();

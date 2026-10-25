@@ -118,6 +118,11 @@ public final class ModBloecke {
     public static final Block PRIVATTUER = ModRegister.tuer("privattuer", BlockSetType.OAK,
             tuer(MapColor.COLOR_BLACK, SoundType.WOOD).strength(6.0F, 1200.0F),
             de.moinmornhart.stinkendreich.mechanik.PrivattuerBlock::new);
+    /** Sicherheitstür fürs Büro: Metall mit Goldkante, öffnet nur über den Kartenleser (Zugangskarte). */
+    public static final Block SICHERHEITSTUER = ModRegister.tuer("sicherheitstuer", BlockSetType.IRON,
+            tuer(MapColor.COLOR_GRAY, SoundType.METAL).strength(50.0F, 1200.0F).requiresCorrectToolForDrops());
+    /** Clubtür: schwarzes Steppleder mit Goldknöpfen und lila Bullauge, öffnet von Hand. */
+    public static final Block CLUBTUER = ModRegister.tuer("clubtuer", BlockSetType.DARK_OAK, tuer(MapColor.COLOR_BLACK, SoundType.WOOD).strength(3.0F));
 
     /** Eine gemeinsame Block-Entity für alle Mechanik-Blöcke. */
     public static final BlockEntityType<MechanikBlockEntity> MECHANIK_TYP = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,

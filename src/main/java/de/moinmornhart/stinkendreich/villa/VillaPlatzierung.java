@@ -268,7 +268,7 @@ public final class VillaPlatzierung {
      * Bäume und Pflanzen auf der Fläche werden entfernt; Wasser außerhalb des Grundstücks bleibt Wasser.
      */
     /** Zufahrt vor der Brücke (Strukturkoordinaten): Fahrbahn x 52–59, Bordsteine bei 51 und 60. */
-    private static final int ZUFAHRT_X0 = 51, ZUFAHRT_X1 = 60;
+    private static final int ZUFAHRT_X0 = 50, ZUFAHRT_X1 = 59;
 
     /**
      * Gepflasterte Zufahrt vom Ende der Brücke nach Süden ins Gelände. Sie steigt oder fällt höchstens

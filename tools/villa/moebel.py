@@ -73,6 +73,13 @@ def strandliege(b: Bau, x: int, y: int, z: int, blick: str) -> None:
     b.setze(x + vx, y, z + vz, zustand("stinkendreich:liege_fuss", facing=blick, waterlogged="false"))
 
 
+def badewanne(b: Bau, x: int, y: int, z: int, blick: str) -> None:
+    """Badewanne der Mod: Kopfteil (zum Hineinsetzen) bei (x, y, z), Fußteil mit Wasserhahn davor."""
+    vx, _, vz = RICHTUNG_VEKTOR[blick]
+    b.setze(x, y, z, zustand("stinkendreich:wanne_kopf", facing=blick, waterlogged="false"))
+    b.setze(x + vx, y, z + vz, zustand("stinkendreich:wanne_fuss", facing=blick, waterlogged="false"))
+
+
 def tisch(b: Bau, x0: int, y: int, z0: int, x1: int, z1: int, platte: str = "dark_oak_slab") -> None:
     """Tisch der Mod über die Fläche x0…x1 × z0…z1: durchgehende Platte, Beine an den Enden jeder Reihe
     (früher halbe Stufen, die in der Luft zu schweben schienen). Holzplatte bei Eiche/Fichte, sonst Marmor."""

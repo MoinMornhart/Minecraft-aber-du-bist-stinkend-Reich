@@ -27,7 +27,7 @@ bild m06_tresor_innen
 befehl /villa ort 73.5 33 46 180 5
 warte 5
 bild m07_ueberwachung
-befehl /villa ort 65 33 54.5 90 15
+befehl /villa ort 71.5 33 57.5 0 20
 warte 5
 bild m08_zentrale
 befehl /villa ort 58 27.2 40.6 170 35

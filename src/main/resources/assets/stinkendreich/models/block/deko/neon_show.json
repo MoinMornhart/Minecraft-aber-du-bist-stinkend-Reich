@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "neon_show": "stinkendreich:block/deko/neon_show",
+    "particle": "stinkendreich:block/deko/neon_show"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        3,
+        15
+      ],
+      "to": [
+        16,
+        13,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#neon_show"
+        },
+        "south": {
+          "uv": [
+            0.0,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#neon_show"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            3,
+            1,
+            13
+          ],
+          "texture": "#neon_show"
+        },
+        "west": {
+          "uv": [
+            15,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#neon_show"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            15,
+            16.0,
+            16.0
+          ],
+          "texture": "#neon_show"
+        },
+        "down": {
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            1
+          ],
+          "texture": "#neon_show"
+        }
+      }
+    }
+  ]
+}

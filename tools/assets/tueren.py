@@ -226,6 +226,42 @@ def tuer_privat() -> Image.Image:
     return img
 
 
+def tuer_sicherheit() -> Image.Image:
+    """Sicherheitstür fürs Büro: dunkles, gebürstetes Metall, Goldkante, senkrechter LED-Streifen, Kartenschlitz,
+    Schild „SECURITY“ als Strich. Öffnet nur über den Kartenleser."""
+    img, d = leinwand(16, 32, (44, 46, 52))
+    for y in range(32):
+        d.line([(0, y), (15, y)], fill=rgba(heller((44, 46, 52), 5 if y % 3 == 0 else 0)))
+    rauschen(img, 2, 36)
+    d.rectangle([0, 0, 15, 31], outline=rgba(GOLD))
+    d.line([(0, 0), (15, 0)], fill=rgba(GOLD_HELL))
+    d.rectangle([2, 3, 13, 28], outline=rgba((70, 72, 80)))
+    for y in range(4, 28):
+        d.point((3, y), fill=rgba((70, 210, 255) if y % 2 == 0 else (40, 150, 200)))
+    d.rectangle([10, 13, 13, 18], fill=rgba((20, 20, 24)), outline=rgba(CHROM))
+    d.line([(11, 15), (12, 15)], fill=rgba((0, 0, 0)))
+    d.point((11, 17), fill=rgba((80, 240, 120)))
+    d.line([(6, 6), (11, 6)], fill=rgba(GOLD))
+    d.rectangle([0, 30, 15, 31], fill=rgba(GOLD_DUNKEL))
+    return img
+
+
+def tuer_club() -> Image.Image:
+    """Clubtür: schwarzes, gestepptes Leder mit goldenen Knöpfen, rundes Bullauge mit lila Leuchtring, Goldgriff."""
+    img, d = leinwand(16, 32, (22, 18, 26))
+    for y in range(2, 30, 4):
+        for x in range(2 + (y // 4) % 2 * 2, 15, 4):
+            d.point((x, y), fill=rgba(GOLD))
+            d.point((x, y + 1), fill=rgba((40, 34, 46)))
+    d.rectangle([0, 0, 15, 31], outline=rgba(GOLD_DUNKEL))
+    d.ellipse([4, 3, 11, 10], fill=rgba((40, 10, 60)), outline=rgba((200, 80, 255)))
+    d.point((6, 5), fill=rgba((230, 180, 255)))
+    d.rectangle([12, 14, 13, 19], fill=rgba(GOLD))
+    d.point((12, 14), fill=rgba(GOLD_HELL))
+    d.rectangle([0, 30, 15, 31], fill=rgba(GOLD))
+    return img
+
+
 def item_aus_tuer(tuer: Image.Image) -> Image.Image:
     """Item-Bild: Tür auf 10×16 verkleinert, mittig."""
     klein = tuer.resize((10, 16), Image.NEAREST)
@@ -241,6 +277,8 @@ AUFKLAPPTUEREN = {
     "stahltuer": (tuer_stahl, "pickaxe", "Stahltür", "Steel Door"),
     "bunkertuer": (tuer_bunker, "pickaxe", "Bunkertür", "Bunker Door"),
     "privattuer": (tuer_privat, "axe", "Privattür (nur Bewohner)", "Private Door (residents only)"),
+    "sicherheitstuer": (tuer_sicherheit, "pickaxe", "Sicherheitstür (Zugangskarte)", "Security Door (key card)"),
+    "clubtuer": (tuer_club, "axe", "Clubtür", "Club Door"),
 }
 
 

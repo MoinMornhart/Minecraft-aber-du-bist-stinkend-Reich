@@ -10,7 +10,7 @@ warte 2
 bild b01_tastenfeld
 taste Escape
 # Sicherheitszentrale im Büro
-befehl /villa ort 63 32 54.5 90 45
+befehl /villa ort 71.5 32 59.3 0 22
 warte 3
 klick
 warte 2

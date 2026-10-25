@@ -1,0 +1,47 @@
+# G-Klasse aus der Tiefgarage die mittige Rampe hinauf in die Garage (0.2.1)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+warte 30
+taste F1
+server /villa ort 87.0 16 41 0 10
+server /summon stinkendreich:gelaendewagen ~ ~ ~
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:gelaendewagen,sort=nearest,limit=1] ^ ^ ^3 ~ ~
+warte 3
+klick
+warte 2
+halte 2.5 w
+bild r01_rampe
+halte 2 w
+bild r02_garage
+server /data get entity @e[type=stinkendreich:gelaendewagen,sort=nearest,limit=1] Pos
+halte 1 s
+halte 1 shift
+warte 1
+server /villa ort 87.0 27 52 0 35
+warte 2
+bild r03_garage_von_oben
+server /gamemode spectator
+server /villa ort 91.5 17 50 160 10
+warte 2
+bild r04_rampe_unten
+# Clubtür am Gartenzugang: von der Treppe aus hinunter zur Tür
+server /villa ort 22.5 23 48.0 -90 30
+warte 3
+bild r05_club_gartentuer
+server /villa ort 28.5 17 48.0 -90 5
+warte 2
+bild r06_club_gartentuer_nah
+# Totem der Unsterblichkeit als Geldbündel: in der Hand und beim Auslösen
+server /gamemode survival
+server /villa ort 55.5 26 80.5 0 10
+server /item replace entity @p weapon.mainhand with minecraft:totem_of_undying
+server /item replace entity @p weapon.offhand with minecraft:totem_of_undying
+taste F1
+warte 2
+bild r07_totem_hand
+server /damage @p 1000 minecraft:generic
+warte 0.6
+bild r08_totem_ausgeloest
+warte 1
+bild r09_totem_ausgeloest2

@@ -296,6 +296,65 @@ def m_cocktail():
     return img
 
 
+def m_sektglas():
+    """Gefüllte Sektschale von außen: goldener Sekt mit Perlen, heller Glasrand oben."""
+    img, d = neu((248, 212, 104))
+    d.line([(0, 0), (15, 0)], fill=(240, 246, 252))
+    d.line([(0, 1), (15, 1)], fill=(255, 236, 160))
+    for x, y in ((2, 5), (6, 9), (10, 4), (13, 11), (4, 13), (9, 7)):
+        d.point((x, y), fill=(255, 250, 225))
+    return img
+
+
+def m_flasche_gruen():
+    """Sektflasche: dunkelgrünes Glas mit goldener Halsfolie und hellem Etikett."""
+    img, d = neu((26, 64, 36))
+    d.rectangle([0, 0, 15, 3], fill=GOLD)
+    d.rectangle([0, 8, 15, 11], fill=(236, 226, 196))
+    d.line([(3, 0), (3, 15)], fill=(52, 104, 66))
+    return img
+
+
+def m_badewasser():
+    """Badewasser von oben: hellblau mit Wellen und etwas Schaum."""
+    img, d = neu((92, 172, 228))
+    rnd = random.Random(52)
+    for y in range(1, 16, 4):
+        for x in range(16):
+            if (x + y) % 5 in (0, 1):
+                d.point((x, y), fill=(150, 206, 244))
+    for _ in range(14):
+        d.point((rnd.randrange(16), rnd.randrange(16)), fill=(244, 250, 255))
+    return img
+
+
+def m_goldmuenzen():
+    """Berg aus Goldmünzen: übereinanderliegende runde Münzen mit Glanzpunkt."""
+    img, d = neu((150, 104, 20))
+    rnd = random.Random(77)
+    for _ in range(26):
+        x, y = rnd.randrange(-2, 16), rnd.randrange(-2, 16)
+        d.ellipse([x, y, x + 4, y + 3], fill=GOLD, outline=GOLD_DUNKEL)
+        d.point((x + 1, y + 1), fill=GOLD_HELL)
+    return img
+
+
+def m_gaming_schwarz():
+    """Kunstleder des Gaming-Stuhls: schwarz mit Steppnähten."""
+    img, d = neu((28, 28, 32))
+    for y in range(2, 16, 5):
+        d.line([(0, y), (15, y)], fill=(48, 48, 54))
+    return rauschen(img, 3, 91)
+
+
+def m_gaming_rot():
+    """Rote Seitenwangen des Gaming-Stuhls."""
+    img, d = neu((196, 26, 36))
+    for y in range(1, 16, 4):
+        d.line([(0, y), (15, y)], fill=(226, 52, 60))
+    return rauschen(img, 3, 92)
+
+
 def m_sekt():
     """Sektgläser: Glas mit goldenem Inhalt, oben durchsichtig."""
     img, d = neu((0, 0, 0), 0)
@@ -315,6 +374,8 @@ def neon(text: str, farbe) -> Image.Image:
         "C": ["011", "100", "100", "100", "011"], "L": ["100", "100", "100", "100", "111"],
         "U": ["101", "101", "101", "101", "111"], "W": ["101", "101", "101", "111", "101"],
         "E": ["111", "100", "110", "100", "111"], "N": ["101", "111", "111", "101", "101"],
+        "S": ["011", "100", "010", "001", "110"], "H": ["101", "101", "111", "101", "101"],
+        "O": ["111", "101", "101", "101", "111"],
     }
     img, d = neu((0, 0, 0), 0)
     breite = len(text) * 4 - 1
@@ -596,6 +657,9 @@ MATERIALIEN = {
     "neon_bar": lambda: neon("BAR", (255, 40, 160)), "neon_vip": lambda: neon("VIP", (255, 200, 40)),
     "neon_club": lambda: neon("CLUB", (40, 220, 255)),
     "neon_wein": lambda: neon("WEIN", (255, 70, 90)),
+    "neon_show": lambda: neon("SHOW", (255, 60, 200)),
+    "sektglas": m_sektglas, "flasche_gruen": m_flasche_gruen, "badewasser": m_badewasser, "goldmuenzen": m_goldmuenzen,
+    "gaming_schwarz": m_gaming_schwarz, "gaming_rot": m_gaming_rot,
     "leder_weiss": m_leder_weiss, "samt_schwarz": m_samt_schwarz, "satin_gold": m_satin_gold, "satin_schwarz": m_satin_schwarz, "laken": m_laken,
     "matratze": m_matratze, "kissen_weiss": m_kissen_weiss, "fell": m_fell, "teak": m_teak,
     "polster_weiss": m_polster_weiss, "handtuch": m_handtuch, "schirm": m_schirm, "schirm_glatt": m_schirm_glatt, "lampenschirm": m_lampenschirm,
@@ -699,8 +763,64 @@ def champagner():
 
 
 def sektturm():
-    return [k([1, 0, 1], [15, 4, 15], "sekt"), k([3, 4, 3], [13, 8, 13], "sekt"),
-            k([5, 8, 5], [11, 12, 11], "sekt"), k([7, 12, 7], [9, 15, 9], "sekt")]
+    """Sektturm: einzelne gefüllte Schalen auf Stielen in drei Ebenen (3 × 3, 2 × 2, 1) auf einem Goldtablett,
+    obendrauf die Flasche (vorher waren es gestapelte Glaskästen, die verbuggt aussahen)."""
+    t = [k([0.5, 0, 0.5], [15.5, 0.5, 15.5], "gold")]
+
+    def schale(x, y, z):
+        return [k([x - 0.3, y, z - 0.3], [x + 0.3, y + 1.6, z + 0.3], "kristall"),
+                k([x - 1.6, y + 1.6, z - 1.6], [x + 1.6, y + 2.6, z + 1.6], "sektglas")]
+    for x in (3.5, 8, 12.5):
+        for z in (3.5, 8, 12.5):
+            t += schale(x, 0.5, z)
+    for x in (5.75, 10.25):
+        for z in (5.75, 10.25):
+            t += schale(x, 3.1, z)
+    t += schale(8, 5.7, 8)
+    t += [k([7, 8.3, 7], [9, 13, 9], "flasche_gruen"), k([7.4, 13, 7.4], [8.6, 15, 8.6], "gold")]
+    return t
+
+
+def gamingstuhl(spalte):
+    """Gaming-Stuhl (Blick nach Norden): Fünfstern-Fuß mit Rollen, Gaslift, Sitz mit roten Wangen, hohe
+    Rückenlehne mit roten Streifen und Nackenkissen, Armlehnen. Steht immer einzeln."""
+    t = [k([2, 1, 7.25], [14, 2, 8.75], "lack_schwarz"), k([7.25, 1, 2], [8.75, 2, 14], "lack_schwarz")]
+    for x, z in ((2, 7.25), (12.5, 7.25), (7.25, 2), (7.25, 12.5)):
+        t.append(k([x, 0, z], [x + 1.5, 1, z + 1.5], "lack_schwarz"))
+    t += [k([7.25, 2, 7.25], [8.75, 6, 8.75], "chrom"),
+          k([2.5, 6, 2], [13.5, 8, 13], "gaming_schwarz"),
+          k([2, 6.5, 2], [3, 9, 13], "gaming_rot"), k([13, 6.5, 2], [14, 9, 13], "gaming_rot"),
+          k([3, 8, 12.5], [13, 24, 14.5], "gaming_schwarz"),
+          k([2.5, 9, 12], [3.5, 23, 14.5], "gaming_rot"), k([12.5, 9, 12], [13.5, 23, 14.5], "gaming_rot"),
+          k([5, 20, 11.5], [11, 22.5, 12.5], "gaming_rot"), k([5, 9, 11.5], [11, 12, 12.5], "gaming_rot")]
+    for x in (1, 13.5):
+        t += [k([x + 0.5, 8, 7], [x + 1, 11, 8], "lack_schwarz"), k([x, 11, 4], [x + 1.5, 12, 10], "gaming_schwarz")]
+    return t
+
+
+def _wanne(kopf):
+    """Freistehende Badewanne aus zwei Teilen (Blick nach Norden): Kopfteil hinten mit Lehne und Handtuch,
+    Fußteil vorn mit goldenem Wasserhahn. Weiße Keramik, Goldrand, Goldfüße, Wasser bis knapp unter den Rand."""
+    wasser_z = (0, 13.5) if kopf else (2.5, 16)
+    t = [k([1, 1.5, 0], [15, 3, 16], "keramik"),
+         k([1, 3, 0], [2.5, 10, 16], "keramik"), k([13.5, 3, 0], [15, 10, 16], "keramik"),
+         k([0.75, 10, 0], [2.75, 10.8, 16], "gold"), k([13.25, 10, 0], [15.25, 10.8, 16], "gold"),
+         k([2.5, 8, wasser_z[0]], [13.5, 8.5, wasser_z[1]], "badewasser")]
+    if kopf:
+        t += [k([1, 3, 13.5], [15, 10, 15], "keramik"), k([0.75, 10, 13.25], [15.25, 10.8, 15.25], "gold"),
+              k([4, 8.5, 12], [12, 11.5, 13.5], "handtuch"),
+              k([1.5, 0, 11.5], [3.5, 1.5, 13.5], "gold"), k([12.5, 0, 11.5], [14.5, 1.5, 13.5], "gold")]
+    else:
+        t += [k([1, 3, 1], [15, 10, 2.5], "keramik"), k([0.75, 10, 0.75], [15.25, 10.8, 2.75], "gold"),
+              k([7, 10.8, 1], [9, 14, 2.5], "gold"), k([7.25, 13, 2.5], [8.75, 14, 5], "gold"),
+              k([1.5, 0, 2.5], [3.5, 1.5, 4.5], "gold"), k([12.5, 0, 2.5], [14.5, 1.5, 4.5], "gold")]
+    return t
+
+
+def tanzstange():
+    """Tanzstange aus Chrom mit Goldringen, lässt sich stapeln (Boden bis Decke)."""
+    return [k([7, 0, 7], [9, 16, 9], "chrom"), k([6.75, 0, 6.75], [9.25, 0.5, 9.25], "gold"),
+            k([6.75, 15.5, 6.75], [9.25, 16, 9.25], "gold")]
 
 
 def flamingo():
@@ -917,10 +1037,18 @@ BLOECKE = {
     "sonnenschirm": (sonnenschirm(), [[7, 0, 7, 9, 16, 9]], 0, True, "wolle", "axe", "Sonnenschirm", "Parasol"),
     "fluegel_tasten": (fluegel_tasten(), [[0, 0, 0, 16, 12, 16]], 0, True, "holz", "axe", "Konzertflügel (Tasten)", "Grand Piano (Keys)"),
     "fluegel_korpus": (fluegel_korpus(), [[0, 0, 0, 16, 13, 15]], 0, True, "holz", "axe", "Konzertflügel (Korpus)", "Grand Piano (Body)"),
+    "neon_show": (neonschild("neon_show"), None, 10, False, "glas", "pickaxe", "Leuchtschrift SHOW", "Neon Sign SHOW"),
+    "wanne_kopf": (_wanne(True), [[1, 0, 0, 15, 10, 16]], 0, True, "stein", "pickaxe", "Badewanne (Kopfteil)", "Bathtub (Head)"),
+    "wanne_fuss": (_wanne(False), [[1, 0, 0, 15, 10, 16]], 0, True, "stein", "pickaxe", "Badewanne (Fußteil)", "Bathtub (Foot)"),
+    "tanzstange": (tanzstange(), [[7, 0, 7, 9, 16, 9]], 0, True, "metall", "pickaxe", "Tanzstange", "Dance Pole"),
+    "goldmuenzen": ([k([0, 0, 0], [16, 16, 16], "goldmuenzen")], None, 0, False, "metall", "pickaxe",
+                    "Goldmünzen (zum Hineinspringen)", "Gold Coins (jump in)"),
 }
 
 # Sitzhöhe in Pixeln für Sitzmöbel (Rechtsklick setzt sich drauf)
-SITZE = {"liege_kopf": 7}
+SITZE = {"liege_kopf": 7, "wanne_kopf": 4}
+# Blöcke mit eigener Funktion beim Rechtsklick (siehe ModDeko): Toilette spült
+SPUELEN = {"goldtoilette"}
 
 # Möbel, die sich mit Nachbarn verbinden: Name → (Teile je Spalte, Form, Licht, fest, Klang, Werkzeug,
 # Deutsch, Englisch, Sitzhöhe oder None)
@@ -938,6 +1066,8 @@ VERBUND = {
                      "Marmortafel", "Marble Table", None),
     "tafel_holz": (lambda sp: tafel(sp, "teak", "lack_schwarz", "lack_schwarz"), [[0, 14, 0, 16, 16, 16]], 0, True, "holz", "axe",
                    "Holztafel", "Wooden Table", None),
+    "gamingstuhl": (gamingstuhl, [[2, 0, 2, 14, 8, 14], [3, 8, 12, 13, 16, 15]], 0, True, "wolle", "axe",
+                    "Gaming-Stuhl", "Gaming Chair", 8),
 }
 
 FLAECHEN = ("north", "south", "east", "west", "up", "down")
@@ -1050,6 +1180,8 @@ def main() -> dict:
         eintrag = {"name": name, "form": form or form_aus_teilen(teile), "licht": licht, "fest": fest, "klang": klang}
         if name in SITZE:
             eintrag["sitz"] = SITZE[name]
+        if name in SPUELEN:
+            eintrag["spuelen"] = True
         liste.append(eintrag)
         werkzeuge[werkzeug].append(f"{NS}:{name}")
         de[f"block.{NS}.{name}"], en[f"block.{NS}.{name}"] = name_de, name_en

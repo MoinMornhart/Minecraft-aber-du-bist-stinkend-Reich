@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_bottom_left",
+  "textures": {
+    "bottom": "stinkendreich:block/tueren/sicherheitstuer_unten",
+    "top": "stinkendreich:block/tueren/sicherheitstuer_oben"
+  }
+}

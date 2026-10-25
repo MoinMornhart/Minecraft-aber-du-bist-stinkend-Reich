@@ -24,6 +24,8 @@ public final class ModSounds {
     public static final SoundEvent SCHUSS = ModRegister.sound("schuss");
     public static final SoundEvent LASER = ModRegister.sound("laser");
     public static final SoundEvent GELDREGEN = ModRegister.sound("geldregen");
+    // Bad
+    public static final SoundEvent TOILETTE = ModRegister.sound("toilette");
 
     private ModSounds() {
     }

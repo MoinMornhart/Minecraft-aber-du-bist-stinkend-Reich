@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-25, 18:30 Uhr_
+_Zuletzt aktualisiert: 2026-10-25, 19:30 Uhr_
 
 ## Erledigt
 
@@ -56,9 +56,30 @@ _Zuletzt aktualisiert: 2026-10-25, 18:30 Uhr_
   Penthouse-Lounge und Ostecke, Bunkerlager, Lava-Graben (`Graben`, Marken „graben“ und „haus“, zweistufiger
   Tausch gegen Obsidian), G-Klasse kommt die Rampe hinauf (`RAMPE_OFFEN_AB` in villa.py), Autos mit Maßstab
   (`Autotyp.massstab`), Tische `tafel_marmor`/`tafel_holz` (moebel.tisch), Sofas ohne Spalt.
-- Rutsche (`Rutsche`, Marke „rutsche“): Aussehen fertig; der Schub kam im ersten Test nicht beim Spieler an
-  (Spieler trieb nur mit dem Wasser) – wird geprüft.
+- Rutsche (`Rutsche`, Marke „rutsche“): schiebt jetzt richtig (in 1 s unten im Pool). Wichtig: Bewegung an den
+  Spieler geht ab 26.3 über `syncVelocity` (bis 26.2 `hurtMarked`), Hilfe `Kompat.bewegungSenden`.
+- Waffenhaltung endgültig (`WAFFEN_HALTUNG` in ausruestung.py): rechts [0,90,80] mit Verschiebung [0,-0.5,5]
+  (Griff in der Faust), links [0,-90,-80], Ich-Sicht [0,100,0] / [0,-100,0]. Achsen in der Hand vor der Drehung:
+  +y vorn, +z oben, x seitlich; Drehfolge erst z, dann y, dann x (Mojang-Standard). Zum Prüfen am Spieler: von
+  hinten muss man das Ende ohne Mündung sehen, von vorn in die Mündung; die Ich-Sicht braucht eingeblendete
+  Hand (kein F1). [0,-90,-80] zeigte nach hinten, [0,-90,100] hatte den Griff oben.
 - Bilder aus Philips Nachrichten lassen sich aus dem Sitzungsprotokoll holen (Einträge vom Typ „attachment“).
+- Zweite Runde (Sprachnachricht 25.10. abends): Haustür-Achse symmetrisch (Tor/Brücke/Teppich/Beete/Brunnen
+  einen Block nach Westen, `ZUFAHRT_X0/X1` in VillaPlatzierung), Sicherheitstüren mit Kartenleser (Büro,
+  Kontrollraum; neue Tür `sicherheitstuer`), Wand zum Kontrollraum, Gaming-Stuhl (`gamingstuhl`, Sitz),
+  Zentrale auf dem Schreibtisch (Szenarien angepasst), Gästezimmer neu mit Fernseher, Bad mit Badewanne
+  (`wanne_kopf`/`wanne_fuss`, Sitz) und Toilette mit Spülung (`ToiletteBlock`, Ton `toilette`), gefüllte Truhen,
+  Landeplatz eine Lage höher (`LANDEPLATZ`), drei Sofas am Penthouse-Fernseher, Feuerstelle aus dem Beet,
+  Clubtür am Gartenzugang (Tunnelhülle hatte x 30 wieder zugemauert), Geheimclub (`geheimclub()`, Geheimregal mit
+  Schalter an der Club-Bar), Bunkertüren, Laser bündig in der Wand, Münzgrube (`goldmuenzen`, `Goldbad`) mit
+  Sprungbrett, Tiefgarage mit Rampe mittig (`RAMPE_X0/X1`), Sektturm neu, Totem = Geldbündel (Bild und Name
+  des Spiels ersetzt in `assets/minecraft`).
+- Wunsch: YouTube-Videos im Fernseher richtig abspielen. Geprüft: geht nur mit WATERMeDIA (VLC) und deren
+  YouTube-Erweiterung; Stand Juli 2026 für 1.21.1, 1.21.11, 26.1.2 und 26.2, noch nicht 26.3. Plan: optionale
+  Anbindung, sobald es sie für 26.3 gibt (Philip spielt 26.3); sonst bleibt Vorschaubild + Browser-Knopf.
+- Totem der Unsterblichkeit = Geldbündel: Bild und Name in `src/main/resources/assets/minecraft/` (von
+  ausruestung.py erzeugt, `python3 tools/assets/assets.py` nach Änderungen ausführen).
+- Club-Bar „ein bisschen Wasser“: in der neuen Villa nicht nachvollziehbar (`/villa lecks` findet nichts dort).
 
 ## Version 0.3 (geplant, Philips Wünsche vom 25.10.)
 
@@ -69,6 +90,8 @@ _Zuletzt aktualisiert: 2026-10-25, 18:30 Uhr_
   Lieferservice (z. B. Tiere).
 - **Mitarbeiter:** übers Handy bestellen → Mitarbeiterkiste ins Inventar → platzieren → Mitarbeiter erscheinen;
   jeder bekommt eine Aufgabe (Diamanten, Kohle, Eisen …), die Beute landet in der Kiste; James oder Philip holt ab.
+- **Bodyguards:** Eisengolems im Smoking, können nie sterben, beschützen nur; aus der Ferne mit Pistole, aus der
+  Nähe Nahkampf wie ein Eisengolem.
 
 ## Release
 
@@ -87,4 +110,4 @@ _Zuletzt aktualisiert: 2026-10-25, 18:30 Uhr_
 
 ## Nächster Schritt
 
-Auf Philips Rückmeldung warten (Pull Request nach `main`? Wünsche zum Feinschliff?). Für ein neues Release: `mod.version` und `.github/release-version` auf 0.1.1 setzen und pushen.
+0.2.1 veröffentlichen (`mod.version` und `.github/release-version` auf 0.2.1, pushen, Release-Ablauf beobachten), dann 0.3 (Straßennetz, Handy, Mitarbeiter, Bodyguards).

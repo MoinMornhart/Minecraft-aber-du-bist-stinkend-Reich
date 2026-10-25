@@ -1,0 +1,51 @@
+# 0.2.1 Kurztest für ältere Versionen: neue Blöcke (Tresore, Badewanne, Gaming-Stuhl, Tanzstangen, Goldmünzen,
+# Türen), Geheimregal, Waffenhaltung und Geldbündel-Totem
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+server /villa ort 55 26.5 74 180 3
+warte 8
+bild k01_haustuer
+server /villa ort 64 32 46.3 180 15
+warte 3
+bild k02_tresor
+server /villa ort 69.5 32 55 0 15
+warte 2
+bild k03_schreibtisch
+server /villa ort 38 32.5 46 160 15
+warte 2
+bild k04_bad
+server /villa ort 62.5 38.5 40.8 0 15
+warte 3
+bild k05_kino
+server /villa ort 16 7 66 60 5
+warte 3
+bild k06_geheimclub
+server /villa ort 68 9.5 53.5 0 40
+warte 3
+bild k07_sprungbrett
+server /villa ort 49 17.6 53.5 -90 30
+warte 2
+bild k07_sektturm
+# Waffen: ein Schritt nach vorn, damit der Körper in Blickrichtung steht
+server /gamemode survival
+server /villa ort 55.5 26 78.5 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /item replace entity @p weapon.offhand with stinkendreich:goldene_pistole
+taste F1
+halte 0.4 w
+warte 1.5
+bild k08_waffen_ich
+taste F5
+warte 1.5
+bild k09_waffen_hinten
+taste F5
+warte 1.5
+bild k10_waffen_vorn
+taste F5
+server /item replace entity @p weapon.mainhand with minecraft:totem_of_undying
+warte 1.5
+bild k11_totem

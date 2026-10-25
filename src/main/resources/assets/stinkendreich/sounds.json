@@ -104,6 +104,12 @@
       "stinkendreich:geldregen"
     ]
   },
+  "toilette": {
+    "subtitle": "stinkendreich.ton.toilette",
+    "sounds": [
+      "stinkendreich:toilette"
+    ]
+  },
   "musik": {
     "subtitle": "stinkendreich.ton.musik",
     "sounds": [

@@ -1,0 +1,127 @@
+# 0.2.1b: Philips Sprachnachricht nachprüfen (Fotos), dazu Griff-Varianten der Waffen
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+# Haustür-Achse: Tor, Teppich, Tür mittig
+server /villa ort 55 30 100 180 12
+warte 8
+bild c01_achse
+server /villa ort 55 26.5 74 180 3
+warte 2
+bild c02_haustuer
+# Obergeschoss: Büro-Sicherheitstür, Kontrollraum, Schreibtisch mit Gaming-Stuhl und Zentrale
+server /villa ort 56.5 32 58.5 -90 8
+warte 3
+bild c03_buero_tuer
+server /villa ort 69.5 32 55 0 15
+warte 2
+bild c04_schreibtisch
+server /villa ort 64 32 49.5 -90 5
+warte 2
+bild c05_kontrollraum_wand
+server /villa ort 70.5 32 54 180 8
+warte 2
+bild c06_kontrollraum_tuer
+# Gästezimmer und Bad
+server /villa ort 46 32.5 64 120 12
+warte 2
+bild c07_gaestezimmer
+server /villa ort 41 32 58 -90 5
+warte 2
+bild c08_gaeste_fernseher
+server /villa ort 38 32.5 46 160 15
+warte 2
+bild c09_bad
+# Penthouse: Kino mit drei Sofas, Decke ohne Landeplatz
+server /villa ort 62.5 38.5 40.8 0 15
+warte 3
+bild c10_kino
+server /villa ort 50 38 52 160 -35
+warte 2
+bild c11_decke
+server /villa ort 55 45 62 180 25
+warte 2
+bild c12_landeplatz
+# Dachterrasse: Feuerstelle
+server /villa ort 43 41 76 180 40
+warte 2
+bild c13_feuerstelle
+# Club: Gartentür, Bar (Wasser?), VIP mit Sektturm, Geheimregal
+server /villa ort 25 17 47.5 -90 5
+warte 3
+bild c14_club_gartentuer
+server /villa ort 40 16 57 180 10
+warte 2
+bild c15_club_bar
+server /villa ort 49.5 17.5 55 90 20
+warte 2
+bild c16_sektturm
+server /villa ort 33.5 16 63.5 90 5
+warte 2
+bild c17_geheimregal
+# Geheimclub
+server /villa ort 17 7 79 135 10
+warte 3
+bild c18_geheimclub
+server /villa ort 16 7 66 60 5
+warte 2
+bild c19_geheimclub_buehne
+# Tiefgarage und Garage
+server /villa ort 86.5 26 70 180 20
+warte 3
+bild c20_garage_rampe
+server /villa ort 75 19.5 49 135 20
+warte 2
+bild c21_tiefgarage
+# Bunker: Türen, Laser, Goldspeicher
+server /villa ort 57.5 6 50 0 5
+warte 3
+bild c22_bunker_flur
+server /villa ort 68 9.5 53.5 0 40
+warte 2
+bild c23_sprungbrett
+# Lecks suchen
+server /villa lecks
+warte 3
+# Toilette spülen, ins Gold springen, Rutsche, Griff-Varianten
+server /gamemode survival
+server /villa ort 47.5 32 38.5 180 30
+warte 2
+klick
+warte 1
+server /villa ort 67.5 11 55.5 0 30
+warte 3
+server /data get entity @p Pos
+server /data get entity @p Health
+bild c24_im_gold
+server /villa ort 55.5 26 80.5 180 0
+taste F5
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g1"]
+warte 1.5
+bild w_g1
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g2"]
+warte 1.5
+bild w_g2
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g3"]
+warte 1.5
+bild w_g3
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g4"]
+warte 1.5
+bild w_g4
+taste F5
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g1"]
+warte 1.5
+bild v_g1
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g2"]
+warte 1.5
+bild v_g2
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g3"]
+warte 1.5
+bild v_g3
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone[minecraft:item_model="stinkendreich:test_g4"]
+warte 1.5
+bild v_g4
+taste F5

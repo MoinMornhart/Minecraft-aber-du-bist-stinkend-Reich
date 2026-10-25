@@ -221,6 +221,23 @@ def geldregen() -> np.ndarray:
     return (stoss + flattern + muenzen) * huelle(len(t), an=0.002, ab=0.15)
 
 
+def toilette() -> np.ndarray:
+    """Toilettenspülung: Klicken der Taste, rauschendes Wasser, Strudel mit Gurgeln, Nachlaufen."""
+    t = zeit(3.2)
+    rnd = np.random.default_rng(7)
+    klick = np.sin(2 * np.pi * 1800 * t) * np.exp(-t / 0.008) * 0.6
+    rauschen = rnd.normal(0, 1, len(t))
+    # Tieffilter: Wasser rauscht dumpf, nicht zischend
+    rauschen = np.convolve(rauschen, np.ones(18) / 18, mode="same")
+    huelle_wasser = np.clip((t - 0.08) / 0.25, 0, 1) * np.exp(-np.maximum(0, t - 1.4) / 0.7)
+    gurgeln = np.zeros_like(t)
+    for start in rnd.uniform(0.6, 2.4, 14):
+        f = rnd.uniform(180, 420)
+        dt = np.maximum(0, t - start)
+        gurgeln += (t >= start) * np.sin(2 * np.pi * (f + 900 * dt) * dt) * np.exp(-dt / 0.06) * 0.35
+    return (klick + rauschen * huelle_wasser * 1.4 + gurgeln) * huelle(len(t), an=0.002, ab=0.4)
+
+
 def midi(n: float) -> float:
     return 440.0 * 2 ** ((n - 69) / 12)
 
@@ -318,6 +335,7 @@ GERAEUSCHE = {
     "schuss": (schuss, "Goldene Pistole feuert", "Golden pistol fires"),
     "laser": (laser, "Laser zischt", "Laser zaps"),
     "geldregen": (geldregen, "Geldkanone feuert", "Money cannon fires"),
+    "toilette": (toilette, "Toilettenspülung", "Toilet flushes"),
 }
 # Lange Stücke werden gestreamt statt ganz in den Speicher geladen
 GESTREAMT = {"aufzug_musik"}

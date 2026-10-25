@@ -5,6 +5,7 @@
     "stinkendreich:prunktuer",
     "stinkendreich:glastuer",
     "stinkendreich:privattuer",
+    "stinkendreich:clubtuer",
     "stinkendreich:geheimregal",
     "stinkendreich:flaschenregal",
     "stinkendreich:geldstapel",
@@ -21,6 +22,7 @@
     "stinkendreich:sofa_schwarz",
     "stinkendreich:bett_ende",
     "stinkendreich:bettbank",
-    "stinkendreich:tafel_holz"
+    "stinkendreich:tafel_holz",
+    "stinkendreich:gamingstuhl"
   ]
 }
