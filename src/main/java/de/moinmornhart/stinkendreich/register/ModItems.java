@@ -16,6 +16,7 @@ public final class ModItems {
     public static final Item GELAENDEWAGEN = autoItem(Autotyp.GELAENDEWAGEN);
     public static final Item SUPERSPORTWAGEN = autoItem(Autotyp.SUPERSPORTWAGEN);
     public static final Item STRETCHLIMO = autoItem(Autotyp.STRETCHLIMO);
+    public static final Item HUBSCHRAUBER = autoItem(Autotyp.HUBSCHRAUBER);
 
     /** XXL-Fernseher zum Aufhängen. */
     public static final Item FERNSEHER = ModRegister.item("fernseher",
@@ -32,6 +33,7 @@ public final class ModItems {
             case GELAENDEWAGEN -> GELAENDEWAGEN;
             case SUPERSPORTWAGEN -> SUPERSPORTWAGEN;
             case STRETCHLIMO -> STRETCHLIMO;
+            case HUBSCHRAUBER -> HUBSCHRAUBER;
         };
     }
 

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public final class Sprache {
     public enum Art { HOLEN, KOCHEN, SORTIEREN, FOLGEN, BLEIBEN, HEIM, KOMMEN, STOPP, INVENTAR, STATUS, HILFE,
-        FAHREN, ORT_MERKEN, ORTE, UNBEKANNT }
+        FAHREN, FLIEGEN, ORT_MERKEN, ORTE, UNBEKANNT }
 
     /** Ziele beim Fahren (in {@link Befehl#quelle()}): Villa, Blickziel, nur vorfahren; sonst Name eines Ortes. */
     public static final String ZIEL_VILLA = "#villa", ZIEL_BLICK = "#blick", ZIEL_ABHOLEN = "#abholen";
@@ -137,21 +137,19 @@ public final class Sprache {
         if (enthaelt(t, " welche orte", " orte ", "gespeicherte orte", "deine orte")) {
             return Befehl.von(Art.ORTE);
         }
+        // Pilot: wie beim Fahren, nur mit dem Hubschrauber
+        if (enthaelt(t, "hol den hubschrauber", "hol den heli", "hubschrauber holen", "heli holen")) {
+            return new Befehl(Art.FLIEGEN, ZIEL_ABHOLEN, -1, false);
+        }
+        if (enthaelt(t, " flieg", "fliegen", " hubschrauber", " heli ", "helikopter")) {
+            return new Befehl(Art.FLIEGEN, ziel(t), -1, false);
+        }
         if (enthaelt(t, "hol den wagen", "hol das auto", "hol die limo", "hol mein auto", "hol meinen wagen", "vorfahren",
                 "wagen holen", "auto holen", "limo holen")) {
             return new Befehl(Art.FAHREN, ZIEL_ABHOLEN, -1, false);
         }
         if (enthaelt(t, " fahr", "chauffier", "kutschier", "bring mich")) {
-            String ziel;
-            if (enthaelt(t, "nach hause", " heim", "zur villa", "zu hause", "zurueck")) {
-                ziel = ZIEL_VILLA;
-            } else if (enthaelt(t, " dahin", " dorthin", " da hin", " dort hin", " hierhin", " wo ich hin", " dahinten", " da vorne")) {
-                ziel = ZIEL_BLICK;
-            } else {
-                String name = ortsname(t);
-                ziel = name.isEmpty() ? ZIEL_BLICK : name;
-            }
-            return new Befehl(Art.FAHREN, ziel, -1, false);
+            return new Befehl(Art.FAHREN, ziel(t), -1, false);
         }
         int menge = menge(t);
         if (enthaelt(t, "koch", " brat", "grill", " jag")) {
@@ -180,6 +178,18 @@ public final class Sprache {
             return Befehl.von(Art.BLEIBEN);
         }
         return Befehl.von(Art.UNBEKANNT);
+    }
+
+    /** Ziel einer Fahrt oder eines Flugs: Villa, Blickziel oder Name eines gespeicherten Ortes. */
+    private static String ziel(String t) {
+        if (enthaelt(t, "nach hause", " heim", "zur villa", "zu hause", "zurueck")) {
+            return ZIEL_VILLA;
+        }
+        if (enthaelt(t, " dahin", " dorthin", " da hin", " dort hin", " hierhin", " wo ich hin", " dahinten", " da vorne")) {
+            return ZIEL_BLICK;
+        }
+        String name = ortsname(t);
+        return name.isEmpty() ? ZIEL_BLICK : name;
     }
 
     /** Name eines Ortes: was nach „als“, „zu“, „zum“, „nach“ … steht (ohne Artikel und Füllwörter). */

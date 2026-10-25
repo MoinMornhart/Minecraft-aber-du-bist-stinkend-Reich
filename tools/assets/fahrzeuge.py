@@ -104,6 +104,17 @@ def mat_glas(d, r, lack):
         d.point((x0 + b - 3, y0 + h - 2), fill=(220, 236, 246, 255))
 
 
+def mat_glas_dunkel(d, r, lack):
+    """Getönte Scheibe (undurchsichtig) mit schrägem Lichtreflex, z. B. Seitenfenster des Hubschraubers."""
+    x0, y0, b, h = r
+    if b <= 0 or h <= 0:
+        return
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=(26, 34, 52, 255))
+    for i in range(-h, b, max(4, b // 2)):
+        d.line([(x0 + i, y0 + h - 1), (x0 + i + h - 1, y0)], fill=(70, 92, 124, 255))
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], outline=(14, 16, 22, 255))
+
+
 def mat_reifen(d, r, lack):
     fuellen(d, r, REIFEN)
     x0, y0, b, h = r
@@ -228,6 +239,7 @@ MATERIALIEN = {
     "innen": farbe_mat(INNEN), "licht": farbe_mat(LICHT), "rot": farbe_mat(ROT), "reifen": mat_reifen,
     "felge": mat_felge, "grill": mat_grill, "kennzeichen": mat_kennzeichen, "lamellen": mat_lamellen,
     "carbon": mat_carbon, "bar": farbe_mat((60, 34, 22)), "orange": farbe_mat((250, 150, 30)),
+    "gruen": farbe_mat((30, 200, 70)), "glas_dunkel": mat_glas_dunkel,
     "grill_quer": mat_grill_quer, "scheinwerfer_rund": mat_scheinwerfer_rund,
     "reifen_flanke": farbe_mat(FLANKE), "felge_rund": mat_leer,
 }
@@ -476,6 +488,66 @@ def gelaendewagen() -> Modell:
     return m
 
 
+def hubschrauber() -> Modell:
+    """Luxus-Hubschrauber (im Spiel 1,4-fach vergrößert: gut 7 Blöcke lang, Rotor 12 Blöcke): Kabine mit großen Scheiben und Goldstreifen,
+    Kufen, Triebwerksverkleidung, Heckausleger mit Seitenleitwerk, Fünfblatt-Hauptrotor (Teil „rotor“) und
+    Heckrotor (Teil „heckrotor“); beide dreht FahrzeugModell. Vorn ist -Z, y = 0 der Boden."""
+    m = Modell("hubschrauber")
+    k = m.teil("karosserie")
+    # Kufen mit Streben
+    for x in (-14, 12):
+        k.kasten((x, -1.5, -20), (2, 1.5, 40), "chrom")
+        k.kasten((x, -3.5, -22.5), (2, 2.5, 3), "chrom")
+        for z in (-12, 10):
+            k.kasten((x + 0.5, -7, z), (1, 5.5, 1.5), "chrom")
+    # Kabine: Bauch, Oberteil mit Fenstern, Nase mit Frontscheibe
+    k.kasten((-11, -14, -18), (22, 8, 32), "lack", unten="schwarz", seite="seite")
+    k.kasten((-10.5, -25, -13), (21, 11, 26), "lack")
+    for x in (-11, 10.5):
+        k.kasten((x, -23.5, -11.5), (0.5, 8, 10), "glas_dunkel")
+        k.kasten((x, -23.5, 0), (0.5, 8, 11), "glas_dunkel")
+        k.kasten((x - (0.3 if x < 0 else -0.5), -15.5, -18), (0.3, 2, 32), "gold")          # Goldstreifen
+        k.kasten((x - (0.2 if x < 0 else -0.5), -24, -0.5), (0.2, 18, 0.5), "lack_dunkel")   # Türfuge
+    k.kasten((-9.5, -25, -19), (19, 5, 6), "glas")
+    k.kasten((-9, -20, -24), (18, 6, 6), "lack")
+    k.kasten((-8.5, -24, -24), (17, 4, 5), "glas")
+    k.kasten((-7, -18, -27), (14, 6, 3), "lack", vorne="lack_dunkel")
+    k.kasten((-2, -15, -27.4), (4, 2, 0.5), "gold")
+    # Innen: Boden, Cockpit, vier Ledersitze
+    k.kasten((-10, -6.5, -17), (20, 0.5, 30), "innen")
+    k.kasten((-9, -17, -19), (18, 3, 3), "schwarz", oben="carbon")
+    s_ = m.teil("sitze")
+    for x in (-10.5, 1.5):
+        for z in (-12, 0):
+            sitz(s_, x, -9, z, lehne_hoehe=7)
+    # Triebwerk, Auspuff, Rotormast
+    k.kasten((-6, -29, -8), (12, 4, 20), "lack_dunkel")
+    k.kasten((-7.5, -28, 6), (2, 2, 4), "chrom").kasten((5.5, -28, 6), (2, 2, 4), "chrom")
+    k.kasten((-1, -35, -1), (2, 6, 2), "chrom")
+    # Heckausleger, Leitwerk, Höhenflosse
+    k.kasten((-3.5, -22, 14), (7, 6, 14), "lack")
+    k.kasten((-2.5, -21.5, 28), (5, 5, 14), "lack")
+    k.kasten((-2, -21, 42), (4, 4, 12), "lack")
+    k.kasten((-1, -34, 50), (2, 13, 6), "lack")
+    k.kasten((-1, -35, 51), (2, 1, 5), "gold")
+    k.kasten((-8, -22, 46), (16, 1, 4), "lack")
+    # Positionslichter: links rot, rechts grün, Blitz am Leitwerk
+    k.kasten((-11.6, -14, -2), (0.5, 1, 1.5), "rot").kasten((11.1, -14, -2), (0.5, 1, 1.5), "gruen")
+    k.kasten((-0.5, -36, 53), (1, 1, 1), "rot")
+    # Hauptrotor: Nabe und fünf Blätter (Blatt 0 im Teil selbst, die anderen um je 72 Grad gedreht)
+    r = m.teil("rotor", (0, 24 - 35, 0))
+    r.kasten((-2.5, -1, -2.5), (5, 2, 5), "chrom")
+    for i in range(5):
+        blatt = r if i == 0 else m.teil(f"rotor_{i}", (0, 0, 0), (0, math.radians(72 * i), 0), eltern="rotor")
+        blatt.kasten((-1.5, -0.6, -66), (3, 0.6, 63), "schwarz")
+        blatt.kasten((-1.5, -0.65, -67), (3, 0.7, 4), "gold")
+    # Heckrotor rechts am Leitwerk (dreht um die Querachse)
+    h = m.teil("heckrotor", (1.5, 24 - 28, 53))
+    h.kasten((0, -7, -1), (0.5, 14, 2), "schwarz").kasten((0, -1, -7), (0.5, 2, 14), "schwarz")
+    h.kasten((-0.2, -1, -1), (1, 2, 2), "chrom")
+    return m
+
+
 def supersportwagen() -> Modell:
     """Flacher Keil-Supersportwagen (4,5 × 2 Blöcke): Mittelmotor mit Lamellen, Lufteinlässe, Heckflügel."""
     m = Modell("supersportwagen")
@@ -545,6 +617,7 @@ TEXTE_DE = {
     "key.stinkendreich.licht": "Scheinwerfer",
     "key.stinkendreich.kamera": "Kamera im Auto",
     "stinkendreich.auto.hinweis": "W/S Gas und Bremse · A/D lenken · Leertaste Handbremse (Driften) · H Hupe · G Licht · V Kamera · Schleichen: aussteigen",
+    "stinkendreich.hubschrauber.hinweis": "Leertaste steigen · Strg sinken · W/S vor und zurück · A/D drehen · G Licht · V Kamera · Schleichen: aussteigen",
     "stinkendreich.ton.motor": "Motor brummt",
     "stinkendreich.ton.anlasser": "Motor startet",
     "stinkendreich.ton.hupe": "Hupe",
@@ -558,6 +631,7 @@ TEXTE_EN = {
     "key.stinkendreich.licht": "Headlights",
     "key.stinkendreich.kamera": "Car camera",
     "stinkendreich.auto.hinweis": "W/S throttle and brake · A/D steer · Space handbrake (drift) · H horn · G lights · V camera · Sneak: get out",
+    "stinkendreich.hubschrauber.hinweis": "Space climb · Ctrl descend · W/S forward and back · A/D turn · G lights · V camera · Sneak: get out",
     "stinkendreich.ton.motor": "Engine hums",
     "stinkendreich.ton.anlasser": "Engine starts",
     "stinkendreich.ton.hupe": "Horn",
@@ -571,6 +645,7 @@ FAHRZEUGE = {
     "gelaendewagen": (gelaendewagen, "Luxus-Geländewagen", "Luxury Off-Roader"),
     "supersportwagen": (supersportwagen, "Supersportwagen", "Supercar"),
     "stretchlimo": (stretchlimo, "Stretch-Limousine", "Stretch Limousine"),
+    "hubschrauber": (hubschrauber, "Luxus-Hubschrauber", "Luxury Helicopter"),
 }
 
 
@@ -590,6 +665,17 @@ def item_bild(typ: str) -> Image.Image:
         d.polygon([(0, 11), (2, 8), (7, 6), (10, 6), (15, 9), (15, 11)], fill=(238, 196, 26, 255))
         d.polygon([(7, 7), (9, 7), (10, 8), (6, 8)], fill=glas)
         rad = ((3, 12), (12, 12))
+    elif typ == "hubschrauber":
+        d.rectangle([3, 6, 11, 10], fill=(24, 24, 28, 255))
+        d.rectangle([2, 7, 4, 9], fill=glas)
+        d.rectangle([11, 7, 15, 8], fill=(24, 24, 28, 255))
+        d.line([(1, 4), (14, 4)], fill=(60, 60, 66, 255))
+        d.point((7, 5), fill=(200, 204, 210, 255))
+        d.line([(3, 12), (11, 12)], fill=(200, 204, 210, 255))
+        d.point((5, 11), fill=(200, 204, 210, 255))
+        d.point((9, 11), fill=(200, 204, 210, 255))
+        d.line([(4, 9), (10, 9)], fill=gold)
+        return img
     elif typ == "stretchlimo":
         d.rectangle([0, 7, 15, 10], fill=(18, 18, 20, 255))
         d.rectangle([3, 5, 13, 7], fill=(18, 18, 20, 255))

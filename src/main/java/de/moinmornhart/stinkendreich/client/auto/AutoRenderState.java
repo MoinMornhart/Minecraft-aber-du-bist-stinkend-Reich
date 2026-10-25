@@ -10,5 +10,7 @@ public class AutoRenderState extends LivingEntityRenderState {
 /*public class AutoRenderState {*/
     public float radWinkel;
     public float lenkWinkel;
+    /** Hubschrauber: Rotorwinkel (Bogenmaß), Neigen und Rollen (Grad). */
+    public float rotorWinkel, neigung, rollen;
     public int farbe;
 }

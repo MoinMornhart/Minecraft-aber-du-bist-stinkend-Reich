@@ -29,7 +29,8 @@ import java.util.Map;
 /**
  * Modell eines Fahrzeugs aus dem Baukasten (tools/assets/fahrzeuge.py → assets/stinkendreich/fahrzeuge/&lt;typ&gt;.json):
  * Teile mit Drehpunkt und Drehung, darin Kästen mit ihrer Stelle auf der Textur. Räder heißen rad_vl, rad_vr,
- * rad_hl, rad_hr (vorne gelenkt); fehlt ein Teil, wird es einfach nicht bewegt.
+ * rad_hl, rad_hr (vorne gelenkt), beim Hubschrauber drehen sich „rotor“ und „heckrotor“ und das ganze Modell
+ * neigt sich; fehlt ein Teil, wird es einfach nicht bewegt.
  */
 //? if >=1.21.2 {
 public class FahrzeugModell extends EntityModel<AutoRenderState> {
@@ -37,6 +38,8 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
 /*public class FahrzeugModell extends HierarchicalModel<AutoEntity> {*/
     private final ModelPart wurzel;
     private final ModelPart radVL, radVR, radHL, radHR;
+    /** Nur Hubschrauber: Haupt- und Heckrotor. */
+    private final ModelPart rotor, heckrotor;
 
     public FahrzeugModell(ModelPart wurzel) {
         //? if >=1.21.2
@@ -46,6 +49,8 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
         this.radVR = kind(wurzel, "rad_vr");
         this.radHL = kind(wurzel, "rad_hl");
         this.radHR = kind(wurzel, "rad_hr");
+        this.rotor = kind(wurzel, "rotor");
+        this.heckrotor = kind(wurzel, "heckrotor");
     }
 
     public static ModelLayerLocation schicht(String typ) {
@@ -89,6 +94,25 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
         return LayerDefinition.create(netz, j.get("breite").getAsInt(), j.get("hoehe").getAsInt());
     }
 
+    /** Hubschrauber: Rotoren drehen, Rumpf neigen (Nase runter) und in der Kurve rollen. */
+    private void fliegen(float rotorWinkel, float neigung, float rollen) {
+        if (rotor == null) {
+            return;
+        }
+        rotor.yRot = rotorWinkel;
+        if (heckrotor != null) {
+            heckrotor.xRot = rotorWinkel * 3.0F;
+        }
+        // Größer zeichnen; der Boden (Modell-y 24) bleibt dabei am Boden
+        float s = de.moinmornhart.stinkendreich.auto.Autotyp.HUBSCHRAUBER_MASSSTAB;
+        wurzel.xScale = s;
+        wurzel.yScale = s;
+        wurzel.zScale = s;
+        wurzel.y = 24.0F * (1.0F - s);
+        wurzel.xRot = -neigung * net.minecraft.util.Mth.DEG_TO_RAD;
+        wurzel.zRot = rollen * net.minecraft.util.Mth.DEG_TO_RAD;
+    }
+
     /** Räder drehen und Vorderräder einschlagen. */
     private void raeder(float drehung, float lenkung) {
         for (ModelPart rad : new ModelPart[]{radVL, radVR, radHL, radHR}) {
@@ -109,6 +133,7 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
     public void setupAnim(AutoRenderState zustand) {
         super.setupAnim(zustand);
         raeder(zustand.radWinkel, zustand.lenkWinkel);
+        fliegen(zustand.rotorWinkel, zustand.neigung, zustand.rollen);
     }
     //?} else {
     /*@Override
@@ -120,6 +145,7 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
     public void setupAnim(AutoEntity auto, float a, float b, float alter, float kopfY, float kopfX) {
         float zwischen = alter - (float) auto.tickCount;
         raeder(net.minecraft.util.Mth.lerp(zwischen, auto.radWinkelAlt, auto.radWinkel), auto.lenkWinkel);
+        fliegen(net.minecraft.util.Mth.lerp(zwischen, auto.rotorWinkelAlt, auto.rotorWinkel), auto.neigung, auto.rollen);
     }
     *///?}
 }

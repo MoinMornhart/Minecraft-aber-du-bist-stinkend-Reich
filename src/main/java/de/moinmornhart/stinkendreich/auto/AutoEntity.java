@@ -66,8 +66,8 @@ public class AutoEntity extends Mob {
 
     // Fahrzustand (auf dem steuernden Rechner)
     private double tempo;
-    /** Gas (-1…1) und Lenkung (-1 rechts … 1 links) vom Chauffeur, wenn der Butler fährt (Server). */
-    private double chauffeurGas, chauffeurLenk;
+    /** Gas (-1…1), Lenkung (-1 rechts … 1 links) und Steigen (-1…1, nur Hubschrauber) vom Butler am Steuer (Server). */
+    protected double chauffeurGas, chauffeurLenk, chauffeurHoch;
     private double lenkung;
     private Vec3 schub = Vec3.ZERO;
     private boolean driftet;
@@ -76,6 +76,8 @@ public class AutoEntity extends Mob {
     // Darstellung (auf jedem Client aus der Bewegung berechnet)
     public float radWinkel, radWinkelAlt;
     public float lenkWinkel;
+    /** Nur Hubschrauber: Rotorwinkel, Neigen (Nase runter) und Rollen in Grad. */
+    public float rotorWinkel, rotorWinkelAlt, neigung, rollen;
     private double anzeigeTempo;
 
     // Scheinwerfer: gesetzte Lichtblöcke (Server)
@@ -97,7 +99,7 @@ public class AutoEntity extends Mob {
                 .add(Attributes.STEP_HEIGHT, 1.05);
         // Ab 1.21.6 richtet sich die Kamera beim Fahren nach diesem Wert (Verfolgerkamera)
         //? if >=1.21.6
-        b.add(Attributes.CAMERA_DISTANCE, art == Autotyp.STRETCHLIMO ? 11.0 : 7.0);
+        b.add(Attributes.CAMERA_DISTANCE, art == Autotyp.STRETCHLIMO || art.fliegt() ? 11.0 : 7.0);
         return b;
     }
 
@@ -195,8 +197,14 @@ public class AutoEntity extends Mob {
 
     /** Eingaben des Chauffeurs für den nächsten Tick (siehe {@code butler.Chauffeur}). */
     public void chauffeurEingabe(double gas, double lenk) {
+        chauffeurEingabe(gas, lenk, 0);
+    }
+
+    /** Eingaben des Butlers mit Steigen/Sinken (Hubschrauber, siehe {@code butler.Pilot}). */
+    public void chauffeurEingabe(double gas, double lenk, double hoch) {
         chauffeurGas = Mth.clamp(gas, -1, 1);
         chauffeurLenk = Mth.clamp(lenk, -1, 1);
+        chauffeurHoch = Mth.clamp(hoch, -1, 1);
     }
 
     /** Aktuelle Geschwindigkeit in Blöcken pro Tick (vorwärts positiv). */
@@ -450,7 +458,7 @@ public class AutoEntity extends Mob {
             float soll = f instanceof Player p ? p.xxa : (f != null ? Mth.clamp(-Mth.wrapDegrees(getYRot() - yRotO) / 3.0F, -1, 1) : 0);
             lenkWinkel += (soll * 0.45F - lenkWinkel) * 0.3F;
             // Reifenqualm beim Driften und beim scharfen Bremsen
-            boolean quer = gefahren > 0.3 && Math.abs(vor) < gefahren * 0.92;
+            boolean quer = gefahren > 0.3 && Math.abs(vor) < gefahren * 0.92 && !art.fliegt();
             if (quer || driftet) {
                 for (int seite = -1; seite <= 1; seite += 2) {
                     Vec3 rad = position().add(richtung.scale(-art.hinterachse)).add(new Vec3(richtung.z, 0, -richtung.x).scale(0.9 * seite));

@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -182,6 +183,11 @@ public final class VillaPlatzierung {
                         ursprung.getZ() + m.get(2).getAsDouble(), 0.0F, 0.0F);
                 welt.addFreshEntity(teller);
             }
+        }
+        // Der Hubschrauber steht auf dem Landeplatz auf dem Penthouse-Dach
+        for (JsonArray m : plan.marke("hubschrauber")) {
+            abstellen(welt, de.moinmornhart.stinkendreich.auto.Autotyp.HUBSCHRAUBER, 0, ursprung.getX() + m.get(0).getAsDouble(),
+                    ursprung.getY() + m.get(1).getAsDouble(), ursprung.getZ() + m.get(2).getAsDouble(), (float) m.get(3).getAsDouble());
         }
         // Der Fuhrpark steht in der Tiefgarage (Stellplätze aus dem Bauplan)
         for (JsonArray platz : plan.marke("stellplatz")) {
@@ -463,6 +469,16 @@ public final class VillaPlatzierung {
 
         public float spawnBlick() {
             return plan.ersteMarke("spawn").get(3).getAsFloat();
+        }
+
+        /** Mitte des Hubschrauber-Landeplatzes auf dem Penthouse-Dach (oder der Spawn, falls es keinen gibt). */
+        public BlockPos landeplatz() {
+            List<JsonArray> marken = plan.marke("hubschrauber");
+            if (marken.isEmpty()) {
+                return spawn();
+            }
+            JsonArray m = marken.get(0);
+            return weltPos(m.get(0).getAsDouble(), m.get(1).getAsDouble(), m.get(2).getAsDouble());
         }
 
         /** Liegt die Position innerhalb des Grundstücks (inkl. Bunker)? */

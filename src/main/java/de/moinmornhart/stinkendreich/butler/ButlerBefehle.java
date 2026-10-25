@@ -5,6 +5,7 @@ import com.mojang.brigadier.context.CommandContext;
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.Konfig;
 import de.moinmornhart.stinkendreich.butler.auftrag.FahrAuftrag;
+import de.moinmornhart.stinkendreich.butler.auftrag.FlugAuftrag;
 import de.moinmornhart.stinkendreich.butler.auftrag.GehAuftrag;
 import de.moinmornhart.stinkendreich.butler.auftrag.SortierAuftrag;
 import de.moinmornhart.stinkendreich.netz.Netz;
@@ -35,7 +36,7 @@ import java.util.Locale;
  *   <li>{@code /butler truhe} – die angeschaute Truhe wird seine Lieferkiste</li>
  *   <li>{@code /butler ort merken <Name>}, {@code /butler ort vergessen <Name>}, {@code /butler orte} – Orte für den Chauffeur</li>
  *   <li>Chauffeur: „Butler, fahr mich zum Strand“, „fahr mich dahin“ (wohin man schaut), „fahr mich nach Hause“,
- *       „hol den Wagen“</li>
+ *       „hol den Wagen“; Pilot genauso mit „flieg mich …“ und „hol den Hubschrauber“</li>
  *   <li>{@code /butler <Auftrag>} – z. B. {@code /butler hol 32 eisen}</li>
  *   <li>Chat: „Butler, hol mir 32 Eisen“ (oder mit seinem Namen anreden)</li>
  *   <li>Rechtsklick auf den Butler: Menü mit Knöpfen und Textfeld</li>
@@ -183,39 +184,47 @@ public final class ButlerBefehle {
         return b.orte().isEmpty() ? "–" : String.join(", ", b.orte().keySet());
     }
 
-    /** Fahrbefehl: Ziel bestimmen und den Chauffeur losschicken. */
-    private static Antwort fahren(ButlerEntity b, ServerPlayer p, String ziel) {
+    /** Fahr- oder Flugbefehl: Ziel bestimmen und den Butler losschicken (als Chauffeur oder Pilot). */
+    private static Antwort fahren(ButlerEntity b, ServerPlayer p, String ziel, boolean fliegen) {
         // Weit weg „schläft“ der Butler (außerhalb der Simulationsweite): dann springt er zum Herrn
         if (b.level() != p.level() || b.distanceTo(p) > 32) {
             b.teleportiereNahe(p.blockPosition());
         }
+        String art = fliegen ? "flug" : "fahren";
+        Vec3 punkt;
+        String name;
+        Antwort antwort;
         if (Sprache.ZIEL_ABHOLEN.equals(ziel)) {
-            b.neueAuftraege(List.of(new FahrAuftrag(null, "")));
-            return Antwort.ok("stinkendreich.butler.fahren.holt");
-        }
-        if (Sprache.ZIEL_VILLA.equals(ziel)) {
+            punkt = null;
+            name = "";
+            antwort = Antwort.ok("stinkendreich.butler." + art + ".holt");
+        } else if (Sprache.ZIEL_VILLA.equals(ziel)) {
             var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
-            BlockPos heim = villa.map(v -> v.spawn()).orElse(b.heimat());
-            String name = Component.translatable("stinkendreich.butler.fahren.villa").getString();
-            b.neueAuftraege(List.of(new FahrAuftrag(Vec3.atBottomCenterOf(heim), name)));
-            return Antwort.ok("stinkendreich.butler.fahren.heim");
-        }
-        if (Sprache.ZIEL_BLICK.equals(ziel)) {
+            // Der Hubschrauber landet auf dem Landeplatz, das Auto hält vor dem Haus
+            BlockPos heim = villa.map(v -> fliegen ? v.landeplatz() : v.spawn()).orElse(b.heimat());
+            punkt = Vec3.atBottomCenterOf(heim);
+            name = Component.translatable("stinkendreich.butler.fahren.villa").getString();
+            antwort = Antwort.ok("stinkendreich.butler." + art + ".heim");
+        } else if (Sprache.ZIEL_BLICK.equals(ziel)) {
             HitResult blick = p.pick(300.0, 1.0F, false);
             if (!(blick instanceof BlockHitResult bt) || blick.getType() != HitResult.Type.BLOCK) {
                 return new Antwort(Component.translatable("stinkendreich.butler.fahren.nichtgesehen"), true);
             }
             BlockPos pos = bt.getBlockPos().above();
-            String name = pos.getX() + " " + pos.getY() + " " + pos.getZ();
-            b.neueAuftraege(List.of(new FahrAuftrag(Vec3.atBottomCenterOf(pos), name)));
-            return Antwort.ok("stinkendreich.butler.fahren.blick", pos.getX(), pos.getY(), pos.getZ());
+            punkt = Vec3.atBottomCenterOf(pos);
+            name = pos.getX() + " " + pos.getY() + " " + pos.getZ();
+            antwort = Antwort.ok("stinkendreich.butler." + art + ".blick", pos.getX(), pos.getY(), pos.getZ());
+        } else {
+            BlockPos ort = b.ort(ziel);
+            if (ort == null) {
+                return new Antwort(Component.translatable("stinkendreich.butler.ort.unbekannt", ziel, ortListe(b)), true);
+            }
+            punkt = Vec3.atBottomCenterOf(ort);
+            name = ziel;
+            antwort = Antwort.ok("stinkendreich.butler." + art + ".ort", ziel);
         }
-        BlockPos ort = b.ort(ziel);
-        if (ort == null) {
-            return new Antwort(Component.translatable("stinkendreich.butler.ort.unbekannt", ziel, ortListe(b)), true);
-        }
-        b.neueAuftraege(List.of(new FahrAuftrag(Vec3.atBottomCenterOf(ort), ziel)));
-        return Antwort.ok("stinkendreich.butler.fahren.ort", ziel);
+        b.neueAuftraege(List.of(fliegen ? new FlugAuftrag(punkt, name) : new FahrAuftrag(punkt, name)));
+        return antwort;
     }
 
     /** Führt einen Auftrag aus und gibt die Antwort zurück (ohne sie auszusprechen). */
@@ -278,7 +287,10 @@ public final class ButlerBefehle {
                 return Antwort.ok("stinkendreich.butler.hilfe");
             }
             case FAHREN -> {
-                return fahren(b, p, bf.quelle());
+                return fahren(b, p, bf.quelle(), false);
+            }
+            case FLIEGEN -> {
+                return fahren(b, p, bf.quelle(), true);
             }
             case ORT_MERKEN -> {
                 String name = bf.quelle() == null ? "" : Sprache.normalisieren(bf.quelle());

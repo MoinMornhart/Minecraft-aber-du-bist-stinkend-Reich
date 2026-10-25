@@ -28,6 +28,10 @@ public final class ModEntities {
     public static final EntityType<AutoEntity> SUPERSPORTWAGEN = auto(Autotyp.SUPERSPORTWAGEN, 2.5F, 1.0F);
     /** Stretch-Limousine: 8 Blöcke lang, die Trefferbox deckt die Mitte ab. */
     public static final EntityType<AutoEntity> STRETCHLIMO = auto(Autotyp.STRETCHLIMO, 2.5F, 1.5F);
+    /** Luxus-Hubschrauber (eigene Flugphysik, siehe HubschrauberEntity). */
+    public static final EntityType<AutoEntity> HUBSCHRAUBER = registrieren(Autotyp.HUBSCHRAUBER.name,
+            EntityType.Builder.<AutoEntity>of((t, w) -> new de.moinmornhart.stinkendreich.auto.HubschrauberEntity(t, w), MobCategory.MISC)
+                    .sized(3.2F, 3.0F).clientTrackingRange(12).updateInterval(1).fireImmune());
 
     /** Die gläserne Aufzugskabine: 2 × 2 Blöcke, knapp 3 hoch; jede Bewegung sofort an die Klienten. */
     public static final EntityType<de.moinmornhart.stinkendreich.mechanik.AufzugKabine> AUFZUG = registrieren("aufzugkabine",
@@ -64,6 +68,7 @@ public final class ModEntities {
             case GELAENDEWAGEN -> GELAENDEWAGEN;
             case SUPERSPORTWAGEN -> SUPERSPORTWAGEN;
             case STRETCHLIMO -> STRETCHLIMO;
+            case HUBSCHRAUBER -> HUBSCHRAUBER;
         };
     }
 

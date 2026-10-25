@@ -123,6 +123,24 @@ def motor() -> np.ndarray:
     return s
 
 
+def rotor() -> np.ndarray:
+    """Hubschrauber: Turbinenpfeifen und das „Wap-wap“ der Rotorblätter (6 Schläge pro Sekunde), nahtlos
+    wiederholbar (2 Sekunden, alle Anteile passen genau hinein). Die Mod ändert Tonhöhe und Lautstärke."""
+    t = zeit(2.0)
+    rnd = np.random.default_rng(23)
+    # Ein Blattschlag: gefiltertes Rauschen mit kurzem Anstieg; zwölfmal derselbe Schlag
+    n = len(t) // 12
+    schlag_t = np.arange(n) / RATE
+    rauschen = rnd.normal(0, 1, n)
+    weich = np.convolve(rauschen, np.ones(18) / 18, mode="same")
+    schlag = weich * np.exp(-schlag_t / 0.035) * np.minimum(1.0, schlag_t / 0.004)
+    schlag += 0.6 * np.sin(2 * np.pi * 70 * schlag_t) * np.exp(-schlag_t / 0.05)
+    blaetter = np.tile(schlag, 12)
+    blaetter = np.concatenate([blaetter, np.zeros(len(t) - len(blaetter))])
+    turbine = 0.12 * np.sin(2 * np.pi * 1840 * t) + 0.06 * np.sin(2 * np.pi * 3680 * t) + 0.25 * np.sin(2 * np.pi * 95 * t)
+    return blaetter * 1.6 + turbine
+
+
 def anlasser() -> np.ndarray:
     """Anlasser orgelt kurz, dann springt der Motor an und heult auf."""
     t1 = zeit(0.55)
@@ -257,6 +275,7 @@ GERAEUSCHE = {
     "tresor": (tresor, "Schwere Tür", "Heavy door"),
     "gloeckchen": (gloeckchen, "Glöckchen klingelt", "Bell rings"),
     "motor": (motor, "Motor brummt", "Engine hums"),
+    "rotor": (rotor, "Rotor knattert", "Rotor chops"),
     "anlasser": (anlasser, "Motor startet", "Engine starts"),
     "hupe": (hupe, "Hupe", "Horn"),
     "reifen": (reifen, "Reifen quietschen", "Tyres squeal"),

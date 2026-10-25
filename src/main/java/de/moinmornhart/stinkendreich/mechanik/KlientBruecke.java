@@ -21,6 +21,8 @@ public final class KlientBruecke {
     public static java.util.function.IntConsumer fernseher = id -> { };
     /** Hält der Fahrer gerade die Handbremse (Sprungtaste)? */
     public static java.util.function.BooleanSupplier handbremse = () -> false;
+    /** Hubschrauber: Sinken (Strg, die Sprinttaste). */
+    public static java.util.function.BooleanSupplier sinken = () -> false;
 
     private KlientBruecke() {
     }

@@ -162,18 +162,18 @@ public class FahrAuftrag extends Auftrag {
 
     /** Wagen des Herrn, einer in der Nähe, oder einer, der vorfährt. */
     private static AutoEntity wagenFinden(ButlerEntity butler, ServerPlayer herr) {
-        if (herr.getVehicle() instanceof AutoEntity eigener) {
+        if (herr.getVehicle() instanceof AutoEntity eigener && !eigener.art.fliegt()) {
             return eigener;
         }
         // In der Nähe heißt auch: etwa auf gleicher Höhe (nicht in der Tiefgarage unter dem Herrn)
         List<AutoEntity> nah = butler.level().getEntitiesOfClass(AutoEntity.class, herr.getBoundingBox().inflate(NAH),
-                a -> (a.getPassengers().isEmpty() || a.chauffeurFaehrt()) && Math.abs(a.getY() - herr.getY()) < 4);
+                a -> !a.art.fliegt() && (a.getPassengers().isEmpty() || a.chauffeurFaehrt()) && Math.abs(a.getY() - herr.getY()) < 4);
         if (!nah.isEmpty()) {
             nah.sort(Comparator.comparingDouble(a -> a.distanceToSqr(herr)));
             return nah.get(0);
         }
         List<AutoEntity> weit = butler.level().getEntitiesOfClass(AutoEntity.class, herr.getBoundingBox().inflate(VORFAHREN),
-                a -> a.getPassengers().isEmpty());
+                a -> !a.art.fliegt() && a.getPassengers().isEmpty());
         if (weit.isEmpty()) {
             return null;
         }

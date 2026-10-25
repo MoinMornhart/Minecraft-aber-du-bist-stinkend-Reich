@@ -1,0 +1,40 @@
+# Butler als Pilot: Hubschrauber holen (landet neben dem Spieler), zum Ort fliegen, zurück auf den Landeplatz
+server /gamemode creative
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 55.5 60 210 0 0
+warte 5
+server Butler, merk dir den Ort als Strand
+warte 2
+server /villa ort 40 26 84 0 10
+warte 3
+merke
+server Butler, hol den Hubschrauber
+warte 6
+bild p01_anflug
+bis 90 steht bereit|keinen
+warte 2
+bild p02_gelandet
+server /ride @p mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]
+warte 2
+merke
+server Butler, flieg mich zum Strand
+warte 8
+bild p03_steigt
+warte 8
+bild p04_unterwegs
+bis 120 gelandet|nicht
+warte 1
+bild p05_am_strand
+merke
+server Butler, flieg mich nach Hause
+warte 12
+bild p06_heimflug
+bis 150 gelandet|nicht
+warte 1
+bild p07_zuhause
+server /gamemode spectator
+server /villa ort 66 47.5 60 135 18
+warte 3
+bild p08_landeplatz

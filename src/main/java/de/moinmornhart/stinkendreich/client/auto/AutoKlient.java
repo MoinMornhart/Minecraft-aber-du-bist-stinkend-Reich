@@ -39,6 +39,7 @@ public final class AutoKlient {
         licht = anmelden(taste("licht", InputConstants.KEY_G)); // L öffnet in Minecraft die Fortschritte
         kamera = anmelden(taste("kamera", InputConstants.KEY_V));
         KlientBruecke.handbremse = () -> Minecraft.getInstance().options.keyJump.isDown();
+        KlientBruecke.sinken = () -> Minecraft.getInstance().options.keySprint.isDown();
         ClientTickEvents.END_CLIENT_TICK.register(AutoKlient::tick);
     }
 
@@ -114,11 +115,18 @@ public final class AutoKlient {
         // Tacho über der Schnellleiste
         if (client.player.tickCount % 4 == 0) {
             Component text = Component.literal(auto.kmh() + " km/h").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD);
+            if (auto.art.fliegt()) {
+                // Höhe über dem Boden
+                int boden = client.level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING,
+                        auto.getBlockX(), auto.getBlockZ());
+                text = text.copy().append(Component.literal("  ↑ " + Math.max(0, auto.getBlockY() - boden) + " m").withStyle(ChatFormatting.AQUA));
+            }
             if (auto.licht()) {
                 text = text.copy().append(Component.literal("  ☀").withStyle(ChatFormatting.YELLOW));
             }
             if (hinweisTicks > 0) {
-                text = text.copy().append(Component.literal("   ").append(Component.translatable("stinkendreich.auto.hinweis"))
+                text = text.copy().append(Component.literal("   ").append(Component.translatable(
+                                auto.art.fliegt() ? "stinkendreich.hubschrauber.hinweis" : "stinkendreich.auto.hinweis"))
                         .withStyle(ChatFormatting.GRAY));
             }
             Kompat.nachricht(client.player, text, true);
@@ -130,6 +138,10 @@ public final class AutoKlient {
 
     private static void kameraSetzen(Minecraft client) {
         kameraAbstand = ABSTAENDE[kameraModus];
+        // Beim Hubschrauber weiter weg (der Rotor ist groß)
+        if (kameraAbstand > 0 && client.player.getVehicle() instanceof AutoEntity a && a.art.fliegt()) {
+            kameraAbstand *= 1.6F;
+        }
         client.options.setCameraType(kameraAbstand == 0.0F ? CameraType.FIRST_PERSON : CameraType.THIRD_PERSON_BACK);
         // Ab 1.21.6 liest die Kamera den Abstand aus dem Fahrzeug
         //? if >=1.21.6 {

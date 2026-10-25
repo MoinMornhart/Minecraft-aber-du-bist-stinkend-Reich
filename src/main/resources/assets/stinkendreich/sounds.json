@@ -47,6 +47,12 @@
       "stinkendreich:motor"
     ]
   },
+  "rotor": {
+    "subtitle": "stinkendreich.ton.rotor",
+    "sounds": [
+      "stinkendreich:rotor"
+    ]
+  },
   "anlasser": {
     "subtitle": "stinkendreich.ton.anlasser",
     "sounds": [

@@ -1,0 +1,32 @@
+# Hubschrauber: auf dem Landeplatz, einsteigen, Rotor hoch, steigen, fliegen, Kurve, sinken
+server /gamemode spectator
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 66 47.5 60 135 18
+warte 8
+bild h01_landeplatz
+server /villa ort 52 45 44 -35 12
+warte 2
+bild h02_vorn
+server /gamemode creative
+server /villa ort 58 43 50.5 90 0
+warte 1
+server /ride @p mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]
+warte 2
+bild h03_eingestiegen
+warte 4
+bild h04_rotor_laeuft
+halte 3 space
+bild h05_gestiegen
+halte 4 w
+bild h06_vorwaerts
+druecke w a
+warte 1.5
+bild h07_kurve
+loslassen w a
+halte 2 space
+warte 3
+bild h08_schwebt
+halte 4 Control_L
+bild h09_sinkt

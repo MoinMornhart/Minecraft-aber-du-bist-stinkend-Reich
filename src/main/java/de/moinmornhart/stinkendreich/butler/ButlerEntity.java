@@ -184,9 +184,9 @@ public class ButlerEntity extends PathfinderMob {
                 statusSetzen();
             }
         }
-        // Am Steuer ohne Fahrauftrag und ohne Gast im Wagen: aussteigen
+        // Am Steuer ohne Auftrag und ohne Gast: aussteigen (beim Hubschrauber erst nach der Landung)
         if (tickCount % 20 == 0 && getVehicle() instanceof de.moinmornhart.stinkendreich.auto.AutoEntity wagen && !faehrtGerade()
-                && wagen.getPassengers().stream().noneMatch(e -> e instanceof Player)) {
+                && wagen.onGround() && wagen.getPassengers().stream().noneMatch(e -> e instanceof Player)) {
             stopRiding();
         }
         // Steckt er in einem Block fest (z. B. nach herabfallendem Kies), gräbt er sich frei
@@ -334,9 +334,11 @@ public class ButlerEntity extends PathfinderMob {
         return auftraege.peek();
     }
 
-    /** Sitzt er gerade als Chauffeur mit Auftrag am Steuer? */
+    /** Sitzt er gerade als Chauffeur oder Pilot mit Auftrag am Steuer? */
     public boolean faehrtGerade() {
-        return auftraege.peek() instanceof de.moinmornhart.stinkendreich.butler.auftrag.FahrAuftrag;
+        Auftrag a = auftraege.peek();
+        return a instanceof de.moinmornhart.stinkendreich.butler.auftrag.FahrAuftrag
+                || a instanceof de.moinmornhart.stinkendreich.butler.auftrag.FlugAuftrag;
     }
 
     // ------------------------------------------------------------------
