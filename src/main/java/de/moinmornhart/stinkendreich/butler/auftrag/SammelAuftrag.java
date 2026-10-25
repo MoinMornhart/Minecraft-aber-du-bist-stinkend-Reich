@@ -178,6 +178,10 @@ public class SammelAuftrag extends Auftrag {
                 return;
             }
         }
+        // Immer das Vorkommen, das von seinem jetzigen Standort aus am nächsten liegt
+        // (die Liste ist nach dem Startpunkt der Suche sortiert, er ist inzwischen weitergewandert)
+        BlockPos hier = butler.blockPosition();
+        kandidaten.sort(java.util.Comparator.<BlockPos>comparingDouble(p -> p.distSqr(hier)));
         while (!kandidaten.isEmpty()) {
             BlockPos p = kandidaten.remove(0);
             if (!gesperrt.contains(p) && rohstoff().block().test(welt.getBlockState(p))) {

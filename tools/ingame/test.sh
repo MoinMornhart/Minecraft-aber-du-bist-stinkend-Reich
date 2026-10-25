@@ -11,6 +11,7 @@
 #                   halte <sek> <taste…>   (z. B. „halte 3 w space“)
 #                   server </befehl oder Chattext>   (über eine Datei, ohne Tippen)
 #                   klient schliessen|butlermenue      (Bildschirm schließen / Butler-Menü öffnen)
+#                   bis <sek> <muster>   (wartet, bis eine neue Zeile im Client-Log zum Muster passt, höchstens <sek>)
 set -uo pipefail
 
 V="${1:?Minecraft-Version angeben, z. B. 26.3}"
@@ -145,6 +146,11 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;   # Befehl ohne Tippen (Autotest-Modus)
     klient) printf '%s\n' "$rest" >> "$RUN/stinkendreich-klient.txt"; sleep 1 ;;   # schliessen | butlermenue
+    bis) set -- $rest; frist="$1"; shift; muster="$*"; ab=$(wc -l < "$LOGS/client.log"); ende=$((SECONDS + frist))
+         until tail -n +"$((ab + 1))" "$LOGS/client.log" | grep -qaE "$muster"; do
+           if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi
+           sleep 2
+         done ;;
     halte) set -- $rest; dauer="$1"; shift; xdotool keydown "$@"; sleep "$dauer"; xdotool keyup "$@"; sleep 0.3 ;;   # Tasten gedrückt halten
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac

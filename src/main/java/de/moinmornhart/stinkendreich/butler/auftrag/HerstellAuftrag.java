@@ -51,7 +51,7 @@ public class HerstellAuftrag extends Auftrag {
             werkbank = tische.isEmpty() ? null : tische.get(0);
         }
         if (werkbank != null) {
-            ButlerEntity.Weg w = butler.gehZu(werkbank, 2.2);
+            ButlerEntity.Weg w = butler.hinkommen(werkbank, 2.2);
             if (w == ButlerEntity.Weg.UNTERWEGS) {
                 return Stand.LAEUFT;
             }

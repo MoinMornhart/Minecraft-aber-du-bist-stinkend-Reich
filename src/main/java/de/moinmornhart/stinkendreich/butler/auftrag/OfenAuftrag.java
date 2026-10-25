@@ -116,7 +116,7 @@ public class OfenAuftrag extends Auftrag {
                     return Stand.LAEUFT;
                 }
                 BlockPos t = truhen.get(brennstoffTruhe);
-                ButlerEntity.Weg w = butler.gehZu(t, 2.2);
+                ButlerEntity.Weg w = butler.hinkommen(t, 2.2);
                 if (w == ButlerEntity.Weg.UNERREICHBAR) {
                     brennstoffTruhe++;
                 } else if (w == ButlerEntity.Weg.DA) {
@@ -141,7 +141,7 @@ public class OfenAuftrag extends Auftrag {
                     return Stand.LAEUFT;
                 }
                 Platz platz = plaetze.get(index);
-                ButlerEntity.Weg w = butler.gehZu(platz.pos, 2.2);
+                ButlerEntity.Weg w = butler.hinkommen(platz.pos, 2.2);
                 if (w == ButlerEntity.Weg.UNERREICHBAR) {
                     index++;
                 } else if (w == ButlerEntity.Weg.DA) {
@@ -181,7 +181,7 @@ public class OfenAuftrag extends Auftrag {
                     index++;
                     return Stand.LAEUFT;
                 }
-                ButlerEntity.Weg w = butler.gehZu(platz.pos, 2.2);
+                ButlerEntity.Weg w = butler.hinkommen(platz.pos, 2.2);
                 if (w == ButlerEntity.Weg.DA || w == ButlerEntity.Weg.UNERREICHBAR) {
                     entnehmen(butler, q, platz);
                     index++;

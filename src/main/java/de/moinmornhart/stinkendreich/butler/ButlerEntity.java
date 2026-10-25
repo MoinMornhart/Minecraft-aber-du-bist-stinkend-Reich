@@ -422,12 +422,13 @@ public class ButlerEntity extends PathfinderMob {
         if (--wegNeuIn <= 0 || getNavigation().isDone()) {
             wegNeuIn = 30;
             Path pfad = getNavigation().createPath(block, Math.max(0, (int) Math.floor(nah) - 1));
-            if (pfad == null || (!pfad.canReach() && pfad.getEndNode() != null
-                    && Vec3.atBottomCenterOf(pfad.getEndNode().asBlockPos()).distanceToSqr(punkt) > (nah + 1.5) * (nah + 1.5))) {
+            if (pfad == null || !fuehrtWeiter(pfad, punkt, nah)) {
                 if (++wegFehler >= 3) {
                     wegZiel = null;
                     return Weg.UNERREICHBAR;
                 }
+            } else {
+                wegFehler = 0;
             }
             if (pfad != null) {
                 getNavigation().moveTo(pfad, 1.0);
@@ -452,6 +453,39 @@ public class ButlerEntity extends PathfinderMob {
     public void wegVergessen() {
         wegZiel = null;
         getNavigation().stop();
+    }
+
+    /**
+     * Bringt der Weg ihn weiter? Ein vollständiger Weg sowieso. Bei weiten Zielen liefert die
+     * Wegsuche nur ein Teilstück (sie schaut höchstens FOLLOW_RANGE Blöcke weit) – das zählt,
+     * solange sein Ende deutlich näher am Ziel liegt als der Butler jetzt.
+     */
+    private boolean fuehrtWeiter(Path pfad, Vec3 punkt, double nah) {
+        if (pfad.canReach() || pfad.getEndNode() == null) {
+            return pfad.canReach();
+        }
+        double ende = Vec3.atBottomCenterOf(pfad.getEndNode().asBlockPos()).distanceToSqr(punkt);
+        if (ende <= (nah + 1.5) * (nah + 1.5)) {
+            return true;
+        }
+        return Math.sqrt(ende) < position().distanceTo(punkt) - 2.0;
+    }
+
+    /**
+     * Wie {@link #gehZu(BlockPos, double)}, aber für Öfen, Truhen und Werkbänke: Findet er keinen
+     * Weg (etwa tief unten in seinem eigenen Tunnel), springt er direkt daneben. Steht er schon in
+     * Reichweite, gilt er als angekommen, auch wenn kein Fußweg bis ganz heran führt.
+     */
+    public Weg hinkommen(BlockPos ziel, double nah) {
+        Weg w = gehZu(ziel, nah);
+        if (w != Weg.UNERREICHBAR) {
+            return w;
+        }
+        if (inReichweite(ziel)) {
+            getNavigation().stop();
+            return Weg.DA;
+        }
+        return teleportiereNahe(ziel) ? Weg.UNTERWEGS : Weg.UNERREICHBAR;
     }
 
     /** Ist der Block in Reichweite der Hände? */

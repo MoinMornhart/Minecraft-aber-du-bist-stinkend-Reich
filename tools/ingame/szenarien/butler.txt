@@ -1,4 +1,4 @@
-# Butler: Nahaufnahme, Menü, Chat-Auftrag „hol mir 32 Eisen“, Arbeit beobachten, Lieferung, Truhen sortieren
+# Butler: Nahaufnahme, Menü, Chat-Auftrag „hol mir 16 Eisen“, Arbeit beobachten, Lieferung, Truhen sortieren
 server /gamemode creative
 server /time set noon
 taste F1
@@ -20,7 +20,7 @@ warte 1
 server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:0b}
 # Auftrag im Chat
 taste F1
-server Butler, hol mir 32 Eisen
+server Butler, hol mir 16 Eisen
 warte 3
 taste t
 warte 2
@@ -30,56 +30,53 @@ warte 1
 taste F1
 server /gamemode spectator
 server /effect give @p night_vision infinite 0 true
-warte 20
-server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^3 ^-5 facing entity @e[type=stinkendreich:butler,limit=1] eyes
+warte 15
+# Kamera hängt am Butler, F5 = Blick von hinten
+server /spectate @e[type=stinkendreich:butler,limit=1] @p
+warte 2
+taste F5
 warte 4
 bild u05_unterwegs
 warte 60
-server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
-warte 4
 bild u06_arbeit_1
-warte 80
-server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
-warte 4
+warte 60
 bild u07_arbeit_2
-warte 80
-server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
-warte 4
+warte 60
 bild u08_arbeit_3
-warte 80
-server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
-warte 4
+warte 60
 bild u09_arbeit_4
-warte 80
-server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
-warte 4
-bild u10_arbeit_5
-warte 80
-server /execute at @e[type=stinkendreich:butler,limit=1] run tp @p ^ ^1.9 ^-1.6 facing entity @e[type=stinkendreich:butler,limit=1] eyes
-warte 4
-bild u11_arbeit_6
 # Zurück in die Halle und auf die Lieferung warten
+server /spectate
+taste F5
+taste F5
 server /gamemode creative
+server /effect clear @p
 server /villa ort 57.5 26 66 180 5
-warte 90
-taste F1
+bis 1200 Bitte sehr|in die Truhe gelegt|Verzeihung|fehlt
+warte 3
+bild u11_angekommen
 taste t
 warte 2
 bild u12_chat_lieferung
 klient schliessen
+taste e
+warte 2
+bild u12b_inventar
+taste Escape
+warte 1
 # Truhen sortieren: zwei Fässer mit durcheinander gelegten Sachen
 server /setblock ~2 ~ ~ barrel
 server /setblock ~2 ~ ~2 barrel
 server /item replace block ~2 ~ ~ container.0 with minecraft:dirt 10
-server /item replace block ~2 ~ ~ container.1 with minecraft:cobblestone 30
+server /item replace block ~2 ~ ~ container.1 with minecraft:cobblestone 5
 server /item replace block ~2 ~ ~ container.2 with minecraft:dirt 20
 server /item replace block ~2 ~ ~ container.3 with minecraft:bread 5
 server /item replace block ~2 ~ ~2 container.0 with minecraft:cobblestone 40
 server /item replace block ~2 ~ ~2 container.1 with minecraft:iron_ingot 3
-server /item replace block ~2 ~ ~2 container.2 with minecraft:dirt 40
+server /item replace block ~2 ~ ~2 container.2 with minecraft:dirt 5
 server /item replace block ~2 ~ ~2 container.3 with minecraft:apple 4
 server Butler, sortier die Truhen
-warte 30
+bis 120 Erledigt:|keine Truhen
 server /data get block ~2 ~ ~ Items
 server /data get block ~2 ~ ~2 Items
 taste t

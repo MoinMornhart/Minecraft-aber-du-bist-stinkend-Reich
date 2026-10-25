@@ -12,6 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,12 +20,14 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Räumt alle Truhen und Fässer in der Nähe auf: geht jede ab, legt gleiche Gegenstände zusammen
- * und verteilt alles sortiert (Baublöcke, Rohstoffe, Essen, Werkzeug, Sonstiges). Es geht nichts
- * verloren: Zusammenlegen braucht nie mehr Platz als vorher.
+ * und verteilt alles sortiert (Baublöcke, Rohstoffe, Essen, Werkzeug, Sonstiges), jede Sorte in
+ * ihre Stammtruhe. Es geht nichts verloren: Zusammenlegen braucht nie mehr Platz als vorher.
  */
 public class SortierAuftrag extends Auftrag {
     public static final String TYP = "sortieren";
@@ -69,7 +72,7 @@ public class SortierAuftrag extends Auftrag {
             }
             return Stand.LAEUFT;
         }
-        ButlerEntity.Weg w = butler.gehZu(t, 2.3);
+        ButlerEntity.Weg w = butler.hinkommen(t, 2.3);
         if (w == ButlerEntity.Weg.UNERREICHBAR) {
             index++;
         } else if (w == ButlerEntity.Weg.DA) {
@@ -81,7 +84,12 @@ public class SortierAuftrag extends Auftrag {
         return Stand.LAEUFT;
     }
 
-    /** Sammelt den Inhalt aller besuchten Truhen, fasst zusammen, sortiert und verteilt neu. */
+    /**
+     * Sammelt den Inhalt aller besuchten Truhen, fasst gleiche Gegenstände zusammen und verteilt
+     * neu: Jede Sorte kommt in die Truhe, in der vorher am meisten davon lag (so bleibt die Erde
+     * in der Erdtruhe), sortiert nach Gruppe und Name. Nur was dort keinen Platz mehr hat, wandert
+     * in die nächste Truhe mit freien Plätzen.
+     */
     private int sortieren(ButlerEntity butler) {
         List<Container> behaelter = new ArrayList<>();
         for (BlockPos p : besucht) {
@@ -89,11 +97,15 @@ public class SortierAuftrag extends Auftrag {
                 behaelter.add(c);
             }
         }
+        int n = behaelter.size();
         List<ItemStack> alles = new ArrayList<>();
-        for (Container c : behaelter) {
+        Map<Item, int[]> mengeJeTruhe = new HashMap<>();
+        for (int ci = 0; ci < n; ci++) {
+            Container c = behaelter.get(ci);
             for (int i = 0; i < c.getContainerSize(); i++) {
                 ItemStack s = c.getItem(i);
                 if (!s.isEmpty()) {
+                    mengeJeTruhe.computeIfAbsent(s.getItem(), k -> new int[n])[ci] += s.getCount();
                     zusammenlegen(alles, s.copy());
                 }
                 c.setItem(i, ItemStack.EMPTY);
@@ -103,23 +115,42 @@ public class SortierAuftrag extends Auftrag {
                 .thenComparing(s -> BuiltInRegistries.ITEM.getKey(s.getItem()).toString())
                 .thenComparingInt(s -> -s.getCount()));
         int anzahl = 0;
-        int ci = 0, slot = 0;
+        int[] belegt = new int[n];
+        List<ItemStack> uebrig = new ArrayList<>();
         for (ItemStack s : alles) {
             anzahl += s.getCount();
-            while (ci < behaelter.size() && slot >= behaelter.get(ci).getContainerSize()) {
-                behaelter.get(ci).setChanged();
-                ci++;
-                slot = 0;
+            int heim = stammtruhe(mengeJeTruhe.get(s.getItem()));
+            if (belegt[heim] < behaelter.get(heim).getContainerSize()) {
+                behaelter.get(heim).setItem(belegt[heim]++, s);
+            } else {
+                uebrig.add(s);
             }
-            if (ci >= behaelter.size()) {
-                // kann nicht passieren (zusammengelegt braucht weniger Platz), zur Sicherheit aber nichts wegwerfen
+        }
+        for (ItemStack s : uebrig) {
+            int ci = 0;
+            while (ci < n && belegt[ci] >= behaelter.get(ci).getContainerSize()) {
+                ci++;
+            }
+            if (ci >= n) {
+                // kann nicht passieren (zusammengelegt braucht nie mehr Platz), zur Sicherheit aber nichts wegwerfen
                 net.minecraft.world.level.block.Block.popResource(butler.welt(), butler.blockPosition(), s);
                 continue;
             }
-            behaelter.get(ci).setItem(slot++, s);
+            behaelter.get(ci).setItem(belegt[ci]++, s);
         }
         behaelter.forEach(Container::setChanged);
         return anzahl;
+    }
+
+    /** Index der Truhe, in der vorher am meisten von einer Sorte lag (bei Gleichstand die erste). */
+    private static int stammtruhe(int[] mengen) {
+        int beste = 0;
+        for (int i = 1; i < mengen.length; i++) {
+            if (mengen[i] > mengen[beste]) {
+                beste = i;
+            }
+        }
+        return beste;
     }
 
     /** Legt einen Stapel auf passende angefangene Stapel, den Rest als neue Stapel ab. */

@@ -59,7 +59,7 @@ public class VorratAuftrag extends Auftrag {
             }
             return Stand.LAEUFT;
         }
-        ButlerEntity.Weg w = butler.gehZu(t, 2.2);
+        ButlerEntity.Weg w = butler.hinkommen(t, 2.2);
         if (w == ButlerEntity.Weg.UNERREICHBAR) {
             truheIndex++;
         } else if (w == ButlerEntity.Weg.DA) {
