@@ -185,14 +185,15 @@ def i_geldkanone():
     return img
 
 
-# Pistole und Geldkanone: Lauf zeigt im Bild nach rechts. So gehalten zeigt die Mündung vom Körper weg, der Griff
-# nach unten (im Spiel mit Rüstungsständern und aus eigener Sicht ermittelt, siehe tools/ingame/szenarien/)
+# Pistole und Geldkanone: Lauf zeigt im Bild nach rechts. So gehalten zeigt die Mündung nach vorn vom Körper weg,
+# der Griff nach unten. Am Spieler selbst ausgemessen (von hinten, von vorn und aus eigener Sicht, je acht
+# Varianten nebeneinander); die linke Hand ist das Spiegelbild der rechten wie bei den Werkzeugen im Spiel.
 WAFFEN = ("goldene_pistole", "geldkanone")
 WAFFEN_HALTUNG = {
-    "thirdperson_righthand": {"rotation": [0, -90, 100], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
-    "thirdperson_lefthand": {"rotation": [0, 90, -100], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
-    "firstperson_righthand": {"rotation": [0, 90, -10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
-    "firstperson_lefthand": {"rotation": [0, -90, 10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
+    "thirdperson_righthand": {"rotation": [0, -90, -80], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
+    "thirdperson_lefthand": {"rotation": [0, 90, 80], "translation": [0, 4, 0.5], "scale": [0.85, 0.85, 0.85]},
+    "firstperson_righthand": {"rotation": [0, -90, -10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
+    "firstperson_lefthand": {"rotation": [0, 90, 10], "translation": [1.13, 3.2, 1.13], "scale": [0.68, 0.68, 0.68]},
 }
 
 ITEMS = {"bond_sonnenbrille": i_brille, "smoking": i_smoking, "anzughose": i_hose, "lackschuhe": i_schuhe,

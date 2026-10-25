@@ -1,0 +1,37 @@
+# 0.2.1 Endkontrolle: Lava-Graben von der Dachterrasse, Privattür, Waffen in der Hand, Rutsche
+server /gamemode survival
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+# Lava-Graben: auf der Dachterrasse (gehört zum Haus), Blick nach Süden über Tor und Graben
+server /villa ort 55.5 38 72.5 0 28
+warte 6
+server /execute if block ~ ~-15 ~31 minecraft:lava run say GRABEN_LAVA_OK
+bild z01_graben_lava
+server /villa ort 40.5 38 72.5 30 30
+warte 2
+bild z02_graben_lava_seite
+# Privattür: als Bewohner öffnen
+server /villa ort 59.5 16 44.5 -90 15
+warte 2
+klick
+warte 1
+bild z03_privattuer_offen
+# Waffen in der Hand (rechts Geldkanone, links Pistole), von hinten und von vorn
+server /item replace entity @p weapon.mainhand with stinkendreich:geldkanone
+server /item replace entity @p weapon.offhand with stinkendreich:goldene_pistole
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /villa ort 55.5 26 80.5 180 0
+taste F5
+warte 2
+bild z04_waffen_hinten
+taste F5
+warte 2
+bild z05_waffen_vorn
+taste F5
+# Rutsche: oben einsteigen
+server /villa ort 69.5 32 21.5 90 10
+warte 3
+server /data get entity @p Pos

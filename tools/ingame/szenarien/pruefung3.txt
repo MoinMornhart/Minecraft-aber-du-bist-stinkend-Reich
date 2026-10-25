@@ -1,0 +1,32 @@
+# 0.2.1 Nachprüfung: Rutsche mit Schub, Lava-Graben vom Dach aus, Brille aus der Nähe
+server /gamemode survival
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+# Rutsche: oben einsteigen, nach 2 Sekunden sollte man im Pool sein
+server /villa ort 69.5 32 21.5 90 10
+taste F5
+warte 0.4
+bild r01_start
+warte 0.6
+bild r02_nach_1s
+server /data get entity @p Pos
+warte 1.5
+server /data get entity @p Pos
+bild r03_nach_2s
+taste F5
+taste F5
+# Lava-Graben: Bewohner auf dem Hubschrauber-Landeplatz (gehört zum Haus), Blick nach Süden über den Graben
+server /villa ort 55.5 43 56 0 22
+warte 6
+server /execute if block ~ ~-20 ~47 minecraft:lava run say GRABEN_LAVA_OK
+bild b05_graben_lava
+server /villa ort 55.5 43 56 -60 25
+warte 2
+bild b05_graben_lava_ost
+# Wieder hinaus vor das Tor: Graben wird zu Wasser
+server /villa ort 55.5 26 112 0 30
+warte 6
+server /execute if block ~ ~-2 ~-9 minecraft:water run say GRABEN_WASSER_OK

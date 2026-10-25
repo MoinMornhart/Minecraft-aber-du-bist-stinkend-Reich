@@ -1295,8 +1295,8 @@ def main() -> None:
     licht_im_garten()
     lichter()
 
-    # Wo ein Bewohner als „zu Hause“ gilt (für den Lava-Graben): Haus samt Penthouse, Garage, Untergeschoss, Bunker
-    b.marke("haus", HX0, EG, HZ0, HX1, PH_DACH + 4, HZ1)
+    # Wo ein Bewohner als „zu Hause“ gilt (für den Lava-Graben): Haus mit Penthouse und Terrassen, Garage, Untergeschoss, Bunker
+    b.marke("haus", HX0, EG, HZ0, HX1, PH_DACH + 4, HZ1 + 6)                 # samt Balkon und Dachterrasse
     b.marke("haus", 80, EG, 46, 94, OG, 67)
     b.marke("haus", 29, UG - 1, 31, 97, EG - 1, 68)
     b.marke("haus", 35, BUNKER - 1, 29, 74, BUNKER + 8, 70)
