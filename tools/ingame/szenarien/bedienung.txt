@@ -1,0 +1,53 @@
+# Bedienbildschirme der Mechanismen (Rechtsklick auf die Blöcke, Klicks auf Knöpfe)
+befehl /gamemode creative
+befehl /time set noon
+taste F1
+# Tastenfeld am Schmuck-Tresor
+befehl /villa ort 62.5 32 49.8 180 4
+warte 4
+klick
+warte 2
+bild b01_tastenfeld
+taste Escape
+# Sicherheitszentrale im Büro
+befehl /villa ort 63 32 54.5 90 45
+warte 3
+klick
+warte 2
+bild b02_zentrale
+taste Escape
+# Aufzug im Erdgeschoss: Etagenwahl, dann Fahrt in die Untergrundbasis
+befehl /villa ort 57.5 26 39.6 180 37
+warte 4
+klick
+warte 2
+bild b03_aufzug_wahl
+linksklick 640 360
+warte 10
+bild b04_aufzug_bunker
+# Überwachungsmonitor: Kamerablick und Umschalten
+befehl /villa ort 69.5 32 39.5 180 -30
+warte 4
+klick
+warte 4
+bild b05_kamera_1
+linksklick 820 684
+warte 4
+bild b06_kamera_2
+linksklick 820 684
+warte 4
+bild b07_kamera_3
+linksklick 640 684
+warte 2
+# Alarm: Zombie in der Halle bei Stufe 1
+befehl /difficulty easy
+befehl /villa ort 55.5 26 50 180 0
+befehl /summon minecraft:zombie ~ ~ ~-4 {NoAI:1b,PersistenceRequired:1b}
+befehl /villa ort 55.5 30 90 0 -8
+warte 3
+bild b08_alarm_warnleuchten
+taste F1
+taste t
+warte 1
+bild b09_alarm_chat
+taste Escape

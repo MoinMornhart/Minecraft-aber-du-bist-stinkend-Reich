@@ -7,6 +7,7 @@
 # Ausgabe:  build/ingame/<version>/*.png und build/ingame/<version>/logs/
 #
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
+#                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
 set -uo pipefail
 
 V="${1:?Minecraft-Version angeben, z. B. 26.3}"
@@ -132,6 +133,9 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     taste) xdotool key $rest; sleep 0.5 ;;
     befehl) xdotool key t; sleep 1; xdotool type --delay 30 "$rest"; sleep 0.4; xdotool key Return; sleep 1.5 ;;
     bild) bild "$rest" ;;
+    klick) xdotool click 3; sleep 1 ;;                                   # Rechtsklick (Block benutzen)
+    linksklick) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3; xdotool click 1; sleep 1 ;;
+    maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac
 done < "$SZENARIO"

@@ -36,7 +36,7 @@ bild m09_aufzug
 befehl /villa ort 87.5 28 78 180 5
 warte 6
 bild m10_garagentor
-befehl /villa ort 36.5 7 61 270 5
+befehl /villa ort 38.5 7 61 90 5
 warte 5
 bild m11_geheimgang
 befehl /villa ort 70.5 26 22.5 0 0
@@ -46,6 +46,7 @@ befehl /villa ort 55 36 31 180 40
 warte 6
 bild m12_poolabdeckung
 befehl /villa stufe 1
+befehl /difficulty easy
 befehl /villa ort 55.5 26 50 180 0
 befehl /summon minecraft:zombie ~ ~ ~-4 {NoAI:1b,PersistenceRequired:1b}
 warte 3

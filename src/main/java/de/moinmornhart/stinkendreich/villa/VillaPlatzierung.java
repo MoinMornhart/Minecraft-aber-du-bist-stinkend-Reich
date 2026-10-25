@@ -23,6 +23,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -49,8 +50,8 @@ public final class VillaPlatzierung {
 
     /** Lage der Villa in der aktuell geladenen Welt, oder null. */
     private static VillaInfo aktuelleVilla;
-    /** Nach dem Bauen: so viele Ticks lang herabfallende Stöcke, Setzlinge usw. wegräumen. */
-    private static int aufraeumenTicks;
+    /** In den ersten 10 Spielminuten einer Villa-Welt werden Reste zerfallender Blätter weggeräumt. */
+    private static final long AUFRAEUMEN_BIS = 20L * 60 * 10;
 
     private VillaPlatzierung() {
     }
@@ -85,7 +86,6 @@ public final class VillaPlatzierung {
                 long start = System.currentTimeMillis();
                 aktuelleVilla = bauen(server, welt);
                 info = aktuelleVilla.alsJson();
-                aufraeumenTicks = 20 * 180;
                 StinkendReich.LOGGER.info("Villa gebaut bei {} in {} ms", aktuelleVilla.ursprung(), System.currentTimeMillis() - start);
             }
             Files.writeString(datei, GSON.toJson(info), StandardCharsets.UTF_8);
@@ -138,6 +138,7 @@ public final class VillaPlatzierung {
         y0 = Mth.clamp(y0, Kompat.minY(welt) + plan.bodenY + 2, Kompat.maxY(welt) - (plan.hoehe - plan.bodenY) - 2);
 
         gelaendeFormen(welt, x0, z0, plan.breiteX, plan.breiteZ, y0, rand);
+        verwaisteBlaetterEntfernen(welt, x0, z0, plan.breiteX, plan.breiteZ, rand + 8);
         tiereEntfernen(welt, x0, y0, z0, plan);
 
         // Strukturdatei setzen: Grasschicht der Datei liegt auf y0 - 1
@@ -234,10 +235,8 @@ public final class VillaPlatzierung {
      * und Äpfel fallen. Die werden in den ersten Minuten auf dem Grundstück weggeräumt.
      */
     private static void aufraeumen(MinecraftServer server) {
-        if (aufraeumenTicks <= 0 || aktuelleVilla == null) {
-            return;
-        }
-        if (--aufraeumenTicks % 20 != 0) {
+        long zeit = server.overworld().getGameTime();
+        if (aktuelleVilla == null || zeit > AUFRAEUMEN_BIS || zeit % 20 != 0) {
             return;
         }
         BlockPos u = aktuelleVilla.ursprung();
@@ -251,6 +250,37 @@ public final class VillaPlatzierung {
                 e.discard();
             }
         }
+    }
+
+    /**
+     * Blätter, deren Baumstamm beim Ebnen entfernt wurde, würden noch minutenlang zerfallen.
+     * Alle nicht festen Blätter ohne Stamm in der Nähe werden deshalb gleich entfernt.
+     */
+    private static void verwaisteBlaetterEntfernen(ServerLevel welt, int x0, int z0, int bx, int bz, int rand) {
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        BlockState luft = Blocks.AIR.defaultBlockState();
+        for (int x = x0 - rand; x < x0 + bx + rand; x++) {
+            for (int z = z0 - rand; z < z0 + bz + rand; z++) {
+                int oben = welt.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+                for (int y = oben - 1; y > oben - 24; y--) {
+                    p.set(x, y, z);
+                    BlockState s = welt.getBlockState(p);
+                    if (s.is(BlockTags.LEAVES) && !(s.hasProperty(LeavesBlock.PERSISTENT) && s.getValue(LeavesBlock.PERSISTENT))
+                            && !stammInDerNaehe(welt, p)) {
+                        welt.setBlock(p, luft, Block.UPDATE_CLIENTS);
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean stammInDerNaehe(ServerLevel welt, BlockPos mitte) {
+        for (BlockPos q : BlockPos.betweenClosed(mitte.offset(-4, -4, -4), mitte.offset(4, 4, 4))) {
+            if (welt.getBlockState(q).is(BlockTags.LOGS)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Entfernt Tiere, die nach dem Bauen in Wänden oder im Graben stecken würden. */
