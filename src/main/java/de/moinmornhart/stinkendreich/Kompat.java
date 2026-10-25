@@ -22,6 +22,17 @@ public final class Kompat {
     private Kompat() {
     }
 
+    /**
+     * Schickt die neue Bewegung eines Wesens sofort an die Rechner, auch an den Spieler selbst (Rückstoß,
+     * Schub auf der Rutsche). Das Feld heißt bis 26.2 hurtMarked, ab 26.3 syncVelocity.
+     */
+    public static void bewegungSenden(net.minecraft.world.entity.Entity e) {
+        //? if >=26.3 {
+        e.syncVelocity = true;
+        //?} else
+        /*e.hurtMarked = true;*/
+    }
+
     /** Setzt Position und Blickrichtung sofort (ohne Gleiten). Heißt ab 1.21.5 snapTo. */
     public static void versetzen(net.minecraft.world.entity.Entity e, double x, double y, double z, float gier, float neigung) {
         //? if >=1.21.5 {

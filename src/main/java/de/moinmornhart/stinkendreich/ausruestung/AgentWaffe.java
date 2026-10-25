@@ -176,11 +176,7 @@ public class AgentWaffe extends Item {
 
     private static void stossen(Entity e, Vec3 richtung, double staerke) {
         e.push(richtung.x * staerke, 0.25 * staerke, richtung.z * staerke);
-        // Bewegung sofort an die Rechner schicken (Feld heißt ab 26.3 anders)
-        //? if >=26.3 {
-        e.needsSync = true;
-        //?} else
-        /*e.hurtMarked = true;*/
+        Kompat.bewegungSenden(e);
     }
 
     private static void ton(ServerLevel sl, Player spieler, SoundEvent ton, float hoehe) {

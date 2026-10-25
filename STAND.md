@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-25, 17:00 Uhr_
+_Zuletzt aktualisiert: 2026-10-25, 18:30 Uhr_
 
 ## Erledigt
 
@@ -40,12 +40,25 @@ _Zuletzt aktualisiert: 2026-10-25, 17:00 Uhr_
 - Video-Werkzeug: `fahrt` im Testmodus (Kamerafahrt über Wegpunkte), `video start/stopp` und `kapitel` in
   `test.sh`, `tools/ingame/video.py` (Titel, Kapitel, Musik), Drehbuch aus `tools/ingame/video_szenario.py`.
   Für flüssige Bilder keinen zweiten Spieltest parallel laufen lassen (sonst nur ~6 Bilder/s).
-- Rundgang aller Versionen (mit Agent und Waffenkammer): 1.21, 1.21.2, 1.21.3, 1.21.4 OK. 1.21.1 brach ab, weil
-  `test.sh` während des Laufs geändert wurde (nie während eines Laufs ändern!) – muss neu. Rest ab 1.21.5 offen.
+- Rundgang aller Versionen (mit Agent und Waffenkammer): **alle 17 Versionen OK** (1.21.1 nach Abbruch neu
+  gelaufen; nie `test.sh` während eines Laufs ändern!).
 - **Release 0.2.0 angestoßen** (Philip: „gleich raus und weiter testen“): `mod.version` und `.github/release-version`
   auf 0.2.0, Neuigkeiten in `.github/neu.md`. Die restlichen Versionen laufen im Spiel weiter; Fehler → 0.2.1.
 - Truhe direkt neben dem Agenten-Ständer in der Waffenkammer entfernt (Philips Bild), Inhalt in die Nachbartruhe.
-- Offen für 0.2: restliche Versionen testen, Video an Philip.
+- Video an Philip geschickt (`villa_rundgang.mp4`).
+
+## Version 0.2.1 (in Arbeit, Fehler aus Philips 20 Bildern)
+
+- Erledigt und in 26.3 im Spiel geprüft (`tools/ingame/szenarien/bugs021.txt`): Personalküche mit Wand und
+  Gartentür, Tresor wie auf Philips Bild (Diamantberg, Tresor-Blöcke aus dem Spiel), Garagendurchgang 2×3 mit
+  Schiebetür, Balkon-/Penthouse-Doppeltür ohne Loch, Privattür (`PrivattuerBlock`, nur Bewohner, bleibt offen),
+  Clubtür, Weinlounge als Weinkeller, VIP-Sofa auf dem Podest, DJ-Pult vorn, Wohnzimmer-U, Kamin symmetrisch,
+  Penthouse-Lounge und Ostecke, Bunkerlager, Lava-Graben (`Graben`, Marken „graben“ und „haus“, zweistufiger
+  Tausch gegen Obsidian), G-Klasse kommt die Rampe hinauf (`RAMPE_OFFEN_AB` in villa.py), Autos mit Maßstab
+  (`Autotyp.massstab`), Tische `tafel_marmor`/`tafel_holz` (moebel.tisch), Sofas ohne Spalt.
+- Rutsche (`Rutsche`, Marke „rutsche“): Aussehen fertig; der Schub kam im ersten Test nicht beim Spieler an
+  (Spieler trieb nur mit dem Wasser) – wird geprüft.
+- Bilder aus Philips Nachrichten lassen sich aus dem Sitzungsprotokoll holen (Einträge vom Typ „attachment“).
 
 ## Version 0.3 (geplant, Philips Wünsche vom 25.10.)
 

@@ -1,6 +1,7 @@
 package de.moinmornhart.stinkendreich.mechanik;
 
 import com.google.gson.JsonArray;
+import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.villa.VillaPlatzierung;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.server.MinecraftServer;
@@ -43,14 +44,7 @@ public final class Rutsche {
                 double querZ = dz == 0 ? (mitteZ - p.getZ()) * 0.3 : 0;
                 Vec3 v = p.getDeltaMovement();
                 p.setDeltaMovement(dx * TEMPO + querX, Math.min(v.y, 0.0) - 0.04, dz * TEMPO + querZ);
-                if (p.tickCount % 10 == 0) {
-                    de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Rutsche: schiebe {} bei {}", p.getName().getString(), p.position());
-                }
-                // Bewegung sofort an den Rechner des Spielers schicken (Feld heißt ab 26.3 anders)
-                //? if >=26.3 {
-                p.needsSync = true;
-                //?} else
-                /*p.hurtMarked = true;*/
+                Kompat.bewegungSenden(p);          // der Spieler bewegt sich selbst, er muss den Schub mitbekommen
             }
         }
     }
