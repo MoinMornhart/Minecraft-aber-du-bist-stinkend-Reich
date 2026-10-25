@@ -63,7 +63,18 @@ public class BodyguardEntity extends IronGolem {
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1, true));
+        // Nahkampf wie ein Eisengolem, nur nicht gegen Creeper (die erledigt er aus der Ferne mit der Pistole)
+        goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1, true) {
+            @Override
+            public boolean canUse() {
+                return !(getTarget() instanceof Creeper) && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !(getTarget() instanceof Creeper) && super.canContinueToUse();
+            }
+        });
         goalSelector.addGoal(2, new FolgenZiel());
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
@@ -113,7 +124,7 @@ public class BodyguardEntity extends IronGolem {
         LivingEntity ziel = getTarget();
         if (ziel != null && ziel.isAlive() && nachladen == 0 && hasLineOfSight(ziel)) {
             double d = distanceTo(ziel);
-            if (d > SCHUSS_AB && d < SCHUSS_BIS) {
+            if ((d > SCHUSS_AB || ziel instanceof Creeper) && d < SCHUSS_BIS) {
                 schiessen((ServerLevel) level(), ziel);
             }
         }
@@ -172,7 +183,7 @@ public class BodyguardEntity extends IronGolem {
         }
     }
 
-    /** Wer den Chef angreift oder vom Chef angegriffen wird, und Monster in seiner Nähe (außer Creepern). */
+    /** Wer den Chef angreift oder vom Chef angegriffen wird, und Monster in seiner Nähe (Creeper zuerst). */
     private class BeschuetzenZiel extends Goal {
         BeschuetzenZiel() {
             setFlags(EnumSet.of(Flag.TARGET));
@@ -207,8 +218,9 @@ public class BodyguardEntity extends IronGolem {
             LivingEntity bestes = null;
             double beste = 16 * 16;
             for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, c.getBoundingBox().inflate(16),
-                    e -> e instanceof Enemy && !(e instanceof Creeper) && e.isAlive())) {
-                double d = e.distanceToSqr(c);
+                    e -> e instanceof Enemy && e.isAlive())) {
+                // Creeper zählen näher, damit sie weg sind, bevor sie zischen
+                double d = e.distanceToSqr(c) * (e instanceof Creeper ? 0.25 : 1.0);
                 if (d < beste) {
                     beste = d;
                     bestes = e;

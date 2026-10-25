@@ -50,6 +50,8 @@ public final class VillaPlatzierung {
     /** Merkdatei im Weltordner: ob und wo die Villa gebaut wurde. */
     private static final String DATEI = StinkendReich.MOD_ID + "-villa.json";
     private static final String TAG_ANGEKOMMEN = StinkendReich.MOD_ID + ".angekommen";
+    /** Hat sein goldenes Handy schon bekommen (seit 0.3, auch in Welten von vorher). */
+    private static final String TAG_HANDY = StinkendReich.MOD_ID + ".handy";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /** Lage der Villa in der aktuell geladenen Welt, oder null. */
@@ -100,7 +102,15 @@ public final class VillaPlatzierung {
 
     /** Beim allerersten Betreten einer Welt mit Villa: Spieler vor den Eingang stellen. */
     private static void beimBetreten(ServerPlayer spieler, MinecraftServer server) {
-        if (aktuelleVilla == null || !Konfig.get().villaSpawnSetzen || Kompat.tags(spieler).contains(TAG_ANGEKOMMEN)) {
+        if (aktuelleVilla == null) {
+            return;
+        }
+        // Das goldene Handy bekommt jeder Bewohner einmal, auch wer schon vor 0.3 hier wohnte
+        if (!Kompat.tags(spieler).contains(TAG_HANDY)) {
+            spieler.addTag(TAG_HANDY);
+            spieler.getInventory().add(new net.minecraft.world.item.ItemStack(de.moinmornhart.stinkendreich.register.ModItems.HANDY));
+        }
+        if (!Konfig.get().villaSpawnSetzen || Kompat.tags(spieler).contains(TAG_ANGEKOMMEN)) {
             return;
         }
         spieler.addTag(TAG_ANGEKOMMEN);

@@ -14,6 +14,7 @@
 [Butler](#-butler-james) &nbsp;·&nbsp;
 [Fuhrpark](#️-fuhrpark) &nbsp;·&nbsp;
 [Hubschrauber](#-hubschrauber) &nbsp;·&nbsp;
+[Handy](#-goldenes-handy) &nbsp;·&nbsp;
 [Agent](#️-agenten-ausrüstung) &nbsp;·&nbsp;
 [Einstellungen](#️-einstellungen)
 
@@ -200,6 +201,40 @@ Schwarz-goldener Luxus-Hubschrauber mit getönten Scheiben und Rotorgeräusch. E
 | **W / S** | vor / zurück (mit Trägheit) |
 | **A / D** | drehen |
 | **Schleichen** | aussteigen |
+
+<br>
+
+## 📱 Goldenes Handy
+
+<table>
+<tr>
+<td width="33%"><img src="docs/bilder/handy.jpg" alt="Das goldene Handy"><br><sub><b>Rechtsklick:</b> das Luxus-Handy</sub></td>
+<td width="33%"><img src="docs/bilder/lieferservice.jpg" alt="Lieferservice"><br><sub><b>Lieferservice:</b> James bringt Tiere und Waren</sub></td>
+<td width="33%"><img src="docs/bilder/bodyguards.jpg" alt="Bodyguards"><br><sub><b>Bodyguards</b> im Smoking</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/mitarbeiter.jpg" alt="Mitarbeiter"><br><sub><b>Mitarbeiterkiste:</b> drei Mitarbeiter steigen aus</sub></td>
+<td><img src="docs/bilder/mitarbeiter_kiste.jpg" alt="Beute in der Kiste"><br><sub><b>Beute</b> landet in der Kiste</sub></td>
+<td><img src="docs/bilder/kreisel.jpg" alt="Kreisel vor der Villa"><br><sub><b>Straßennetz:</b> Kreisel vor der Villa</sub></td>
+</tr>
+</table>
+
+Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten von vor 0.3). Rechtsklick öffnet es:
+
+| App | Was passiert |
+|---|---|
+| **Limo rufen** · **Hubschrauber rufen** | James kommt wirklich: Er fährt mit der Stretch-Limo vor oder landet mit dem Hubschrauber neben dir |
+| **Navigation** | James holt dich ab und fährt dich zur Villa, ins nächste Dorf, zur Mine, zum Endportal, zum Netherportal oder zu einem gemerkten Ort |
+| **Lieferservice** | Kühe, Schweine, Schafe, Hühner, ein zahmer Hund, eine Katze oder ein Papagei, ein Festessen, 64 Raketen oder ein Sack Gold – James bringt es mit der Limo |
+| **Aufträge** | wie im Chat: Eisen, Diamanten, Holz, Essen, Truhen sortieren – oder ein eigener Satz |
+| **Mitarbeiter bestellen** | eine Mitarbeiterkiste kommt ins Inventar |
+| **Bodyguards rufen / heim** | zwei Leibwächter kommen oder gehen nach Hause |
+
+**Mitarbeiter:** Stell die Mitarbeiterkiste auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Sie graben sich selbst zum Erz und bringen jede Ladung in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis und Holz), Schleichen + Rechtsklick zeigt, was er gerade dabeihat.
+
+**Bodyguards:** Eisengolems im Smoking mit Sonnenbrille. Sie können nicht sterben, folgen dir und beschützen dich – auf Abstand mit der Pistole, aus der Nähe mit Golem-Fäusten. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
+
+**Straßennetz:** Bevor James zum ersten Mal irgendwohin fährt, baut er eine echte Straße: zuerst einen Kreisel mit Insel vor der Villa, dann eine Straße mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein ganzes Netz – und du kannst es auch selbst befahren. Abgerissen wird nichts, weder an der Villa noch an deinen Bauten. `/butler strassen` zeigt alle Straßen, `Butler, bau eine Straße zum Dorf` baut eine schon vorher.
 
 <br>
 

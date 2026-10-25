@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-25, 22:50 Uhr (Nachtschicht, Philip schläft)_
+_Zuletzt aktualisiert: 2026-10-25, 23:45 Uhr (Nachtschicht, Philip schläft)_
 
 ## Erledigt
 
@@ -117,17 +117,29 @@ _Zuletzt aktualisiert: 2026-10-25, 22:50 Uhr (Nachtschicht, Philip schläft)_
 - Neu geplant: README-Bilder, Trailer (`tools/ingame/trailer_szenario.py`), Server-Version ohne Mod beim Spieler
   (Philip: „soll alles gehen“ → Fabric-Server mit Ressourcenpaket und Paper-Plugin).
 
-## Version 0.3 (geplant, Philips Wünsche vom 25.10.)
+## Version 0.3 (in Arbeit, Philips Wünsche vom 25.10.)
 
-- **Straßennetz:** Vor der ersten Fahrt zu einem Ziel baut der Chauffeur eine echte Straße (Kreisel vor der Villa,
-  Abzweigungen). Ziele: Mine, Endportal, nächstes Dorf, Netherportal und alle gemerkten Orte; das Netz wächst
-  weiter wie ein echtes Straßennetz und ist selbst befahrbar. Nichts an Villa oder Spielerbauten abreißen.
-- **Handy:** Butler anrufen (kommt wirklich mit Limo oder Hubschrauber, kurze Wartezeit), Aufträge geben,
-  Lieferservice (z. B. Tiere).
-- **Mitarbeiter:** übers Handy bestellen → Mitarbeiterkiste ins Inventar → platzieren → Mitarbeiter erscheinen;
-  jeder bekommt eine Aufgabe (Diamanten, Kohle, Eisen …), die Beute landet in der Kiste; James oder Philip holt ab.
-- **Bodyguards:** Eisengolems im Smoking, können nie sterben, beschützen nur; aus der Ferne mit Pistole, aus der
-  Nähe Nahkampf wie ein Eisengolem.
+- 0.2.3 ist in allen 17 Versionen geprüft (`kurz023.txt`, je 9 Prüfungen OK).
+- **Handy** (`handy/`, `client/handy/HandyBildschirm`, Texte und Bild aus `tools/assets/handy.py`): Netz-Nachricht
+  „handy“ mit `anruf|limo/heli`, `fahr|Ziel`, `liefer|Was`, `auftrag|Text`, `mitarbeiter`, `bodyguards|rufen/heim`.
+  Geschenk einmal je Spieler (Marke `stinkendreich.handy` in `VillaPlatzierung.beimBetreten`, auch alte Welten).
+  Knöpfe im Test (1280×720, Maßstab 2): Startseite y 188 + 42 je Knopf, Lieferservice y 185 + 34 je Knopf.
+  `AnrufAuftrag`: Limo kommt zum Spieler (Parkplatz 25–40 Blöcke), `HeliBereitstellung` stellt den Hubschrauber
+  bereit, `Lieferservice` (Tiere über `Kompat.entityTypNachId`, Waren ins Inventar). Test: `handy.txt` (OK).
+- **Mitarbeiter** (`mitarbeiter/`): `MitarbeiterEntity extends ButlerEntity` (`istButler()` false), Kiste =
+  `MitarbeiterkisteItem` (BlockItem der Truhe). Test `mitarbeiter.txt`: nach 5 Min. 16 Eisenerz + 16 Kohle in der Kiste.
+- **Bodyguards** (`bodyguard/`): Golem-Modell mit eigener Smoking-Textur, unverwundbar, Pistole 4,5–24 Blöcke,
+  Nahkampf, Creeper nur mit der Pistole (Nahkampf-Ziel ausgeschlossen, Creeper zählen bei der Zielwahl näher).
+- **Straßennetz** (`strasse/`): `Strassennetz` (Speicher `stinkendreich-strassen.json`, Routen, Kreisel),
+  `StrassenBau` (Spalten nach Abstand zur Mittellinie: Fahrbahn ≤ 2,5, Bordstein ≤ 3,5, Seitenstreifen ≤ 4,5; ein
+  Block wird erst gebaut, wenn die Linie 12 Schritte vorbei ist; Stufen aus Tiefenschiefer-Platten; über Wasser
+  mindestens einen Block hoch), `StrassenZiele` (Dorf, Mine, Endportal, Netherportal). Wegpunkte alle 3 Blöcke;
+  `Chauffeur` fährt bei dichten Wegpunkten „auf Schienen“ (Ziel 6 Blöcke voraus, bremst vor Kurven).
+  Befehle: `/butler strassen`, `/butler strasse <ziel>`, `/butler strassenpunkt <strasse> <punkt>` (Test-Teleport).
+  Test: `strasse2.txt` (Bau, Fotos von oben, Fahrt zum Dorf). Stand: Straße sauber, Fahrt noch nicht bis ins Dorf.
+- Noch offen für 0.3: Fahrt bis ins Dorf, Mitarbeiter-/Bodyguard-Fotos für das README (`docs/bilder/handy.jpg`,
+  `lieferservice.jpg`, `bodyguards.jpg`, `mitarbeiter.jpg`, `mitarbeiter_kiste.jpg`, `kreisel.jpg` sind im README
+  schon eingetragen), alle 17 Versionen bauen und testen, Release (`.github/neu.md` ist geschrieben).
 
 ## Release
 
@@ -146,5 +158,5 @@ _Zuletzt aktualisiert: 2026-10-25, 22:50 Uhr (Nachtschicht, Philip schläft)_
 
 ## Nächster Schritt
 
-0.2.3 in den übrigen 16 Versionen prüfen (sr-test), README-Bilder und Trailer, dann 0.3 (Straßennetz, Handy,
-Mitarbeiter, Bodyguards), danach die Server-Version.
+0.3 fertig machen (Fahrt bis ins Dorf, README-Fotos, alle 17 Versionen), veröffentlichen, dann Trailer und die
+Server-Version.

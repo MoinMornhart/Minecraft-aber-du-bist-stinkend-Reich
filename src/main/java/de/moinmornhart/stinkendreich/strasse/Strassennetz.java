@@ -40,7 +40,7 @@ public final class Strassennetz {
     /** Halbmesser: Insel, Außenrand der Fahrbahn, Fahrspur in der Mitte. */
     static final double INSEL = 4.5, AUSSEN = 10.5, SPUR = 7.5;
     /** Abstand der Wegpunkte für den Chauffeur entlang einer Straße (Blöcke). */
-    private static final int WEGPUNKT_ABSTAND = 8;
+    private static final int WEGPUNKT_ABSTAND = 3;
 
     /** Eine gebaute Straße: Name des Ziels, Eltern-Straße (−1 = Kreisel), Abzweig-Index dort, Mittellinie. */
     public record Strasse(String name, int eltern, int abzweig, List<BlockPos> punkte) {

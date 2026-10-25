@@ -1,3 +1,11 @@
+### Neu in 0.3 – das XXL-Update
+
+- **Goldenes Handy:** Rechtsklick öffnet ein Luxus-Handy mit Uhr und Akku. Damit rufst du James an – er kommt wirklich mit der Stretch-Limo vorgefahren oder landet mit dem Hubschrauber neben dir. Dazu Navigation (Villa, Dorf, Mine, Endportal, Netherportal und alle gemerkten Orte), Aufträge per Knopfdruck, Mitarbeiter und Bodyguards.
+- **Lieferservice:** Kühe, Schweine, Schafe, Hühner, ein gezähmter Hund, eine Katze oder ein Papagei, ein Festessen, 64 Feuerwerksraketen oder ein Sack Gold – James bringt die Bestellung mit der Limo vorbei.
+- **Straßennetz:** Bevor James zum ersten Mal irgendwohin fährt, baut er eine echte Straße: zuerst einen Kreisel mit Springbrunnen-Insel vor der Villa, dann Straßen mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein Netz. Du kannst die Straßen auch selbst befahren. Abgerissen wird nichts: weder an der Villa noch an deinen Bauten.
+- **Mitarbeiter:** Übers Handy bestellt, kommt eine Mitarbeiterkiste ins Inventar. Stell sie auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Ihre Beute bringen sie in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis, Holz).
+- **Bodyguards:** Zwei Eisengolems im Smoking mit Sonnenbrille. Sie können nicht sterben, folgen dir und beschützen dich: auf Abstand mit der Pistole, aus der Nähe mit Golem-Fäusten. Übers Handy rufst du sie oder schickst sie heim.
+
 ### Neu in 0.2.3
 
 - **Konzertflügel, der wirklich spielt:** Ein großer Flügel (3 × 3 Blöcke) mit offenem Deckel, goldenem Innenleben, Notenpult und Klavierbank. Rechtsklick öffnet die Klaviatur mit drei Oktaven (Maus oder Computertasten), alle in der Nähe hören mit. Der Flügel spielt auch selbst: Für Elise, Ode an die Freude, Kanon in D.

@@ -75,3 +75,8 @@ merke
 bis 200 Wir sind da|nicht weiter|fast da
 bild r11_angekommen
 taste F5
+# Wo steht der Wagen jetzt? (von oben)
+server /gamemode spectator
+server /execute at @e[type=stinkendreich:stretchlimo,limit=1,sort=nearest] run tp @p ~ ~14 ~ 0 90
+warte 5
+bild r12_wagen_von_oben

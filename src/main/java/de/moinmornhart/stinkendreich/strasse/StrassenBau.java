@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Baut eine Straße Stück für Stück (in jedem Server-Tick einige Querschnitte, mit Zeitbudget, damit der Server
+ * Baut eine Straße Stück für Stück (in jedem Server-Tick einige Schritte, mit Zeitbudget, damit der Server
  * flüssig bleibt). Die Straße ist 7 Blöcke breit: grauer Asphalt, weiße Mittellinie in Strichen, Bordstein aus
- * glattem Stein, alle 32 Blöcke eine Laterne. Sie folgt sanft dem Gelände (höchstens ein Block Höhe auf drei
+ * glattem Stein, alle 32 Blöcke eine Laterne. Jeder Block neben der Mittellinie bekommt sein Material nach dem
+ * Abstand zur Linie (Fahrbahn bis 2,5, Bordstein bis 3,5, Seitenstreifen bis 4,5), so bleibt die Straße auch
+ * schräg und in Kurven gleich breit. Ein Block wird erst gesetzt, wenn die Linie an ihm vorbei ist. Sie folgt sanft dem Gelände (höchstens ein Block Höhe auf drei
  * Blöcke, Übergänge mit Stufen), schneidet durch Hügel (nur natürliche Blöcke werden abgetragen, Bäume über der
  * Fahrbahn verschwinden), schüttet kleine Senken mit Steinziegeln auf und führt als Brücke mit Geländer und Pfeilern
  * über Wasser und tiefe Täler.
@@ -34,6 +36,10 @@ public final class StrassenBau {
     /** Halbe Breite: Mitte ± 3 Blöcke. */
     static final int HALB = 3;
     private static final int LATERNE_ALLE = 32;
+    /** Mittellinie: so viele Blöcke Strich, dann ebenso viele Lücke. */
+    private static final int STRICH = 4;
+    /** Ein Block gilt als fertig, wenn die Linie so viele Schritte nicht mehr in seiner Nähe war. */
+    private static final int FERTIG_NACH = 12;
     /** So weit darf die Fahrbahn über dem Boden liegen, bevor sie zur Brücke wird (darunter wird aufgeschüttet). */
     private static final int AUFSCHUETTEN_BIS = 6;
     /** Höchstens so viele Querschnitte je Tick und so viel Zeit (Nanosekunden). */
@@ -44,9 +50,12 @@ public final class StrassenBau {
 
     // Beton über die ID (die Farbblöcke heißen im Code je nach Version anders)
     private static final BlockState ASPHALT = id("gray_concrete");
-    private static final BlockState ASPHALT_STUFE = Blocks.POLISHED_ANDESITE_SLAB.defaultBlockState();
+    /** Halbe Stufe in Asphaltfarbe (auch auf der Mittellinie, sonst wirkt die Steigung fleckig). */
+    private static final BlockState ASPHALT_STUFE = Blocks.POLISHED_DEEPSLATE_SLAB.defaultBlockState();
     private static final BlockState LINIE = id("white_concrete");
-    private static final BlockState LINIE_STUFE = Blocks.SMOOTH_QUARTZ_SLAB.defaultBlockState();
+    /** Stufen älterer Straßen (vor 0.3.0), damit Abzweigungen sie überbauen dürfen. */
+    private static final BlockState ALT_STUFE_1 = Blocks.POLISHED_ANDESITE_SLAB.defaultBlockState();
+    private static final BlockState ALT_STUFE_2 = Blocks.SMOOTH_QUARTZ_SLAB.defaultBlockState();
     private static final BlockState BORD = Blocks.SMOOTH_STONE.defaultBlockState();
     private static final BlockState BORD_STUFE = Blocks.SMOOTH_STONE_SLAB.defaultBlockState();
     private static final BlockState UNTERBAU = Blocks.STONE_BRICKS.defaultBlockState();
@@ -66,8 +75,14 @@ public final class StrassenBau {
     private boolean fertig;
     /** Mittellinie (Fahrbahnblock je Schritt). */
     private final List<BlockPos> punkte = new ArrayList<>();
-    /** Spalten des letzten Querschnitts (für Stufen beim Höhenwechsel). */
-    private List<long[]> letzterQuerschnitt = List.of();
+    /** Genaue Lage der Mittellinie je Schritt (x, z) für die Abstände. */
+    private final List<double[]> linie = new ArrayList<>();
+    /** Noch offene Spalten: Abstand zur Linie, nächster Schritt, zuletzt berührt. */
+    private final Map<Long, double[]> offen = new HashMap<>();
+    /** Fertige Spalten mit ihrem Abstand zur Linie (für Laternen und damit nichts doppelt gebaut wird). */
+    private final Map<Long, Double> gebaut = new HashMap<>();
+    /** Laternen, die nach dem Fertigbauen ihrer Umgebung kommen: Schritt, x, z. */
+    private final List<int[]> laternen = new ArrayList<>();
     private final Map<Long, int[]> bodenCache = new HashMap<>();
     private final double startAbstand;
 
@@ -128,48 +143,80 @@ public final class StrassenBau {
     private void schritt() {
         double rest = Math.hypot(ziel.x - x, ziel.z - z);
         if (rest < 5 || schritte > maxSchritte) {
-            fertig = true;
+            abschliessen();
             return;
         }
         // Richtung: sanft zum Ziel einlenken, Hindernissen (Villa, Häuser, Spielerbauten) ausweichen
         float zum = (float) Strassennetz.gier(x, z, ziel.x, ziel.z);
         float wunsch = richtung + clamp((float) Strassennetz.wrap(zum - richtung), -KURVE, KURVE);
+        // Freie Richtung nahe am Ziel; steile Hänge umfahren wie eine echte Bergstraße (nur wenn es geradeaus deutlich
+        // bergauf oder bergab ginge und eine Abweichung flacher ist)
         Float frei = null;
+        double besteKosten = Double.MAX_VALUE;
         for (float abw : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}) {
             float r = wunsch + Math.copySign(Math.min(Math.abs(abw), 90), abw);
-            if (frei(r)) {
+            if (!frei(r)) {
+                continue;
+            }
+            if (Math.abs(abw) >= 30 && rest < 48 && frei == null) {
+                break;      // Am Dorfrand nicht um die Häuser kurven: hier endet die Straße
+            }
+            double steigung = Math.max(0, steigung(r) - 3);
+            double kosten = steigung * 4 + Math.abs(abw) * 0.12;
+            if (kosten < besteKosten) {
+                besteKosten = kosten;
                 frei = r;
-                break;
+            }
+            if (steigung == 0) {
+                break;      // flach genug: die erste (zielnächste) freie Richtung nehmen
             }
         }
         if (frei == null) {
             // Kurz vor dem Ziel (etwa am Dorfrand) endet die Straße hier, sonst bricht der Bau ab
-            fertig = true;
+            abschliessen();
             return;
         }
-        // Große Ausweichschwenks nur schrittweise fahren
-        richtung = richtung + clamp((float) Strassennetz.wrap(frei - richtung), -3 * KURVE, 3 * KURVE);
+        // Große Ausweichschwenks nur schrittweise fahren (weite Kurven, die der Wagen sauber schafft)
+        richtung = richtung + clamp((float) Strassennetz.wrap(frei - richtung), -1.5F * KURVE, 1.5F * KURVE);
         x += -Math.sin(Math.toRadians(richtung));
         z += Math.cos(Math.toRadians(richtung));
 
-        // Höhe: Mittel des Geländes der nächsten Blöcke, höchstens ein Block Wechsel auf drei Blöcke
+        // Höhe: Mittel des Geländes der nächsten Blöcke, höchstens ein Block Wechsel auf drei Blöcke; erst ab einem
+        // deutlichen Unterschied (sonst geht es auf welligem Boden ständig auf und ab)
         double summe = 0;
         int n = 0;
-        for (int d = 0; d <= 8; d += 2) {
+        int ueberWasser = Integer.MIN_VALUE;
+        for (int d = 0; d <= 12; d += 2) {
             int bx = (int) Math.floor(x - Math.sin(Math.toRadians(richtung)) * d);
             int bz = (int) Math.floor(z + Math.cos(Math.toRadians(richtung)) * d);
             int[] b = boden(bx, bz);
             summe += b[1] == 1 ? b[0] + 1 : b[0];
             n++;
+            if (b[1] == 1) {
+                ueberWasser = Math.max(ueberWasser, b[0] + 1);
+            }
         }
-        int soll = (int) Math.round(summe / n);
-        int alt = y;
-        if (schritte - letzteAenderung >= 3 && soll != y) {
+        // Über Wasser liegt die Fahrbahn immer mindestens einen Block über der Oberfläche (rechtzeitig ansteigen)
+        double soll = Math.max(summe / n, ueberWasser);
+        if (schritte - letzteAenderung >= 3 && Math.abs(soll - y) > 0.75) {
             y += soll > y ? 1 : -1;
             letzteAenderung = schritte;
         }
-        querschnitt(alt);
+        weiter();
         schritte++;
+    }
+
+    /** Größter Höhenunterschied zwischen Fahrbahn und Gelände in Richtung {@code r} (4 bis 16 Blöcke voraus). */
+    private int steigung(float r) {
+        double rx = -Math.sin(Math.toRadians(r)), rz = Math.cos(Math.toRadians(r));
+        int max = 0;
+        for (int d = 4; d <= 16; d += 4) {
+            int[] b = boden((int) Math.floor(x + rx * d), (int) Math.floor(z + rz * d));
+            int boden = b[1] == 1 ? b[0] + 1 : b[0];
+            // Erlaubt ist ein Block auf drei; was darüber hinausgeht, zählt
+            max = Math.max(max, Math.abs(boden - y) - d / 3);
+        }
+        return max;
     }
 
     /** Ist die Richtung frei (die nächsten zehn Blöcke kein geschützter Block in Fahrbahnhöhe)? */
@@ -188,62 +235,101 @@ public final class StrassenBau {
         return true;
     }
 
-    /** Ein Querschnitt der Straße an der aktuellen Stelle; {@code alteHoehe} für die Stufe beim Höhenwechsel. */
-    private void querschnitt(int alteHoehe) {
-        double rx = -Math.sin(Math.toRadians(richtung)), rz = Math.cos(Math.toRadians(richtung));
-        List<long[]> spalten = new ArrayList<>();
-        BlockPos mitte = BlockPos.containing(x, y, z);
-        punkte.add(mitte);
-        boolean strich = (schritte / 3) % 2 == 0;
-        // Breiter abtasten als die Straße (halbe Schritte), damit in Kurven keine Löcher bleiben
-        for (double o = -HALB - 1; o <= HALB + 1; o += 0.5) {
-            int bx = (int) Math.floor(x + rz * o), bz = (int) Math.floor(z - rx * o);
-            int ganz = (int) Math.round(o);
-            long schluessel = BlockPos.asLong(bx, 0, bz);
-            if (spalten.stream().anyMatch(s -> s[0] == schluessel)) {
-                continue;
+    /** Der nächste Punkt der Mittellinie: Spalten in der Nähe vormerken, vorbeigezogene bauen. */
+    private void weiter() {
+        int i = punkte.size();
+        punkte.add(BlockPos.containing(x, y, z));
+        linie.add(new double[]{x, z});
+        if (i > 0) {
+            double[] a = linie.get(i - 1), b = linie.get(i);
+            int r = HALB + 2;
+            for (int bx = (int) Math.floor(Math.min(a[0], b[0])) - r; bx <= (int) Math.floor(Math.max(a[0], b[0])) + r; bx++) {
+                for (int bz = (int) Math.floor(Math.min(a[1], b[1])) - r; bz <= (int) Math.floor(Math.max(a[1], b[1])) + r; bz++) {
+                    long k = BlockPos.asLong(bx, 0, bz);
+                    if (gebaut.containsKey(k)) {
+                        continue;
+                    }
+                    // Abstand der Blockmitte zum Stück a–b; hinter dem Anfang der Straße nichts bauen
+                    double vx = b[0] - a[0], vz = b[1] - a[1], wx = bx + 0.5 - a[0], wz = bz + 0.5 - a[1];
+                    double t = (wx * vx + wz * vz) / Math.max(1e-6, vx * vx + vz * vz);
+                    if (i == 1 && t < 0) {
+                        continue;
+                    }
+                    t = Math.max(0, Math.min(1, t));
+                    double d = Math.hypot(wx - vx * t, wz - vz * t);
+                    if (d > HALB + 1.5) {
+                        continue;
+                    }
+                    int naechster = t < 0.5 ? i - 1 : i;
+                    double[] alt = offen.get(k);
+                    if (alt == null || d < alt[0]) {
+                        offen.put(k, new double[]{d, naechster, i});
+                    } else {
+                        alt[2] = i;
+                    }
+                }
             }
-            spalten.add(new long[]{schluessel, ganz});
-            spalte(bx, bz, ganz, strich);
         }
-        // Höhenwechsel: halbe Stufen auf der tieferen Seite
-        if (y > alteHoehe) {
-            for (long[] s : letzterQuerschnitt) {
-                stufe(BlockPos.getX(s[0]), alteHoehe + 1, BlockPos.getZ(s[0]), (int) s[1]);
-            }
-        } else if (y < alteHoehe) {
-            for (long[] s : spalten) {
-                stufe(BlockPos.getX(s[0]), y + 1, BlockPos.getZ(s[0]), (int) s[1]);
-            }
-        }
-        letzterQuerschnitt = spalten;
         // Laterne am Rand, abwechselnd links und rechts
-        if (schritte % LATERNE_ALLE == LATERNE_ALLE / 2) {
-            int seite = (schritte / LATERNE_ALLE) % 2 == 0 ? 1 : -1;
-            int lx = (int) Math.floor(x + rz * (HALB + 1) * seite), lz = (int) Math.floor(z - rx * (HALB + 1) * seite);
-            laterne(lx, lz);
+        if (i % LATERNE_ALLE == LATERNE_ALLE / 2) {
+            double rx = -Math.sin(Math.toRadians(richtung)), rz = Math.cos(Math.toRadians(richtung));
+            int seite = (i / LATERNE_ALLE) % 2 == 0 ? 1 : -1;
+            laternen.add(new int[]{i, (int) Math.floor(x + rz * (HALB + 1) * seite), (int) Math.floor(z - rx * (HALB + 1) * seite)});
+        }
+        bauen(i - FERTIG_NACH);
+    }
+
+    /** Baut alle Spalten, an denen die Linie seit {@code bis} nicht mehr war, und die Laternen dahinter. */
+    private void bauen(int bis) {
+        var it = offen.entrySet().iterator();
+        while (it.hasNext()) {
+            var e = it.next();
+            double[] v = e.getValue();
+            if (v[2] <= bis) {
+                spalte(BlockPos.getX(e.getKey()), BlockPos.getZ(e.getKey()), v[0], (int) v[1]);
+                gebaut.put(e.getKey(), v[0]);
+                it.remove();
+            }
+        }
+        while (!laternen.isEmpty() && laternen.get(0)[0] <= bis - FERTIG_NACH) {
+            int[] l = laternen.remove(0);
+            laterne(l[1], l[2]);
         }
     }
 
-    /** Eine Spalte: Fahrbahn (o = Abstand von der Mitte, ±4 = Seitenstreifen), darunter Unterbau, darüber frei. */
-    private void spalte(int bx, int bz, int o, boolean strich) {
+    /** Ende: alles Offene bauen. */
+    private void abschliessen() {
+        fertig = true;
+        bauen(Integer.MAX_VALUE);
+    }
+
+    /**
+     * Eine Spalte im Abstand {@code d} zur Mittellinie (nächster Schritt {@code i}): Fahrbahn, Bordstein oder
+     * Seitenstreifen, darunter Unterbau, darüber frei. Liegt dort schon eine andere Straße, bleibt ihre Fahrbahn
+     * offen (Abzweigung, Kreisel).
+     */
+    private void spalte(int bx, int bz, double d, int i) {
+        int y = punkte.get(i).getY();
         int[] b = boden(bx, bz);
         int grund = b[0];
         boolean wasser = b[1] == 1;
-        boolean fahrbahn = Math.abs(o) <= HALB;
+        boolean fahrbahn = d <= HALB - 0.5, bord = !fahrbahn && d <= HALB + 0.5, seite = !fahrbahn && !bord;
         boolean bruecke = wasser || y - grund > AUFSCHUETTEN_BIS;
-        if (fahrbahn) {
-            BlockState belag = Math.abs(o) == HALB ? BORD : (o == 0 && strich ? LINIE : ASPHALT);
-            setzen(new BlockPos(bx, y, bz), belag);
+        BlockPos oben = new BlockPos(bx, y, bz);
+        BlockState vorher = welt.getBlockState(oben);
+        boolean andereFahrbahn = vorher.is(ASPHALT.getBlock()) || vorher.is(LINIE.getBlock()) || vorher.is(ASPHALT_STUFE.getBlock());
+        // Halbe Stufe auf der tieferen Seite eines Höhenwechsels
+        boolean stufe = (i + 1 < punkte.size() && punkte.get(i + 1).getY() > y) || (i > 0 && punkte.get(i - 1).getY() > y);
+        boolean gelaender = bord && bruecke;
+        if (fahrbahn || (bord && !andereFahrbahn)) {
+            boolean strich = d < 0.5 && (i / STRICH) % 2 == 0;
+            setzen(oben, bord ? BORD : (strich && !stufe ? LINIE : ASPHALT));
             if (bruecke) {
-                // Geländer am Rand, Pfeiler alle acht Blöcke bis zum Grund
-                if (Math.abs(o) == HALB) {
-                    setzen(new BlockPos(bx, y + 1, bz), GELAENDER);
-                    if (schritte % 8 == 0) {
-                        for (int h = y - 1; h >= Math.max(grund - (wasser ? 8 : 0), y - 64); h--) {
-                            if (!setzen(new BlockPos(bx, h, bz), UNTERBAU)) {
-                                break;
-                            }
+                if (gelaender && i % 8 == 0) {
+                    // Pfeiler bis zum Grund
+                    for (int h = y - 1; h >= Math.max(grund - (wasser ? 8 : 0), y - 64); h--) {
+                        if (!setzen(new BlockPos(bx, h, bz), UNTERBAU)) {
+                            break;
                         }
                     }
                 }
@@ -251,23 +337,32 @@ public final class StrassenBau {
                 for (int h = y - 1; h > grund; h--) {
                     setzen(new BlockPos(bx, h, bz), UNTERBAU);
                 }
-                // Böschung: Grasblock statt Erde, wenn der Boden auf Höhe der Fahrbahn lag
             }
-        } else if (!bruecke && grund >= y) {
-            // Seitenstreifen: Gelände auf Fahrbahnhöhe abtragen, oben Gras
+            if (gelaender) {
+                setzen(oben.above(), GELAENDER);
+            } else if (stufe && (welt.getBlockState(oben.above()).isAir() || welt.getBlockState(oben.above()).canBeReplaced())) {
+                setzen(oben.above(), (bord ? BORD_STUFE : ASPHALT_STUFE).setValue(SlabBlock.TYPE, SlabType.BOTTOM));
+            }
+        } else if (seite && !bruecke && !andereFahrbahn && !istStrasse(vorher)) {
+            // Seitenstreifen: Gelände auf Fahrbahnhöhe abtragen oder flach aufschütten, oben Gras
             for (int h = grund; h > y; h--) {
                 abtragen(new BlockPos(bx, h, bz));
             }
-            BlockPos oben = new BlockPos(bx, y, bz);
-            if (Schutz.istNatuerlich(welt.getBlockState(oben)) && !geschuetzt(oben)) {
+            if (grund < y && y - grund <= 3) {
+                for (int h = grund + 1; h < y; h++) {
+                    setzen(new BlockPos(bx, h, bz), Blocks.DIRT.defaultBlockState());
+                }
+            }
+            if ((grund >= y || y - grund <= 3) && Schutz.istNatuerlich(welt.getBlockState(oben)) && !geschuetzt(oben)) {
                 setzen(oben, Blocks.GRASS_BLOCK.defaultBlockState());
             }
         }
         // Darüber freiräumen (Bäume über der Fahrbahn ganz)
-        for (int h = y + 1 + (fahrbahn && bruecke && Math.abs(o) == HALB ? 1 : 0); h <= y + 6; h++) {
+        boolean besetzt = gelaender || (stufe && !seite);
+        for (int h = y + (besetzt ? 2 : 1); h <= y + 6; h++) {
             abtragen(new BlockPos(bx, h, bz));
         }
-        if (fahrbahn) {
+        if (!seite) {
             for (int h = y + 7; h <= y + 20; h++) {
                 BlockPos p = new BlockPos(bx, h, bz);
                 BlockState s = welt.getBlockState(p);
@@ -278,16 +373,12 @@ public final class StrassenBau {
         }
     }
 
-    /** Halbe Stufe aus dem Material der Spalte (für sanfte Höhenwechsel). */
-    private void stufe(int bx, int sy, int bz, int o) {
-        BlockState s = Math.abs(o) > HALB ? null : Math.abs(o) == HALB ? BORD_STUFE : (o == 0 ? LINIE_STUFE : ASPHALT_STUFE);
-        BlockPos p = new BlockPos(bx, sy, bz);
-        if (s != null && welt.getBlockState(p).isAir()) {
-            setzen(p, s.setValue(SlabBlock.TYPE, SlabType.BOTTOM));
-        }
-    }
-
     private void laterne(int bx, int bz) {
+        Double d = gebaut.get(BlockPos.asLong(bx, 0, bz));
+        if (d != null && d <= HALB + 0.5) {
+            return;     // In einer Kurve läge der Mast auf der Fahrbahn
+        }
+        int y = hoeheBei(bx, bz);
         BlockPos fuss = new BlockPos(bx, y, bz);
         if (geschuetzt(fuss)) {
             return;
@@ -300,6 +391,20 @@ public final class StrassenBau {
             setzen(fuss.above(h), MAST);
         }
         setzen(fuss.above(4), LAMPE);
+    }
+
+    /** Fahrbahnhöhe am nächsten Punkt der Mittellinie. */
+    private int hoeheBei(int bx, int bz) {
+        BlockPos best = punkte.get(punkte.size() - 1);
+        double bd = Double.MAX_VALUE;
+        for (BlockPos p : punkte) {
+            double d = (p.getX() - bx) * (double) (p.getX() - bx) + (p.getZ() - bz) * (double) (p.getZ() - bz);
+            if (d < bd) {
+                bd = d;
+                best = p;
+            }
+        }
+        return best.getY();
     }
 
     // ------------------------------------------------------------------
@@ -342,7 +447,7 @@ public final class StrassenBau {
     /** Teil einer (anderen) Straße: darf überbaut werden (Abzweigungen, Kreuzungen). */
     private static boolean istStrasse(BlockState s) {
         return s.is(ASPHALT.getBlock()) || s.is(LINIE.getBlock()) || s.is(BORD.getBlock()) || s.is(UNTERBAU.getBlock())
-                || s.is(GELAENDER.getBlock()) || s.is(ASPHALT_STUFE.getBlock()) || s.is(LINIE_STUFE.getBlock())
+                || s.is(GELAENDER.getBlock()) || s.is(ASPHALT_STUFE.getBlock()) || s.is(ALT_STUFE_1.getBlock()) || s.is(ALT_STUFE_2.getBlock())
                 || s.is(BORD_STUFE.getBlock()) || s.is(MAST.getBlock()) || s.is(LAMPE.getBlock());
     }
 

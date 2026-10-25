@@ -20,8 +20,8 @@ import java.util.List;
  * bestellen, Bodyguards rufen oder heimschicken. Jede Taste schickt eine Nachricht „handy“ an den Server.
  */
 public class HandyBildschirm extends Screen {
-    private static final int BREITE = 150, HOEHE = 250;
-    private static final int KNOPF_B = 126, KNOPF_H = 18, ABSTAND = 3;
+    private static final int BREITE = 160, HOEHE = 270;
+    private static final int KNOPF_B = 136, KNOPF_H = 18, ABSTAND = 3;
 
     private enum Seite { START, NAVI, LIEFERUNG, AUFTRAG }
 
@@ -78,7 +78,7 @@ public class HandyBildschirm extends Screen {
             }
             case LIEFERUNG -> {
                 for (String was : de.moinmornhart.stinkendreich.handy.Lieferservice.ANGEBOT) {
-                    y = knopf(x, y, "liefer." + was, () -> senden("liefer|" + was), KNOPF_H - 2);
+                    y = knopf(x, y, "liefer." + was, () -> senden("liefer|" + was), KNOPF_H - 3) - 1;
                 }
                 knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
             }

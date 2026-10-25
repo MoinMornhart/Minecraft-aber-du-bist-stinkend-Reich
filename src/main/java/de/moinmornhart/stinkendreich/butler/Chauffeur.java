@@ -15,7 +15,9 @@ import net.minecraft.world.phys.Vec3;
  * der Kurve und dem Abstand zum Ziel. Steckt der Wagen fest, setzt er zurück und versucht es anders.
  *
  * <p>Läuft nur auf dem Server; gibt seine Eingaben über {@link AutoEntity#chauffeurEingabe} an das Auto.
- * Zwischenziele (z. B. vor der Brücke und hinter dem Tor der Villa) durchfährt er ohne anzuhalten.</p>
+ * Zwischenziele (z. B. vor der Brücke und hinter dem Tor der Villa) durchfährt er ohne anzuhalten. Liegen die
+ * Wegpunkte dicht (eine Straße aus dem Straßennetz), fährt er wie auf Schienen: Er zielt auf einen Punkt einige
+ * Blöcke voraus auf der Linie, schneidet so keine Kurven und bremst vor engen Biegungen.</p>
  */
 public final class Chauffeur {
     /** Wie weit er vorausschaut (Blöcke). */
@@ -23,6 +25,10 @@ public final class Chauffeur {
     /** Abweichungen von der Zielrichtung, die er prüft (Grad). */
     private static final int[] RICHTUNGEN = {0, 12, -12, 25, -25, 40, -40, 55, -55, 75, -75, 100, -100, 135, -135};
     private static final int KEIN = Integer.MIN_VALUE;
+    /** Wegpunkte mit weniger Abstand gelten als Straße (Spur fahren). */
+    private static final double DICHT = 5.0;
+    /** So weit voraus auf der Spur zielt er (Blöcke). */
+    private static final double VORAUS = 6.0;
 
     /** Zwischenziele und am Ende das Ziel. */
     private final java.util.List<Vec3> punkte;
@@ -33,6 +39,8 @@ public final class Chauffeur {
     private Vec3 letztePos;
     private double besterAbstand = Double.MAX_VALUE;
     private int ohneFortschritt;
+    /** Wie oft er den Wagen schon auf die Straße zurückgesetzt hat. */
+    private int rettungen;
 
     public enum Lage { FAEHRT, DA, FESTGEFAHREN }
 
@@ -54,6 +62,12 @@ public final class Chauffeur {
     public Lage fahren(AutoEntity auto) {
         ticks++;
         Vec3 pos = auto.position();
+        // Auf der Spur: Punkte, an denen er schon vorbei ist (der nächste liegt näher), überspringen
+        while (punkt < punkte.size() - 1 && dicht(punkt) && waagerecht(pos, punkte.get(punkt + 1)) < waagerecht(pos, punkte.get(punkt))) {
+            punkt++;
+            besterAbstand = Double.MAX_VALUE;
+            ohneFortschritt = 0;
+        }
         Vec3 ziel = punkte.get(punkt);
         double dx = ziel.x - pos.x, dz = ziel.z - pos.z;
         double abstand = Math.sqrt(dx * dx + dz * dz);
@@ -76,6 +90,10 @@ public final class Chauffeur {
         } else if (++ohneFortschritt > 800) {
             auto.chauffeurEingabe(0, 0);
             return Lage.FESTGEFAHREN;
+        } else if (ohneFortschritt == 300 && dicht(punkt) && rettungen < 5) {
+            // Auf der Straße festgefahren (etwa vom Rand abgerutscht): Wagen samt Fahrgästen zurück auf die Fahrbahn
+            zurueckAufDieStrasse(auto);
+            return Lage.FAEHRT;
         }
 
         // Steckt er fest? Dann ein Stück zurück und dabei zur anderen Seite einschlagen
@@ -86,7 +104,10 @@ public final class Chauffeur {
             }
             letztePos = pos;
         }
-        float zielRichtung = (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F;
+        // Auf der Spur einige Blöcke vorausschauen und dorthin zielen
+        Vec3 voraus = vorausPunkt(pos, VORAUS);
+        float zielRichtung = (float) (Mth.atan2(voraus.z - pos.z, voraus.x - pos.x) * Mth.RAD_TO_DEG) - 90.0F;
+        double vorausAbstand = waagerecht(pos, voraus);
         if (rueckwaerts > 0) {
             rueckwaerts--;
             float fehler = Mth.wrapDegrees(zielRichtung - auto.getYRot());
@@ -96,7 +117,12 @@ public final class Chauffeur {
 
         // Alle 5 Ticks neu planen: freieste Richtung nahe am Ziel
         double frei = SICHT;
-        if (ticks % 5 == 1 || Float.isNaN(gewaehlteRichtung)) {
+        double geradeFrei = freieStrecke(auto, zielRichtung);
+        if (geradeFrei >= Math.min(SICHT, vorausAbstand) - 1) {
+            // Der Weg dorthin ist frei: genau hinfahren (auf der Straße immer)
+            gewaehlteRichtung = zielRichtung;
+            frei = geradeFrei;
+        } else if (ticks % 5 == 1 || Float.isNaN(gewaehlteRichtung)) {
             double besteWertung = -1e9;
             float beste = zielRichtung;
             double besteFrei = 0;
@@ -104,7 +130,7 @@ public final class Chauffeur {
                 float r = zielRichtung + abw;
                 double f = freieStrecke(auto, r);
                 double drehen = Math.abs(Mth.wrapDegrees(r - auto.getYRot()));
-                double wertung = Math.min(f, Math.min(SICHT, abstand)) * 2.0 - Math.abs(abw) * 0.06 - drehen * 0.02;
+                double wertung = Math.min(f, Math.min(SICHT, vorausAbstand)) * 2.0 - Math.abs(abw) * 0.06 - drehen * 0.02;
                 if (wertung > besteWertung) {
                     besteWertung = wertung;
                     beste = r;
@@ -124,10 +150,52 @@ public final class Chauffeur {
         if (Math.abs(fehler) > 45) {
             soll = Math.min(soll, 0.28);
         }
+        // Vor engen Kurven auf der Spur bremsen
+        Vec3 weit = vorausPunkt(pos, 14);
+        float kurve = Math.abs(Mth.wrapDegrees((float) (Mth.atan2(weit.z - pos.z, weit.x - pos.x) * Mth.RAD_TO_DEG) - 90.0F - auto.getYRot()));
+        if (kurve > 60) {
+            soll = Math.min(soll, 0.22);
+        } else if (kurve > 30) {
+            soll = Math.min(soll, 0.34);
+        }
         soll = Math.max(0.12, soll);
         double gas = auto.tempo() < soll - 0.02 ? 1 : (auto.tempo() > soll + 0.08 ? -1 : 0);
         auto.chauffeurEingabe(gas, lenk);
         return Lage.FAEHRT;
+    }
+
+    /** Setzt den Wagen auf den nächsten Wegpunkt, in Fahrtrichtung der Straße. */
+    private void zurueckAufDieStrasse(AutoEntity auto) {
+        rettungen++;
+        Vec3 p = punkte.get(punkt), q = punkte.get(Math.min(punkt + 1, punkte.size() - 1));
+        float gier = (float) (Mth.atan2(q.z - p.z, q.x - p.x) * Mth.RAD_TO_DEG) - 90.0F;
+        auto.setDeltaMovement(Vec3.ZERO);
+        auto.chauffeurEingabe(0, 0);
+        auto.setYRot(gier);
+        auto.teleportTo(p.x, p.y + 0.1, p.z);
+        rueckwaerts = 0;
+        gewaehlteRichtung = Float.NaN;
+        ohneFortschritt = 0;
+        besterAbstand = Double.MAX_VALUE;
+        de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Chauffeur setzt den Wagen zurück auf die Straße bei {}", p);
+    }
+
+    /** Liegt der nächste Wegpunkt nach {@code i} dicht dran (Straße)? */
+    private boolean dicht(int i) {
+        return i + 1 < punkte.size() && waagerecht(punkte.get(i), punkte.get(i + 1)) < DICHT;
+    }
+
+    /** Der erste Punkt ab dem aktuellen, der mindestens {@code weit} Blöcke entfernt ist (nur über dichte Punkte). */
+    private Vec3 vorausPunkt(Vec3 pos, double weit) {
+        int j = punkt;
+        while (j < punkte.size() - 1 && dicht(j) && waagerecht(pos, punkte.get(j)) < weit) {
+            j++;
+        }
+        return punkte.get(j);
+    }
+
+    private static double waagerecht(Vec3 a, Vec3 b) {
+        return Math.hypot(a.x - b.x, a.z - b.z);
     }
 
     /** Wie weit man in Richtung {@code grad} fahren kann (0 … SICHT Blöcke). */

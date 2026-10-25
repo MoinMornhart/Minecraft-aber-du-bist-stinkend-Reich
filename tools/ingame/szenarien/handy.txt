@@ -1,5 +1,7 @@
 # 0.3: Handy (Startseite, Lieferservice mit Limo und Kühen, Mitarbeiterkiste mit drei Mitarbeitern, Bodyguards gegen
-# einen Zombie, James mit dem Hubschrauber). Knöpfe: Bildschirm 1280×720, GUI-Maßstab 2.
+# einen Zombie, James mit dem Hubschrauber). Knöpfe: Bildschirm 1280×720, GUI-Maßstab 2; Startseite y 188 + 42 je Knopf
+# (Limo 188, Heli 230, Navi 272, Lieferung 314, Aufträge 356, Mitarbeiter 398, Bodyguards 440, heim 482),
+# Lieferservice y 185 + 34 je Knopf.
 server /gamemode creative
 server /time set 6000
 server /weather clear
@@ -13,10 +15,10 @@ warte 1
 klick
 warte 1.5
 bild h01_handy_start
-linksklick 640 334
+linksklick 640 314
 warte 1
 bild h02_lieferservice
-linksklick 640 206
+linksklick 640 185
 warte 1
 merke
 bis 60 Lieferung
@@ -33,7 +35,7 @@ warte 1
 server /item replace entity @p weapon.mainhand with stinkendreich:handy
 klick
 warte 1.5
-linksklick 640 418
+linksklick 640 398
 warte 1.5
 server /item replace entity @p weapon.mainhand with stinkendreich:mitarbeiterkiste
 server /villa ort 30 26 100 0 60
@@ -51,7 +53,7 @@ server /item replace entity @p weapon.mainhand with stinkendreich:handy
 warte 1
 klick
 warte 1.5
-linksklick 640 460
+linksklick 640 440
 warte 3
 server /effect give @p resistance 60 4
 server /summon zombie ~ ~ ~12
@@ -72,7 +74,7 @@ server /gamemode creative
 server /item replace entity @p weapon.mainhand with stinkendreich:handy
 klick
 warte 1.5
-linksklick 640 250
+linksklick 640 230
 warte 20
 taste F5
 taste F5
