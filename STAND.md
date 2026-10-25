@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-25, 21:00 Uhr_
+_Zuletzt aktualisiert: 2026-10-25, 22:50 Uhr (Nachtschicht, Philip schläft)_
 
 ## Erledigt
 
@@ -96,6 +96,27 @@ _Zuletzt aktualisiert: 2026-10-25, 21:00 Uhr_
   den Anker setzt die Figur beim ersten Tick selbst). Tänzerinnen tragen Glitzer-Showkostüme (bewusst nicht
   freizügiger, weil Repo öffentlich und Minecraft auch von Kindern gespielt wird).
 
+## Version 0.2.2 (veröffentlicht, in allen 17 Versionen geprüft) und 0.2.3 (veröffentlicht 25.10. nachts)
+
+- 0.2.3: Konzertflügel (`klavier/`, `client/klavier/KlavierBildschirm`, Modell `konzertfluegel` + 8 unsichtbare
+  `fluegel_teil` in deko.py, Töne `klavier_c2…c6` aus sounds.py, Stücke in `Lieder`), Tresorfallen nur für
+  Eindringlinge (`FallenplatteBlock`), Lava-Graben bei Bewohner auf dem ganzen Grundstück und im Lockdown immer
+  (`Graben`), Goldmünzen kletterbar (Tag `minecraft:climbable`, `Goldbad` nur noch ohne Fallschaden), Leiter am
+  Sprungturm an Eisensäule, James folgt nach `/butler rufen`.
+- Türen: Haustür = Torflügel `portaltuer` (tueren.py, Modus „schiebetuer“, Radius 3), Banktür `banktuer` und
+  `sicherheitstuer` sind `SicherheitstuerBlock` (Kartenleser öffnet direkt beide Flügel, bleibt offen, Rechtsklick
+  schließt), Tür Ballsaal–Wohnzimmer, Wandlücken neben Gästezimmer- und Badtür zu.
+- Weiße Decken: `register/ModDecken` (decke_holz, _teppich_weiss/_rot/_gelb, _grau, _gold, _schwarz, _schiefer;
+  Vorbild per ID, `ofFullCopy`), Modelle in assets.py (`DECKEN`), villa.py `decken_weiss()` ersetzt sichtbare Böden.
+- `pruefe_vor_glas()` in villa.py: Wandgeräte vor Glas → Villa wird nicht gespeichert.
+- Magischer Eingang `mechanik/Geheimgang` (schleichen vor Geheimregal, Bewohner/Karte/Stufe 0, schließt nach 10 s),
+  Geheimschalter liest den echten Zustand des Regals. Whirlpool taut Eis auf und dampft. Drehteller hält sich an
+  der Marke. Garten-Lounge neu, Club-Sofa mit einem Block Abstand, Tänzerinnen im zweiteiligen Showkostüm (so viel
+  wie ein Bikini, nicht freizügiger: Repo öffentlich, Kinder spielen Minecraft).
+- Tests: `check023.txt`, `check023b.txt`, `check023c.txt` (Weltkoordinaten = Villa + (-56, 62, -56)).
+- Neu geplant: README-Bilder, Trailer (`tools/ingame/trailer_szenario.py`), Server-Version ohne Mod beim Spieler
+  (Philip: „soll alles gehen“ → Fabric-Server mit Ressourcenpaket und Paper-Plugin).
+
 ## Version 0.3 (geplant, Philips Wünsche vom 25.10.)
 
 - **Straßennetz:** Vor der ersten Fahrt zu einem Ziel baut der Chauffeur eine echte Straße (Kreisel vor der Villa,
@@ -125,4 +146,5 @@ _Zuletzt aktualisiert: 2026-10-25, 21:00 Uhr_
 
 ## Nächster Schritt
 
-0.2.1 veröffentlichen (`mod.version` und `.github/release-version` auf 0.2.1, pushen, Release-Ablauf beobachten), dann 0.3 (Straßennetz, Handy, Mitarbeiter, Bodyguards).
+0.2.3 in den übrigen 16 Versionen prüfen (sr-test), README-Bilder und Trailer, dann 0.3 (Straßennetz, Handy,
+Mitarbeiter, Bodyguards), danach die Server-Version.

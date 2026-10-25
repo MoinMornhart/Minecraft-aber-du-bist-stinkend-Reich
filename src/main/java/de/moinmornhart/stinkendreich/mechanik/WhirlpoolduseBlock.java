@@ -47,9 +47,7 @@ public class WhirlpoolduseBlock extends MechanikBlock {
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity d) {
         auftauen(welt, pos);
         // Dampf über dem warmen Wasser, auch wenn die Düsen aus sind
-        if (welt.getRandom().nextInt(2) == 0) {
-            welt.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 2.1, pos.getZ() + 0.5, 2, 2.2, 0.05, 1.8, 0.01);
-        }
+        welt.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 2.1, pos.getZ() + 0.5, 5, 2.2, 0.05, 1.8, 0.015);
         if (d.zahl("aus", 0) == 1) {
             return;
         }

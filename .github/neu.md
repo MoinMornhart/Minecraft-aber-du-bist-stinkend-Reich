@@ -1,3 +1,17 @@
+### Neu in 0.2.3
+
+- **Konzertflügel, der wirklich spielt:** Ein großer Flügel (3 × 3 Blöcke) mit offenem Deckel, goldenem Innenleben, Notenpult und Klavierbank. Rechtsklick öffnet die Klaviatur mit drei Oktaven (Maus oder Computertasten), alle in der Nähe hören mit. Der Flügel spielt auch selbst: Für Elise, Ode an die Freude, Kanon in D.
+- **Magischer Eingang zum Geheimclub:** Vor dem Bücherregal im Nachtclub kurz schleichen – es funkelt, ein Zauberklang ertönt, und das Regal gleitet auf. Nach 10 Sekunden schließt es sich von selbst. Der Schalter im Regal geht weiterhin.
+- **Türen:** Die Haustür ist jetzt eine große weiß-goldene Portaltür mit Glasfenstern, die aufgleitet, wenn du davorstehst. Neue Banktür im Bunker vor der Kommandozentrale (nur mit Zugangskarte). Sicherheitstüren (Büro, Kontrollraum, Banktür) bleiben nach dem Öffnen offen, bis du sie per Rechtsklick wieder schließt, zum Beispiel von innen. Neue Doppeltür zwischen Ballsaal und Wohnzimmer, Wandlücken neben der Gästezimmer- und der Badtür geschlossen.
+- **Weiße Decken:** Überall in Haus und Penthouse ist die Decke jetzt weiß, auch unter Holzböden und Teppichen (neue Deckenblöcke: oben wie vorher, unten weiß).
+- **Tresor:** Die Fallen im Tresor lösen nur noch bei Eindringlingen aus, nicht mehr bei dir.
+- **Lava-Graben:** Lava, sobald ein Bewohner irgendwo auf dem Grundstück ist (auch im Garten). Im Lockdown ist immer Lava im Graben.
+- **Whirlpool:** beheizt – er friert nie mehr zu und dampft.
+- **Goldspeicher:** Leiter zum Sprungbrett hängt richtig, in den Goldmünzen kannst du mit Schleichen stehen bleiben und mit der Leertaste nach oben klettern.
+- **James** bleibt nach dem Rufen bei dir, statt wieder nach Hause zu gehen.
+- **Geheimclub:** Zwischen Bar und Sofa ist ein Block Platz, die Tänzerinnen tragen zweiteilige Glitzer-Showkostüme.
+- **Kleinigkeiten:** Garten-Lounge neu (Sofas als U, Marmortisch, Kronleuchter), Alarmanlagen hängen nicht mehr vor Fenstern, der Drehteller bleibt genau in der Mitte seines Goldrings.
+
 ### Neu in 0.2.2
 
 - **Show-Tänzerinnen im Geheimclub:** Drei tanzen an den Stangen und drehen sich langsam darum, drei laufen durch den Club und tanzen, wenn sie stehen bleiben. Vier Glitzer-Showkostüme mit Federschmuck. Sie sind unverwundbar wie James.

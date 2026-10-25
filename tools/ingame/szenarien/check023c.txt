@@ -1,0 +1,91 @@
+# 0.2.3 (dritte Runde): Garten-Lounge, Konzertflügel, Sprungturm, Münzgrube (schleichen, Leertaste), Bürotür
+# (bleibt offen, von innen zu), Whirlpool (Eis prüfen), James nach dem Rufen, neue Kostüme der Tänzerinnen.
+# Weltkoordinaten = Villa-Koordinaten + (-56, 62, -56)
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+server /villa ort 28.5 28 68.5 90 15
+warte 8
+bild u01_pavillon
+server /villa ort 54.5 27.8 58.5 -36 18
+warte 2
+bild u02_fluegel
+server /villa ort 58.5 28 66.5 180 25
+warte 2
+bild u03_fluegel_vorn
+server /villa ort 64.5 9 58.5 -40 15
+warte 2
+bild u04_sprungturm
+server /villa ort 13 8.5 72 -110 8
+warte 3
+bild u05_taenzerinnen
+server /villa ort 8.5 8 71.5 -90 5
+warte 2
+bild u06_stange
+# Whirlpool: Eis setzen, sofort prüfen, ob es da ist, dann nach 2 s wieder Wasser
+server /villa ort 74.5 40 39.5 0 90
+warte 2
+server /fill ~-3 ~-2 ~-2 ~3 ~-2 ~3 minecraft:ice replace minecraft:water
+server /execute if block ~1 ~-2 ~1 minecraft:ice run say WHIRLPOOL_EIS_GESETZT
+warte 2
+server /execute if block ~1 ~-2 ~1 minecraft:water run say WHIRLPOOL_WIEDER_WASSER
+server /execute if block ~1 ~-2 ~1 minecraft:ice run say WHIRLPOOL_NOCH_EIS
+server /villa ort 70.5 40 44 -138 25
+warte 3
+bild u07_whirlpool_dampf
+# Zu Fuß
+server /gamemode survival
+server /villa stufe 1
+server /give @p stinkendreich:zugangskarte
+# Sprungturm: die Leiter hoch
+server /villa ort 68.5 6 53.5 -90 -20
+warte 1
+halte 4 w
+warte 1
+server /execute if entity @p[y=71,dy=6] run say SPRUNGTURM_OBEN
+bild u08_auf_dem_turm
+# Münzgrube: unten in den Münzen, Leertaste halten → nach oben
+server /villa ort 67.5 3 62.5 0 0
+warte 1
+halte 3 space
+server /execute if entity @p[y=68,dy=8] run say MUENZEN_OBEN
+server /execute if entity @p[y=60,dy=7] run say MUENZEN_UNTEN
+bild u09_muenzen
+# Schleichen hält einen oben
+server /villa ort 67.5 7 62.5 0 30
+druecke shift
+warte 3
+server /execute if entity @p[y=68,dy=8] run say MUENZEN_SCHLEICHEN_OBEN
+loslassen shift
+# Bürotür: Karte an den Leser, Tür bleibt offen
+server /villa ort 58.3 32 57.5 -90 10
+warte 2
+klick
+warte 6
+server /execute if block 4 94 2 stinkendreich:sicherheitstuer[open=true] run say BUEROTUER_OFFEN
+server /execute if block 4 94 2 stinkendreich:sicherheitstuer[open=false] run say BUEROTUER_ZU
+server /villa ort 58.3 32 59.5 -70 10
+warte 1
+bild u10_buero_offen
+# Von innen auf das offene Türblatt klicken → zu
+server /villa ort 62.5 32 58.1 90 20
+warte 1
+klick
+warte 1.5
+server /execute if block 4 94 2 stinkendreich:sicherheitstuer[open=false] run say BUEROTUER_INNEN_ZU
+server /execute if block 4 94 2 stinkendreich:sicherheitstuer[open=true] run say BUEROTUER_NOCH_OFFEN
+bild u11_buero_innen
+# James rufen: er kommt und bleibt dann bei mir
+server /villa ort 55.5 26 95.5 180 5
+warte 2
+server /butler rufen
+warte 8
+server /execute at @p if entity @e[type=stinkendreich:butler,distance=..8] run say JAMES_DA
+warte 20
+server /execute at @p if entity @e[type=stinkendreich:butler,distance=..10] run say JAMES_BLEIBT
+server /execute at @p unless entity @e[type=stinkendreich:butler,distance=..10] run say JAMES_WEG
+bild u12_james
+server /villa stufe 0

@@ -3,7 +3,8 @@
 
 Textur (64x64): oben die Menschengestalt im klassischen Layout (Kopf, Körper, schmaler Arm mit 3 Pixeln, Bein;
 die linke Seite ist gespiegelt), unten die Zusatzteile des eigenen Modells (lange Haare, Federschmuck),
-siehe TaenzerinModell.java. Kostüm: glitzernder Show-Body im Stil einer Las-Vegas-Revue, Schuhe in Kostümfarbe.
+siehe TaenzerinModell.java. Kostüm: zweiteiliges Glitzer-Showkostüm im Stil einer Las-Vegas-Revue (etwa so viel
+wie ein Bikini), Netzstrümpfe, Schuhe in Kostümfarbe.
 
 Aufruf: python3 tools/assets/taenzerin.py
 """
@@ -97,7 +98,8 @@ def kostuem_bild(nr: int) -> Image.Image:
     m.wuerfel(0, 0, 8, 8, 8, kopf)
     m.wuerfel(32, 0, 8, 8, 8, lambda *a: (0, 0, 0, 0))   # Hut-Schicht leer
 
-    # Körper: Schultern frei mit zwei Trägern, darunter der glitzernde Show-Body
+    # Körper: zweiteiliges Showkostüm wie in einer Las-Vegas-Revue (Pailletten-Top mit Trägern, Bauch frei,
+    # Glitzergürtel und kurzes Höschen), also so viel wie ein Bikini – nicht mehr
     def koerper(seite, x, y, w, h):
         if seite == "oben":
             return haut
@@ -107,9 +109,15 @@ def kostuem_bild(nr: int) -> Image.Image:
             if seite in ("vorn", "hinten") and x in (1, 6):
                 return glitzer                            # Träger
             return haut
-        if y == 8 and seite in ("vorn", "hinten", "rechts", "links"):
+        if y < 6:
+            return paillette(x, y)                        # Top
+        if y < 9:
+            if seite == "vorn" and y == 7 and x in (3, 4):
+                return dunkler(haut, 0.9)                 # Bauchnabel
+            return haut                                   # Bauch frei
+        if y == 9:
             return glitzer                                # Glitzergürtel
-        return paillette(x, y)
+        return paillette(x, y)                            # Höschen
     m.wuerfel(16, 16, 8, 12, 4, koerper)
 
     # Arm (schmal, 3 Pixel): Haut, oben Armreif, unten Glitzerhandschuh bis zum Handgelenk
@@ -131,8 +139,8 @@ def kostuem_bild(nr: int) -> Image.Image:
             return stoff
         if seite == "unten":
             return dunkler(stoff, 0.6)
-        if y < 2 and not (seite == "vorn" and y == 1 and x in (1, 2)):
-            return paillette(x, y)
+        if y < 1:
+            return paillette(x, y)                        # Saum des Höschens
         if y >= 10:
             return dunkler(stoff, 0.75) if y == 11 else stoff  # Pumps
         if (x + y) % 2 == 0:
