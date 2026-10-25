@@ -158,6 +158,14 @@ public final class Kompat {
     }
 
     /** Block zu einer ID (Methode hieß bis 1.21.1 {@code get}). */
+    /** Entity-Typ über seine ID (die Konstanten stehen ab 26.2 in einer anderen Klasse). */
+    public static net.minecraft.world.entity.EntityType<?> entityTypNachId(net.minecraft.resources.Identifier id) {
+        //? if >=1.21.2 {
+        return net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getValue(id);
+        //?} else
+        /*return net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.get(id);*/
+    }
+
     public static net.minecraft.world.level.block.Block blockNachId(net.minecraft.resources.Identifier id) {
         //? if >=1.21.2 {
         return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(id);

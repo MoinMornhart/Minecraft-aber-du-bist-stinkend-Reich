@@ -55,6 +55,36 @@ public final class ButlerBefehle {
                             return 1;
                         }))
                         .then(Commands.literal("truhe").executes(ButlerBefehle::truheFestlegen))
+                        .then(Commands.literal("strassen").executes(k -> {
+                            var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer());
+                            StringBuilder t = new StringBuilder();
+                            netz.uebersicht().forEach((name, laenge) -> t.append(t.length() > 0 ? ", " : "").append(name)
+                                    .append(" (").append(laenge).append(")"));
+                            var bau = netz.aktuellerBau();
+                            k.getSource().sendSuccess(() -> Component.translatable("stinkendreich.strasse.liste",
+                                    t.length() == 0 ? "–" : t.toString(), bau == null ? "–" : bau.name() + " " + bau.prozent() + " %"), false);
+                            return 1;
+                        }))
+                        // Für Tests und Neugierige: zu einem Punkt einer Straße springen („/butler strassenpunkt 0 200“)
+                        .then(Commands.literal("strassenpunkt").then(Commands.argument("strasse", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0))
+                                .then(Commands.argument("punkt", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0)).executes(k -> {
+                                    ServerPlayer p = k.getSource().getPlayerOrException();
+                                    var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer());
+                                    int nr = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(k, "strasse");
+                                    if (nr >= netz.strassen().size()) {
+                                        return 0;
+                                    }
+                                    var punkte = netz.strassen().get(nr).punkte();
+                                    BlockPos q = punkte.get(Math.min(punkte.size() - 1, com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(k, "punkt")));
+                                    p.teleportTo(q.getX() + 0.5, q.getY() + 1, q.getZ() + 0.5);
+                                    return 1;
+                                }))))
+                        .then(Commands.literal("strasse").then(Commands.argument("ziel", StringArgumentType.greedyString()).executes(k -> {
+                            ServerPlayer p = k.getSource().getPlayerOrException();
+                            ausfuehren(ButlerVerwaltung.vonSpieler(p), p, new Sprache.Befehl(Sprache.Art.STRASSE,
+                                    Sprache.normalisieren(StringArgumentType.getString(k, "ziel")), -1, false));
+                            return 1;
+                        })))
                         .then(Commands.literal("orte").executes(k -> {
                             ServerPlayer p = k.getSource().getPlayerOrException();
                             ausfuehren(ButlerVerwaltung.vonSpieler(p), p, Sprache.Befehl.von(Sprache.Art.ORTE));
@@ -184,12 +214,26 @@ public final class ButlerBefehle {
         return b.orte().isEmpty() ? "–" : String.join(", ", b.orte().keySet());
     }
 
+    /** Ziel einer Fahrt oder eines Flugs: Punkt (null = nur vorfahren), Name und Antwort des Butlers. */
+    public record FahrZiel(Vec3 punkt, String name, Antwort antwort) {
+    }
+
     /** Fahr- oder Flugbefehl: Ziel bestimmen und den Butler losschicken (als Chauffeur oder Pilot). */
     private static Antwort fahren(ButlerEntity b, ServerPlayer p, String ziel, boolean fliegen) {
         // Weit weg „schläft“ der Butler (außerhalb der Simulationsweite): dann springt er zum Herrn
         if (b.level() != p.level() || b.distanceTo(p) > 32) {
             b.teleportiereNahe(p.blockPosition());
         }
+        FahrZiel z = fahrZiel(b, p, ziel, fliegen);
+        if (z.antwort().fehler()) {
+            return z.antwort();
+        }
+        b.neueAuftraege(List.of(fliegen ? new FlugAuftrag(z.punkt(), z.name()) : new FahrAuftrag(z.punkt(), z.name())));
+        return z.antwort();
+    }
+
+    /** Löst ein gesprochenes Ziel auf (Villa, Blickziel, festes Ziel wie „Dorf“ oder gemerkter Ort). */
+    public static FahrZiel fahrZiel(ButlerEntity b, ServerPlayer p, String ziel, boolean fliegen) {
         String art = fliegen ? "flug" : "fahren";
         Vec3 punkt;
         String name;
@@ -208,23 +252,68 @@ public final class ButlerBefehle {
         } else if (Sprache.ZIEL_BLICK.equals(ziel)) {
             HitResult blick = p.pick(300.0, 1.0F, false);
             if (!(blick instanceof BlockHitResult bt) || blick.getType() != HitResult.Type.BLOCK) {
-                return new Antwort(Component.translatable("stinkendreich.butler.fahren.nichtgesehen"), true);
+                return new FahrZiel(null, "", new Antwort(Component.translatable("stinkendreich.butler.fahren.nichtgesehen"), true));
             }
             BlockPos pos = bt.getBlockPos().above();
             punkt = Vec3.atBottomCenterOf(pos);
             name = pos.getX() + " " + pos.getY() + " " + pos.getZ();
             antwort = Antwort.ok("stinkendreich.butler." + art + ".blick", pos.getX(), pos.getY(), pos.getZ());
+        } else if (b.ort(ziel) == null && de.moinmornhart.stinkendreich.strasse.StrassenZiele.fester(ziel) != null) {
+            // Feste Ziele des Straßennetzes: Dorf, Endportal, Netherportal, Mine
+            var gefunden = festesZiel(p, ziel);
+            if (gefunden == null) {
+                return new FahrZiel(null, "", new Antwort(Component.translatable("stinkendreich.strasse.nicht_gefunden", ziel), true));
+            }
+            punkt = Vec3.atBottomCenterOf(gefunden.pos());
+            name = Component.translatable("stinkendreich.strasse.ziel." + gefunden.name()).getString();
+            antwort = Antwort.ok("stinkendreich.butler." + art + ".ort", name);
         } else {
             BlockPos ort = b.ort(ziel);
             if (ort == null) {
-                return new Antwort(Component.translatable("stinkendreich.butler.ort.unbekannt", ziel, ortListe(b)), true);
+                return new FahrZiel(null, "", new Antwort(Component.translatable("stinkendreich.butler.ort.unbekannt", ziel, ortListe(b)), true));
             }
             punkt = Vec3.atBottomCenterOf(ort);
             name = ziel;
             antwort = Antwort.ok("stinkendreich.butler." + art + ".ort", ziel);
         }
-        b.neueAuftraege(List.of(fliegen ? new FlugAuftrag(punkt, name) : new FahrAuftrag(punkt, name)));
-        return antwort;
+        return new FahrZiel(punkt, name, antwort);
+    }
+
+    /** Sucht ein festes Ziel (Dorf, Endportal, Netherportal, Mine) von der Villa aus, sonst vom Herrn aus. */
+    static de.moinmornhart.stinkendreich.strasse.StrassenZiele.Ziel festesZiel(ServerPlayer p, String ziel) {
+        String fest = de.moinmornhart.stinkendreich.strasse.StrassenZiele.fester(ziel);
+        if (fest == null || !(p.level() instanceof net.minecraft.server.level.ServerLevel welt)) {
+            return null;
+        }
+        BlockPos von = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa().map(v -> v.spawn()).orElse(p.blockPosition());
+        return de.moinmornhart.stinkendreich.strasse.StrassenZiele.finden(welt, fest, von);
+    }
+
+    /** Straße zu einem Ziel bauen lassen (ohne hinzufahren). */
+    private static Antwort strasseBauen(ButlerEntity b, ServerPlayer p, String ziel) {
+        Vec3 punkt;
+        String name;
+        var gefunden = festesZiel(p, ziel);
+        if (gefunden != null) {
+            punkt = Vec3.atBottomCenterOf(gefunden.pos());
+            name = Component.translatable("stinkendreich.strasse.ziel." + gefunden.name()).getString();
+        } else if (b.ort(ziel) != null) {
+            punkt = Vec3.atBottomCenterOf(b.ort(ziel));
+            name = ziel;
+        } else if (de.moinmornhart.stinkendreich.strasse.StrassenZiele.fester(ziel) != null) {
+            return new Antwort(Component.translatable("stinkendreich.strasse.nicht_gefunden", ziel), true);
+        } else {
+            return new Antwort(Component.translatable("stinkendreich.butler.ort.unbekannt", ziel, ortListe(b)), true);
+        }
+        var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(p.level().getServer());
+        if (netz.strasseZu(name, punkt) >= 0) {
+            return Antwort.ok("stinkendreich.strasse.gibtes", name);
+        }
+        var bau = netz.bauen(b.welt(), punkt, name);
+        if (bau == null) {
+            return new Antwort(Component.translatable("stinkendreich.strasse.keinevilla"), true);
+        }
+        return Antwort.ok("stinkendreich.strasse.wirdgebaut", bau.name());
     }
 
     /** Führt einen Auftrag aus und gibt die Antwort zurück (ohne sie auszusprechen). */
@@ -291,6 +380,9 @@ public final class ButlerBefehle {
             }
             case FLIEGEN -> {
                 return fahren(b, p, bf.quelle(), true);
+            }
+            case STRASSE -> {
+                return strasseBauen(b, p, bf.quelle());
             }
             case ORT_MERKEN -> {
                 String name = bf.quelle() == null ? "" : Sprache.normalisieren(bf.quelle());

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public final class Sprache {
     public enum Art { HOLEN, KOCHEN, SORTIEREN, FOLGEN, BLEIBEN, HEIM, KOMMEN, STOPP, INVENTAR, STATUS, HILFE,
-        FAHREN, FLIEGEN, ORT_MERKEN, ORTE, UNBEKANNT }
+        FAHREN, FLIEGEN, ORT_MERKEN, ORTE, STRASSE, UNBEKANNT }
 
     /** Ziele beim Fahren (in {@link Befehl#quelle()}): Villa, Blickziel, nur vorfahren; sonst Name eines Ortes. */
     public static final String ZIEL_VILLA = "#villa", ZIEL_BLICK = "#blick", ZIEL_ABHOLEN = "#abholen";
@@ -136,6 +136,11 @@ public final class Sprache {
         }
         if (enthaelt(t, " welche orte", " orte ", "gespeicherte orte", "deine orte")) {
             return Befehl.von(Art.ORTE);
+        }
+        // Straßenbau: „bau eine Straße zum Dorf“
+        if (enthaelt(t, "strasse", "strassen") && enthaelt(t, "bau", "leg", "zieh")) {
+            String name = ortsname(t);
+            return new Befehl(Art.STRASSE, name.isEmpty() ? "dorf" : name, -1, false);
         }
         // Pilot: wie beim Fahren, nur mit dem Hubschrauber
         if (enthaelt(t, "hol den hubschrauber", "hol den heli", "hubschrauber holen", "heli holen")) {

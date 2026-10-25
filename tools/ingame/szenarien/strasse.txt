@@ -1,0 +1,49 @@
+# 0.3 Straßennetz: Straße zum Dorf bauen lassen (Kreisel vor dem Tor), aus der Luft fotografieren, dann mit James
+# im Wagen über die Straße zum Dorf fahren
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+warte 30
+taste F1
+server /villa ort 55.5 26 86 0 15
+warte 3
+server /butler strasse dorf
+warte 2
+merke
+bis 400 Straße|Strasse|road
+server /butler strassen
+warte 40
+server /butler strassen
+warte 40
+server /butler strassen
+server /gamemode spectator
+server /villa ort 55 60 125 0 70
+warte 6
+bild s01_kreisel_oben
+server /villa ort 70 40 150 140 25
+warte 6
+bild s02_kreisel_schraeg
+# Fahrt zum Dorf
+server /gamemode creative
+server /villa ort 55.5 26 86 0 15
+warte 2
+merke
+server Butler, hol den Wagen
+bis 20 vorgefahren
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
+warte 2
+merke
+server Butler, fahr mich zum Dorf
+warte 10
+taste F5
+bild s03_losfahren
+warte 15
+bild s04_unterwegs
+warte 20
+bild s05_unterwegs2
+bis 240 Wir sind da|nicht weiter|da, Sir
+bild s06_angekommen
+taste F5
+server /butler strassen

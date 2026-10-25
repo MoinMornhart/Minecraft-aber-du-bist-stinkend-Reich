@@ -61,6 +61,13 @@ public final class Konfig {
     public double hubschrauberTempo = 130.0;
     /** Höchstgeschwindigkeit, wenn der Butler chauffiert (km/h). */
     public double chauffeurTempo = 60.0;
+    /**
+     * Vor der ersten Fahrt zu einem weiter entfernten Ziel (Dorf, Endportal, Netherportal, Mine, gemerkte Orte)
+     * baut der Chauffeur eine echte Straße dorthin, ausgehend vom Kreisel vor der Villa. Aus = er fährt querfeldein.
+     */
+    public boolean strassenBauen = true;
+    /** Ab dieser Entfernung (Blöcke) lohnt sich eine Straße. */
+    public int strassenAbEntfernung = 96;
 
     // ---------- Musik ----------
     /** Hörweite rund um die Musikanlage und jeden ihrer Lautsprecher (Blöcke). */

@@ -26,6 +26,15 @@ public final class ModItems {
     public static final Item FERNSEHER = ModRegister.item("fernseher",
             de.moinmornhart.stinkendreich.fernseher.FernseherItem::new, new Item.Properties().stacksTo(1));
 
+    /** Das goldene Handy (James anrufen, Navigation, Lieferservice, Mitarbeiter, Bodyguards). */
+    public static final Item HANDY = ModRegister.item("handy", de.moinmornhart.stinkendreich.handy.HandyItem::new,
+            new Item.Properties().stacksTo(1).rarity(Rarity.EPIC));
+    /** Mitarbeiterkiste: stellt eine Truhe auf, drei Mitarbeiter steigen aus und arbeiten für dich. */
+    public static final Item MITARBEITERKISTE = ModRegister.item("mitarbeiterkiste",
+            de.moinmornhart.stinkendreich.mitarbeiter.MitarbeiterkisteItem::new, new Item.Properties().stacksTo(16)
+                    .component(DataComponents.CUSTOM_NAME, net.minecraft.network.chat.Component.translatable("item.stinkendreich.mitarbeiterkiste")
+                            .withStyle(s -> s.withItalic(false).withColor(net.minecraft.ChatFormatting.GOLD))));
+
     /** Agenten-Anzug (Kräfte siehe AgentKraefte). */
     public static final Item BOND_SONNENBRILLE = AgentRuestung.teil("bond_sonnenbrille", AgentRuestung.Teil.KOPF);
     public static final Item SMOKING = AgentRuestung.teil("smoking", AgentRuestung.Teil.BRUST);

@@ -98,6 +98,9 @@ public class StinkendReichClient implements ClientModInitializer {
         //?} else
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(de.moinmornhart.stinkendreich.client.club.TaenzerinModell.SCHICHT, de.moinmornhart.stinkendreich.client.club.TaenzerinModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.TAENZERIN, de.moinmornhart.stinkendreich.client.club.TaenzerinRenderer::new);
+        EntityRendererRegistry.register(ModEntities.MITARBEITER, de.moinmornhart.stinkendreich.client.mitarbeiter.MitarbeiterRenderer::new);
+        EntityRendererRegistry.register(ModEntities.BODYGUARD, de.moinmornhart.stinkendreich.client.bodyguard.BodyguardRenderer::new);
+        KlientBruecke.handy = () -> KompatClient.zeige(new de.moinmornhart.stinkendreich.client.handy.HandyBildschirm());
         AutoKlient.registrieren();
         UpdateKlient.registrieren();
         // Musikanlage: eigene Dateien abspielen, Spotify-Fernbedienung

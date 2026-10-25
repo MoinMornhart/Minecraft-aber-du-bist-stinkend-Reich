@@ -45,6 +45,11 @@ public final class Chauffeur {
         this.ankunft = ankunft;
     }
 
+    /** Der Wegpunkt, auf den er gerade zufährt (für Meldungen). */
+    public Vec3 naechsterPunkt() {
+        return punkte.get(punkt);
+    }
+
     /** Ein Tick am Steuer. */
     public Lage fahren(AutoEntity auto) {
         ticks++;

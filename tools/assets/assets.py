@@ -22,6 +22,7 @@ from PIL import Image, ImageDraw
 
 import ausruestung
 import taenzerin
+import handy
 import deko
 import drehteller
 import fahrzeuge
@@ -516,6 +517,18 @@ TEXTE_DE = {
     "stinkendreich.tresor.falle": "FALLE! Der Tresor ist verriegelt.",
     "stinkendreich.privattuer.verweigert": "Privat! Nur Bewohner der Villa kommen hier durch.",
     "stinkendreich.sicherheitstuer.karte": "Halte die Zugangskarte an den Kartenleser neben der Tür.",
+    "stinkendreich.strasse.bau": "Nach %s gibt es noch keine Straße, Sir. Ich lasse eine bauen – das dauert einen Moment.",
+    "stinkendreich.strasse.fortschritt": "Straßenbau nach %s: %s %%",
+    "stinkendreich.strasse.fertig": "Die Straße nach %s ist fertig. Wir fahren los, Sir.",
+    "stinkendreich.strasse.nicht_gefunden": "Ich finde „%s“ nirgends in der Nähe, Sir.",
+    "stinkendreich.strasse.gibtes": "Nach %s gibt es schon eine Straße, Sir.",
+    "stinkendreich.strasse.wirdgebaut": "Sehr wohl, ich lasse eine Straße nach %s bauen.",
+    "stinkendreich.strasse.keinevilla": "Ohne Villa kein Kreisel, Sir – hier kann ich keine Straße bauen lassen.",
+    "stinkendreich.strasse.liste": "Straßen: %s · im Bau: %s",
+    "stinkendreich.strasse.ziel.dorf": "Dorf",
+    "stinkendreich.strasse.ziel.endportal": "Endportal",
+    "stinkendreich.strasse.ziel.netherportal": "Netherportal",
+    "stinkendreich.strasse.ziel.mine": "Mine",
     "stinkendreich.geheimgang.offen": "✨ Ein magischer Eingang öffnet sich …",
     "stinkendreich.geheimgang.nichts": "Die Bücher flüstern … aber das Regal bleibt zu.",
     "stinkendreich.klavier.lied.fuer_elise": "Für Elise",
@@ -568,6 +581,18 @@ TEXTE_EN = {
     "stinkendreich.tresor.falle": "TRAP! The vault is locked.",
     "stinkendreich.privattuer.verweigert": "Private! Residents of the villa only.",
     "stinkendreich.sicherheitstuer.karte": "Hold your key card to the card reader next to the door.",
+    "stinkendreich.strasse.bau": "There is no road to %s yet, sir. I'll have one built – it takes a moment.",
+    "stinkendreich.strasse.fortschritt": "Building the road to %s: %s %%",
+    "stinkendreich.strasse.fertig": "The road to %s is finished. Off we go, sir.",
+    "stinkendreich.strasse.nicht_gefunden": "I can't find \u201c%s\u201d anywhere nearby, sir.",
+    "stinkendreich.strasse.gibtes": "There already is a road to %s, sir.",
+    "stinkendreich.strasse.wirdgebaut": "Very well, I'll have a road to %s built.",
+    "stinkendreich.strasse.keinevilla": "No villa, no roundabout, sir – I can't have a road built here.",
+    "stinkendreich.strasse.liste": "Roads: %s · being built: %s",
+    "stinkendreich.strasse.ziel.dorf": "the village",
+    "stinkendreich.strasse.ziel.endportal": "the End portal",
+    "stinkendreich.strasse.ziel.netherportal": "the Nether portal",
+    "stinkendreich.strasse.ziel.mine": "the mine",
     "stinkendreich.geheimgang.offen": "✨ A magical entrance opens …",
     "stinkendreich.geheimgang.nichts": "The books whisper … but the shelf stays shut.",
     "stinkendreich.klavier.lied.fuer_elise": "Für Elise",
@@ -658,7 +683,7 @@ def main() -> None:
     fz = fahrzeuge.main()
     TEXTE_DE.update(fz["de"])
     TEXTE_EN.update(fz["en"])
-    for texte in (ausruestung.main(), drehteller.main(), fernseher.main(), taenzerin.main()):
+    for texte in (ausruestung.main(), drehteller.main(), fernseher.main(), taenzerin.main(), handy.main()):
         TEXTE_DE.update(texte["de"])
         TEXTE_EN.update(texte["en"])
     g = gemaelde.main()

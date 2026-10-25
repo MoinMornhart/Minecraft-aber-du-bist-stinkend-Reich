@@ -1,0 +1,415 @@
+package de.moinmornhart.stinkendreich.strasse;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import de.moinmornhart.stinkendreich.StinkendReich;
+import de.moinmornhart.stinkendreich.villa.VillaPlatzierung;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.phys.Vec3;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Das Straßennetz der Welt: ein Kreisel vor dem Tor der Villa und Straßen, die von dort (oder von einer anderen
+ * Straße) zu den Zielen führen. Jede Straße kennt ihre Eltern-Straße und die Stelle, an der sie abzweigt, so
+ * entsteht ein Baum mit dem Kreisel als Wurzel. Darauf sucht {@link #route} den Weg für den Chauffeur.
+ *
+ * <p>Gespeichert wird im Weltordner als {@code stinkendreich-strassen.json}. Gebaut wird immer nur eine Straße zur
+ * Zeit ({@link StrassenBau}), Stück für Stück in jedem Server-Tick.</p>
+ */
+public final class Strassennetz {
+    private static final String DATEI = StinkendReich.MOD_ID + "-strassen.json";
+    private static final Gson GSON = new GsonBuilder().create();
+
+    /** Mitte des Kreisels in Villa-Koordinaten (auf der Achse von Tor und Haustür, südlich der Brücke). */
+    static final double KREISEL_X = 55.0, KREISEL_Z = 131.0;
+    /** Halbmesser: Insel, Außenrand der Fahrbahn, Fahrspur in der Mitte. */
+    static final double INSEL = 4.5, AUSSEN = 10.5, SPUR = 7.5;
+    /** Abstand der Wegpunkte für den Chauffeur entlang einer Straße (Blöcke). */
+    private static final int WEGPUNKT_ABSTAND = 8;
+
+    /** Eine gebaute Straße: Name des Ziels, Eltern-Straße (−1 = Kreisel), Abzweig-Index dort, Mittellinie. */
+    public record Strasse(String name, int eltern, int abzweig, List<BlockPos> punkte) {
+        BlockPos ende() {
+            return punkte.get(punkte.size() - 1);
+        }
+    }
+
+    private static Strassennetz aktuell;
+
+    private MinecraftServer server;
+    private Path pfad;
+    private boolean kreiselGebaut;
+    private final List<Strasse> strassen = new ArrayList<>();
+    private StrassenBau bau;
+
+    private Strassennetz() {
+    }
+
+    public static void registrieren() {
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> aktuell = null);
+        ServerTickEvents.END_SERVER_TICK.register(s -> {
+            if (aktuell != null && aktuell.server == s && aktuell.bau != null) {
+                aktuell.bauTick();
+            }
+        });
+    }
+
+    public static Strassennetz get(MinecraftServer server) {
+        if (aktuell == null || aktuell.server != server) {
+            aktuell = laden(server);
+        }
+        return aktuell;
+    }
+
+    // ------------------------------------------------------------------
+    // Kreisel
+    // ------------------------------------------------------------------
+
+    /** Mitte des Kreisels in Weltkoordinaten (Höhe = Fahrbahnblock) oder null ohne Villa. */
+    public static Vec3 kreiselMitte() {
+        return VillaPlatzierung.villa().map(v -> new Vec3(v.ursprung().getX() + KREISEL_X, v.ursprung().getY() + v.plan().bodenY,
+                v.ursprung().getZ() + KREISEL_Z)).orElse(null);
+    }
+
+    /** Punkt auf dem Kreisel (Fahrspur) in Richtung {@code gier} (Minecraft-Gierwinkel). */
+    static Vec3 aufDemKreisel(Vec3 mitte, double gier, double radius) {
+        double r = Math.toRadians(gier);
+        return new Vec3(mitte.x - Math.sin(r) * radius, mitte.y + 1, mitte.z + Math.cos(r) * radius);
+    }
+
+    /** Gierwinkel von a nach b. */
+    static double gier(double ax, double az, double bx, double bz) {
+        return Math.toDegrees(Math.atan2(-(bx - ax), bz - az));
+    }
+
+    // ------------------------------------------------------------------
+    // Bauen
+    // ------------------------------------------------------------------
+
+    public StrassenBau aktuellerBau() {
+        return bau;
+    }
+
+    /** Gibt es schon eine Straße zu diesem Ziel (Name gleich oder Ende höchstens 32 Blöcke vom Ziel)? */
+    public int strasseZu(String name, Vec3 ziel) {
+        for (int i = 0; i < strassen.size(); i++) {
+            Strasse s = strassen.get(i);
+            if (s.name().equals(name) || Vec3.atCenterOf(s.ende()).distanceTo(ziel) < 32) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Startet den Bau einer Straße zum Ziel (läuft danach von selbst Tick für Tick). Gibt es schon eine, wird
+     * nichts gebaut. Sie beginnt am Kreisel oder zweigt von der Straße ab, die dem Ziel am nächsten kommt.
+     */
+    public StrassenBau bauen(ServerLevel welt, Vec3 ziel, String name) {
+        if (bau != null) {
+            return bau;
+        }
+        Vec3 mitte = kreiselMitte();
+        if (mitte == null) {
+            return null;
+        }
+        if (!kreiselGebaut) {
+            StrassenBau.kreiselBauen(welt, mitte);
+            kreiselGebaut = true;
+            speichern();
+        }
+        // Start: Abzweig von der nächsten Straße, wenn das deutlich näher am Ziel liegt als der Kreisel
+        double gierKreisel = gier(mitte.x, mitte.z, ziel.x, ziel.z);
+        // Nach Norden liegt die Villa: dorthin geht keine neue Straße ab
+        double nachNorden = wrap(gierKreisel - 180.0);
+        if (Math.abs(nachNorden) < 50) {
+            gierKreisel = 180.0 + (nachNorden < 0 ? -50 : 50);
+        }
+        Vec3 start = aufDemKreisel(mitte, gierKreisel, AUSSEN + 0.5);
+        int eltern = -1, abzweig = 0;
+        double besteEntfernung = start.distanceTo(ziel) - 50;
+        for (int i = 0; i < strassen.size(); i++) {
+            List<BlockPos> pkt = strassen.get(i).punkte();
+            for (int j = 0; j < pkt.size(); j += 4) {
+                double d = Vec3.atCenterOf(pkt.get(j)).distanceTo(ziel);
+                if (d < besteEntfernung) {
+                    besteEntfernung = d;
+                    eltern = i;
+                    abzweig = j;
+                }
+            }
+        }
+        if (eltern >= 0) {
+            BlockPos p = strassen.get(eltern).punkte().get(abzweig);
+            start = new Vec3(p.getX() + 0.5, p.getY() + 1, p.getZ() + 0.5);
+        }
+        bau = new StrassenBau(welt, name, ziel, start, (float) gier(start.x, start.z, ziel.x, ziel.z), eltern, abzweig);
+        return bau;
+    }
+
+    private void bauTick() {
+        bau.tick();
+        if (bau.fertig()) {
+            if (bau.punkte().size() > 8) {
+                strassen.add(new Strasse(bau.name(), bau.eltern(), bau.abzweig(), List.copyOf(bau.punkte())));
+                speichern();
+            }
+            bau = null;
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // Weg suchen
+    // ------------------------------------------------------------------
+
+    /** Ort im Netz: Straße und Index (Straße −1 = Kreisel, dann ist {@code index} der Gierwinkel). */
+    private record Stelle(int strasse, int index) {
+    }
+
+    /**
+     * Weg über das Netz vom Start zum Ziel als Wegpunkte für den Chauffeur, oder null, wenn es zum Ziel noch keine
+     * Straße gibt oder der Start zu weit vom Netz entfernt ist. {@code start} kann {@code null} sein: dann beginnt
+     * der Weg am Kreisel (Abfahrt von der Villa).
+     */
+    public List<Vec3> route(Vec3 start, Vec3 ziel, String name) {
+        Vec3 mitte = kreiselMitte();
+        int zielStrasse = strasseZu(name, ziel);
+        if (mitte == null || zielStrasse < 0) {
+            return null;
+        }
+        Stelle von = start == null ? new Stelle(-1, 180) : naechsteStelle(start, mitte, 80);
+        if (von == null) {
+            return null;
+        }
+        Stelle nach = new Stelle(zielStrasse, strassen.get(zielStrasse).punkte().size() - 1);
+        List<Stelle> a = vorfahren(von), b = vorfahren(nach);
+        // Gemeinsame Straße suchen (sonst treffen sich beide Wege am Kreisel)
+        int ia = -1, ib = -1;
+        outer:
+        for (int i = 0; i < a.size(); i++) {
+            for (int j = 0; j < b.size(); j++) {
+                if (a.get(i).strasse() == b.get(j).strasse() && a.get(i).strasse() >= 0) {
+                    ia = i;
+                    ib = j;
+                    break outer;
+                }
+            }
+        }
+        List<Vec3> weg = new ArrayList<>();
+        if (ia >= 0) {
+            hinauf(a, ia, weg);
+            entlang(a.get(ia).strasse(), a.get(ia).index(), b.get(ib).index(), weg);
+            hinab(b, ib, weg);
+        } else {
+            // Bis zum Anfang der Wurzelstraße, um den Kreisel herum (gegen den Uhrzeigersinn) und wieder hinaus
+            hinauf(a, a.size() - 1, weg);
+            double gierVon = a.get(a.size() - 1).index(), gierNach = b.get(b.size() - 1).index();
+            kreiselFahrt(mitte, gierVon, gierNach, weg);
+            hinab(b, b.size() - 1, weg);
+        }
+        // Endet die Straße vor dem Ziel (etwa am Dorfrand, weil dort Häuser stehen), hält der Wagen am Straßenende
+        BlockPos ende = strassen.get(zielStrasse).ende();
+        if (Math.hypot(ende.getX() + 0.5 - ziel.x, ende.getZ() + 0.5 - ziel.z) < 12) {
+            weg.add(ziel);
+        }
+        return weg;
+    }
+
+    /**
+     * Weg vom Start über das Netz bis zum Kreisel und dort zur Ausfahrt nach Norden (zur Villa), oder null, wenn der
+     * Start weiter als 80 Blöcke vom Netz entfernt ist.
+     */
+    public List<Vec3> routeHeim(Vec3 start) {
+        Vec3 mitte = kreiselMitte();
+        if (mitte == null || !kreiselGebaut) {
+            return null;
+        }
+        Stelle von = naechsteStelle(start, mitte, 80);
+        if (von == null) {
+            return null;
+        }
+        List<Stelle> a = vorfahren(von);
+        List<Vec3> weg = new ArrayList<>();
+        hinauf(a, a.size() - 1, weg);
+        kreiselFahrt(mitte, a.get(a.size() - 1).index(), 180, weg);
+        weg.add(new Vec3(mitte.x, mitte.y + 1, mitte.z - AUSSEN - 2));
+        return weg;
+    }
+
+    /** Kette von der Stelle bis zum Kreisel: (Straße, Index), dann (Eltern, Abzweig) … bis (−1, Gierwinkel). */
+    private List<Stelle> vorfahren(Stelle s) {
+        List<Stelle> kette = new ArrayList<>();
+        Stelle jetzt = s;
+        int sicher = 0;
+        while (jetzt.strasse() >= 0 && sicher++ < 64) {
+            kette.add(jetzt);
+            Strasse st = strassen.get(jetzt.strasse());
+            if (st.eltern() < 0) {
+                Vec3 m = kreiselMitte();
+                BlockPos p0 = st.punkte().get(0);
+                kette.add(new Stelle(-1, (int) Math.round(gier(m.x, m.z, p0.getX() + 0.5, p0.getZ() + 0.5))));
+                return kette;
+            }
+            jetzt = new Stelle(st.eltern(), st.abzweig());
+        }
+        kette.add(jetzt);
+        return kette;
+    }
+
+    /** Von a[0] hinauf bis vor a[bis]: jeweils die Straße zurück bis zu ihrem Anfang. */
+    private void hinauf(List<Stelle> a, int bis, List<Vec3> weg) {
+        for (int i = 0; i < bis; i++) {
+            Stelle s = a.get(i);
+            if (s.strasse() >= 0) {
+                entlang(s.strasse(), s.index(), 0, weg);
+            }
+        }
+    }
+
+    /** Von b[ab] hinab bis b[0]: jeweils die Straße vom Anfang bis zur Stelle. */
+    private void hinab(List<Stelle> b, int ab, List<Vec3> weg) {
+        for (int i = ab - 1; i >= 0; i--) {
+            Stelle s = b.get(i);
+            entlang(s.strasse(), 0, s.index(), weg);
+        }
+    }
+
+    /** Wegpunkte entlang einer Straße von Index {@code von} bis {@code bis} (vorwärts oder rückwärts). */
+    private void entlang(int strasse, int von, int bis, List<Vec3> weg) {
+        List<BlockPos> pkt = strassen.get(strasse).punkte();
+        int schritt = von <= bis ? WEGPUNKT_ABSTAND : -WEGPUNKT_ABSTAND;
+        for (int i = von; schritt > 0 ? i < bis : i > bis; i += schritt) {
+            weg.add(Vec3.atBottomCenterOf(pkt.get(i).above()));
+        }
+        weg.add(Vec3.atBottomCenterOf(pkt.get(bis).above()));
+    }
+
+    /** Um den Kreisel herum (in Fahrtrichtung gegen den Uhrzeigersinn, von oben gesehen) zur Ausfahrt. */
+    private static void kreiselFahrt(Vec3 mitte, double gierVon, double gierNach, List<Vec3> weg) {
+        weg.add(aufDemKreisel(mitte, gierVon, SPUR));
+        // Gegen den Uhrzeigersinn heißt im Minecraft-Gierwinkel: der Winkel nimmt ab
+        double d = wrap(gierVon - gierNach);
+        if (d < 0) {
+            d += 360;
+        }
+        for (double w = 30; w < d; w += 30) {
+            weg.add(aufDemKreisel(mitte, gierVon - w, SPUR));
+        }
+        weg.add(aufDemKreisel(mitte, gierNach, SPUR));
+    }
+
+    /** Nächste Stelle im Netz (Straße oder Kreisel) höchstens {@code max} Blöcke vom Punkt, sonst null. */
+    private Stelle naechsteStelle(Vec3 p, Vec3 mitte, double max) {
+        Stelle beste = null;
+        double besteD = max;
+        double dk = Math.hypot(p.x - mitte.x, p.z - mitte.z) - AUSSEN;
+        if (dk < besteD) {
+            besteD = Math.max(0, dk);
+            beste = new Stelle(-1, (int) Math.round(gier(mitte.x, mitte.z, p.x, p.z)));
+        }
+        for (int i = 0; i < strassen.size(); i++) {
+            List<BlockPos> pkt = strassen.get(i).punkte();
+            for (int j = 0; j < pkt.size(); j += 2) {
+                BlockPos q = pkt.get(j);
+                double d = Math.hypot(q.getX() + 0.5 - p.x, q.getZ() + 0.5 - p.z);
+                if (d < besteD) {
+                    besteD = d;
+                    beste = new Stelle(i, j);
+                }
+            }
+        }
+        return beste;
+    }
+
+    static double wrap(double grad) {
+        double g = grad % 360;
+        if (g >= 180) {
+            g -= 360;
+        }
+        if (g < -180) {
+            g += 360;
+        }
+        return g;
+    }
+
+    // ------------------------------------------------------------------
+    // Auskunft
+    // ------------------------------------------------------------------
+
+    public List<Strasse> strassen() {
+        return Collections.unmodifiableList(strassen);
+    }
+
+    /** Ziele mit Straße und ihre Länge (für /strasse und das Handy). */
+    public Map<String, Integer> uebersicht() {
+        Map<String, Integer> m = new LinkedHashMap<>();
+        for (Strasse s : strassen) {
+            m.put(s.name(), s.punkte().size());
+        }
+        return m;
+    }
+
+    // ------------------------------------------------------------------
+    // Speichern
+    // ------------------------------------------------------------------
+
+    private static Strassennetz laden(MinecraftServer server) {
+        Strassennetz n = new Strassennetz();
+        n.server = server;
+        n.pfad = server.getWorldPath(LevelResource.ROOT).resolve(DATEI);
+        try {
+            if (Files.exists(n.pfad)) {
+                JsonObject j = GSON.fromJson(Files.readString(n.pfad, StandardCharsets.UTF_8), JsonObject.class);
+                n.kreiselGebaut = j.has("kreisel") && j.get("kreisel").getAsBoolean();
+                for (var e : j.getAsJsonArray("strassen")) {
+                    JsonObject s = e.getAsJsonObject();
+                    List<BlockPos> punkte = new ArrayList<>();
+                    for (var p : s.getAsJsonArray("punkte")) {
+                        punkte.add(BlockPos.of(p.getAsLong()));
+                    }
+                    n.strassen.add(new Strasse(s.get("name").getAsString(), s.get("eltern").getAsInt(), s.get("abzweig").getAsInt(), punkte));
+                }
+            }
+        } catch (Exception ex) {
+            StinkendReich.LOGGER.warn("Straßennetz nicht lesbar: {}", ex.toString());
+        }
+        return n;
+    }
+
+    private void speichern() {
+        JsonObject j = new JsonObject();
+        j.addProperty("kreisel", kreiselGebaut);
+        JsonArray liste = new JsonArray();
+        for (Strasse s : strassen) {
+            JsonObject o = new JsonObject();
+            o.addProperty("name", s.name());
+            o.addProperty("eltern", s.eltern());
+            o.addProperty("abzweig", s.abzweig());
+            JsonArray p = new JsonArray();
+            s.punkte().forEach(b -> p.add(b.asLong()));
+            o.add("punkte", p);
+            liste.add(o);
+        }
+        j.add("strassen", liste);
+        try {
+            Files.writeString(pfad, GSON.toJson(j), StandardCharsets.UTF_8);
+        } catch (Exception ex) {
+            StinkendReich.LOGGER.warn("Straßennetz nicht gespeichert: {}", ex.toString());
+        }
+    }
+}

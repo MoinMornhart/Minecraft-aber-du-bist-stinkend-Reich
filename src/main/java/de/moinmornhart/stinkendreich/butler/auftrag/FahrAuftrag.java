@@ -28,7 +28,7 @@ public class FahrAuftrag extends Auftrag {
     public static final String TYP = "fahren";
     private static final double NAH = 24.0, VORFAHREN = 256.0;
 
-    private enum Phase { WAGEN, EINSTEIGEN, WARTEN, FAHREN }
+    private enum Phase { WAGEN, EINSTEIGEN, WARTEN, BAUEN, FAHREN }
 
     /** Ziel oder null (nur vorfahren). */
     private final Vec3 ziel;
@@ -40,6 +40,9 @@ public class FahrAuftrag extends Auftrag {
     private int warten;
     /** Der Wagen ist vorgefahren (dann hat James schon „Bitte steigen Sie ein“ gesagt). */
     private boolean vorgefahren;
+    /** Straße, die gerade für diese Fahrt gebaut wird (Phase BAUEN). */
+    private de.moinmornhart.stinkendreich.strasse.StrassenBau bau;
+    private int bauVersuche;
 
     public FahrAuftrag(Vec3 ziel, String zielName) {
         this.ziel = ziel;
@@ -93,12 +96,45 @@ public class FahrAuftrag extends Auftrag {
                         butler.sagen(Component.translatable("stinkendreich.butler.fahren.wohin"));
                         return Stand.FERTIG;
                     }
-                    chauffeur = new Chauffeur(route(auto.position(), ziel), 5.0);
-                    phase = Phase.FAHREN;
+                    if (strasseLohnt(auto.position())) {
+                        var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(butler.welt().getServer());
+                        if (netzRoute(netz, auto.position()) == null) {
+                            bau = netz.bauen(butler.welt(), ziel, zielName);
+                            if (bau != null) {
+                                butler.sagen(Component.translatable("stinkendreich.strasse.bau", zielName));
+                                phase = Phase.BAUEN;
+                                return Stand.LAEUFT;
+                            }
+                        }
+                    }
+                    losfahren(butler);
                 } else if (++warten > 20 * 90) {
                     butler.sagen(Component.translatable("stinkendreich.butler.fahren.ausgestiegen"));
                     return Stand.FERTIG;
                 }
+            }
+            case BAUEN -> {
+                auto.chauffeurEingabe(auto.tempo() > 0.03 ? -1 : 0, 0);
+                if (butler.getVehicle() != auto) {
+                    return Stand.FERTIG;
+                }
+                if (!bau.fertig()) {
+                    if (ticks % 40 == 0) {
+                        Kompat.nachricht(herr, Component.translatable("stinkendreich.strasse.fortschritt", zielName, bau.prozent())
+                                .withStyle(net.minecraft.ChatFormatting.GOLD), true);
+                    }
+                    return Stand.LAEUFT;
+                }
+                var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(butler.welt().getServer());
+                if (netzRoute(netz, auto.position()) == null && ++bauVersuche < 3) {
+                    // Es lief noch der Bau einer anderen Straße: jetzt die eigene bauen
+                    bau = netz.bauen(butler.welt(), ziel, zielName);
+                    if (bau != null) {
+                        return Stand.LAEUFT;
+                    }
+                }
+                butler.sagen(Component.translatable("stinkendreich.strasse.fertig", zielName));
+                losfahren(butler);
             }
             case FAHREN -> {
                 if (butler.getVehicle() != auto) {
@@ -118,6 +154,14 @@ public class FahrAuftrag extends Auftrag {
                         return Stand.FERTIG;
                     }
                     case FESTGEFAHREN -> {
+                        de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Chauffeur steckt fest bei {} (nächster Wegpunkt {})",
+                                auto.blockPosition(), chauffeur.naechsterPunkt());
+                        // Kurz vor dem Ziel (z. B. zwischen den Häusern eines Dorfs): angekommen, den Rest zu Fuß
+                        if (Math.hypot(ziel.x - auto.getX(), ziel.z - auto.getZ()) < 48) {
+                            butler.welt().getServer().execute(butler::stopRiding);
+                            butler.sagen(Component.translatable("stinkendreich.butler.fahren.fastda"));
+                            return Stand.FERTIG;
+                        }
                         return fehlschlag(Component.translatable("stinkendreich.butler.fahren.fest"));
                     }
                     default -> {
@@ -126,6 +170,69 @@ public class FahrAuftrag extends Auftrag {
             }
         }
         return Stand.LAEUFT;
+    }
+
+    /** Weg zum Ziel festlegen (über das Straßennetz, wenn es eins gibt) und losfahren. */
+    private void losfahren(ButlerEntity butler) {
+        List<Vec3> weg = null;
+        if (strasseLohnt(auto.position()) || zielAufDemGrundstueck()) {
+            weg = netzRoute(de.moinmornhart.stinkendreich.strasse.Strassennetz.get(butler.welt().getServer()), auto.position());
+        }
+        chauffeur = new Chauffeur(weg != null ? weg : route(auto.position(), ziel), 5.0);
+        phase = Phase.FAHREN;
+    }
+
+    /** Lohnt sich für diese Fahrt eine Straße? (Ziel außerhalb der Villa und weit genug weg, Straßenbau an) */
+    private boolean strasseLohnt(Vec3 start) {
+        var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
+        if (!de.moinmornhart.stinkendreich.Konfig.get().strassenBauen || villa.isEmpty() || zielAufDemGrundstueck()
+                || auto.level().dimension() != net.minecraft.world.level.Level.OVERWORLD) {
+            return false;
+        }
+        Vec3 von = aufDemGrundstueck(villa.get(), start) ? de.moinmornhart.stinkendreich.strasse.Strassennetz.kreiselMitte() : start;
+        return von != null && Math.hypot(ziel.x - von.x, ziel.z - von.z) > de.moinmornhart.stinkendreich.Konfig.get().strassenAbEntfernung;
+    }
+
+    private boolean zielAufDemGrundstueck() {
+        return de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa().map(v -> aufDemGrundstueck(v, ziel)).orElse(false);
+    }
+
+    /**
+     * Weg über das Straßennetz: von der Villa durchs Tor zum Kreisel und weiter, von unterwegs zur nächsten Straße,
+     * nach Hause bis zum Kreisel und durchs Tor. Null, wenn es keinen gibt (noch keine Straße zum Ziel).
+     */
+    private List<Vec3> netzRoute(de.moinmornhart.stinkendreich.strasse.Strassennetz netz, Vec3 start) {
+        var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
+        if (villa.isEmpty()) {
+            return null;
+        }
+        var v = villa.get();
+        int y = v.plan().bodenY + 1;
+        Vec3 aussen = Vec3.atBottomCenterOf(v.weltPos(TOR_X, y, VOR_DER_BRUECKE_Z));
+        Vec3 innen = Vec3.atBottomCenterOf(v.weltPos(TOR_X, y, HINTER_DEM_TOR_Z));
+        List<Vec3> weg = new java.util.ArrayList<>();
+        if (zielAufDemGrundstueck()) {
+            List<Vec3> heim = netz.routeHeim(start);
+            if (heim == null) {
+                return null;
+            }
+            weg.addAll(heim);
+            weg.add(aussen);
+            weg.add(innen);
+            weg.add(ziel);
+            return weg;
+        }
+        boolean startDrin = aufDemGrundstueck(v, start);
+        List<Vec3> netzWeg = netz.route(startDrin ? null : start, ziel, zielName);
+        if (netzWeg == null) {
+            return null;
+        }
+        if (startDrin) {
+            weg.add(innen);
+            weg.add(aussen);
+        }
+        weg.addAll(netzWeg);
+        return weg;
     }
 
     private boolean sitztDrin(ServerPlayer herr) {

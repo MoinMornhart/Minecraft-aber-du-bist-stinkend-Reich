@@ -58,6 +58,16 @@ public final class ModEntities {
             EntityType.Builder.of(de.moinmornhart.stinkendreich.club.TaenzerinEntity::new, MobCategory.MISC).sized(0.6F, 1.9F)
                     .eyeHeight(1.6F).clientTrackingRange(8).updateInterval(2).fireImmune());
 
+    /** Mitarbeiter aus der Mitarbeiterkiste: so groß wie James. */
+    public static final EntityType<de.moinmornhart.stinkendreich.mitarbeiter.MitarbeiterEntity> MITARBEITER = registrieren("mitarbeiter",
+            EntityType.Builder.of(de.moinmornhart.stinkendreich.mitarbeiter.MitarbeiterEntity::new, MobCategory.MISC).sized(0.6F, 1.95F)
+                    .eyeHeight(1.62F).clientTrackingRange(10).fireImmune());
+
+    /** Bodyguard: Eisengolem im Smoking (Maße wie der Eisengolem). */
+    public static final EntityType<de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity> BODYGUARD = registrieren("bodyguard",
+            EntityType.Builder.of(de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity::new, MobCategory.MISC).sized(1.4F, 2.7F)
+                    .clientTrackingRange(10).fireImmune());
+
     private ModEntities() {
     }
 
@@ -98,5 +108,7 @@ public final class ModEntities {
         FabricDefaultAttributeRegistry.register(SITZ, de.moinmornhart.stinkendreich.moebel.SitzEntity.attribute());
         FabricDefaultAttributeRegistry.register(DREHTELLER, de.moinmornhart.stinkendreich.auto.DrehtellerEntity.attribute());
         FabricDefaultAttributeRegistry.register(TAENZERIN, de.moinmornhart.stinkendreich.club.TaenzerinEntity.attribute());
+        FabricDefaultAttributeRegistry.register(MITARBEITER, ButlerEntity.attribute());
+        FabricDefaultAttributeRegistry.register(BODYGUARD, de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity.attribute());
     }
 }

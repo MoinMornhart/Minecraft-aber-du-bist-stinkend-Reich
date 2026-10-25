@@ -169,7 +169,7 @@ public class ButlerEntity extends PathfinderMob {
         if (level().isClientSide()) {
             return;
         }
-        if (getCustomName() == null) {
+        if (getCustomName() == null && istButler()) {
             setCustomName(Component.literal(Konfig.get().butlerName));
         }
         if (heimat == null) {
@@ -179,7 +179,9 @@ public class ButlerEntity extends PathfinderMob {
             zuhause = heimat;
         }
         if (tickCount % 20 == 0) {
-            ButlerVerwaltung.pflegen(this);
+            if (istButler()) {
+                ButlerVerwaltung.pflegen(this);
+            }
             if (auftraege.isEmpty()) {
                 statusSetzen();
             }
@@ -241,7 +243,7 @@ public class ButlerEntity extends PathfinderMob {
         return entityData.get(BESITZER_NAME);
     }
 
-    void besitzerEintragen(UUID uuid, String name) {
+    public void besitzerEintragen(UUID uuid, String name) {
         besitzer = uuid;
         entityData.set(BESITZER_NAME, name == null ? "" : name);
     }
@@ -675,8 +677,25 @@ public class ButlerEntity extends PathfinderMob {
     // Speichern
     // ------------------------------------------------------------------
 
+    /**
+     * Ist das der Butler eines Spielers (und nicht etwa ein Mitarbeiter, der dieselben Fähigkeiten nutzt)? Nur
+     * Butler werden in der Butler-Verwaltung geführt.
+     */
+    protected boolean istButler() {
+        return true;
+    }
+
+    /** Für Unterklassen: eigene Werte mitspeichern. */
+    protected void zusatzSchreiben(JsonObject j) {
+    }
+
+    /** Für Unterklassen: eigene Werte lesen. */
+    protected void zusatzLesen(JsonObject j) {
+    }
+
     private String datenAlsText() {
         JsonObject j = new JsonObject();
+        zusatzSchreiben(j);
         if (besitzer != null) {
             j.addProperty("besitzer", besitzer.toString());
             j.addProperty("besitzerName", entityData.get(BESITZER_NAME));
@@ -708,6 +727,7 @@ public class ButlerEntity extends PathfinderMob {
         }
         try {
             JsonObject j = JsonParser.parseString(text).getAsJsonObject();
+            zusatzLesen(j);
             if (j.has("besitzer")) {
                 besitzerEintragen(UUID.fromString(j.get("besitzer").getAsString()),
                         j.has("besitzerName") ? j.get("besitzerName").getAsString() : "");

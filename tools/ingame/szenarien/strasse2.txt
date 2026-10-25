@@ -1,0 +1,77 @@
+# 0.3 Straßennetz (zweite Runde, bei Tag): Bau zum Dorf mit Fortschritt, Fotos entlang der Straße von oben,
+# Fahrt mit James über die Straße zum Dorf
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 55.5 26 86 0 15
+warte 3
+server /butler strasse dorf
+warte 10
+server /butler strassen
+warte 10
+server /butler strassen
+warte 10
+server /butler strassen
+warte 20
+server /butler strassen
+warte 30
+server /butler strassen
+warte 30
+server /butler strassen
+server /gamemode spectator
+server /time set 6000
+server /villa ort 55 50 150 180 45
+warte 6
+bild r01_kreisel
+server /butler strassenpunkt 0 40
+server /tp @p ~ ~22 ~ 0 90
+warte 6
+bild r02_strasse_40
+server /butler strassenpunkt 0 140
+server /tp @p ~ ~22 ~ 0 90
+warte 6
+bild r03_strasse_140
+server /butler strassenpunkt 0 240
+server /tp @p ~ ~22 ~ 0 90
+warte 6
+bild r04_strasse_240
+server /butler strassenpunkt 0 340
+server /tp @p ~ ~22 ~ 0 90
+warte 6
+bild r05_strasse_340
+server /butler strassenpunkt 0 2000
+server /tp @p ~ ~22 ~ 0 90
+warte 6
+bild r06_strassenende
+server /butler strassenpunkt 0 140
+server /tp @p ~5 ~4 ~ 90 15
+warte 4
+bild r07_strasse_nah
+# Fahrt zum Dorf
+server /gamemode creative
+server /time set 6000
+server /villa ort 55.5 26 86 0 15
+warte 2
+merke
+server Butler, hol den Wagen
+bis 20 vorgefahren
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
+warte 2
+merke
+server Butler, fahr mich zum Dorf
+warte 6
+taste F5
+bild r08_losfahren
+warte 12
+bild r09_kreisel_fahrt
+warte 15
+bild r10_unterwegs
+merke
+bis 200 Wir sind da|nicht weiter|fast da
+bild r11_angekommen
+taste F5

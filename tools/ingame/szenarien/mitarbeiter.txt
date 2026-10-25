@@ -1,0 +1,34 @@
+# 0.3: Mitarbeiterkiste draußen in der Natur aufstellen; drei Mitarbeiter (Diamanten, Eisen, Kohle) arbeiten,
+# die Beute landet in der Kiste. Die Kiste steht hinter der Brücke (Villa-Achse, Welt x -0.5, z 70.5).
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule doDaylightCycle false
+server /gamerule advance_time false
+warte 30
+server /execute positioned -0.5 0 70.5 positioned over motion_blocking_no_leaves run tp @p ~ ~ ~ 0 60
+warte 6
+server /item replace entity @p weapon.mainhand with stinkendreich:mitarbeiterkiste
+warte 1
+merke
+klick
+bis 10 Mitarbeiter sind eingetroffen
+server /execute at @p run summon marker ~ ~ ~1 {Tags:["kiste"]}
+server /execute at @p run tp @p ~ ~4 ~-5 0 30
+warte 3
+bild m01_angekommen
+warte 45
+bild m02_nach_45s
+server /execute as @e[type=stinkendreich:mitarbeiter,limit=1,sort=nearest] at @s run tp @p ~-4 ~3 ~-4 -45 30
+warte 2
+bild m03_mitarbeiter_bei_der_arbeit
+warte 240
+server /execute at @e[type=marker,tag=kiste] if data block ~ ~ ~ Items[0] run say KISTE_HAT_BEUTE_OK
+server /execute at @e[type=marker,tag=kiste] run tp @p ~ ~ ~-1.5 0 50
+warte 2
+bild m04_bei_der_kiste
+klick
+warte 1.5
+bild m05_kiste_offen
+taste Escape
+warte 1
