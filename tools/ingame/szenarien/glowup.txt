@@ -1,0 +1,51 @@
+# Glow-up: Räume der Villa ansehen (Koordinaten im Bauplan)
+server /gamemode spectator
+server /time set noon
+server /weather clear
+taste F1
+# Ballsaal vom Eingang und von der Galerie
+server /villa ort 54.9 26.5 66 180 2
+warte 8
+bild g01_ballsaal
+server /villa ort 51 33 61 160 25
+warte 4
+bild g02_ballsaal_galerie
+server /villa ort 58 27 48 120 5
+warte 3
+bild g03_ballsaal_bild
+# Küche und Personalküche
+server /villa ort 70 27.5 50 180 15
+warte 4
+bild g04_kueche
+server /villa ort 76 27 43 180 10
+warte 3
+bild g05_personalkueche
+# Esszimmer
+server /villa ort 70 27.5 64 180 15
+warte 3
+bild g06_esszimmer
+# Wohnzimmer
+server /villa ort 44 27.5 54 120 10
+warte 3
+bild g07_wohnzimmer
+server /villa ort 39 27.5 46 180 5
+warte 3
+bild g08_kamin
+# Schlafzimmer, Bad
+server /villa ort 40 33.5 58 90 10
+warte 3
+bild g09_schlafzimmer
+server /villa ort 44 33.5 46 135 15
+warte 3
+bild g10_bad
+# Tresor innen und von außen
+server /villa ort 63.5 33 51 180 5
+warte 3
+bild g11_tresor_aussen
+server /villa ort 64.5 33.5 46.3 180 25
+warte 3
+bild g12_tresor_innen
+# Büro
+server /villa ort 70 33.5 64 180 10
+warte 3
+bild g13_buero
