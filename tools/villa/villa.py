@@ -40,7 +40,7 @@ HX0, HX1, HZ0, HZ1 = 30, 79, 36, 67
 # Aufzugsschacht (außen 4x4, innen 2x2), Tür nach Süden
 AX0, AX1, AZ0, AZ1 = 56, 59, 37, 40
 # Haltestellen des Aufzugs: Name -> Höhe des Bodens
-AUFZUG_HALTE = {"bunker": BUNKER, "keller": UG, "eg": EG, "og": OG, "dach": DACH}
+AUFZUG_HALTE = {"bunker": BUNKER, "keller": UG, "eg": EG, "og": OG, "dach": DACH, "heli": PH_DACH}
 
 # Materialien
 WEISS = "white_concrete"
@@ -263,8 +263,8 @@ def treppe_und_aufzug() -> None:
     b.setze(50, OG + 1, 51, GLAS)
     b.setze(51, OG + 1, 51, GLAS)
     # Aufzugsschacht: Glaswände, in den Ecken warm leuchtende Lichtsäulen, bis unter das Penthouse-Dach.
-    # Darin fährt die gläserne Kabine (Entity, siehe AufzugKabine.java).
-    for y in range(BUNKER + 1, PH_DACH):
+    # Darin fährt die gläserne Kabine (Entity, siehe AufzugKabine.java). Oben ragt der Kopf über das Dach.
+    for y in range(BUNKER + 1, PH_DACH + 4):
         for x in range(AX0, AX1 + 1):
             for z in range(AZ0, AZ1 + 1):
                 rand = x in (AX0, AX1) or z in (AZ0, AZ1)
@@ -275,6 +275,7 @@ def treppe_und_aufzug() -> None:
                     b.setze(x, y, z, "glass")
                 else:
                     b.setze(x, y, z, "air")
+    b.quader(AX0, PH_DACH + 4, AZ0, AX1, PH_DACH + 4, AZ1, WEISS)
     # Haltestellen: Boden im Schacht (die Kabine nimmt ihn beim Durchfahren kurz heraus), Öffnung nach Süden
     for name, y in AUFZUG_HALTE.items():
         b.quader(AX0 + 1, y, AZ0 + 1, AX1 - 1, y, AZ1 - 1, "polished_deepslate")
@@ -360,14 +361,14 @@ def erdgeschoss() -> None:
     deko(b, 63, y, HZ0 + 1, "weinkuehlschrank", "south")
     deko(b, 63, y + 1, HZ0 + 1, "weinkuehlschrank", "south")
     for x in (64, 65, 67, 69, 70, 71, 72):
-        b.setze(x, y, HZ0 + 1, "smooth_quartz")
+        b.setze(x, y, HZ0 + 1, "polished_blackstone")
     deko(b, 66, y, HZ0 + 1, "spuele", "south")
     deko(b, 68, y, HZ0 + 1, "herd", "south")
     deko(b, 68, OG - 2, HZ0 + 1, "dunstabzug", "south")
     deko(b, 70, y + 1, HZ0 + 1, "kaffeemaschine", "south")
     deko(b, 72, y + 1, HZ0 + 1, "cocktail")
     # Kochinsel mit Goldenden, Barhocker, Hängelampen
-    b.quader(64, y, 43, 71, y, 44, "smooth_quartz")
+    b.quader(64, y, 43, 71, y, 44, "polished_blackstone")
     for x in (64, 71):
         b.quader(x, y, 43, x, y, 44, "gold_block")
     deko(b, 66, y + 1, 43, "champagner")
@@ -482,6 +483,7 @@ def obergeschoss() -> None:
     deko(b, 62, y, 45, "goldbarren", "east")
     for z, ding in ((40, "diamond"), (42, "emerald"), (44, "nether_star")):
         bilderrahmen(b, 62, y + 2, z, "east", ding)
+    kronleuchter(b, 64, DACH - 2, 42)
 
     # Überwachungsraum (Nordost hinten)
     b.quader(68, OG, HZ0 + 1, HX1 - 1, OG, 50, "gray_concrete")
@@ -494,12 +496,18 @@ def obergeschoss() -> None:
     for x in (71, 74, 77):
         stuhl(b, x, y, 42, "north", "polished_blackstone_stairs")
 
-    # Büro mit Sicherheitszentrale (Südosten): Schreibtisch mit Geld, Pokale, Gemälde
+    # Büro mit Sicherheitszentrale (Südosten): Chefschreibtisch mit drei Überwachungsmonitoren
+    # (Rechtsklick zeigt alle Kameras der Villa), Geld, Pokal, Gemälde
     b.quader(61, OG, 52, HX1 - 1, OG, HZ1 - 1, HOLZBODEN)
-    tisch(b, 66, y, 60, 72, 61, "dark_oak_slab")
-    stuhl(b, 69, y, 59, "south")
+    b.quader(66, y, 60, 72, y, 61, "polished_blackstone")
+    b.quader(66, y, 60, 66, y, 61, "gold_block")
+    b.quader(72, y, 60, 72, y, 61, "gold_block")
+    for x in (68, 69, 70):
+        mech(x, y + 1, 61, "monitor", "north")
+    stuhl(b, 69, y, 59, "south", "polished_blackstone_stairs")
     deko(b, 67, y + 1, 60, "geldstapel", "north")
-    deko(b, 71, y + 1, 61, "pokal")
+    deko(b, 71, y + 1, 60, "pokal")
+    b.quader(65, OG, 57, 73, OG, 59, "red_wool")
     b.quader(HX1 - 1, y, 53, HX1 - 1, y + 3, 64, "bookshelf")
     gemaelde(b, 72, y + 1, 52, "south", "privatjet", 3, 2)
     kronleuchter(b, 69, DACH - 1, 58)
@@ -507,7 +515,8 @@ def obergeschoss() -> None:
 
 
 def penthouse() -> None:
-    """Gläserne Lounge auf dem Dach, Dachgarten, Whirlpool, Glasgeländer."""
+    """Sky-Lounge auf dem Dach: Bar mit Flaschenregal, Tanzfläche mit Discokugeln, DJ, Lounge;
+    draußen Dachgarten, Whirlpool und Glasgeländer."""
     x0, x1, z0, z1 = 42, 67, 37, 58
     y = DACH + 1
     b.waende(x0, y, z0, x1, PH_DACH - 1, z1, SCHWARZ)
@@ -526,13 +535,35 @@ def penthouse() -> None:
     b.luft(54, y, z1, 55, y + 1, z1)
     tuerrahmen(53, y, z1, 56, y + 2)
     doppeltuer(b, 54, y, z1, "south", "stinkendreich:glastuer")
-    # Bar und Lounge
-    b.quader(x0 + 2, y, z0 + 2, x0 + 9, y, z0 + 2, "polished_blackstone")
-    b.quader(x0 + 2, y + 1, z0 + 2, x0 + 9, y + 1, z0 + 2, zustand("smooth_quartz_slab", type="bottom", waterlogged="false"))
-    for x in range(x0 + 2, x0 + 10, 2):
-        stuhl(b, x, y, z0 + 4, "north", "polished_blackstone_stairs")
+    # Bar an der Nordwand: Theke mit Goldkante, Flaschenregale, Barhocker, Leuchtschrift
+    b.quader(x0 + 2, y, z0 + 3, x0 + 10, y, z0 + 3, "polished_blackstone")
+    b.quader(x0 + 2, y, z0 + 4, x0 + 10, y, z0 + 4, "gold_block")
+    for x in range(x0 + 2, x0 + 11):
+        deko(b, x, y, z0 + 1, "flaschenregal", "south")
+        deko(b, x, y + 1, z0 + 1, "flaschenregal", "south")
+    for x in range(x0 + 3, x0 + 11, 2):
+        deko(b, x, y, z0 + 5, "barhocker")
+    deko(b, x0 + 4, y + 1, z0 + 3, "cocktail")
+    deko(b, x0 + 8, y + 1, z0 + 3, "champagner")
+    deko(b, x0 + 6, y + 2, z0 + 1, "neon_bar", "south")
+    # Tanzfläche mit Discokugeln, DJ-Pult mit Lautsprechern
+    for x in range(52, 59):
+        for z in range(44, 51):
+            deko(b, x, DACH, z, "tanzflaeche")
+    for x, z in ((54, 46), (57, 48)):
+        deko(b, x, PH_DACH - 1, z, "discokugel")
+    b.setze(55, y, z0 + 1, zustand("stinkendreich:musikanlage", facing="south"))
+    b.marke("dj_penthouse", 55, y, z0 + 1)
+    for x in (52, 58):
+        b.setze(x, y, z0 + 1, zustand("stinkendreich:lautsprecher", facing="south"))
+        b.setze(x, y + 1, z0 + 1, zustand("stinkendreich:lautsprecher", facing="south"))
+    # Lounge mit Sektturm
     sofa(b, x0 + 6, y, z1 - 4, 8, "south", "smooth_quartz_stairs")
     tisch(b, x0 + 7, y, z1 - 2, x0 + 12, z1 - 2, "smooth_quartz_slab")
+    deko(b, x0 + 8, y + 1, z1 - 2, "sektturm")
+    deko(b, x0 + 11, y + 1, z1 - 2, "champagner")
+    sofa(b, x1 - 2, y, 52, 4, "west", "smooth_quartz_stairs", None)
+    deko(b, x1 - 4, y, 53, "goldbarren", "east")
     # Glasgeländer um die Dachterrasse
     rx0, rx1, rz0, rz1 = HX0 - 2, HX1 + 2, HZ0 - 2, HZ1 + 6
     b.ring(rx0, rz0, rx1, rz1, y, GLAS)
@@ -550,6 +581,118 @@ def penthouse() -> None:
     b.quader(HX1 - 8, y, HZ0 + 1, HX1 - 2, y, HZ0 + 6, "water")
     b.setze(HX1 - 5, DACH, HZ0 + 3, LICHT)
     b.marke("whirlpool", HX1 - 5, y, HZ0 + 3)
+    deko(b, HX1 - 10, y, HZ0 + 2, "champagner")
+    deko(b, HX1 - 10, y, HZ0 + 4, "cocktail")
+
+
+def dachparty() -> None:
+    """Party auf der Dachterrasse südlich vom Penthouse: Tanzfläche unter Lichterketten, DJ, Feuerstelle
+    mit Lounge, Sonnenliegen am Whirlpool."""
+    y = DACH + 1
+    # Tanzfläche unter freiem Himmel, Lichterketten an vier Pfosten
+    for x in range(50, 59):
+        for z in range(64, 71):
+            deko(b, x, DACH, z, "tanzflaeche")
+    for x, z in ((48, 63), (60, 63), (48, 72), (60, 72)):
+        b.quader(x, y, z, x, y + 3, z, "polished_blackstone_wall")
+        b.setze(x, y + 4, z, LICHT)
+    for z in (63, 72):
+        b.quader(49, y + 3, z, 59, y + 3, z, zustand("chain", axis="x", waterlogged="false"))
+        for x in range(50, 59, 2):
+            b.setze(x, y + 2, z, zustand("lantern", hanging="true", waterlogged="false"))
+    # DJ-Pult mit Lautsprechern am Südrand, Blick zur Tanzfläche
+    b.setze(54, y, 72, zustand("stinkendreich:musikanlage", facing="north"))
+    b.marke("dj_dach", 54, y, 72)
+    for x in (52, 56):
+        b.setze(x, y, 72, zustand("stinkendreich:lautsprecher", facing="north"))
+        b.setze(x, y + 1, 72, zustand("stinkendreich:lautsprecher", facing="north"))
+    # Feuerstelle mit Lounge (Westen)
+    b.quader(37, DACH, 66, 41, DACH, 70, "polished_blackstone")
+    b.setze(39, y, 68, zustand("campfire", lit="true", facing="north", signal_fire="false", waterlogged="false"))
+    for (x, z, blick) in ((39, 65, "south"), (39, 71, "north")):
+        sofa(b, x - 1, y, z, 3, blick, "smooth_quartz_stairs", None)
+    deko(b, 42, y, 68, "champagner")
+    # Sonnenliegen auf der Ostseite
+    for z in range(45, 58, 3):
+        b.setze(HX1 - 2, y, z, zustand("white_bed", facing="east", part="head", occupied="false"))
+        b.setze(HX1 - 3, y, z, zustand("white_bed", facing="east", part="foot", occupied="false"))
+
+
+def hubschrauberlandeplatz() -> None:
+    """Landeplatz auf dem Penthouse-Dach: dunkle Fläche mit gelbem Kreis und weißem H, Randlichter,
+    Windsack, Glasgeländer. Der Aufzug fährt bis hier hoch."""
+    y = PH_DACH + 1
+    cx, cz = 55, 50
+    b.quader(cx - 6, PH_DACH, cz - 6, cx + 6, PH_DACH, cz + 6, "gray_concrete")
+    for dx in range(-6, 7):
+        for dz in range(-6, 7):
+            r = (dx * dx + dz * dz) ** 0.5
+            if 4.6 <= r <= 5.6:
+                b.setze(cx + dx, PH_DACH, cz + dz, "yellow_concrete")
+    for dz in range(-3, 4):
+        b.setze(cx - 2, PH_DACH, cz + dz, "white_concrete")
+        b.setze(cx + 2, PH_DACH, cz + dz, "white_concrete")
+    for dx in (-1, 0, 1):
+        b.setze(cx + dx, PH_DACH, cz, "white_concrete")
+    for d in range(-6, 7, 3):
+        for (x, z) in ((cx + d, cz - 6), (cx + d, cz + 6), (cx - 6, cz + d), (cx + 6, cz + d)):
+            b.setze(x, PH_DACH, z, zustand("verdant_froglight", axis="y"))
+    b.marke("hubschrauber", cx + 0.5, y, cz + 0.5, 180.0)
+    # Glasgeländer am Dachrand, Windsack an der Südostecke
+    b.ring(40, 35, 69, 63, y, GLAS)
+    b.quader(67, y, 61, 67, y + 4, 61, "polished_blackstone_wall")
+    for i, farbe in enumerate(("orange_wool", "white_wool", "orange_wool")):
+        b.setze(66 - i, y + 4, 61, farbe)
+
+
+def poolparty() -> None:
+    """Poolparty im Garten: Poolbar mit Barhockern, DJ, Flamingos, Wasserrutsche, bunte Lichter, Palmen."""
+    y = G + 1
+    # Poolbar am Westende
+    b.quader(35, G, 17, 39, G, 28, "stripped_dark_oak_wood")
+    b.quader(37, y, 19, 37, y, 26, "polished_blackstone")
+    b.quader(36, y, 19, 36, y, 26, "gold_block")
+    for z in range(19, 27):
+        deko(b, 35, y, z, "flaschenregal", "east")
+    for z in range(20, 27, 2):
+        deko(b, 38, y, z, "barhocker")
+    for z, ding in ((20, "cocktail"), (23, "champagner"), (25, "cocktail")):
+        deko(b, 37, y + 1, z, ding)
+    b.quader(35, y + 3, 18, 39, y + 3, 27, "white_wool")
+    for (x, z) in ((35, 18), (39, 18), (35, 27), (39, 27)):
+        b.quader(x, y, z, x, y + 2, z, "dark_oak_fence")
+    deko(b, 37, y + 2, 18, "neon_bar", "south")
+    # Flamingos im Pool
+    for x, z, blick in ((47, 21, "east"), (58, 24, "west"), (63, 20, "north")):
+        deko(b, x, G, z, "flamingo", blick, nass=True)
+    # DJ am Nordrand des Pools
+    b.setze(54, y, 16, zustand("stinkendreich:musikanlage", facing="south"))
+    b.marke("dj_pool", 54, y, 16)
+    for x in (51, 57):
+        b.setze(x, y, 16, zustand("stinkendreich:lautsprecher", facing="south"))
+        b.setze(x, y + 1, 16, zustand("stinkendreich:lautsprecher", facing="south"))
+    # Wasserrutsche: Turm am Ostende, Rinne aus Glas mit fließendem Wasser hinab in den Pool
+    b.quader(70, G, 19, 73, G + 6, 22, "smooth_quartz")
+    b.luft(71, G + 1, 20, 72, G + 5, 21)
+    for yy in range(G + 1, G + 7):
+        b.setze(72, yy, 20, zustand("ladder", facing="west", waterlogged="false"))
+    b.luft(71, G + 1, 19, 71, G + 2, 19)
+    b.quader(70, G + 7, 19, 73, G + 7, 22, "smooth_quartz_slab")
+    for i in range(5):
+        x, yy = 69 - i, G + 6 - i
+        b.setze(x, yy - 1, 21, "light_blue_stained_glass")
+        b.setze(x, yy, 20, "glass")
+        b.setze(x, yy, 22, "glass")
+        b.setze(x, yy, 21, zustand("water", level="0") if i == 0 else zustand("water", level=str(min(7, i))))
+        b.gewollter_fluss.add((x, yy, 21))
+    # Bunte Lichter an Pfosten rund um den Pool
+    for x in range(40, 70, 6):
+        for z in (17, 28):
+            b.quader(x, y, z, x, y + 1, z, "polished_blackstone_wall")
+            b.setze(x, y + 2, z, ("pearlescent_froglight", "verdant_froglight", "ochre_froglight")[(x // 6) % 3])
+    # Palmen (Dschungelbäume) an den Ecken
+    for x, z in ((33, 14), (75, 30)):
+        baum(b, x, y, z, "jungle", hoehe=7)
 
 
 def garage() -> None:
@@ -616,6 +759,11 @@ def keller() -> None:
     for i, x in enumerate(range(33, 53, 5)):
         for j, z in enumerate(range(39, 65, 5)):
             b.setze(x, UG_DECKE, z, zustand(lichter_farben[(i + j) % 3], axis="y"))
+    # Unsichtbare Lichtquellen in Kopfhöhe: der Club bleibt dunkel-edel, aber man sieht genug
+    for x in range(33, 53, 5):
+        for z in range(40, 65, 6):
+            if b.hole(x, y + 3, z) == "minecraft:air":
+                b.setze(x, y + 3, z, zustand("light", level="10", waterlogged="false"))
     # Tanzfläche (leuchtet und wechselt die Farben), darüber Discokugeln
     for x in range(37, 46):
         for z in range(45, 54):
@@ -624,9 +772,13 @@ def keller() -> None:
         deko(b, x, oben, z, "discokugel")
     # DJ-Pult auf dem Podest im Norden, Leuchtschrift CLUB
     b.quader(39, y, 37, 45, y, 39, "polished_blackstone_bricks")
-    b.quader(40, y + 1, 39, 44, y + 1, 39, "polished_blackstone")
-    b.setze(42, y + 1, 39, zustand("jukebox", has_record="false"))
-    b.marke("dj_club", 42, y + 1, 39)
+    b.quader(40, y + 1, 39, 41, y + 1, 39, "polished_blackstone")
+    b.quader(43, y + 1, 39, 44, y + 1, 39, "polished_blackstone")
+    b.setze(42, y + 1, 38, zustand("stinkendreich:musikanlage", facing="south"))
+    b.marke("dj_club", 42, y + 1, 38)
+    for x in (39, 45):
+        for dy in (1, 2, 3):
+            b.setze(x, y + dy, 37, zustand("stinkendreich:lautsprecher", facing="south"))
     deko(b, 42, y + 4, 37, "neon_club", "south")
     # Bar an der Südwand: Theke, Flaschenregale, Barhocker, Leuchtschrift BAR
     b.quader(33, y, 62, 47, y, 62, "polished_blackstone")
@@ -789,10 +941,26 @@ def bunker() -> None:
         bett(b, x0 + 1, y, z, "west", "gray")
     for x in range(x0 + 4, 51, 2):
         truhe(b, x, y, z1 - 1, "north", [("bread", 32), ("cooked_beef", 32), ("golden_carrot", 16)])
-    # Haupttresor (Südost): Goldwand
+    # Haupttresor (Südost) als Geldspeicher: Goldwand, ein Berg aus Gold zum Hineinspringen, Sprungbrett
     b.quader(63, y, 51, x1 - 1, y1 - 1, 51, "iron_block")
     b.quader(x1 - 1, y, 52, x1 - 1, y1 - 1, z1 - 1, "gold_block")
-    b.quader(66, y, 56, 70, y, 64, "gold_block")
+    mx, mz = 67.5, 60.5
+    for x in range(63, x1 - 1):
+        for z in range(52, z1):
+            r = ((x - mx) ** 2 + ((z - mz) * 0.8) ** 2) ** 0.5
+            hoehe = max(0, int(4.5 - r * 0.75))
+            for dy in range(hoehe):
+                b.setze(x, y + dy, z, "raw_gold_block" if (x * 3 + z + dy) % 4 == 0 else "gold_block")
+    b.quader(66, y + 4, 52, 68, y + 4, 55, zustand("smooth_quartz_slab", type="bottom", waterlogged="false"))
+    b.quader(66, y, 52, 68, y + 3, 52, "iron_block")
+    for yy in range(y, y + 4):
+        b.setze(69, yy, 53, zustand("ladder", facing="east", waterlogged="false"))
+    b.quader(70, y, 53, 70, y + 3, 53, "iron_block")
+    for x, z in ((64, 66), (71, 66), (64, 53)):
+        deko(b, x, y, z, "geldstapel", "north")
+    for x, z in ((63, 58), (71, 58)):
+        deko(b, x, y, z, "goldbarren", "east")
+    kronleuchter(b, 67, y1 - 1, 60)
     # Fluchttunnel nach Westen, Leiter hoch in den Westgarten; rundum Tiefenschiefer, damit kein
     # Grundwasser aus Höhlen hereinläuft
     b.quader(16, y0 - 1, 59, x0 - 1, y + 3, 62, "polished_deepslate")
@@ -926,7 +1094,7 @@ def mechanismen() -> None:
     for (x, z) in ((63, 42), (64, 40), (65, 43), (63, 45)):
         b.setze(x, OG, z, "stinkendreich:fallenplatte")
     mech(66, yo + 2, 47, "entschaerfknopf")
-    b.quader(62, yo, 66, 62, DACH - 1, 66, "deepslate_bricks")
+    b.quader(62, yo, 66, 62, DACH - 1, 66, WEISS)
     mech(62, yo + 1, 66, "entschaerfknopf")
 
     # Waffenkammer im Bunker: Bunkertür (Schloss und Riegel) mit Kartenleser auf beiden Seiten
@@ -939,7 +1107,7 @@ def mechanismen() -> None:
     # Aufzug: Ruftafel rechts neben der Tür an jeder Haltestelle; die Kabine steht 1,5 Blöcke links
     # und 2,5 Blöcke hinter der Tafel
     namen = {"bunker": "Untergrundbasis", "keller": "Club & Tiefgarage", "eg": "Erdgeschoss", "og": "Obergeschoss",
-             "dach": "Penthouse"}
+             "dach": "Penthouse", "heli": "Hubschrauber"}
     for name, y in AUFZUG_HALTE.items():
         mech(AX1, y + 2, AZ1 + 1, "aufzugstafel", "south", name=namen[name],
              kabine_dx="-1.5", kabine_dz="-2.5", kabine_dy="-1")
@@ -994,6 +1162,9 @@ def main() -> None:
     erdgeschoss()
     obergeschoss()
     penthouse()
+    dachparty()
+    hubschrauberlandeplatz()
+    poolparty()
     bunker()
     keller()
     # Treppe und Aufzug nach allen Räumen, die beim Bau Luft schaffen (sonst fehlte der Schacht im Bunker)

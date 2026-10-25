@@ -411,7 +411,7 @@ BLOECKE: dict[str, dict] = {
                          zustand=bs_waagerecht(B("aufzugstafel")), de="Aufzugstafel", en="Elevator Panel"),
     "fallenplatte": dict(modelle={"fallenplatte": m_wuerfel("minecraft:block/gold_block")}, zustand=bs_einfach(B("fallenplatte")),
                          de="Fallenplatte", en="Trap Plate"),
-    "entschaerfknopf": dict(modelle={"entschaerfknopf": m_wuerfel("minecraft:block/deepslate_bricks")},
+    "entschaerfknopf": dict(modelle={"entschaerfknopf": m_wuerfel("minecraft:block/white_concrete")},
                             zustand=bs_einfach(B("entschaerfknopf")), de="Entschärfknopf", en="Hidden Disarm Button"),
     "kamera": dict(modelle={"kamera": m_kamera()}, zustand=bs_waagerecht(B("kamera")), de="Überwachungskamera", en="Security Camera"),
     "monitor": dict(modelle={"monitor": m_orientierbar(B("monitor"), "minecraft:block/black_concrete", "minecraft:block/black_concrete")},

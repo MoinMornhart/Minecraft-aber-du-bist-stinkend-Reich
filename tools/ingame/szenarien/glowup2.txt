@@ -1,0 +1,55 @@
+# Glow-up Teil 2: Büro, Penthouse, Dachparty, Landeplatz, Pool, Club, Tiefgarage, Geldspeicher
+server /gamemode spectator
+server /time set noon
+server /weather clear
+taste F1
+server /villa ort 69 33.6 57 0 22
+warte 8
+bild h01_buero_monitore
+server /villa ort 55 39.5 56 180 12
+warte 4
+bild h02_penthouse
+server /villa ort 54 40.5 76 180 18
+warte 4
+bild h03_dachparty
+server /villa ort 55 50 66 180 40
+warte 4
+bild h04_landeplatz
+server /villa ort 54 30 34 160 20
+warte 4
+bild h05_poolparty
+server /villa ort 76 30 22 100 20
+warte 3
+bild h06_rutsche
+server /villa ort 42 17.6 58 180 8
+warte 4
+bild h07_club
+server /villa ort 40 17.6 47 0 5
+warte 3
+bild h08_club_bar
+server /villa ort 50 17.6 54 90 5
+warte 3
+bild h09_club_vip
+server /villa ort 22 27.5 45 -60 30
+warte 3
+bild h10_club_eingang
+server /villa ort 58 17.6 47 180 5
+warte 3
+bild h11_foyer
+server /villa ort 75 19 50 160 15
+warte 4
+bild h12_tiefgarage
+server /villa ort 91.5 21 36 0 25
+warte 3
+bild h13_rampe
+server /villa ort 67.5 10 52 0 25
+warte 3
+bild h14_geldspeicher
+# Nacht: Partylichter
+server /time set 18000
+server /villa ort 55 50 82 180 25
+warte 5
+bild h15_dach_nacht
+server /villa ort 54 32 36 165 18
+warte 4
+bild h16_pool_nacht
