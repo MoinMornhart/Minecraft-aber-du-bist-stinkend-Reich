@@ -1,5 +1,6 @@
 # Rundgang für jede Version: Villa von vorn, Butler (Nahaufnahme, Menü, echter Auftrag bis zur
-# Lieferkiste), Bonzenauto (einsteigen, ausfahren) und Poolabdeckung (ohne Pflanzenreste)
+# Lieferkiste), Bonzenauto (einsteigen, aus der Tiefgarage fahren), Poolabdeckung (ohne Pflanzenreste),
+# Agenten-Anzug und Waffenkammer
 server /gamemode creative
 server /time set noon
 taste F1
@@ -59,3 +60,21 @@ warte 3
 server /villa ort 55 36 31 180 40
 warte 6
 bild r07_pool
+# Agenten-Anzug von vorn (Rüstung ist je Version anders angelegt) und Waffenkammer im Bunker
+server /gamemode survival
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p armor.chest with stinkendreich:smoking
+server /item replace entity @p armor.legs with stinkendreich:anzughose
+server /item replace entity @p armor.feet with stinkendreich:lackschuhe
+server /item replace entity @p weapon.mainhand with stinkendreich:goldene_pistole
+server /villa ort 55.5 26 93.5 0 0
+warte 4
+taste F5
+taste F5
+warte 2
+bild r08_agent
+taste F5
+server /gamemode spectator
+server /villa ort 64.2 7.5 40 270 10
+warte 5
+bild r09_waffenkammer

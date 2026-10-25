@@ -60,6 +60,11 @@ jobs:
           {
             echo "## Minecraft, aber du bist stinkend reich ${VERSION}"
             echo
+            # Was neu ist, steht in .github/neu.md (wird bei jeder Version überschrieben)
+            if [[ -f .github/neu.md ]]; then
+              cat .github/neu.md
+              echo
+            fi
             echo "Nimm die Datei, deren Name zu deiner Minecraft-Version passt, z. B. \`stinkendreich-${VERSION}+mc1.21.4.jar\`, und leg sie mit der Fabric API in den \`mods\`-Ordner."
             echo
             echo "| Minecraft | Datei |"

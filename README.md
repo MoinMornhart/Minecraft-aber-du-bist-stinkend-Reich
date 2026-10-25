@@ -6,13 +6,15 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.21_bis_26.3-62B47A?style=for-the-badge)](#-installation)
 [![Fabric](https://img.shields.io/badge/Loader-Fabric-DBB68C?style=for-the-badge)](https://fabricmc.net/)
 
-### Jede neue Welt beginnt in deiner eigenen Luxusvilla –<br>mit Butler James und einem goldenen Bonzenauto in der Garage.
+### Jede neue Welt beginnt in deiner eigenen Luxusvilla –<br>mit Butler James, Fuhrpark in der Tiefgarage, Hubschrauber auf dem Dach und Agenten-Ausrüstung im Bunker.
 
 [**⬇️ Herunterladen**](https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/latest) &nbsp;·&nbsp;
 [Installation](#-installation) &nbsp;·&nbsp;
 [Villa](#️-die-villa) &nbsp;·&nbsp;
 [Butler](#-butler-james) &nbsp;·&nbsp;
-[Bonzenauto](#️-das-bonzenauto) &nbsp;·&nbsp;
+[Fuhrpark](#️-fuhrpark) &nbsp;·&nbsp;
+[Hubschrauber](#-hubschrauber) &nbsp;·&nbsp;
+[Agent](#️-agenten-ausrüstung) &nbsp;·&nbsp;
 [Einstellungen](#️-einstellungen)
 
 </div>
@@ -25,7 +27,7 @@
 
 In **jeder neuen Welt** steht am Spawn deine Villa – egal welcher Welttyp. Das Gelände drumherum wird geebnet und weich an die Landschaft angeblendet. Du startest vor dem Tor, mit der Zugangskarte in der Tasche. Bestehende Welten bleiben unberührt.
 
-Wassergraben mit Brücke · zwei Glaskuppel-Brunnen · Pool mit Abdeckung · Garten mit Grillecke · drei Etagen · Penthouse mit Whirlpool auf dem Dach · Garage · Untergrundbunker.
+Wassergraben mit Brücke · zwei Glaskuppel-Brunnen · Pool mit Abdeckung und Strandliegen · Garten mit Grillecke · Ballsaal · Luxusküche · Nachtclub im Keller · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher.
 
 <table>
 <tr>
@@ -37,6 +39,34 @@ Wassergraben mit Brücke · zwei Glaskuppel-Brunnen · Pool mit Abdeckung · Gar
 <td><img src="docs/bilder/whirlpool.jpg" alt="Whirlpool auf der Dachterrasse"><br><sub><b>Dachterrasse:</b> Whirlpool mit Ausblick</sub></td>
 </tr>
 </table>
+
+### 🥂 Drinnen: Party und Luxus
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/ballsaal.jpg" alt="Ballsaal"><br><sub><b>Ballsaal</b> mit Kronleuchtern und Konzertflügel</sub></td>
+<td width="50%"><img src="docs/bilder/club.jpg" alt="Nachtclub"><br><sub><b>Nachtclub</b> im Keller mit leuchtender Tanzfläche</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/kueche.jpg" alt="Luxusküche"><br><sub><b>Luxusküche</b> mit Kochinsel</sub></td>
+<td><img src="docs/bilder/dachparty.jpg" alt="Dachparty"><br><sub><b>Dachparty</b> mit DJ-Pult und Tanzfläche</sub></td>
+</tr>
+</table>
+
+### 🛏️ Penthouse: dein privater Schlafbereich
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/penthouse_bett.jpg" alt="XXL-Kingsize-Bett"><br><sub><b>XXL-Kingsize-Bett</b> aus einem Stück – man kann darin schlafen</sub></td>
+<td width="50%"><img src="docs/bilder/kinosofa.jpg" alt="Kinosofa vor dem Fernseher"><br><sub><b>Kinosofa</b> für zwei vor dem XXL-Fernseher</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/fernseher.jpg" alt="XXL-Fernseher"><br><sub><b>XXL-Fernseher:</b> YouTube-Link einfügen, Video startet im Browser</sub></td>
+<td><img src="docs/bilder/strandliegen.jpg" alt="Strandliegen am Pool"><br><sub><b>Strandliegen</b> mit Sonnenschirmen am Pool</sub></td>
+</tr>
+</table>
+
+Auf Sofas, Liegen und der Bettbank kann man sich mit **Rechtsklick** hinsetzen, **Schleichen** steht wieder auf.
 
 ### 🔐 29 Mechanismen – alles eigene Blöcke
 
@@ -75,6 +105,11 @@ James wartet in der Halle, folgt dir auf Wunsch oder bleibt zu Hause. Er **erled
 <td width="33%"><img src="docs/bilder/butler_menue.jpg" alt="Butler-Menü"><br><sub><b>Rechtsklick:</b> Menü mit Knöpfen und Textfeld</sub></td>
 <td width="33%"><img src="docs/bilder/butler_unterwegs.jpg" alt="James unterwegs"><br><sub><b>Unterwegs</b> zum nächsten Erz</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/chauffeur.jpg" alt="Die Limo fährt vor"><br><sub><b>Chauffeur:</b> James fährt die Limo vor</sub></td>
+<td><img src="docs/bilder/pilot.jpg" alt="James fliegt den Hubschrauber"><br><sub><b>Pilot:</b> James fliegt dich zum Ziel</sub></td>
+<td><img src="docs/bilder/butler_lieferkiste.jpg" alt="Lieferkiste"><br><sub><b>Lieferkiste</b> in der Halle</sub></td>
+</tr>
 </table>
 
 Sprich ihn im Chat an – mit „Butler“ oder seinem Namen –, nimm `/butler …` oder klick ihn an. Schleichen + Rechtsklick öffnet seine Taschen.
@@ -87,6 +122,10 @@ Sprich ihn im Chat an – mit „Butler“ oder seinem Namen –, nimm `/butler 
 | `Butler, mach 16 Fackeln` | holt selbst Holz und Kohle, macht Bretter, Stöcke und Fackeln |
 | `Butler, hol Essen` · `koch was` | nimmt Essen aus der Speisekammer, sonst jagt und brät er |
 | `Butler, sortier die Truhen` | räumt alle Truhen und Fässer in deiner Nähe auf, jede Sorte in ihre Truhe |
+| `Butler, hol den Wagen` | lässt die Stretch-Limo vorfahren und wartet am Steuer |
+| `Butler, fahr mich zum Strand` · `fahr mich dahin` · `fahr mich nach Hause` | chauffiert dich zum gemerkten Ort, dahin, wo du hinschaust, oder zur Villa |
+| `Butler, merk dir den Ort als Strand` | merkt sich die Stelle, an der du stehst (`/butler orte` zeigt alle) |
+| `Butler, hol den Hubschrauber` · `flieg mich zum Strand` | holt dich mit dem Hubschrauber ab, fliegt dich hin und landet |
 | `folg mir` · `bleib hier` · `geh nach Hause` · `komm her` · `stopp` · `hilfe` | genau das |
 
 Außerdem: `/butler rufen` holt ihn herbei (oder stellt dir einen eigenen ein), `/butler truhe` macht die angeschaute Truhe zu seiner Lieferkiste, und das **Butler-Glöckchen** ruft ihn auch.
@@ -96,17 +135,24 @@ Außerdem: `/butler rufen` holt ihn herbei (oder stellt dir einen eigenen ein), 
 
 <br>
 
-## 🏎️ Das Bonzenauto
+## 🏎️ Fuhrpark
 
 <img src="docs/bilder/auto_held.jpg" alt="Das goldene Bonzenauto vor der Villa" width="100%">
 
-Ein goldenes Sportcabrio mit vier Sitzen wartet in der Garage: Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
+In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit vier Sitzen), ein **Luxus-Geländewagen**, ein **Supersportwagen** und die **Stretch-Limo**. Alle mit Goldfelgen. Über die Rampe geht es nach draußen, und der **Drehteller** am Fuß der Rampe wendet dich samt Auto um 180 Grad. Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
 
 <table>
 <tr>
-<td width="33%"><img src="docs/bilder/auto_garage.jpg" alt="Das Auto in der Garage"><br><sub><b>In der Garage</b> – bereit zur Ausfahrt</sub></td>
-<td width="33%"><img src="docs/bilder/auto_drift.jpg" alt="Drift mit Reifenqualm"><br><sub><b>Drift</b> mit Reifenqualm</sub></td>
-<td width="33%"><img src="docs/bilder/fuhrpark.jpg" alt="Fuhrpark in fünf Farben"><br><sub><b>Fuhrpark:</b> mit Farbstoff umlackieren</sub></td>
+<td width="50%"><img src="docs/bilder/tiefgarage.jpg" alt="Tiefgarage mit Fuhrpark"><br><sub><b>Tiefgarage</b> mit zehn Stellplätzen</sub></td>
+<td width="50%"><img src="docs/bilder/drehteller.jpg" alt="Drehteller"><br><sub><b>Drehteller:</b> draufrollen, anhalten, er dreht</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/gelaendewagen.jpg" alt="Geländewagen"><br><sub><b>Geländewagen</b> mit Reserverad und Dachreling</sub></td>
+<td><img src="docs/bilder/supersportwagen.jpg" alt="Supersportwagen"><br><sub><b>Supersportwagen</b> neben dem Geländewagen</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/auto_drift.jpg" alt="Drift mit Reifenqualm"><br><sub><b>Drift</b> mit Reifenqualm</sub></td>
+<td><img src="docs/bilder/fuhrpark.jpg" alt="Bonzenautos in fünf Farben"><br><sub><b>Lackfarben:</b> mit Farbstoff umlackieren</sub></td>
 </tr>
 </table>
 
@@ -121,6 +167,54 @@ Ein goldenes Sportcabrio mit vier Sitzen wartet in der Garage: Gas mit Trägheit
 | **V** | Kamera: Verfolger · Fahrersicht · Verfolger weit |
 
 Lackfarben: Schwarz, Weiß, Rot, Gelb, Gold, Blau, Grün, Pink – einfach mit dem passenden Farbstoff anklicken. Schleichen + Rechtsklick mit leerer Hand packt das Auto ein.
+
+<br>
+
+## 🚁 Hubschrauber
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/hubschrauber.jpg" alt="Hubschrauber auf dem Landeplatz"><br><sub><b>Landeplatz</b> auf dem Penthouse-Dach</sub></td>
+<td width="50%"><img src="docs/bilder/hubschrauber_flug.jpg" alt="Hubschrauber im Flug"><br><sub><b>Im Flug</b> über dem Gebirge</sub></td>
+</tr>
+</table>
+
+Schwarz-goldener Luxus-Hubschrauber mit getönten Scheiben und Rotorgeräusch. Einsteigen mit Rechtsklick; der Rotor läuft in gut vier Sekunden hoch, dann hebt er ab. Oder du lässt **James fliegen** („Butler, flieg mich zum Strand“): Er holt dich ab, landet neben dir und setzt dich am Ziel ab.
+
+| Taste | |
+|---|---|
+| **Leertaste / Strg** | steigen / sinken (ohne beides hält er die Höhe) |
+| **W / S** | vor / zurück (mit Trägheit) |
+| **A / D** | drehen |
+| **Schleichen** | aussteigen |
+
+<br>
+
+## 🕶️ Agenten-Ausrüstung
+
+<img src="docs/bilder/waffenkammer.jpg" alt="Waffenkammer im Bunker" width="100%">
+
+In der **Waffenkammer** im Bunker stehen sechs Rüstungsständer mit den besten Sets, die es gibt – alles maximal verzaubert, Netherit mit Goldverzierung: der **Agent**, **Gott-Netherit**, der **Flieger** (Elytra und Streitkolben), **Goldprotz**, **Schütze** und **Poseidon** (Dreizack). Rechtsklick auf einen Ständer nimmt die Teile. In den Truhen davor liegen Ersatz-Anzug, Waffen, Totems und Vorräte.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/agent.jpg" alt="Spieler im Agenten-Anzug"><br><sub><b>Im Anzug:</b> Sonnenbrille, Smoking mit Fliege, Lackschuhe</sub></td>
+<td width="50%"><img src="docs/bilder/geldkanone.jpg" alt="Geldkanone im Einsatz"><br><sub><b>Geldkanone:</b> Geldregen, der Gegner wegschleudert</sub></td>
+</tr>
+</table>
+
+| Teil | Kraft |
+|---|---|
+| 🕶️ **Bond-Sonnenbrille** | Nachtsicht · Gegner in der Nähe leuchten durch Wände |
+| 🤵 **Smoking** | Resistenz II · feuerfest |
+| 👖 **Anzughose** | Schnelligkeit II |
+| 👞 **Lackschuhe** | Sprungkraft II · kein Fallschaden |
+| ✨ **Ganzes Set** | Stärke II · Regeneration |
+| 🔫 **Goldene Pistole** | Rechtsklick: Schuss mit goldener Leuchtspur, 8 Schaden, 64 Blöcke weit |
+| ⌚ **Laser-Armbanduhr** | Rechtsklick: Laserstrahl, 12 Schaden, setzt in Brand |
+| 💸 **Geldkanone** | Rechtsklick: Geldregen, schleudert Gegner weg, macht sie langsam und blind |
+
+Die Waffen beschädigen keine Blöcke, und James, Fahrzeuge und Rüstungsständer bleiben verschont.
 
 <br>
 
@@ -204,7 +298,7 @@ Die Zahl hinter `+mc` muss **genau** deiner Version entsprechen. 1.21 bis 1.21.1
 
 ## ⚙️ Einstellungen
 
-Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Name und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Höchstgeschwindigkeit des Autos, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port sowie die Update-Prüfung.
+Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Name und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Höchstgeschwindigkeit des Autos, Tempo von Hubschrauber und Chauffeur, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port sowie die Update-Prüfung.
 
 ## 🔄 Updates
 
