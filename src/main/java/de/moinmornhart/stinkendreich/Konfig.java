@@ -56,6 +56,18 @@ public final class Konfig {
     /** Höchstgeschwindigkeit des Bonzenautos in km/h. */
     public double autoHoechstTempo = 110.0;
 
+    // ---------- Musik ----------
+    /** Hörweite rund um die Musikanlage und jeden ihrer Lautsprecher (Blöcke). */
+    public int musikRadius = 24;
+    /** Lautsprecher in diesem Umkreis um eine Musikanlage spielen deren Musik mit (Blöcke). */
+    public int lautsprecherRadius = 16;
+    /** Ordner für eigene Musik (OGG, MP3), relativ zum Minecraft-Ordner. */
+    public String musikOrdner = "stinkendreich/musik";
+    /** Client-ID der eigenen Spotify-App von developer.spotify.com. Leer = Spotify-Reiter zeigt nur die Anleitung. */
+    public String spotifyClientId = "";
+    /** Port für die Rückmeldung nach der Spotify-Anmeldung (Redirect-URI http://127.0.0.1:Port/callback). */
+    public int spotifyPort = 8888;
+
     // ---------- Update ----------
     /** Beim Start auf GitHub nach einer neuen Version suchen. */
     public boolean updatePruefen = true;
@@ -104,6 +116,11 @@ public final class Konfig {
         erklaerung.put("anthropicApiKey", "API-Key von console.anthropic.com für den Butler-Chat. Leer lassen = ohne Claude");
         erklaerung.put("butlerModell", "Claude-Modell für den Butler");
         erklaerung.put("autoHoechstTempo", "Höchstgeschwindigkeit des Bonzenautos in km/h (zum Vergleich: Sprinten sind etwa 20 km/h)");
+        erklaerung.put("musikRadius", "Hörweite der Musikanlage und jedes Lautsprechers in Blöcken");
+        erklaerung.put("lautsprecherRadius", "Lautsprecher in diesem Umkreis um eine Musikanlage spielen mit (Blöcke)");
+        erklaerung.put("musikOrdner", "Ordner für eigene Musik (OGG und MP3), relativ zum Minecraft-Ordner");
+        erklaerung.put("spotifyClientId", "Client-ID deiner eigenen Spotify-App (developer.spotify.com, siehe README unter „Musik“). Kein Secret nötig. Leer = ohne Spotify");
+        erklaerung.put("spotifyPort", "Port für die Spotify-Anmeldung. Bei Spotify muss genau http://127.0.0.1:<Port>/callback als Redirect-URI eingetragen sein");
         erklaerung.put("updatePruefen", "Beim Start nach neuen Versionen auf GitHub suchen");
         erklaerung.put("githubToken", "Nur nötig, wenn das GitHub-Repo privat ist");
         JsonObject mitErklaerung = new JsonObject();

@@ -23,6 +23,8 @@
     "stinkendreich:kamera",
     "stinkendreich:monitor",
     "stinkendreich:whirlpoolduese",
-    "stinkendreich:kaminsteuerung"
+    "stinkendreich:kaminsteuerung",
+    "stinkendreich:musikanlage",
+    "stinkendreich:lautsprecher"
   ]
 }

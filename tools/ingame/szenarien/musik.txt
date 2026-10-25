@@ -1,0 +1,71 @@
+# Musikanlage: Pult und zwei Lautsprecher auf einer Plattform am Himmel, Menü, eigene Titel abspielen,
+# automatisch weiter zum nächsten Titel (OGG → MP3 → OGG), weggehen und zurückkommen (Einstieg an der
+# richtigen Stelle), Stopp, Spotify-Reiter.
+#
+# Vorher in versions/<v>/run/stinkendreich/musik/ zwei Testtöne ablegen (a_ton440.ogg, b_ton660.mp3,
+# je 12 s, z. B. mit ffmpeg). Mit LAUTSTAERKE=1.0 und einer OpenAL-Wave-Ausgabe (ALSOFT_CONF) lässt
+# sich danach im Mitschnitt nachprüfen, was wirklich zu hören war.
+#
+# Bildschirm 1280x720, GUI-Faktor 2: Reiter bei y=136, erster Titel bei y=214, Steuerreihe bei y=302.
+server /gamemode creative
+server /time set noon
+server /tp @p 8.5 160 16.5
+warte 4
+server /fill -8 150 -8 24 150 24 smooth_quartz
+server /setblock 8 151 8 stinkendreich:musikanlage[facing=south]
+server /setblock 4 151 12 stinkendreich:lautsprecher[facing=south]
+server /setblock 12 151 12 stinkendreich:lautsprecher[facing=south]
+taste F1
+server /tp @p 8.5 152 17.5 180 12
+warte 4
+bild m01_anlage
+server /tp @p 8.5 152 1.5 0 12
+warte 3
+bild m02_rueckseite
+taste F1
+server /tp @p 8.5 151 10.5 180 30
+warte 3
+klick
+warte 2
+bild m03_menue
+# Ersten Titel starten (OGG)
+merke
+linksklick 640 214
+bis 20 Musikstrom offen
+warte 3
+bild m04_spielt
+klient schliessen
+warte 2
+bild m05_noten
+# Titelende: der DJ startet von selbst den nächsten (MP3)
+merke
+bis 25 Musik startet: b_ton660
+# Mittlere Entfernung (gut 12 Blöcke von der nächsten Box): leiser
+server /tp @p 8.5 151 24.5 180 0
+warte 2
+# Weit weg: Musik verstummt; zurück: Einstieg an der laufenden Stelle
+server /tp @p 8.5 151 45.5 180 0
+warte 2
+merke
+server /tp @p 8.5 151 10.5 180 30
+bis 15 Musik startet: b_ton660
+merke
+bis 25 Musik startet: a_ton440
+warte 2
+klick
+warte 2
+bild m06_menue_zweiter_durchlauf
+linksklick 640 302
+warte 3
+bild m07_gestoppt
+# Spotify-Reiter (Client-ID aus der Test-Config, nicht echt)
+linksklick 742 136
+warte 2
+bild m08_spotify
+linksklick 640 262
+warte 3
+bild m09_spotify_warten
+warte 8
+bild m10_spotify_fehler
+klient schliessen
+warte 1

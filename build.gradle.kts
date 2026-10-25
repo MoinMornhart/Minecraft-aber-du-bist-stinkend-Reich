@@ -39,6 +39,7 @@ afterEvaluate {
 
 dependencies {
     mitliefern("com.anthropic:anthropic-java:${property("deps.anthropic_java")}")
+    mitliefern("javazoom:jlayer:${property("deps.jlayer")}")
     minecraft("com.mojang:minecraft:${sc.current.version}")
     // Mojangs offizielle Namen auch für die verschleierten 1.21.x-Versionen
     loomx.applyMojangMappings()

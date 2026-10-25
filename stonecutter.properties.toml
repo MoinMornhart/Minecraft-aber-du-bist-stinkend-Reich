@@ -8,6 +8,8 @@ mod.version = "0.1.0"
 deps.fabric_loader = "0.20.1"
 # Anthropic-Bibliothek für den Claude-Butler (Version 2.x, siehe docs/BAUPLAN.md)
 deps.anthropic_java = "2.75.0"
+# MP3-Dekoder für die Musikanlage (reines Java, LGPL, wird in die .jar eingebettet)
+deps.jlayer = "1.0.1"
 loomx.loom_version = "1.19.3"
 
 ["1.21"]

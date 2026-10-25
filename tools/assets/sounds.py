@@ -210,6 +210,11 @@ def main() -> None:
         sounds_json[name] = {"subtitle": f"stinkendreich.ton.{name}", "sounds": [f"stinkendreich:{name}"]}
         untertitel_de[f"stinkendreich.ton.{name}"] = de
         untertitel_en[f"stinkendreich.ton.{name}"] = en
+    # Musikanlage: Strom mit dem leeren Fabric-Klang; die Datei des Spielers liefert MusikSound
+    sounds_json["musik"] = {"subtitle": "stinkendreich.ton.musik",
+                            "sounds": [{"name": "fabric-sound-api-v1:empty", "stream": True}]}
+    untertitel_de["stinkendreich.ton.musik"] = "Musik spielt"
+    untertitel_en["stinkendreich.ton.musik"] = "Music plays"
     (ZIEL.parent / "sounds.json").write_text(json.dumps(sounds_json, indent=2) + "\n", encoding="utf-8")
     for datei, texte in (("de_de", untertitel_de), ("en_us", untertitel_en)):
         pfad = ZIEL.parent / "lang" / f"{datei}.json"
