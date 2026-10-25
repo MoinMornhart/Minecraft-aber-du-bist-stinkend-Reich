@@ -1,4 +1,4 @@
-# Butler: Nahaufnahme, Menü, Chat-Auftrag „hol mir 16 Eisen“, Arbeit beobachten, Lieferung, Truhen sortieren
+# Butler: Nahaufnahme, Menü, Chat-Auftrag „hol 16 Eisen in die Truhe“, Arbeit beobachten, Lieferkiste, Truhen sortieren
 server /gamemode creative
 server /time set noon
 taste F1
@@ -20,7 +20,8 @@ warte 1
 server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:0b}
 # Auftrag im Chat
 taste F1
-server Butler, hol mir 16 Eisen
+merke
+server Butler, hol 16 Eisen in die Truhe
 warte 3
 taste t
 warte 2
@@ -52,17 +53,23 @@ taste F5
 server /gamemode creative
 server /effect clear @p
 server /villa ort 57.5 26 66 180 5
-bis 1200 Bitte sehr|in die Truhe gelegt|Verzeihung|fehlt
+bis 1200 in die Truhe gelegt|Bitte sehr|Verzeihung|fehlt|habe ich nur
 warte 3
 bild u11_angekommen
 taste t
 warte 2
 bild u12_chat_lieferung
 klient schliessen
-taste e
+warte 1
+# Lieferkiste öffnen (steht schräg rechts vor dem Spieler, Mitte bei 59.5 / 62.5)
+server /villa ort 57.5 26 66 210 16
 warte 2
-bild u12b_inventar
+klick
+warte 2
+bild u12b_lieferkiste
 taste Escape
+warte 1
+server /villa ort 57.5 26 66 180 5
 warte 1
 # Truhen sortieren: zwei Fässer mit durcheinander gelegten Sachen
 server /setblock ~2 ~ ~ barrel

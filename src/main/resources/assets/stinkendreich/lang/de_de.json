@@ -46,7 +46,7 @@
   "stinkendreich.alarm.grund.tresor": "%s hat die Tresorfalle ausgelöst",
   "stinkendreich.alarm.grund.zentrale": "%s hat die Zentrale ohne Berechtigung benutzt",
   "stinkendreich.alarm.start": "ALARM! %s (bei %s %s %s)",
-  "stinkendreich.auto.hinweis": "W/S Gas und Bremse · A/D lenken · Leertaste Handbremse (Driften) · H Hupe · L Licht · V Kamera · Schleichen: aussteigen",
+  "stinkendreich.auto.hinweis": "W/S Gas und Bremse · A/D lenken · Leertaste Handbremse (Driften) · H Hupe · G Licht · V Kamera · Schleichen: aussteigen",
   "stinkendreich.butler.bitteschoen": "Bitte sehr: %s × %s.",
   "stinkendreich.butler.bleiben": "Ich warte hier.",
   "stinkendreich.butler.dabei": "Ich trage bei mir:",

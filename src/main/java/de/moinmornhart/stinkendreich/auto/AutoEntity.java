@@ -175,6 +175,33 @@ public class AutoEntity extends Mob {
         return new Vec3(seite, 0.55, vorne).yRot(-getYRot() * Mth.DEG_TO_RAD);
     }
 
+    /**
+     * Insassen drehen sich mit dem Wagen mit und können sich höchstens 105° zur Seite umsehen
+     * (wie im Boot), damit die Kamera hinter dem Auto bleibt.
+     */
+    @Override
+    protected void positionRider(Entity passagier, Entity.MoveFunction bewegen) {
+        super.positionRider(passagier, bewegen);
+        float drehung = Mth.wrapDegrees(getYRot() - yRotO);
+        passagier.setYRot(passagier.getYRot() + drehung);
+        passagier.setYHeadRot(passagier.getYHeadRot() + drehung);
+        blickBegrenzen(passagier);
+    }
+
+    @Override
+    public void onPassengerTurned(Entity passagier) {
+        blickBegrenzen(passagier);
+    }
+
+    private void blickBegrenzen(Entity passagier) {
+        passagier.setYBodyRot(getYRot());
+        float abweichung = Mth.wrapDegrees(passagier.getYRot() - getYRot());
+        float erlaubt = Mth.clamp(abweichung, -105.0F, 105.0F);
+        passagier.yRotO += erlaubt - abweichung;
+        passagier.setYRot(passagier.getYRot() + erlaubt - abweichung);
+        passagier.setYHeadRot(passagier.getYRot());
+    }
+
     @Override
     protected InteractionResult mobInteract(Player spieler, InteractionHand hand) {
         ItemStack stapel = spieler.getItemInHand(hand);
@@ -239,7 +266,7 @@ public class AutoEntity extends Mob {
         }
     }
 
-    /** Scheinwerfer an/aus (Taste L). */
+    /** Scheinwerfer an/aus (Taste G). */
     public void lichtUmschalten() {
         entityData.set(LICHT, !licht());
         playSound(net.minecraft.sounds.SoundEvents.LEVER_CLICK, 0.6F, licht() ? 1.4F : 1.0F);

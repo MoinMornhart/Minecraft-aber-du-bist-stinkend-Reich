@@ -59,7 +59,7 @@ Rechtsklick aufs Auto zum Einsteigen (bis zu vier Leute), Schleichen zum Ausstei
 | **A / D** | Lenken (bei hohem Tempo weniger Einschlag) |
 | **Leertaste** | Handbremse – in der Kurve zum Driften |
 | **H** | Hupe |
-| **L** | Scheinwerfer (leuchten wirklich) |
+| **G** | Scheinwerfer (leuchten wirklich) |
 | **V** | Kamera: Verfolger · Fahrersicht · Verfolger weit |
 
 Mit Farbstoff umlackieren (Schwarz, Weiß, Rot, Gelb, Gold, Blau, Grün, Pink). Schleichen + Rechtsklick mit leerer Hand packt das Auto ein.

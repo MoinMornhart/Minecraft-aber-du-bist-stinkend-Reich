@@ -36,7 +36,7 @@ public final class AutoKlient {
 
     public static void registrieren() {
         hupe = anmelden(taste("hupe", InputConstants.KEY_H));
-        licht = anmelden(taste("licht", InputConstants.KEY_L));
+        licht = anmelden(taste("licht", InputConstants.KEY_G)); // L öffnet in Minecraft die Fortschritte
         kamera = anmelden(taste("kamera", InputConstants.KEY_V));
         KlientBruecke.handbremse = () -> Minecraft.getInstance().options.keyJump.isDown();
         ClientTickEvents.END_CLIENT_TICK.register(AutoKlient::tick);
@@ -75,7 +75,12 @@ public final class AutoKlient {
         motorenPflegen(client);
         boolean imAuto = client.player.getVehicle() instanceof AutoEntity;
         if (imAuto && !sassImAuto) {
-            // Beim Einsteigen: Verfolgerkamera
+            // Beim Einsteigen: nach vorn schauen und Verfolgerkamera
+            AutoEntity auto = (AutoEntity) client.player.getVehicle();
+            client.player.setYRot(auto.getYRot());
+            client.player.yRotO = auto.getYRot();
+            client.player.setYHeadRot(auto.getYRot());
+            client.player.setXRot(10.0F);
             vorherigeKamera = client.options.getCameraType();
             kameraModus = 0;
             kameraSetzen(client);

@@ -46,7 +46,7 @@
   "stinkendreich.alarm.grund.tresor": "%s triggered the vault trap",
   "stinkendreich.alarm.grund.zentrale": "%s used the console without permission",
   "stinkendreich.alarm.start": "ALARM! %s (at %s %s %s)",
-  "stinkendreich.auto.hinweis": "W/S throttle and brake · A/D steer · Space handbrake (drift) · H horn · L lights · V camera · Sneak: get out",
+  "stinkendreich.auto.hinweis": "W/S throttle and brake · A/D steer · Space handbrake (drift) · H horn · G lights · V camera · Sneak: get out",
   "stinkendreich.butler.bitteschoen": "Here you are: %s × %s.",
   "stinkendreich.butler.bleiben": "I'll wait here.",
   "stinkendreich.butler.dabei": "I am carrying:",

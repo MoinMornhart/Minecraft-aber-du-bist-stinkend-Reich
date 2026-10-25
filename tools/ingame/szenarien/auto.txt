@@ -1,4 +1,5 @@
-# Bonzenauto: Garage, einsteigen, losfahren, Kurve, Drift, Licht bei Nacht, Kameraarten, Lackfarben
+# Bonzenauto: Garage, einsteigen, ausfahren; dann Fahrprüfung auf einer Teststrecke südlich der Villa
+# (bei 110 km/h legt das Auto 30 Blöcke pro Sekunde zurück, deshalb kurze Gasstöße)
 server /gamemode creative
 server /time set noon
 taste F1
@@ -10,41 +11,64 @@ warte 3
 taste F1
 warte 1
 bild a02_eingestiegen
-halte 3 w
-bild a03_ausfahrt
-halte 3 w
-halte 2 w d
-bild a04_kurve
 halte 2 w
-halte 2 w a space
-bild a05_drift
-halte 2 s
-taste l
+bild a03_ausfahrt
+halte 1 s
+warte 1
+halte 1 shift
+warte 1
+# Teststrecke: 121 × 121 Blöcke Beton, darüber alles frei
+server /villa ort 75 26 140 0 30
+server /fill ~-60 ~-1 ~-20 ~60 ~-1 ~100 gray_concrete
+server /fill ~-60 ~ ~-20 ~60 ~5 ~24 air
+server /fill ~-60 ~6 ~-20 ~60 ~11 ~24 air
+server /fill ~-60 ~12 ~-20 ~60 ~17 ~24 air
+server /fill ~-60 ~ ~25 ~60 ~5 ~69 air
+server /fill ~-60 ~6 ~25 ~60 ~11 ~69 air
+server /fill ~-60 ~12 ~25 ~60 ~17 ~69 air
+server /fill ~-60 ~ ~70 ~60 ~5 ~100 air
+server /fill ~-60 ~6 ~70 ~60 ~11 ~100 air
+server /fill ~-60 ~12 ~70 ~60 ~17 ~100 air
+server /summon stinkendreich:bonzenauto ~ ~ ~
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:bonzenauto,sort=nearest,limit=1] ^ ^ ^3 ~ ~
+warte 3
+klick
+warte 2
+halte 1.5 w
+bild a04_fahrt
+halte 1.2 w d
+bild a05_kurve
+halte 1.5 w a space
+bild a06_drift
+halte 1 s
+taste g
 server /time set midnight
 warte 3
-bild a06_licht_nacht
+bild a07_licht_nacht
 taste v
 warte 2
-bild a07_kamera_fahrer
+bild a08_kamera_fahrer
 taste v
 warte 2
-bild a08_kamera_weit
+bild a09_kamera_weit
 taste v
 taste h
+warte 1
 server /time set noon
 halte 1 shift
 warte 1
-# Lackfarben: vier Autos nebeneinander vor dem Haus
+# Lackfarben: vier Autos nebeneinander, alle schauen zum Spieler
 taste F1
-server /villa ort 55.5 26 86 0 20
-server /summon stinkendreich:bonzenauto ~-6 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":2}"}
-server /summon stinkendreich:bonzenauto ~-2 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":5}"}
-server /summon stinkendreich:bonzenauto ~2 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":1}"}
-server /summon stinkendreich:bonzenauto ~6 ~ ~5 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":7}"}
+server /villa ort 75 26 140 0 20
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^-6 ^ ^6 {stinkendreich:"{\"farbe\":2}"}
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^-2 ^ ^6 {stinkendreich:"{\"farbe\":5}"}
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^2 ^ ^6 {stinkendreich:"{\"farbe\":1}"}
+server /execute at @p rotated ~ 0 run summon stinkendreich:bonzenauto ^6 ^ ^6 {stinkendreich:"{\"farbe\":7}"}
+server /execute as @e[type=stinkendreich:bonzenauto,distance=..9] at @s run tp @s ~ ~ ~ facing entity @p feet
 warte 3
-bild a09_farben
+bild a10_farben
 taste F1
 taste t
 warte 2
-bild a10_chat
+bild a11_chat
 klient schliessen
