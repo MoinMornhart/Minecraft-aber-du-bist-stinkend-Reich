@@ -961,10 +961,11 @@ def bunker() -> None:
         [("stinkendreich:bond_sonnenbrille", 1), ("stinkendreich:smoking", 1), ("stinkendreich:anzughose", 1),
          ("stinkendreich:lackschuhe", 1)],
         [("totem_of_undying", 1), ("totem_of_undying", 1), ("enchanted_golden_apple", 8), ("golden_apple", 32)],
-        [("ender_pearl", 16), ("firework_rocket", 64), ("arrow", 64), ("spectral_arrow", 64)],
-        [("netherite_ingot", 16), ("diamond", 64), ("experience_bottle", 64), ("shield", 1)],
+        [("ender_pearl", 16), ("firework_rocket", 64), ("arrow", 64), ("spectral_arrow", 64),
+         ("netherite_ingot", 16), ("diamond", 64), ("experience_bottle", 64), ("shield", 1)],
     ]
-    for x, inhalt in zip(range(63, x1, 2), vorraete):
+    # Vier Truhen; der Platz direkt neben dem ersten Ständer bleibt frei (verdeckte sonst den Agenten-Anzug)
+    for x, inhalt in zip(range(63, x1 - 2, 2), vorraete):
         truhe(b, x, y, z0 + 1, "south", inhalt)
     # Panikraum (Südwest): Betten, Vorräte
     for z in range(53, 66, 3):

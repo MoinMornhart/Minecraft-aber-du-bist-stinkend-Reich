@@ -42,8 +42,10 @@ _Zuletzt aktualisiert: 2026-10-25, 17:00 Uhr_
   Für flüssige Bilder keinen zweiten Spieltest parallel laufen lassen (sonst nur ~6 Bilder/s).
 - Rundgang aller Versionen (mit Agent und Waffenkammer): 1.21, 1.21.2, 1.21.3, 1.21.4 OK. 1.21.1 brach ab, weil
   `test.sh` während des Laufs geändert wurde (nie während eines Laufs ändern!) – muss neu. Rest ab 1.21.5 offen.
-- Offen für 0.2: restliche Versionen testen, Video an Philip, Release 0.2.0 (`mod.version` und
-  `.github/release-version` auf 0.2.0; Neuigkeiten stehen in `.github/neu.md`).
+- **Release 0.2.0 angestoßen** (Philip: „gleich raus und weiter testen“): `mod.version` und `.github/release-version`
+  auf 0.2.0, Neuigkeiten in `.github/neu.md`. Die restlichen Versionen laufen im Spiel weiter; Fehler → 0.2.1.
+- Truhe direkt neben dem Agenten-Ständer in der Waffenkammer entfernt (Philips Bild), Inhalt in die Nachbartruhe.
+- Offen für 0.2: restliche Versionen testen, Video an Philip.
 
 ## Version 0.3 (geplant, Philips Wünsche vom 25.10.)
 
