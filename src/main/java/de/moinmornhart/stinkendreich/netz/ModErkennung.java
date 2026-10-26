@@ -76,18 +76,6 @@ public final class ModErkennung {
         return gemerkt != null ? gemerkt : ServerPlayNetworking.canSend(spieler, Hallo.TYP);
     }
 
-    /**
-     * Für Polymer: Bekommt der Empfänger dieses Pakets die echten Mod-Dinge? Ohne Empfänger (Polymer fragt auch beim
-     * Laden von Chunks, dann ist der Kontext leer) gilt: nein, damit Polymer unsere Blöcke als übersetzt erkennt.
-     */
-    public static boolean hatMod(net.fabricmc.fabric.api.networking.v1.context.PacketContext kontext) {
-        if (kontext == null) {
-            return false;
-        }
-        Connection verbindung = kontext.get(net.fabricmc.fabric.api.networking.v1.context.PacketContext.CONNECTION);
-        return verbindung != null && hatMod(verbindung);
-    }
-
     /** Hat der Spieler hinter dieser Verbindung die Mod? (Speicherverbindung, also Einzelspieler: ja.) */
     public static boolean hatMod(Connection verbindung) {
         if (verbindung == null || verbindung.isMemoryConnection()) {

@@ -48,6 +48,19 @@ public final class ServerPaket {
     private ServerPaket() {
     }
 
+    /**
+     * Bekommt der Empfänger dieses Pakets die echten Mod-Dinge? Ohne Empfänger (Polymer fragt auch beim Laden von
+     * Chunks, dann ist der Kontext leer) gilt: nein, damit Polymer unsere Blöcke als übersetzt erkennt. Ein Fehler an
+     * dieser Stelle würde das Laden des Chunks abbrechen, und der Server erzeugte ihn neu.
+     */
+    static boolean mitMod(PacketContext kontext) {
+        if (kontext == null) {
+            return false;
+        }
+        net.minecraft.network.Connection verbindung = kontext.get(PacketContext.CONNECTION);
+        return verbindung != null && ModErkennung.hatMod(verbindung);
+    }
+
     public static void registrieren() {
         StinkendReich.LOGGER.info("Polymer gefunden: Server-Version für Spieler ohne Mod ist aktiv");
         PolymerResourcePackUtils.addModAssets(StinkendReich.MOD_ID);
@@ -113,12 +126,12 @@ public final class ServerPaket {
     private static final class ItemUebersetzung implements PolymerItem {
         @Override
         public Item getPolymerItem(ItemStack stack, PacketContext kontext) {
-            return ModErkennung.hatMod(kontext) ? stack.getItem() : Items.PAPER;
+            return mitMod(kontext) ? stack.getItem() : Items.PAPER;
         }
 
         @Override
         public boolean canSyncRawToClient(PacketContext kontext) {
-            return ModErkennung.hatMod(kontext);
+            return mitMod(kontext);
         }
     }
 
@@ -141,12 +154,12 @@ public final class ServerPaket {
             @Override
             public EntityType<?> getPolymerReplacement(EntityType<?> t, PacketContext kontext) {
                 // Spieler mit Mod bekommen immer die echte Figur (sonst passen Typ und Daten nicht zusammen)
-                return ModErkennung.hatMod(kontext) ? t : ersatz;
+                return mitMod(kontext) ? t : ersatz;
             }
 
             @Override
             public boolean canSyncRawToClient(PacketContext kontext) {
-                return ModErkennung.hatMod(kontext);
+                return mitMod(kontext);
             }
         }, (java.util.function.Function<T, PolymerEntity>) e -> e instanceof de.moinmornhart.stinkendreich.auto.AutoEntity auto
                 ? FahrzeugAnzeige.uebersetzung(auto, typ)
@@ -154,7 +167,7 @@ public final class ServerPaket {
                 : new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
-                return ModErkennung.hatMod(kontext) ? typ : ersatz;
+                return mitMod(kontext) ? typ : ersatz;
             }
 
             @Override
