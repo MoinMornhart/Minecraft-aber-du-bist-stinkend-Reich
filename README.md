@@ -354,7 +354,7 @@ Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modr
 2. Polymer für 26.3 (`polymer-bundled-0.18.5+26.3.jar` oder neuer) ebenfalls in `mods` legen.
 3. Server starten. Wer ohne Mod beitritt, bekommt automatisch ein Ressourcenpaket (annehmen).
 
-Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als Eisengolem), Autos und Hubschrauber. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik, Spotify und der Fernseher gehen nur mit der Mod. Wer die Mod hat, sieht alles wie gewohnt.
+Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos und Hubschrauber. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik, Spotify und der Fernseher gehen nur mit der Mod. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).
 
 <br>
 

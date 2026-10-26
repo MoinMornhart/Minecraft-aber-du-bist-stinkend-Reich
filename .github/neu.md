@@ -1,3 +1,8 @@
+### Neu in 0.3.2
+
+- **Server-Version (Vorschau, 26.3):** Spieler mit Mod und Spieler ohne Mod können jetzt gemeinsam auf demselben Server spielen. In 0.3.1 flog ein Spieler mit Mod beim Betreten eines Servers mit Polymer wieder raus. Spieler ohne Mod sehen die Bodyguards jetzt als große Türsteher im Smoking mit Sonnenbrille statt als normale Eisengolems.
+- **Trailer:** Ein 3-Minuten-Trailer aus echtem Minecraft steht im README.
+
 ### Neu in 0.3.1
 
 - **Straßen:** Wo eine Straße sich selbst nahe kommt (Kurven an Flüssen, Brücken), stehen keine Geländer und Bordsteine mehr mitten auf der Fahrbahn. Wasser aus Höhlen und Hängen läuft nicht mehr auf die Straße. James kommt so auch in Welten bis ins Dorf, in denen er vorher an einer Flusskreuzung hängen blieb.

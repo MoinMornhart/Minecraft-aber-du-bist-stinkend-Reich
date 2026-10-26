@@ -180,6 +180,12 @@ _Zuletzt aktualisiert: 2026-10-26, 02:50 Uhr (Nachtschicht, Philip schläft)_
 - Offen: Fernseher, Drehteller, übrige 16 Versionen (Polymer gibt es für alle, Dialoge erst ab 1.21.6), danach
   Paper-Plugin.
 
+## Version 0.3.2 (veröffentlicht 26.10. nachts)
+
+- Server-Version: Spieler mit und ohne Mod gemeinsam (Erkennung beim Anmelden), Bodyguards ohne Mod als
+  Türsteher im Smoking, Trailer im README (`docs/trailer.mp4`, Vorschaubild `docs/bilder/trailer.jpg`).
+  Vorher: kurz03 in 26.3 (Einzelspieler) alles OK, `vanilla_figuren.txt` mit und ohne Mod OK.
+
 ## Version 0.3.1 (veröffentlicht 26.10. nachts)
 
 - Versionstest 0.3.0 (`kurz03.txt`, alle 17): Handy, Lieferung, Mitarbeiter, Bodyguards, Kreisel überall OK.
