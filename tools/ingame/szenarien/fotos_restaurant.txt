@@ -21,3 +21,10 @@ bild glastunnel
 server /villa ort 40.5 18 57 0 8
 warte 3
 bild club_bar
+# Glas ohne Rand: Fensterfront der Villa und Penthouse-Glas
+server /villa ort 56 30 90 180 4
+warte 3
+bild glas_villa
+server /villa ort 55 39.5 56 180 12
+warte 3
+bild glas_penthouse
