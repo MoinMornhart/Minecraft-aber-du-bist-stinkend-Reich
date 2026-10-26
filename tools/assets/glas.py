@@ -10,11 +10,11 @@ ZIEL = WURZEL / "src/main/resources/assets/minecraft/textures/block"
 
 def scheibe() -> Image.Image:
     """Volle Glasfläche: Innen ganz leicht bläulich-durchsichtig, Rand 1 Pixel hell und halbdurchsichtig."""
-    img = Image.new("RGBA", (16, 16), (225, 240, 245, 18))
+    img = Image.new("RGBA", (16, 16), (225, 240, 245, 12))
     px = img.load()
     for i in range(16):
         for (x, y) in ((i, 0), (i, 15), (0, i), (15, i)):
-            px[x, y] = (235, 245, 250, 110)
+            px[x, y] = (235, 245, 250, 45)
     return img
 
 
@@ -24,7 +24,7 @@ def scheibe_oben() -> Image.Image:
     px = img.load()
     for y in range(16):
         for x in (7, 8):
-            px[x, y] = (235, 245, 250, 110)
+            px[x, y] = (235, 245, 250, 45)
     return img
 
 
