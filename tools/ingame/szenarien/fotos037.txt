@@ -1,0 +1,52 @@
+# README-Fotos 0.3.6: Bunker-Suite, Kommandozentrale, Bunkergang, Bad, Bett, Notausgang, Festung von außen
+# Aufruf: STINKENDREICH_TESTVIDEO=<video> tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos037.txt
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /difficulty normal
+warte 30
+server /gamemode spectator @p
+taste F1
+server /villa ort 45.0 8.4 60.5 180 6
+warte 3
+klient fernseher !abspielen|aqz-KE-bpKQ
+warte 8
+bild bunker_suite
+klient fernseher !stopp
+server /villa ort 45.0 8.4 48.6 180 12
+warte 3
+bild kommandozentrale
+server /villa ort 57.5 8.2 42.5 0 12
+warte 3
+bild bunker_gang
+server /villa ort 49.5 8.0 63.3 0 18
+warte 3
+bild bunker_bad
+server /villa ort 45.5 9.0 59.5 25 18
+warte 3
+bild bunker_bett
+server /villa ort 30.5 6.1 61.0 90 2
+warte 3
+bild notausgang_tunnel
+server /villa luke
+warte 3
+bild notausgang_luke
+server /gamemode survival @p
+server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+warte 1
+klick
+warte 2
+bild notausgang
+server /gamemode spectator @p
+server /villa stufe 4
+warte 15
+server /villa ort 55 60 175 180 18
+warte 5
+bild festung
+server /villa ort -20 55 140 225 25
+warte 4
+bild festung_schraeg
+server /villa ort 30 40 110 200 20
+warte 3
+bild festung_mauer
+server /villa stufe 1
