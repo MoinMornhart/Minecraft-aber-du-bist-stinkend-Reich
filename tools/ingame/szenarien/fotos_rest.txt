@@ -1,0 +1,46 @@
+# README-Fotos 0.3.6 (Bildnamen = Dateinamen in docs/bilder), alles, was kein eigenes Foto-Szenario hat
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 58 27.2 40.6 170 35
+warte 3
+bild aufzug
+server /villa ort 54 40.5 76 180 18
+warte 3
+bild dachparty
+server /villa ort 70 27.5 50 180 15
+warte 3
+bild kueche
+server /villa ort 57.5 7 52 180 8
+warte 3
+bild laser
+server /villa ort 64.5 33.5 46.3 180 30
+warte 3
+bild tresor
+server /villa ort 63.5 32.5 50 180 10
+warte 3
+bild tresortuer
+server /villa ort 73.5 33 46 180 5
+warte 3
+bild ueberwachung
+server /villa ort 71.5 33 57.5 0 20
+warte 3
+bild zentrale
+server /villa ort 62.5 39.8 45.8 180 12
+warte 3
+bild penthouse_bett
+server /villa ort 63.5 39.6 41.0 0 12
+warte 3
+bild fernseher
+server /villa ort 54 32 36 165 18
+warte 3
+bild strandliegen
+server /villa ort 76 17.3 58 200 8
+warte 3
+bild auto_garage
+server /villa ort 66 47.5 60 135 18
+warte 3
+bild hubschrauber

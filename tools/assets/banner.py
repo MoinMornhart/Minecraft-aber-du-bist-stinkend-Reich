@@ -50,7 +50,7 @@ def main() -> None:
     x = 214
     zeile1 = pixeltext("Minecraft, aber du bist", 3, (255, 255, 255), (63, 63, 63))
     zeile2 = pixeltext("stinkend reich", 6, (255, 213, 64), (88, 60, 0))
-    zeile3 = pixeltext("Villa · Butler · Bonzenauto", 3, (215, 230, 220), (40, 45, 42))
+    zeile3 = pixeltext("Villa · Butler · Festung · Haie", 3, (215, 230, 220), (40, 45, 42))
     gesamt = zeile1.height + 4 + zeile2.height + 14 + zeile3.height
     y = (HOEHE - gesamt) // 2
     for z, abstand in ((zeile1, 4), (zeile2, 14), (zeile3, 0)):
