@@ -1,0 +1,23 @@
+# README-Fotos: VIP-Seerestaurant (Kuppel innen, außen durchs Aquarium), Glastunnel, Bar vor dem Aquarium
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /clear @p
+taste F1
+server /villa ort 46.5 16.6 79.8 0 8
+warte 4
+bild seerestaurant
+server /villa ort 46.5 18 81 180 -5
+warte 2
+bild seerestaurant_blick
+server /villa ort 34 19 84 270 5
+warte 3
+bild seerestaurant_aussen
+server /villa ort 50.5 16.5 73 0 5
+warte 3
+bild glastunnel
+server /villa ort 40.5 18 57 0 8
+warte 3
+bild club_bar
