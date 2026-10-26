@@ -156,9 +156,10 @@ final class VideoAbspieler implements AutoCloseable {
         }
         ProcessBuilder laden = q.ytdlpSpur(bild);
         ProcessBuilder umwandeln = ffmpeg(q, "pipe:0", ab, bild);
-        laden.redirectError(ProcessBuilder.Redirect.DISCARD);
         List<Process> kette = ProcessBuilder.startPipeline(List.of(laden, umwandeln));
         nebenProzesse.add(kette.get(0));
+        // Was yt-dlp meldet (z. B. „Sign in to confirm you're not a bot“), landet mit in der Fehlermeldung
+        VideoQuelle.mitlesen(kette.get(0).getErrorStream(), ffmpegFehler);
         return kette.get(1);
     }
 
