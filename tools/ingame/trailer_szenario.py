@@ -111,6 +111,14 @@ z("server /item replace entity @p weapon.mainhand with stinkendreich:handy", "se
   "server /execute as @p run handy smart|disco|aus", "server /execute as @p run handy smart|farbe|warm", "server /clear @p")
 titel("Ein Nachtclub im Keller")
 zufahren(4, 42, 17.6, 58, 180, 8)
+titel("VIP-Restaurant unter einer Glaskuppel im Meeresaquarium")
+zufahren(5, 46.5, 16.6, 79.8, 0, 8, zurueck=2.5, schwenk=12)
+titel("Ein Haifischbecken im Wohnzimmer")
+zufahren(4, 44, 23.5, 59, 180, 10, zurueck=1.5, schwenk=10)
+titel("… für freche Gäste")
+z("server /difficulty normal", "server /summon zombie -10 88 -6 {PersistenceRequired:1b}", "server /villa ort 48 30 50 90 55",
+  "warte 1.5", "server /execute as @p run handy smart|haie|auf", "warte 4", "server /kill @e[type=zombie]",
+  "server /difficulty peaceful")
 titel("… und ein Geheimclub hinter dem Bücherregal")
 z("server /gamemode survival", "server /villa ort 31.5 16 64 90 5", "warte 1", "druecke shift", "warte 1.2", "loslassen shift",
   "warte 1.5", "server /gamemode spectator")
@@ -125,6 +133,9 @@ titel("Eine Bunker-Suite mit Riesen-Fernseher")
 z("server /villa ort 44.5 9.2 60.5 180 14", "klient fernseher !abspielen|aqz-KE-bpKQ", "warte 2")
 zufahren(4, 51.5, 10.4, 58.5, 115, 24, zurueck=1.5, schwenk=-10)
 z("klient fernseher !stopp")
+titel("Echte Regenduschen")
+z("server /villa ort 47.5 6.2 64.4 0 12", "server /setblock -9 70 11 stinkendreich:duschkopf[facing=north,an=true,wand=false]",
+  "server /setblock -9 69 11 stinkendreich:duscharmatur[facing=north,an=true]", "warte 3.5")
 titel("Die Kommandozentrale")
 fahrt(5, (53.5, 6.5, 44.5, 90, 8), (46, 7.4, 42, 160, 14), (45.5, 7.2, 40, 180, 22))
 titel("Modus FESTUNG")
@@ -175,6 +186,13 @@ z("server /gamemode survival", "server /difficulty normal",
   "server /execute as @p at @s run summon vindicator ^ ^ ^9 {NoAI:1b}",
   "server /execute as @p at @s run summon vindicator ^1.5 ^ ^11", "warte 1", "klick", "warte 1", "klick", "warte 2",
   "server /kill @e[type=vindicator]", "server /gamemode spectator", "server /difficulty peaceful")
+
+titel("Inkognito: Die Villa fährt in die Erde")
+z("server /villa ort 118 58 128 139 19", "warte 1", "server /villa inkognito an")
+fahrt(11, (118, 58, 128, 139, 19), (90, 52, 140, 160, 18), (56, 46, 150, 180, 16))
+titel("… und taucht wieder auf")
+z("server /villa inkognito aus")
+fahrt(11, (56, 46, 150, 180, 16), (90, 52, 140, 160, 18), (118, 58, 128, 139, 19))
 
 titel("Minecraft, aber du bist stinkend reich", tag=False)
 z("server /time set 12650", "server /villa ort 56 52 142 180 22", "warte 2")

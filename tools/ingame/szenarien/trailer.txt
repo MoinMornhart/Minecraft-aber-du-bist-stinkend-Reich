@@ -137,6 +137,30 @@ merke
 server fahrt 4 | 42.00 17.60 61.50 165.0 8.0 | 42.00 17.60 58.00 180.0 8.0
 bis 96 Fahrt fertig
 server /time set 6000
+kapitel VIP-Restaurant unter einer Glaskuppel im Meeresaquarium
+server /villa ort 46.50 16.60 77.30 12.0 8.0
+warte 3
+merke
+server fahrt 5 | 46.50 16.60 77.30 12.0 8.0 | 46.50 16.60 79.80 0.0 8.0
+bis 105 Fahrt fertig
+server /time set 6000
+kapitel Ein Haifischbecken im Wohnzimmer
+server /villa ort 44.00 23.50 60.50 190.0 10.0
+warte 3
+merke
+server fahrt 4 | 44.00 23.50 60.50 190.0 10.0 | 44.00 23.50 59.00 180.0 10.0
+bis 96 Fahrt fertig
+server /time set 6000
+kapitel … für freche Gäste
+server /difficulty normal
+server /summon zombie -10 88 -6 {PersistenceRequired:1b}
+server /villa ort 48 30 50 90 55
+warte 4.5
+server /execute as @p run handy smart|haie|auf
+warte 12
+server /kill @e[type=zombie]
+server /difficulty peaceful
+server /time set 6000
 kapitel … und ein Geheimclub hinter dem Bücherregal
 server /gamemode survival
 server /villa ort 31.5 16 64 90 5
@@ -176,6 +200,12 @@ merke
 server fahrt 4 | 52.86 10.40 59.13 105.0 24.0 | 51.50 10.40 58.50 115.0 24.0
 bis 96 Fahrt fertig
 klient fernseher !stopp
+server /time set 6000
+kapitel Echte Regenduschen
+server /villa ort 47.5 6.2 64.4 0 12
+server /setblock -9 70 11 stinkendreich:duschkopf[facing=north,an=true,wand=false]
+server /setblock -9 69 11 stinkendreich:duscharmatur[facing=north,an=true]
+warte 10.5
 server /time set 6000
 kapitel Die Kommandozentrale
 merke
@@ -300,6 +330,20 @@ warte 6
 server /kill @e[type=vindicator]
 server /gamemode spectator
 server /difficulty peaceful
+server /time set 6000
+kapitel Inkognito: Die Villa fährt in die Erde
+server /villa ort 118 58 128 139 19
+warte 3
+server /villa inkognito an
+merke
+server fahrt 11 | 118.00 58.00 128.00 139.0 19.0 | 90.00 52.00 140.00 160.0 18.0 | 56.00 46.00 150.00 180.0 16.0
+bis 159 Fahrt fertig
+server /time set 6000
+kapitel … und taucht wieder auf
+server /villa inkognito aus
+merke
+server fahrt 11 | 56.00 46.00 150.00 180.0 16.0 | 90.00 52.00 140.00 160.0 18.0 | 118.00 58.00 128.00 139.0 19.0
+bis 159 Fahrt fertig
 kapitel Minecraft, aber du bist stinkend reich
 server /time set 12650
 server /villa ort 56 52 142 180 22
