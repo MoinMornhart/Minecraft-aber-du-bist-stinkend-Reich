@@ -3,7 +3,8 @@
 
 Kürzer und schneller als der Rundgang (video_szenario.py): kurze Kamerafahrten mit großen Schlagzeilen,
 dazwischen die besten Vorführungen (Tor, Portaltür, Ballsaal, Konzertflügel im Wohnzimmer, Esszimmer, Fernseher mit Video und Fernbedienung, Geheimclub,
-echte Haie, Butler, Auto, Straßen mit Brücken, Hubschrauber, Handy mit Navi und Gästeliste, Bodyguards mit Pistole, Agenten-Waffen) und am Ende die Villa bei
+echte Haie, Butler, Auto, Straßen mit Brücken, Hubschrauber, Handy mit Navi und Gästeliste, Bodyguards mit Pistole, Agenten-Waffen,
+Nachbarvilla mit Nummernschild) und am Ende die Villa bei
 Sonnenuntergang. Der Fernseher spielt ein Video von der Platte (YouTube ist beim Dreh nicht erreichbar), in Zeitlupe.
 
 Aufruf: python3 tools/ingame/trailer_szenario.py
@@ -61,8 +62,16 @@ def titel(text: str, tag: bool = True) -> None:
 z("# Trailer (erzeugt von tools/ingame/trailer_szenario.py)",
   "server /gamemode spectator", "server /time set 6000", "server /weather clear", "server /difficulty peaceful",
   "server /villa stufe 0", "server /butler strasse dorf", "server /villa ort 160 80 175 139 22")
+# Vor der Aufnahme: Nachbarvilla für einen Freund bauen lassen (im Hintergrund, mit Straße) und einen Wagen mit
+# Nummernschild davorstellen; danach zurück zur Spawn-Villa
+# (erst wenn die automatischen Straßen stehen: Die Brücken-Aufnahme braucht die Endportal-Straße als Nummer 3)
+zeilen += ["warte 30", "bis 900 Straße Endportal: Ende", "merke", "server /villa nachbar Aircrafter", "bis 600 Baustelle: Villa 1 fertig",
+           "merke", "bis 900 Straße Villa von Aircrafter: Ende", "server /villa hin 1", "warte 2",
+           "server /villa ort 55.5 26 94 180 0",
+           "server /execute at @p run summon stinkendreich:gelaendewagen ~ ~ ~ {Rotation:[180f,0f]}", "warte 8",
+           "server /villa hin 0", "warte 5"]
 # Leere Hände (das geschenkte Handy läge sonst in der Hand und öffnete sich bei jedem Rechtsklick)
-zeilen += ["warte 30", "server /clear @p", "taste F1", f"server /tick rate {20 / ZEITLUPE:.3f}", "warte 5", "video start trailer"]
+zeilen += ["server /clear @p", "taste F1", f"server /tick rate {20 / ZEITLUPE:.3f}", "warte 5", "video start trailer"]
 
 titel("Jede neue Welt startet hier")
 fahrt(9, (160, 80, 175, 139, 22), (118, 58, 128, 139, 19), (80, 48, 138, 165, 16), (56, 36, 118, 180, 10))
@@ -200,6 +209,14 @@ fahrt(11, (118, 58, 128, 139, 19), (90, 52, 140, 160, 18), (56, 46, 150, 180, 16
 titel("… und taucht wieder auf")
 z("server /villa inkognito aus")
 fahrt(11, (56, 46, 150, 180, 16), (90, 52, 140, 160, 18), (118, 58, 128, 139, 19))
+
+titel("Neue Freunde bekommen ihre eigene Villa")
+z("server /villa hin 1", "warte 1", "server /villa ort 55 75 200 180 35", "warte 2")
+fahrt(10, (55, 75, 200, 180, 35), (55, 60, 160, 180, 30), (55, 48, 130, 180, 20))
+titel("… mit Straße und ihrem Namen auf dem Nummernschild")
+z("server /villa ort 55.5 26.3 99.5 180 12", "warte 1")
+fahrt(5, (55.5, 26.3, 99.5, 180, 12), (55.5, 26.3, 98.4, 180, 14))
+z("server /villa hin 0", "warte 1")
 
 titel("Minecraft, aber du bist stinkend reich", tag=False)
 z("server /time set 12650", "server /villa ort 56 52 142 180 22", "warte 2")

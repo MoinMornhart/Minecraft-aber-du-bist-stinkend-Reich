@@ -13,4 +13,6 @@ public class AutoRenderState extends LivingEntityRenderState {
     /** Hubschrauber: Rotorwinkel (Bogenmaß), Neigen und Rollen (Grad). */
     public float rotorWinkel, neigung, rollen;
     public int farbe;
+    /** Name auf dem Nummernschild (leer = keine Schrift). */
+    public String kennzeichen = "";
 }

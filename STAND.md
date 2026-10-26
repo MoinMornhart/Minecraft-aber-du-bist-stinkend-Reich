@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 22:35 Uhr (Release 0.3.9 läuft, Trailer wird aufgenommen)_
+_Zuletzt aktualisiert: 2026-10-26, 23:30 Uhr (0.3.9 veröffentlicht, 0.4.0 Nachbarschaft in Arbeit)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -218,7 +218,28 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
 
-## Version 0.3.9 (Release angestoßen 26.10. 22:26, „Fehler-Runde vor dem Plugin“)
+## Version 0.4.0 (in Arbeit seit 26.10. abends: Nachbarschaft)
+
+- **Nachbarvilla im Hintergrund** (`villa/VillaBaustelle`): Schritte SUCHEN (flachster freier Platz der inneren
+  Ringe, Höhe nur geschätzt über `ChunkGenerator.getBaseHeight`, ohne Chunks; Plätze mit Straße darauf fallen weg),
+  LADEN (Chunks in Gruppen zu 24 über `ServerChunkCache.updateChunkForced`; `setChunkForced` lädt in allen Versionen
+  sofort und blockierend!), MESSEN, GELAENDE, BLAETTER, BLOECKE (Palette über `mixin/StrukturZugriff`, je Tick 20 ms,
+  Flags 2|16, Truhen-Daten mit `loadWithComponents`), FORMEN (`Block.updateFromNeighbourShapes` + Nachbarn melden),
+  FIGUREN (Minecrafts `placeEntities` per Invoker), AUSSTATTEN (`VillaPlatzierung.ausstatten`). Strukturdatei wird beim
+  Serverstart im Hintergrund vorgeladen (erstes Laden kostete 5–6 s). Fortschritt in der Leiste, Spieler wird nach dem
+  Bau hingebracht (Tag `stinkendreich.eigene_villa`). Testbefehl `/villa nachbar [name]` (erfundener Besitzer).
+- **Straße zur Nachbarvilla** endet am Ende ihrer Zufahrt (`VillaPlatzierung.zufahrtEnde`, `Strassennetz.villaZiel`);
+  liegt das Netz hinter der Villa, erst ein Zubringer seitlich vorbei. Zufahrt jetzt offener Einschnitt bis zur
+  Oberfläche. Straßen umfahren alle Villen (`StrassenBau.geschuetzt` mit `VillaPlatzierung.bei`), zweigen nicht aus
+  überbauten Stücken ab. Straßenbau lädt Chunks im Hintergrund (5 × 5 um die Spitze, `umgebungBereit`).
+- **Navi/James:** Villen der anderen im Handy (mit und ohne Mod, `Handy.andereVillen`), „fahr zur Villa von Max“
+  (`Sprache.ziel`, `VillaPlatzierung.mitHerrnImText`), „nach Hause“ = eigene Villa.
+- **Nummernschild:** `client/auto/KennzeichenLayer` (goldene Schrift auf schwarz), Lage aus `schilder` in den
+  Fahrzeugdaten (fahrzeuge.py), Name in `AutoEntity.KENNZEICHEN` (wird gesetzt, wenn der Wagen in einer Villa steht).
+- Test: `nachbarn041.txt` (26.3). Bekannt: Minecrafts Strukturen-Suche (Dorf, Endportal) ruckelt beim ersten Betreten
+  einmal 2–7 s.
+
+## Version 0.3.9 (veröffentlicht 26.10. 23:02: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.9)
 
 - **Inkognito neu** (`mechanik/Inkognito`): Phasen `LADEN_RUNTER, RUNTER, DECKEL_ZU, BAEUME_HOCH | BAEUME_WEG,
   DECKEL_AUF, LADEN_HOCH, HOCH`. Vor der Fahrt werden alle Chunks der Villa erzwungen geladen (`laden`, 40 Ticks),

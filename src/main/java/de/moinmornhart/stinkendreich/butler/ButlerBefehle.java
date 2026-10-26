@@ -98,10 +98,11 @@ public final class ButlerBefehle {
                                 .then(Commands.argument("punkt", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0)).executes(k -> {
                                     ServerPlayer p = k.getSource().getPlayerOrException();
                                     var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer());
-                                    int nr = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(k, "strasse");
-                                    if (nr >= netz.strassen().size()) {
+                                    // Zu große Nummern meinen die zuletzt gebaute Straße (Tests: „99 9999“ = ihr Ende)
+                                    if (netz.strassen().isEmpty()) {
                                         return 0;
                                     }
+                                    int nr = Math.min(com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(k, "strasse"), netz.strassen().size() - 1);
                                     var punkte = netz.strassen().get(nr).punkte();
                                     BlockPos q = punkte.get(Math.min(punkte.size() - 1, com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(k, "punkt")));
                                     p.teleportTo(q.getX() + 0.5, q.getY() + 1, q.getZ() + 0.5);
@@ -277,12 +278,35 @@ public final class ButlerBefehle {
             name = "";
             antwort = Antwort.ok("stinkendreich.butler." + art + ".holt");
         } else if (Sprache.ZIEL_VILLA.equals(ziel)) {
-            var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
-            // Der Hubschrauber landet auf dem Landeplatz, das Auto hält vor dem Haus
-            BlockPos heim = villa.map(v -> fliegen ? v.landeplatz() : v.spawn()).orElse(b.heimat());
-            punkt = Vec3.atBottomCenterOf(heim);
-            name = Component.translatable("stinkendreich.butler.fahren.villa").getString();
+            // Nach Hause = in James' eigene Villa (bei Nachbarn deren Villa, nicht die am Spawn)
+            var eigene = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.bei(b.heimat());
+            if (eigene != null && eigene.nr() > 0) {
+                punkt = fliegen ? Vec3.atBottomCenterOf(eigene.landeplatz()) : de.moinmornhart.stinkendreich.strasse.Strassennetz.villaZiel((net.minecraft.server.level.ServerLevel) p.level(), eigene);
+                name = fliegen ? Component.translatable("stinkendreich.butler.fahren.villa").getString()
+                        : de.moinmornhart.stinkendreich.strasse.Strassennetz.villaName(eigene);
+            } else {
+                var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
+                // Der Hubschrauber landet auf dem Landeplatz, das Auto hält vor dem Haus
+                BlockPos heim = villa.map(v -> fliegen ? v.landeplatz() : v.spawn()).orElse(b.heimat());
+                punkt = Vec3.atBottomCenterOf(heim);
+                name = Component.translatable("stinkendreich.butler.fahren.villa").getString();
+            }
             antwort = Antwort.ok("stinkendreich.butler." + art + ".heim");
+        } else if (b.ort(ziel) == null && de.moinmornhart.stinkendreich.villa.VillaPlatzierung.mitHerrnImText(p.level().getServer(), ziel) != null) {
+            // Die Villa eines anderen Spielers („fahr zur Villa von Max“); Spawn-Villa wie „nach Hause“ vor das Haus
+            var v = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.mitHerrnImText(p.level().getServer(), ziel);
+            String herr = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.herrName(p.level().getServer(), v);
+            if (fliegen) {
+                punkt = Vec3.atBottomCenterOf(v.landeplatz());
+                name = Component.translatable("stinkendreich.strasse.ziel.villa", herr).getString();
+            } else if (v.nr() == 0) {
+                punkt = Vec3.atBottomCenterOf(v.spawn());
+                name = Component.translatable("stinkendreich.butler.fahren.villa").getString();
+            } else {
+                punkt = de.moinmornhart.stinkendreich.strasse.Strassennetz.villaZiel((net.minecraft.server.level.ServerLevel) p.level(), v);
+                name = de.moinmornhart.stinkendreich.strasse.Strassennetz.villaName(v);
+            }
+            antwort = Antwort.ok("stinkendreich.butler." + art + ".ort", Component.translatable("stinkendreich.strasse.ziel.villa", herr).getString());
         } else if (Sprache.ZIEL_BLICK.equals(ziel)) {
             HitResult blick = p.pick(300.0, 1.0F, false);
             if (!(blick instanceof BlockHitResult bt) || blick.getType() != HitResult.Type.BLOCK) {

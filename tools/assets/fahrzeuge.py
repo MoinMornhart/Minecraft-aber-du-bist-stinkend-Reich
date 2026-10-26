@@ -304,11 +304,24 @@ class Modell:
 
     def als_json(self):
         teile = []
+        schilder = []
         for t in self.teile:
             teile.append({"name": t.name, "eltern": t.eltern, "pivot": list(t.pivot), "drehung": list(t.drehung),
                           "kaesten": [{"uv": list(self.platz[k["schluessel"]]), "von": k["von"], "masse": k["masse"]}
                                       for k in t.kaesten]})
-        return {"breite": self.breite, "hoehe": self.hoehe, "teile": teile}
+            # Nummernschilder: Darauf schreibt das Spiel den Namen des Besitzers (KennzeichenLayer)
+            for k in t.kaesten:
+                if "kennzeichen" in k["flaechen"].values():
+                    schilder.append({"pfad": self.pfad(t), "von": k["von"], "masse": k["masse"]})
+        return {"breite": self.breite, "hoehe": self.hoehe, "teile": teile, "schilder": schilder}
+
+    def pfad(self, teil):
+        """Namen der Teile von der Wurzel bis zu diesem Teil."""
+        namen = {t.name: t for t in self.teile}
+        kette = [teil.name]
+        while namen[kette[0]].eltern is not None:
+            kette.insert(0, namen[kette[0]].eltern)
+        return kette
 
     def textur(self, lack) -> Image.Image:
         """Malt die Lackierung: erst grob (1 Texel pro Pixel), dann FEIN-fach vergrößert; runde Teile

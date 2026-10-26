@@ -50,6 +50,12 @@ public final class HandyDialog {
                 for (String ziel : List.of("dorf", "endportal", "netherportal", "mine")) {
                     knopf(knoepfe, "navi." + ziel, "fahr|" + ziel);
                 }
+                // Villen der anderen Spieler
+                for (String herr : de.moinmornhart.stinkendreich.handy.Handy.andereVillen(spieler)) {
+                    knoepfe.add(new ActionButton(new CommonButtonData(Component.literal("🏠 ")
+                            .append(Component.translatable("stinkendreich.strasse.ziel.villa", herr)), BREITE),
+                            Optional.of(befehl("fahr|villa von " + herr))));
+                }
                 ButlerEntity b = ButlerVerwaltung.vonSpieler(spieler);
                 if (b != null) {
                     for (String ort : new java.util.TreeSet<>(b.orte().keySet())) {

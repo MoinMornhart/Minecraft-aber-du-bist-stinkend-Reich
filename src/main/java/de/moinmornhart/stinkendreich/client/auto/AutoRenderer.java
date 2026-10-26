@@ -21,6 +21,7 @@ public class AutoRenderer extends MobRenderer<AutoEntity, AutoRenderState, Fahrz
         for (int i = 0; i < texturen.length; i++) {
             texturen[i] = StinkendReich.id("textures/entity/" + typ.name + "/" + AutoEntity.FARBEN[i] + ".png");
         }
+        addLayer(new KennzeichenLayer(this, typ.name));
     }
 
     //? if >=1.21.2 {
@@ -38,6 +39,7 @@ public class AutoRenderer extends MobRenderer<AutoEntity, AutoRenderState, Fahrz
         zustand.neigung = auto.neigung;
         zustand.rollen = auto.rollen;
         zustand.farbe = auto.farbe();
+        zustand.kennzeichen = auto.kennzeichen();
     }
 
     @Override

@@ -81,6 +81,7 @@ public class StinkendReich implements ModInitializer {
         // Vor der Villa, damit die Butler-Liste geladen ist, wenn die Villa ihren Butler einstellt
         ButlerVerwaltung.registrieren();
         VillaPlatzierung.registrieren();
+        de.moinmornhart.stinkendreich.villa.VillaBaustelle.registrieren();
         VillaBefehle.registrieren();
         ButlerBefehle.registrieren();
         // Server-Version: liegt Polymer auf dem Server, sehen auch Spieler ohne Mod alles (ab 1.21.9)

@@ -93,6 +93,15 @@ public class HandyBildschirm extends Screen {
                 // Gespeicherte Orte: Name = hinfahren, ✕ = löschen
                 List<String> liste = orte.size() > ORTE_MAX ? orte.subList(0, ORTE_MAX) : orte;
                 for (String ort : liste) {
+                    if (ort.startsWith("#villa:")) {
+                        // Villa eines anderen Spielers: hinfahren, aber nicht löschbar
+                        String herr = ort.substring("#villa:".length());
+                        Component text = Component.literal("🏠 ").append(Component.translatable("stinkendreich.strasse.ziel.villa", herr));
+                        addRenderableWidget(Button.builder(text, b -> senden("fahr|villa von " + herr))
+                                .bounds(x, y, KNOPF_B, KNOPF_H).build());
+                        y += KNOPF_H + ABSTAND;
+                        continue;
+                    }
                     addRenderableWidget(Button.builder(Component.literal("➜ " + ort.substring(0, 1).toUpperCase(java.util.Locale.ROOT) + ort.substring(1)),
                             b -> senden("fahr|" + ort))
                             .bounds(x, y, KNOPF_B - 22, KNOPF_H).build());

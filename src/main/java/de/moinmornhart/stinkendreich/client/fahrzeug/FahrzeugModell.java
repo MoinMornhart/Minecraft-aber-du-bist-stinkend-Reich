@@ -60,6 +60,11 @@ public class FahrzeugModell extends EntityModel<AutoRenderState> {
         return new ModelLayerLocation(StinkendReich.id(typ), "main");
     }
 
+    /** Wurzel des Modells (trägt Maßstab, Neigen und Rollen). */
+    public ModelPart wurzel() {
+        return wurzel;
+    }
+
     private static ModelPart kind(ModelPart wurzel, String name) {
         try {
             return wurzel.getChild(name);

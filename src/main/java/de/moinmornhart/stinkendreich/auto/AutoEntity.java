@@ -57,6 +57,8 @@ import java.util.Set;
 public class AutoEntity extends Mob {
     private static final EntityDataAccessor<Integer> FARBE = SynchedEntityData.defineId(AutoEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> LICHT = SynchedEntityData.defineId(AutoEntity.class, EntityDataSerializers.BOOLEAN);
+    /** Name auf dem Nummernschild: der Herr der Villa, zu der der Wagen gehört (leer = noch keiner). */
+    private static final EntityDataAccessor<String> KENNZEICHEN = SynchedEntityData.defineId(AutoEntity.class, EntityDataSerializers.STRING);
     private static final String SCHLUESSEL = "stinkendreich";
     /** Welches Fahrzeug (Bonzenauto, Geländewagen, Supersportwagen, Stretch-Limo). */
     public final Autotyp art;
@@ -108,6 +110,31 @@ public class AutoEntity extends Mob {
         super.defineSynchedData(daten);
         daten.define(FARBE, 0);
         daten.define(LICHT, false);
+        daten.define(KENNZEICHEN, "");
+    }
+
+    /** Was auf dem Nummernschild steht (Name des Besitzers, leer = Schild ohne Schrift). */
+    public String kennzeichen() {
+        return entityData.get(KENNZEICHEN);
+    }
+
+    public void setzeKennzeichen(String name) {
+        entityData.set(KENNZEICHEN, name == null ? "" : name);
+    }
+
+    /**
+     * Wagen ohne Kennzeichen bekommen den Namen des Herrn der Villa, auf deren Gelände sie stehen (bei der Spawn-Villa
+     * steht der erst fest, wenn der erste Spieler kommt). Alle 5 Sekunden, nur auf dem Server.
+     */
+    private void kennzeichenPruefen() {
+        if (tickCount % 100 != 7 || !kennzeichen().isEmpty() || !(level() instanceof net.minecraft.server.level.ServerLevel welt)) {
+            return;
+        }
+        var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.bei(blockPosition());
+        if (villa != null && villa.enthaelt(blockPosition())) {
+            setzeKennzeichen(de.moinmornhart.stinkendreich.villa.VillaPlatzierung.herrName(welt.getServer(), villa));
+            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Kennzeichen {} für {} bei {}", kennzeichen(), art.name, blockPosition().toShortString());
+        }
     }
 
     public int farbe() {
@@ -479,6 +506,7 @@ public class AutoEntity extends Mob {
     @Override
     public void tick() {
         super.tick();
+        kennzeichenPruefen();
         yBodyRot = getYRot();
         yHeadRot = getYRot();
         if (hupeSperre > 0) {
@@ -578,6 +606,7 @@ public class AutoEntity extends Mob {
         JsonObject j = new JsonObject();
         j.addProperty("farbe", farbe());
         j.addProperty("licht", licht());
+        j.addProperty("kennzeichen", kennzeichen());
         JsonArray l = new JsonArray();
         for (BlockPos p : lichtBloecke) {
             l.add(p.asLong());
@@ -594,6 +623,7 @@ public class AutoEntity extends Mob {
             JsonObject j = JsonParser.parseString(text).getAsJsonObject();
             setzeFarbe(j.has("farbe") ? j.get("farbe").getAsInt() : 0);
             entityData.set(LICHT, j.has("licht") && j.get("licht").getAsBoolean());
+            setzeKennzeichen(j.has("kennzeichen") ? j.get("kennzeichen").getAsString() : "");
             if (j.has("lichtbloecke")) {
                 j.getAsJsonArray("lichtbloecke").forEach(e -> geladeneLichter.add(BlockPos.of(e.getAsLong())));
             }

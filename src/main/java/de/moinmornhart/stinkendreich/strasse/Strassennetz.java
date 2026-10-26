@@ -61,7 +61,15 @@ public final class Strassennetz {
     }
 
     public static void registrieren() {
-        ServerLifecycleEvents.SERVER_STOPPED.register(s -> aktuell = null);
+        ServerLifecycleEvents.SERVER_STOPPING.register(s -> {
+            if (aktuell != null && aktuell.bau != null) {
+                aktuell.bau.freigeben();
+            }
+        });
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
+            aktuell = null;
+            VILLA_ZIELE.clear();
+        });
         ServerTickEvents.END_SERVER_TICK.register(s -> {
             if (aktuell != null && aktuell.server == s) {
                 if (aktuell.bau != null) {
@@ -77,7 +85,71 @@ public final class Strassennetz {
             if (!netz.automatikGestartet && VillaPlatzierung.villa().isPresent()) {
                 netz.automatikGestartet = true;
                 netz.warteschlange.addAll(AUTOMATISCH);
+                // Nachbarvillen bekommen ihre Straße (schon vorhandene werden beim Abarbeiten übersprungen)
+                for (int i = 1; i < VillaPlatzierung.alle().size(); i++) {
+                    netz.villaAnbinden(i);
+                }
             }
+        });
+    }
+
+    /** Kennung einer Nachbarvilla in der Warteschlange: „villa:“ + Nummer. */
+    private static final String VILLA = "villa:";
+
+    /** Eine Nachbarvilla ans Netz anschließen (die Straße entsteht, sobald kein anderer Bau läuft). */
+    public void villaAnbinden(int nr) {
+        if (nr > 0 && !warteschlange.contains(VILLA + nr)) {
+            warteschlange.addFirst(VILLA + nr);             // Villen vor Dorf, Mine & Co.
+        }
+    }
+
+    /**
+     * Straße vom Netz bis ans Ende der Zufahrt einer Nachbarvilla. Die Zufahrt führt schon vom Tor auf natürliche
+     * Geländehöhe hinab bzw. hinauf, die Straße schließt dort an. Liegt das Netz hinter der Villa (nördlich ihrer
+     * Südkante), entsteht zuerst ein Zubringer seitlich an Villa und Minengürtel vorbei, danach das letzte Stück.
+     */
+    private void villaStrasseBauen(ServerLevel welt, VillaPlatzierung.VillaInfo v) {
+        if (v == null || v.nr() == 0) {
+            return;
+        }
+        String name = villaName(v);
+        Vec3 punkt = villaZiel(welt, v);
+        Vec3 netz = kreiselMitte();
+        if (netz == null || strasseZu(name, punkt) >= 0) {
+            return;
+        }
+        double suedkante = v.ursprung().getZ() + v.plan().breiteZ;
+        String zubringer = name + " – Zubringer";
+        if (netz.z < suedkante - 10 && strasseZu(zubringer, punkt) < 0 && !hatStrasse(zubringer)) {
+            double seiteX = netz.x < v.ursprung().getX() + v.plan().breiteX / 2.0
+                    ? v.ursprung().getX() - 64 : v.ursprung().getX() + v.plan().breiteX + 64;
+            StrassenBau b = bauen(welt, new Vec3(seiteX, punkt.y, suedkante + 24), zubringer);
+            StinkendReich.LOGGER.info("Straßennetz: baue {} ({})", zubringer, b == null ? "ging nicht" : "seitlich vorbei");
+            warteschlange.addFirst(VILLA + v.nr());            // danach das letzte Stück bis zur Zufahrt
+            return;
+        }
+        StrassenBau b = bauen(welt, punkt, name);
+        StinkendReich.LOGGER.info("Straßennetz: baue Straße zur {} ({})", name, b == null ? "ging nicht" : BlockPos.containing(punkt));
+    }
+
+    private boolean hatStrasse(String name) {
+        return strassen.stream().anyMatch(s -> s.name().equals(name));
+    }
+
+    /** Name der Straße zu einer Villa: „Villa von Name“ (ohne Besitzer: „Villa Nummer“). */
+    public static String villaName(VillaPlatzierung.VillaInfo v) {
+        return v.besitzerName().isEmpty()
+                ? net.minecraft.network.chat.Component.translatable("stinkendreich.strasse.ziel.villa_nr", v.nr()).getString()
+                : net.minecraft.network.chat.Component.translatable("stinkendreich.strasse.ziel.villa", v.besitzerName()).getString();
+    }
+
+    /** Wo die Straße zu einer Nachbarvilla endet: kurz hinter dem Ende ihrer Zufahrt (je Villa einmal gesucht). */
+    private static final Map<Integer, Vec3> VILLA_ZIELE = new java.util.concurrent.ConcurrentHashMap<>();
+
+    public static Vec3 villaZiel(ServerLevel welt, VillaPlatzierung.VillaInfo v) {
+        return VILLA_ZIELE.computeIfAbsent(v.nr(), n -> {
+            BlockPos ende = VillaPlatzierung.zufahrtEnde(welt, v);
+            return ende == null ? Vec3.atBottomCenterOf(v.spawn()) : new Vec3(ende.getX() + 0.5, ende.getY(), ende.getZ() + 3.5);
         });
     }
 
@@ -95,6 +167,10 @@ public final class Strassennetz {
             return;
         }
         ServerLevel welt = server.overworld();
+        if (fest.startsWith(VILLA)) {
+            villaStrasseBauen(welt, VillaPlatzierung.nr(Integer.parseInt(fest.substring(VILLA.length()))));
+            return;
+        }
         StrassenZiele.Ziel ziel = StrassenZiele.finden(welt, fest, villa.spawn());
         if (ziel == null) {
             StinkendReich.LOGGER.info("Straßennetz: kein Ziel „{}“ in Reichweite", fest);
@@ -174,6 +250,9 @@ public final class Strassennetz {
 
     public void neuBauen() {
         strassen.clear();
+        if (bau != null) {
+            bau.freigeben();
+        }
         bau = null;
         warteschlange.clear();
         warteschlange.addAll(AUTOMATISCH);
@@ -260,6 +339,10 @@ public final class Strassennetz {
             List<BlockPos> pkt = strassen.get(i).punkte();
             for (int j = 0; j < pkt.size(); j += 4) {
                 double d = Vec3.atCenterOf(pkt.get(j)).distanceTo(ziel);
+                VillaPlatzierung.VillaInfo drin = VillaPlatzierung.bei(pkt.get(j));
+                if (drin != null && drin.inDerNaehe(pkt.get(j), 8)) {
+                    continue;                                   // überbaut (Villa später darauf gesetzt): nicht abzweigen
+                }
                 if (d < besteEntfernung) {
                     besteEntfernung = d;
                     eltern = i;
@@ -463,6 +546,19 @@ public final class Strassennetz {
     // ------------------------------------------------------------------
     // Auskunft
     // ------------------------------------------------------------------
+
+    /** Führt eine Straße durch das Rechteck (x0, z0)–(x1, z1)? (Für die Platzwahl neuer Villen.) */
+    public boolean strasseIn(int x0, int z0, int x1, int z1) {
+        for (Strasse s : strassen) {
+            for (BlockPos p : s.punkte()) {
+                if (p.getX() >= x0 && p.getX() <= x1 && p.getZ() >= z0 && p.getZ() <= z1) {
+                    return true;
+                }
+            }
+        }
+        // auch die Straße, die gerade entsteht
+        return bau != null && bau.punkte().stream().anyMatch(p -> p.getX() >= x0 && p.getX() <= x1 && p.getZ() >= z0 && p.getZ() <= z1);
+    }
 
     public List<Strasse> strassen() {
         return Collections.unmodifiableList(strassen);

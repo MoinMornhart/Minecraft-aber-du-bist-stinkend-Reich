@@ -170,9 +170,31 @@ public final class Handy {
         }
     }
 
-    /** Die Orte, die James kennt, an das Handy (eine Zeile je Ort, alphabetisch). */
+    /**
+     * Die Orte, die James kennt, an das Handy (eine Zeile je Ort, alphabetisch). Davor die Villen der anderen Spieler
+     * als „#villa:Name“ (nicht löschbar).
+     */
     private static void orteSenden(ServerPlayer p, ButlerEntity b) {
-        Netz.melden(p, "orte", String.join("\n", new java.util.TreeSet<>(b.orte().keySet())));
+        List<String> zeilen = new java.util.ArrayList<>();
+        for (String herr : andereVillen(p)) {
+            zeilen.add("#villa:" + herr);
+        }
+        zeilen.addAll(new java.util.TreeSet<>(b.orte().keySet()));
+        Netz.melden(p, "orte", String.join("\n", zeilen));
+    }
+
+    /** Namen der Herren aller anderen Villen auf dem Server (ohne die eigene). */
+    public static List<String> andereVillen(ServerPlayer p) {
+        List<String> namen = new java.util.ArrayList<>();
+        var eigene = de.moinmornhart.stinkendreich.mechanik.VillaZustand.vonSpieler(p.level().getServer(), p);
+        for (var v : de.moinmornhart.stinkendreich.villa.VillaPlatzierung.alle()) {
+            String herr = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.herrName(p.level().getServer(), v);
+            var zustand = de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(p.level().getServer(), v.nr());
+            if (!herr.isEmpty() && zustand != eigene && !zustand.bewohner().containsKey(p.getUUID())) {
+                namen.add(herr);
+            }
+        }
+        return namen;
     }
 
     /** Der Butler des Spielers; hat er noch keinen, wird er jetzt eingestellt. */

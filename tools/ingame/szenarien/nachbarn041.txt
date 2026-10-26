@@ -1,0 +1,55 @@
+# 0.4.0: Nachbarvilla im Hintergrund bauen (Server hängt nicht), Straße bis an ihre Zufahrt, Nummernschild mit dem
+# Namen des Besitzers, James versteht „fahr zur Villa von …“
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+merke
+server /villa nachbar Aircrafter
+warte 10
+server /tick query
+warte 10
+server /tick query
+bis 600 Baustelle: Villa 1 fertig
+merke
+warte 10
+taste F1
+server /gamemode spectator
+# Vor der neuen Villa
+server /villa ort 55.5 26 92 180 -6
+warte 8
+bild n41_vor_der_villa
+# Nummernschilder: Geländewagen auf dem roten Teppich (Blick nach Norden), Fotos von hinten und von vorn
+server /villa ort 55.5 26 94 180 0
+server /execute at @p run summon stinkendreich:gelaendewagen ~ ~ ~ {Rotation:[180f,0f]}
+warte 8
+server /villa ort 55.5 26.3 98.6 180 14
+warte 3
+bild n41_schild_hinten
+server /villa ort 55.5 26.3 89 0 14
+warte 3
+bild n41_schild_vorn
+# Straße bis an die Zufahrt der Nachbarvilla
+bis 900 Straße Villa von Aircrafter: Ende
+server /butler strassen pruefen
+server /butler strassenpunkt 99 9999
+server /tp @p ~ ~40 ~ 0 90
+warte 8
+bild n41_strasse_ende_oben
+server /butler strassenpunkt 99 9999
+server /tp @p ~ ~6 ~ 0 20
+warte 6
+bild n41_strasse_ende
+server /butler strassenpunkt 99 60
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild n41_strasse_mitte
+# James kennt die Villa (Antwort im Chat)
+server /gamemode creative
+server /villa ort 55.5 26 92 180 -6
+merke
+server Butler, fahr mich zur Villa von Aircrafter
+bis 20 Aircrafter
+warte 3
+bild n41_chat

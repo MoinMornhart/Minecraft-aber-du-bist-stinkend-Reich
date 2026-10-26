@@ -232,6 +232,10 @@ public final class Sprache {
 
     /** Ziel einer Fahrt oder eines Flugs: Villa, Blickziel oder Name eines gespeicherten Ortes. */
     private static String ziel(String t) {
+        // „zur Villa von Max“ ist die Villa eines anderen Spielers, nicht das eigene Zuhause
+        if (enthaelt(t, "villa von ") && !ortsname(t).isEmpty()) {
+            return ortsname(t);
+        }
         if (enthaelt(t, "nach hause", " heim", "zur villa", "zu hause", "zurueck")) {
             return ZIEL_VILLA;
         }

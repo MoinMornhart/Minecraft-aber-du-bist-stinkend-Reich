@@ -52,6 +52,8 @@ public final class VillaPlatzierung {
     private static final String TAG_ANGEKOMMEN = StinkendReich.MOD_ID + ".angekommen";
     /** Hat sein goldenes Handy schon bekommen (seit 0.3, auch in Welten von vorher). */
     private static final String TAG_HANDY = StinkendReich.MOD_ID + ".handy";
+    /** Wurde in seine eigene Nachbarvilla gebracht (seit 0.4). */
+    private static final String TAG_EIGENE_VILLA = StinkendReich.MOD_ID + ".eigene_villa";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /** Alle Villen der geladenen Welt; Nummer 0 ist die Villa am Spawn, dahinter die Nachbarn (je Spieler eine). */
@@ -97,6 +99,33 @@ public final class VillaPlatzierung {
             }
         }
         return null;
+    }
+
+    /** Name des Herrn einer Villa: bei Nachbarvillen der Besitzer, bei der Spawn-Villa ihr erster Bewohner. */
+    public static String herrName(MinecraftServer server, VillaInfo v) {
+        if (!v.besitzerName().isEmpty()) {
+            return v.besitzerName();
+        }
+        var bewohner = de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(server, v.nr()).bewohner();
+        return bewohner.isEmpty() ? "" : bewohner.values().iterator().next();
+    }
+
+    /**
+     * Die Villa, deren Herr im Text vorkommt („Villa von Max“, „fahr zu Max“, „Max's villa“), oder null. Längere Namen
+     * gewinnen (damit „Maxi“ nicht bei „Max“ landet).
+     */
+    public static VillaInfo mitHerrnImText(MinecraftServer server, String text) {
+        String n = " " + de.moinmornhart.stinkendreich.butler.Sprache.normalisieren(text) + " ";
+        VillaInfo treffer = null;
+        int laenge = 0;
+        for (VillaInfo v : VILLEN) {
+            String herr = de.moinmornhart.stinkendreich.butler.Sprache.normalisieren(herrName(server, v));
+            if (!herr.isEmpty() && n.contains(" " + herr + " ") && herr.length() > laenge) {
+                treffer = v;
+                laenge = herr.length();
+            }
+        }
+        return treffer;
     }
 
     /** Die Villa, die diesem Spieler gehört, oder null. */
@@ -155,64 +184,139 @@ public final class VillaPlatzierung {
         if (VILLEN.isEmpty()) {
             return;
         }
-        // Nachbarschaft: Wer neu dazukommt, während die Spawn-Villa schon jemand anderem gehört, bekommt seine eigene
-        VillaInfo eigene = nachbarvillaFuer(spieler, server);
         // Das goldene Handy bekommt jeder Bewohner einmal, auch wer schon vor 0.3 hier wohnte
         if (!Kompat.tags(spieler).contains(TAG_HANDY)) {
             spieler.addTag(TAG_HANDY);
             spieler.getInventory().add(new net.minecraft.world.item.ItemStack(de.moinmornhart.stinkendreich.register.ModItems.HANDY));
         }
-        if (!Konfig.get().villaSpawnSetzen || Kompat.tags(spieler).contains(TAG_ANGEKOMMEN)) {
+        // Nachbarschaft: Wer neu dazukommt, während die Spawn-Villa schon jemand anderem gehört, bekommt seine eigene
+        VillaInfo eigene = vonBesitzer(spieler.getUUID());
+        if (eigene != null) {
+            // Vor 0.4 wurde die Nachbarvilla beim ersten Betreten gebaut und der Spieler gleich hingebracht
+            einziehen(spieler, eigene, server, !Kompat.tags(spieler).contains(TAG_ANGEKOMMEN));
+            return;
+        }
+        if (brauchtEigeneVilla(spieler, server)) {
+            nachbarBestellen(server, spieler);
+        }
+        if (!Konfig.get().villaSpawnSetzen || Kompat.tags(spieler).contains(TAG_ANGEKOMMEN) || VillaBaustelle.wartet(spieler.getUUID())) {
             return;
         }
         spieler.addTag(TAG_ANGEKOMMEN);
-        VillaInfo ziel = eigene != null ? eigene : VILLEN.get(0);
+        VillaInfo ziel = VILLEN.get(0);
         // Willkommensgeschenk: eine Zugangskarte für Tore und Kartenleser der eigenen Villa
         spieler.getInventory().add(de.moinmornhart.stinkendreich.mechanik.Zugang.karte(ziel));
         BlockPos p = ziel.spawn();
         Kompat.befehl(server, String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f %.1f 0",
                 spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, ziel.spawnBlick()));
-        if (eigene != null) {
-            Kompat.befehl(server, String.format(java.util.Locale.ROOT, "spawnpoint %s %d %d %d",
-                    spieler.getScoreboardName(), p.getX(), p.getY(), p.getZ()));
-        }
     }
 
-    /**
-     * Baut dem Spieler eine eigene Villa, wenn er neu ist und die Spawn-Villa schon einem anderen gehört (nur mit
-     * {@code mehrereVillen}). Gibt seine Villa zurück (auch eine schon vorhandene), sonst null.
-     */
-    private static VillaInfo nachbarvillaFuer(ServerPlayer spieler, MinecraftServer server) {
-        VillaInfo schon = vonBesitzer(spieler.getUUID());
-        if (schon != null || !Konfig.get().mehrereVillen) {
-            return schon;
+    /** Neu hier, mehrere Villen erlaubt und die Spawn-Villa gehört schon einem anderen? */
+    private static boolean brauchtEigeneVilla(ServerPlayer spieler, MinecraftServer server) {
+        if (!Konfig.get().mehrereVillen) {
+            return false;
         }
         de.moinmornhart.stinkendreich.mechanik.VillaZustand haupt = de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(server, 0);
-        if (haupt.bewohner().isEmpty() || haupt.bewohner().containsKey(spieler.getUUID())) {
-            return null;                                         // er ist der Herr der Spawn-Villa (oder ihr Bewohner)
+        // Wer der Herr der Spawn-Villa (oder ihr Bewohner) ist, braucht keine eigene
+        return !haupt.bewohner().isEmpty() && !haupt.bewohner().containsKey(spieler.getUUID());
+    }
+
+    /** Lässt dem Spieler seine Villa bauen; er wird hingebracht, sobald sie steht (oder beim nächsten Betreten). */
+    private static void nachbarBestellen(MinecraftServer server, ServerPlayer spieler) {
+        if (VillaBaustelle.wartet(spieler.getUUID())) {
+            return;
         }
-        VillaInfo neu = nachbarBauen(server, spieler);
-        de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(server, neu.nr()).bewohnerHinzufuegen(spieler);
-        return neu;
+        java.util.UUID wer = spieler.getUUID();
+        VillaBaustelle.bestellen(wer, spieler.getScoreboardName(), villa -> {
+            ServerPlayer p = server.getPlayerList().getPlayer(wer);
+            if (p != null) {
+                einziehen(p, villa, server, true);
+            }
+        });
+        Kompat.nachricht(spieler, net.minecraft.network.chat.Component.translatable("stinkendreich.villa.baubeginn")
+                .withStyle(net.minecraft.ChatFormatting.GOLD), false);
     }
 
     /**
-     * Baut die nächste Nachbarvilla im Raster. {@code besitzer} null = ohne Besitzer (Testbefehl /villa nachbar).
+     * Macht den Spieler zum Bewohner seiner Villa und bringt ihn beim ersten Mal hin: Zugangskarte, Teleport vor den
+     * Eingang, Spawnpunkt dort.
      */
-    public static VillaInfo nachbarBauen(MinecraftServer server, ServerPlayer besitzer) {
-        int nr = VILLEN.size();
-        int[] platz = platz(nr);
+    private static void einziehen(ServerPlayer spieler, VillaInfo villa, MinecraftServer server, boolean hinbringen) {
+        de.moinmornhart.stinkendreich.mechanik.VillaZustand z = de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(server, villa.nr());
+        if (!z.bewohner().containsKey(spieler.getUUID())) {
+            z.bewohnerHinzufuegen(spieler);
+        }
+        if (!hinbringen || Kompat.tags(spieler).contains(TAG_EIGENE_VILLA)) {
+            return;
+        }
+        spieler.addTag(TAG_EIGENE_VILLA);
+        spieler.addTag(TAG_ANGEKOMMEN);
+        spieler.getInventory().add(de.moinmornhart.stinkendreich.mechanik.Zugang.karte(villa));
+        BlockPos p = villa.spawn();
+        Kompat.befehl(server, String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f %.1f 0",
+                spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, villa.spawnBlick()));
+        Kompat.befehl(server, String.format(java.util.Locale.ROOT, "spawnpoint %s %d %d %d",
+                spieler.getScoreboardName(), p.getX(), p.getY(), p.getZ()));
+        Kompat.nachricht(spieler, net.minecraft.network.chat.Component.translatable("stinkendreich.villa.willkommen",
+                spieler.getScoreboardName()).withStyle(net.minecraft.ChatFormatting.GOLD), false);
+    }
+
+    /**
+     * Baut die nächste Nachbarvilla im Raster über viele Ticks verteilt (Testbefehl /villa nachbar [name]).
+     * fertig läuft, sobald sie steht.
+     */
+    public static void nachbarBauen(java.util.UUID besitzer, String name, java.util.function.Consumer<VillaInfo> fertig) {
+        VillaBaustelle.bestellen(besitzer, name, fertig);
+    }
+
+    /**
+     * Ende der gepflasterten Zufahrt südlich des Tors (ein Block über der Fahrbahn, auf der Mittelachse), oder null. Dort
+     * schließt die Straße einer Nachbarvilla an.
+     */
+    public static BlockPos zufahrtEnde(ServerLevel welt, VillaInfo v) {
+        Block fahrbahn = Kompat.blockNachId(net.minecraft.resources.Identifier.withDefaultNamespace("gray_concrete"));
+        int mitte = v.ursprung().getX() + (ZUFAHRT_X0 + ZUFAHRT_X1) / 2;
+        int start = v.ursprung().getZ() + v.plan().breiteZ;
+        BlockPos ende = null;
+        for (int i = 0; i < anblendung() + 44; i++) {
+            int z = start + i;
+            welt.getChunk(mitte >> 4, z >> 4);
+            int oben = welt.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, mitte, z) - 1;
+            BlockState s = welt.getBlockState(new BlockPos(mitte, oben, z));
+            if (s.is(fahrbahn) || s.is(Blocks.POLISHED_ANDESITE_SLAB)) {
+                ende = new BlockPos(mitte, s.is(fahrbahn) ? oben + 1 : oben, z);
+            } else if (ende != null) {
+                break;
+            }
+        }
+        return ende;
+    }
+
+    /**
+     * Freie Plätze im Raster um die Spawn-Villa (Nordwest-Ecke x, z und Ring), von innen nach außen. Belegt ist ein
+     * Platz, wenn dort schon eine Villa steht (näher als der halbe Villenabstand).
+     */
+    static List<int[]> freiePlaetze(int anzahl) {
         int abstand = Math.max(240, Konfig.get().villenAbstand);
-        VillaInfo spawnVilla = VILLEN.get(0);
-        int x0 = spawnVilla.ursprung().getX() + platz[0] * abstand;
-        int z0 = spawnVilla.ursprung().getZ() + platz[1] * abstand;
-        long start = System.currentTimeMillis();
-        VillaInfo neu = bauenBei(server, server.overworld(), x0, z0, nr, besitzer);
-        VILLEN.add(neu);
+        BlockPos spawnVilla = VILLEN.get(0).ursprung();
+        List<int[]> frei = new java.util.ArrayList<>();
+        for (int k = 1; frei.size() < anzahl && k < 400; k++) {
+            int[] platz = platz(k);
+            int x = spawnVilla.getX() + platz[0] * abstand, z = spawnVilla.getZ() + platz[1] * abstand;
+            boolean belegt = VILLEN.stream().anyMatch(v -> Math.max(Math.abs(v.ursprung().getX() - x),
+                    Math.abs(v.ursprung().getZ() - z)) < abstand / 2);
+            if (!belegt) {
+                frei.add(new int[]{x, z, Math.max(Math.abs(platz[0]), Math.abs(platz[1]))});
+            }
+        }
+        return frei;
+    }
+
+    /** Die Baustelle meldet eine fertige Villa: in die Liste, in die Merkdatei, 3 Minuten Pflanzenreste wegräumen. */
+    static void fertigGebaut(MinecraftServer server, VillaInfo villa) {
+        VILLEN.add(villa);
         merken();
-        StinkendReich.LOGGER.info("Nachbarvilla {} für {} gebaut bei {} in {} ms", nr,
-                besitzer == null ? "(Test)" : besitzer.getScoreboardName(), neu.ursprung(), System.currentTimeMillis() - start);
-        return neu;
+        NACHBARN_AUFRAEUMEN.put(villa.nr(), server.overworld().getGameTime() + 20L * 60 * 3);
     }
 
     /** Platz der Villa Nummer nr im Raster um die Spawn-Villa: Ringe von innen nach außen, je Ring im Kreis. */
@@ -263,7 +367,7 @@ public final class VillaPlatzierung {
      */
     private static VillaInfo bauenBei(MinecraftServer server, ServerLevel welt, int x0, int z0, int nr, ServerPlayer besitzer) {
         VillaDaten plan = VillaDaten.get();
-        int rand = Math.max(4, Konfig.get().villaAnblendung);
+        int rand = anblendung();
 
         // Alle betroffenen Chunks laden (bzw. erzeugen)
         for (int cx = (x0 - rand) >> 4; cx <= (x0 + plan.breiteX + rand) >> 4; cx++) {
@@ -274,33 +378,75 @@ public final class VillaPlatzierung {
 
         // Zielhöhe: Median der Geländehöhe auf dem Grundstück
         int[] hoehen = new int[plan.breiteX * plan.breiteZ];
-        int i = 0;
         for (int x = 0; x < plan.breiteX; x++) {
-            for (int z = 0; z < plan.breiteZ; z++) {
-                hoehen[i++] = bodenHoehe(welt, x0 + x, z0 + z);
-            }
+            hoehenReihe(welt, x0, z0, plan, x, hoehen);
         }
-        Arrays.sort(hoehen);
-        int y0 = Math.max(hoehen[hoehen.length / 2], welt.getSeaLevel() + 1);
-        y0 = Mth.clamp(y0, Kompat.minY(welt) + plan.bodenY + 2, Kompat.maxY(welt) - (plan.hoehe - plan.bodenY) - 2);
+        int y0 = zielhoehe(welt, plan, hoehen);
 
-        gelaendeFormen(welt, x0, z0, plan.breiteX, plan.breiteZ, y0, rand);
-        verwaisteBlaetterEntfernen(welt, x0, z0, plan.breiteX, plan.breiteZ, rand + 8);
+        for (int x = x0 - rand; x < x0 + plan.breiteX + rand; x++) {
+            gelaendeReihe(welt, x, x0, z0, plan.breiteX, plan.breiteZ, y0, rand);
+        }
+        for (int x = x0 - rand - 8; x < x0 + plan.breiteX + rand + 8; x++) {
+            blaetterReihe(welt, x, z0, plan.breiteZ, rand + 8);
+        }
         tiereEntfernen(welt, x0, y0, z0, plan);
 
         // Strukturdatei setzen: Grasschicht der Datei liegt auf y0 - 1
-        BlockPos ursprung = new BlockPos(x0, y0 - 1 - plan.bodenY, z0);
-        StructureTemplate vorlage = Kompat.strukturen(server).get(StinkendReich.id("villa/villa"))
+        BlockPos ursprung = ursprung(x0, y0, z0, plan);
+        vorlage(server).placeInWorld(welt, ursprung, ursprung, new StructurePlaceSettings(), welt.getRandom(), Block.UPDATE_CLIENTS);
+        return ausstatten(server, welt, ursprung, y0, nr, besitzer == null ? null : besitzer.getUUID(),
+                besitzer == null ? "" : besitzer.getScoreboardName());
+    }
+
+    // ------------------------------------------------------------------
+    // Bauschritte (auch für die Baustelle, die eine Nachbarvilla über viele Ticks verteilt baut)
+    // ------------------------------------------------------------------
+
+    /** Breite des angeblendeten Geländestreifens rund ums Grundstück. */
+    static int anblendung() {
+        return Math.max(4, Konfig.get().villaAnblendung);
+    }
+
+    /** Die Strukturdatei der Villa. */
+    static StructureTemplate vorlage(MinecraftServer server) {
+        return Kompat.strukturen(server).get(StinkendReich.id("villa/villa"))
                 .orElseThrow(() -> new IllegalStateException("Strukturdatei villa/villa.nbt fehlt"));
-        vorlage.placeInWorld(welt, ursprung, ursprung, new StructurePlaceSettings(), welt.getRandom(), Block.UPDATE_CLIENTS);
-        zufahrtBauen(welt, ursprung, plan, y0, rand);
+    }
+
+    /** Bodenhöhen einer Reihe x (0 … breiteX − 1) des Grundstücks, für den Median. */
+    static void hoehenReihe(ServerLevel welt, int x0, int z0, VillaDaten plan, int x, int[] hoehen) {
+        for (int z = 0; z < plan.breiteZ; z++) {
+            hoehen[x * plan.breiteZ + z] = bodenHoehe(welt, x0 + x, z0 + z);
+        }
+    }
+
+    /** Zielhöhe der Villa: Median der Bodenhöhen, nicht unter dem Meeresspiegel und innerhalb der Welt. */
+    static int zielhoehe(ServerLevel welt, VillaDaten plan, int[] hoehen) {
+        int[] sortiert = hoehen.clone();
+        Arrays.sort(sortiert);
+        int y0 = Math.max(sortiert[sortiert.length / 2], welt.getSeaLevel() + 1);
+        return Mth.clamp(y0, Kompat.minY(welt) + plan.bodenY + 2, Kompat.maxY(welt) - (plan.hoehe - plan.bodenY) - 2);
+    }
+
+    /** Ursprung der Strukturdatei: Ihre Grasschicht liegt auf y0 − 1. */
+    static BlockPos ursprung(int x0, int y0, int z0, VillaDaten plan) {
+        return new BlockPos(x0, y0 - 1 - plan.bodenY, z0);
+    }
+
+    /**
+     * Alles nach dem Setzen des Bauplans: Zufahrt, Festung (Minengürtel, Notausgang), Spawnpunkt, Butler, Fernseher,
+     * Drehteller, Waffenkammer, Hubschrauber und Fuhrpark. Gibt die fertige Villa zurück.
+     */
+    static VillaInfo ausstatten(MinecraftServer server, ServerLevel welt, BlockPos ursprung, int y0, int nr,
+                                java.util.UUID besitzer, String besitzerName) {
+        VillaDaten plan = VillaDaten.get();
+        zufahrtBauen(welt, ursprung, plan, y0, anblendung());
         // Festung außerhalb des Bauplans: Minengürtel rund ums Grundstück, Notausgang bis zur versteckten Falltür
         int minen = Festungsbau.minenfeld(welt, ursprung, plan, ZUFAHRT_X0, ZUFAHRT_X1);
         BlockPos luke = Festungsbau.notausgang(welt, ursprung, plan);
         StinkendReich.LOGGER.info("Festung: {} Minen, Notausgang bei {}", minen, luke);
 
-        VillaInfo villa = new VillaInfo(ursprung, plan, nr, besitzer == null ? null : besitzer.getUUID(),
-                besitzer == null ? "" : besitzer.getScoreboardName());
+        VillaInfo villa = new VillaInfo(ursprung, plan, nr, besitzer, besitzer == null ? "" : besitzerName);
         if (nr == 0) {
             Kompat.setzeSpawnPunkt(welt, villa.spawn(), villa.spawnBlick());
             Kompat.befehl(server, Kompat.spawnRadiusBefehl(0));
@@ -308,7 +454,7 @@ public final class VillaPlatzierung {
         // Der Butler wartet in der Halle auf seinen Herrn
         JsonArray b = plan.ersteMarke("butler");
         ButlerVerwaltung.villaButlerErzeugen(welt, villa.weltPos(b.get(0).getAsDouble(), b.get(1).getAsDouble(), b.get(2).getAsDouble()),
-                besitzer);
+                besitzer, besitzerName);
         // XXL-Fernseher (Penthouse, Gästezimmer, Bunker; die Marke kann Breite und Höhe in Blöcken mitbringen)
         for (JsonArray m : plan.marke("fernseher")) {
             de.moinmornhart.stinkendreich.fernseher.FernseherEntity tv = de.moinmornhart.stinkendreich.register.ModEntities.FERNSEHER.create(welt
@@ -461,7 +607,9 @@ public final class VillaPlatzierung {
                     welt.setBlock(p, stein, flags);
                 }
                 welt.setBlock(p.set(x, hoehe - 1, z), rand_ ? bord : fahrbahn, flags);
-                for (int y = hoehe; y < hoehe + 5; y++) {
+                // Offener Einschnitt bis zur Oberfläche (höchstens 48 Blöcke): im Hang kein Tunnel
+                int himmel = Math.min(hoehe + 48, Math.max(hoehe + 5, welt.getHeight(Heightmap.Types.WORLD_SURFACE, x, z)));
+                for (int y = hoehe; y < himmel; y++) {
                     if (!welt.getBlockState(p.set(x, y, z)).isAir()) {
                         welt.setBlock(p, luft, flags);
                     }
@@ -487,7 +635,8 @@ public final class VillaPlatzierung {
         }
     }
 
-    private static void gelaendeFormen(ServerLevel welt, int x0, int z0, int bx, int bz, int y0, int rand) {
+    /** Ebnet eine Reihe x des Grundstücks samt angeblendetem Rand (x von x0 − rand bis x0 + bx + rand − 1). */
+    static void gelaendeReihe(ServerLevel welt, int x, int x0, int z0, int bx, int bz, int y0, int rand) {
         BlockState gras = Blocks.GRASS_BLOCK.defaultBlockState();
         BlockState erde = Blocks.DIRT.defaultBlockState();
         BlockState stein = Blocks.STONE.defaultBlockState();
@@ -497,43 +646,41 @@ public final class VillaPlatzierung {
         int meer = welt.getSeaLevel();
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
 
-        for (int x = x0 - rand; x < x0 + bx + rand; x++) {
-            for (int z = z0 - rand; z < z0 + bz + rand; z++) {
-                // Abstand zum Grundstücksrand (0 = innen)
-                int dx = Math.max(Math.max(x0 - x, x - (x0 + bx - 1)), 0);
-                int dz = Math.max(Math.max(z0 - z, z - (z0 + bz - 1)), 0);
-                double abstand = Math.sqrt(dx * dx + dz * dz);
-                if (abstand >= rand) {
+        for (int z = z0 - rand; z < z0 + bz + rand; z++) {
+            // Abstand zum Grundstücksrand (0 = innen)
+            int dx = Math.max(Math.max(x0 - x, x - (x0 + bx - 1)), 0);
+            int dz = Math.max(Math.max(z0 - z, z - (z0 + bz - 1)), 0);
+            double abstand = Math.sqrt(dx * dx + dz * dz);
+            if (abstand >= rand) {
+                continue;
+            }
+            int boden = bodenHoehe(welt, x, z);
+            double t = abstand / rand;
+            double weich = t * t * (3 - 2 * t);
+            int ziel = (int) Math.round(y0 + (boden - y0) * weich);
+            int oben = Math.max(welt.getHeight(Heightmap.Types.WORLD_SURFACE, x, z), ziel) + 1;
+
+            // Auffüllen bis zur Zielhöhe
+            for (int y = Math.min(boden, ziel) - 4; y < ziel; y++) {
+                p.set(x, y, z);
+                BlockState alt = welt.getBlockState(p);
+                BlockState neu = y == ziel - 1 ? gras : (y >= ziel - 4 ? erde : stein);
+                if (y < boden && !alt.isAir() && alt.getFluidState().isEmpty() && y < ziel - 1) {
+                    continue; // vorhandenen Untergrund behalten
+                }
+                if (alt != neu) {
+                    welt.setBlock(p, neu, flags);
+                }
+            }
+            // Alles darüber räumen (Bäume, Hügel); unter dem Meeresspiegel außerhalb bleibt Wasser
+            for (int y = ziel; y <= oben; y++) {
+                p.set(x, y, z);
+                BlockState alt = welt.getBlockState(p);
+                if (alt.isAir()) {
                     continue;
                 }
-                int boden = bodenHoehe(welt, x, z);
-                double t = abstand / rand;
-                double weich = t * t * (3 - 2 * t);
-                int ziel = (int) Math.round(y0 + (boden - y0) * weich);
-                int oben = Math.max(welt.getHeight(Heightmap.Types.WORLD_SURFACE, x, z), ziel) + 1;
-
-                // Auffüllen bis zur Zielhöhe
-                for (int y = Math.min(boden, ziel) - 4; y < ziel; y++) {
-                    p.set(x, y, z);
-                    BlockState alt = welt.getBlockState(p);
-                    BlockState neu = y == ziel - 1 ? gras : (y >= ziel - 4 ? erde : stein);
-                    if (y < boden && !alt.isAir() && alt.getFluidState().isEmpty() && y < ziel - 1) {
-                        continue; // vorhandenen Untergrund behalten
-                    }
-                    if (alt != neu) {
-                        welt.setBlock(p, neu, flags);
-                    }
-                }
-                // Alles darüber räumen (Bäume, Hügel); unter dem Meeresspiegel außerhalb bleibt Wasser
-                for (int y = ziel; y <= oben; y++) {
-                    p.set(x, y, z);
-                    BlockState alt = welt.getBlockState(p);
-                    if (alt.isAir()) {
-                        continue;
-                    }
-                    boolean nass = abstand > 0 && y < meer && !alt.getFluidState().isEmpty();
-                    welt.setBlock(p, nass ? wasser : luft, flags);
-                }
+                boolean nass = abstand > 0 && y < meer && !alt.getFluidState().isEmpty();
+                welt.setBlock(p, nass ? wasser : luft, flags);
             }
         }
     }
@@ -547,21 +694,30 @@ public final class VillaPlatzierung {
      */
     private static void aufraeumen(MinecraftServer server) {
         long zeit = server.overworld().getGameTime();
-        VillaInfo aktuelleVilla = villa().orElse(null);
-        if (aktuelleVilla == null || zeit > AUFRAEUMEN_BIS || zeit % 20 != 0) {
+        if (zeit % 20 != 0) {
             return;
         }
-        BlockPos u = aktuelleVilla.ursprung();
-        VillaDaten plan = aktuelleVilla.plan();
-        int r = Konfig.get().villaAnblendung + 8;
-        AABB bereich = new AABB(u.getX() - r, u.getY(), u.getZ() - r,
-                u.getX() + plan.breiteX + r, u.getY() + plan.hoehe + 40, u.getZ() + plan.breiteZ + r);
-        for (ItemEntity e : server.overworld().getEntitiesOfClass(ItemEntity.class, bereich, i -> true)) {
-            if (e.getAge() > 100 && e.getOwner() == null && pflanzenabfall(e.getItem())) {
-                e.discard();
+        for (VillaInfo v : VILLEN) {
+            // Spawn-Villa: die ersten 10 Minuten der Welt; Nachbarvillen: 3 Minuten nach dem Bau
+            long bis = v.nr() == 0 ? AUFRAEUMEN_BIS : NACHBARN_AUFRAEUMEN.getOrDefault(v.nr(), -1L);
+            if (zeit > bis) {
+                continue;
+            }
+            BlockPos u = v.ursprung();
+            VillaDaten plan = v.plan();
+            int r = Konfig.get().villaAnblendung + 8;
+            AABB bereich = new AABB(u.getX() - r, u.getY(), u.getZ() - r,
+                    u.getX() + plan.breiteX + r, u.getY() + plan.hoehe + 40, u.getZ() + plan.breiteZ + r);
+            for (ItemEntity e : server.overworld().getEntitiesOfClass(ItemEntity.class, bereich, i -> true)) {
+                if (e.getAge() > 100 && e.getOwner() == null && pflanzenabfall(e.getItem())) {
+                    e.discard();
+                }
             }
         }
     }
+
+    /** Bis zu welcher Spielzeit um eine frisch gebaute Nachbarvilla aufgeräumt wird (Nummer → Spielzeit). */
+    private static final java.util.Map<Integer, Long> NACHBARN_AUFRAEUMEN = new java.util.concurrent.ConcurrentHashMap<>();
 
     private static boolean pflanzenabfall(ItemStack stapel) {
         if (stapel.is(Items.STICK) || stapel.is(ItemTags.SAPLINGS) || stapel.is(Items.APPLE) || stapel.is(Items.WHEAT_SEEDS)) {
@@ -582,19 +738,17 @@ public final class VillaPlatzierung {
      * Blätter, deren Baumstamm beim Ebnen entfernt wurde, würden noch minutenlang zerfallen.
      * Alle nicht festen Blätter ohne Stamm in der Nähe werden deshalb gleich entfernt.
      */
-    private static void verwaisteBlaetterEntfernen(ServerLevel welt, int x0, int z0, int bx, int bz, int rand) {
+    static void blaetterReihe(ServerLevel welt, int x, int z0, int bz, int rand) {
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
         BlockState luft = Blocks.AIR.defaultBlockState();
-        for (int x = x0 - rand; x < x0 + bx + rand; x++) {
-            for (int z = z0 - rand; z < z0 + bz + rand; z++) {
-                int oben = welt.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
-                for (int y = oben - 1; y > oben - 24; y--) {
-                    p.set(x, y, z);
-                    BlockState s = welt.getBlockState(p);
-                    if (s.is(BlockTags.LEAVES) && !(s.hasProperty(LeavesBlock.PERSISTENT) && s.getValue(LeavesBlock.PERSISTENT))
-                            && !stammInDerNaehe(welt, p)) {
-                        welt.setBlock(p, luft, Block.UPDATE_CLIENTS);
-                    }
+        for (int z = z0 - rand; z < z0 + bz + rand; z++) {
+            int oben = welt.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
+            for (int y = oben - 1; y > oben - 24; y--) {
+                p.set(x, y, z);
+                BlockState s = welt.getBlockState(p);
+                if (s.is(BlockTags.LEAVES) && !(s.hasProperty(LeavesBlock.PERSISTENT) && s.getValue(LeavesBlock.PERSISTENT))
+                        && !stammInDerNaehe(welt, p)) {
+                    welt.setBlock(p, luft, Block.UPDATE_CLIENTS);
                 }
             }
         }
@@ -610,7 +764,7 @@ public final class VillaPlatzierung {
     }
 
     /** Entfernt Tiere, die nach dem Bauen in Wänden oder im Graben stecken würden. */
-    private static void tiereEntfernen(ServerLevel welt, int x0, int y0, int z0, VillaDaten plan) {
+    static void tiereEntfernen(ServerLevel welt, int x0, int y0, int z0, VillaDaten plan) {
         AABB bereich = new AABB(x0, y0 - plan.bodenY - 1, z0, x0 + plan.breiteX, y0 + plan.hoehe, z0 + plan.breiteZ);
         for (Entity e : welt.getEntitiesOfClass(Mob.class, bereich, m -> true)) {
             e.discard();

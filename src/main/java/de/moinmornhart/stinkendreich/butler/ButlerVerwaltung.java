@@ -90,14 +90,23 @@ public final class ButlerVerwaltung {
 
     /** Stellt den Butler der Villa an seinen Platz (bei der Spawn-Villa noch ohne Besitzer). */
     public static void villaButlerErzeugen(ServerLevel welt, BlockPos platz, ServerPlayer besitzer) {
-        ButlerEntity b = erzeugen(welt, platz, besitzer);
+        villaButlerErzeugen(welt, platz, besitzer == null ? null : besitzer.getUUID(), besitzer == null ? "" : besitzer.getScoreboardName());
+    }
+
+    /** Wie oben, der Besitzer muss dafür nicht online sein (Nachbarvilla, die fertig wird, während er weg ist). */
+    public static void villaButlerErzeugen(ServerLevel welt, BlockPos platz, java.util.UUID besitzer, String besitzerName) {
+        ButlerEntity b = erzeugen(welt, platz, besitzer, besitzerName);
         if (b != null) {
-            EINTRAEGE.put(besitzer == null ? VILLA : besitzer.getUUID().toString(), eintrag(b));
+            EINTRAEGE.put(besitzer == null ? VILLA : besitzer.toString(), eintrag(b));
             speichern();
         }
     }
 
     private static ButlerEntity erzeugen(ServerLevel welt, BlockPos platz, ServerPlayer besitzer) {
+        return erzeugen(welt, platz, besitzer == null ? null : besitzer.getUUID(), besitzer == null ? "" : besitzer.getScoreboardName());
+    }
+
+    private static ButlerEntity erzeugen(ServerLevel welt, BlockPos platz, java.util.UUID besitzer, String besitzerName) {
         ButlerEntity b = ModEntities.BUTLER.create(welt
                 //? if >=1.21.2
                 , net.minecraft.world.entity.EntitySpawnReason.MOB_SUMMONED
@@ -109,7 +118,7 @@ public final class ButlerVerwaltung {
         b.setCustomName(Component.literal(Konfig.get().butlerName));
         b.setzeHeimat(platz);
         if (besitzer != null) {
-            b.besitzerEintragen(besitzer.getUUID(), besitzer.getScoreboardName());
+            b.besitzerEintragen(besitzer, besitzerName);
         }
         welt.addFreshEntity(b);
         return b;

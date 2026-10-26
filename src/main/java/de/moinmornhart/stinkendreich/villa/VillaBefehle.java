@@ -58,21 +58,22 @@ public final class VillaBefehle {
                                             return 1;
                                         })))
                         .then(Commands.literal("lecks").requires(Kompat.istOperator()).executes(VillaBefehle::lecks))
-                        // Testhilfe: nächste Nachbarvilla bauen (ohne Besitzer) und hinfliegen
-                        .then(Commands.literal("nachbar").requires(Kompat.istOperator()).executes(k -> {
-                            if (VillaPlatzierung.villa().isEmpty()) {
-                                return 0;
-                            }
-                            var neu = VillaPlatzierung.nachbarBauen(k.getSource().getServer(), null);
-                            var p = k.getSource().getPlayer();
-                            if (p != null) {
-                                net.minecraft.core.BlockPos s = neu.spawn();
-                                p.teleportTo(s.getX() + 0.5, s.getY(), s.getZ() + 0.5);
-                            }
-                            k.getSource().sendSuccess(() -> net.minecraft.network.chat.Component.literal("Nachbarvilla " + neu.nr()
-                                    + " bei " + neu.ursprung().toShortString()), false);
-                            return 1;
-                        }))
+                        // Testhilfe: nächste Nachbarvilla bauen (ohne Besitzer oder für einen erfundenen Besitzer) und hinfliegen
+                        .then(Commands.literal("nachbar").requires(Kompat.istOperator())
+                                .executes(k -> nachbar(k, null))
+                                .then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                        .executes(k -> nachbar(k, com.mojang.brigadier.arguments.StringArgumentType.getString(k, "name")))))
+                        // Testhilfe: zur Villa Nummer n springen (0 = Spawn-Villa), z. B. für den Trailer
+                        .then(Commands.literal("hin").requires(Kompat.istOperator())
+                                .then(Commands.argument("nr", IntegerArgumentType.integer(0)).executes(k -> {
+                                    var v = VillaPlatzierung.nr(IntegerArgumentType.getInteger(k, "nr"));
+                                    if (v == null) {
+                                        return 0;
+                                    }
+                                    BlockPos s = v.spawn();
+                                    teleport(k.getSource(), s.getX() + 0.5, s.getY(), s.getZ() + 0.5, v.spawnBlick(), 0.0F);
+                                    return 1;
+                                })))
                         .then(Commands.literal("bruecke").requires(Kompat.istOperator())
                                 .then(Commands.literal("ein").executes(k -> bruecke(k, true)))
                                 .then(Commands.literal("aus").executes(k -> bruecke(k, false))))
@@ -134,7 +135,9 @@ public final class VillaBefehle {
     }
 
     private static int ort(CommandContext<CommandSourceStack> k, float blick, float neigung) throws CommandSyntaxException {
-        Optional<VillaPlatzierung.VillaInfo> villa = VillaPlatzierung.villa();
+        // Bezogen auf die Villa, bei der man gerade ist (Nachbarvillen), sonst auf die Spawn-Villa
+        Optional<VillaPlatzierung.VillaInfo> villa = Optional.ofNullable(k.getSource().getPlayer() == null ? null
+                : VillaPlatzierung.bei(k.getSource().getPlayer().blockPosition())).or(VillaPlatzierung::villa);
         if (villa.isEmpty()) {
             k.getSource().sendFailure(Component.translatable("stinkendreich.villa.keine"));
             return 0;
@@ -288,5 +291,27 @@ public final class VillaBefehle {
         ServerPlayer spieler = quelle.getPlayerOrException();
         Kompat.befehl(quelle.getServer(), String.format(Locale.ROOT, "tp %s %.2f %.2f %.2f %.1f %.1f",
                 spieler.getScoreboardName(), x, y, z, blick, neigung));
+    }
+
+    /** /villa nachbar [name]: Die Baustelle arbeitet im Hintergrund; wer den Befehl gab, wird danach hingebracht. */
+    private static int nachbar(CommandContext<CommandSourceStack> k, String name) {
+        if (VillaPlatzierung.villa().isEmpty()) {
+            return 0;
+        }
+        var quelle = k.getSource();
+        java.util.UUID wer = quelle.getPlayer() == null ? null : quelle.getPlayer().getUUID();
+        java.util.UUID besitzer = name == null ? null
+                : java.util.UUID.nameUUIDFromBytes(("stinkendreich-test:" + name).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        VillaPlatzierung.nachbarBauen(besitzer, name == null ? "" : name, neu -> {
+            var p = wer == null ? null : quelle.getServer().getPlayerList().getPlayer(wer);
+            if (p != null) {
+                net.minecraft.core.BlockPos s = neu.spawn();
+                p.teleportTo(s.getX() + 0.5, s.getY(), s.getZ() + 0.5);
+            }
+            quelle.sendSuccess(() -> net.minecraft.network.chat.Component.literal("Nachbarvilla " + neu.nr()
+                    + " bei " + neu.ursprung().toShortString()), false);
+        });
+        quelle.sendSuccess(() -> net.minecraft.network.chat.Component.literal("Nachbarvilla wird gebaut …"), false);
+        return 1;
     }
 }

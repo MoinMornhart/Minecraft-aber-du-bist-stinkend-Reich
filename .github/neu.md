@@ -1,3 +1,13 @@
+### Neu in 0.4.0 – Nachbarschaft
+
+- **Jeder bekommt seine eigene Villa:** Kommt auf einem Server ein neuer Spieler dazu, entsteht für ihn eine eigene Villa mit Butler, Fuhrpark, Hubschrauber, Bunker und Festung – mit großem Abstand im Raster rund um die erste (Standard 320 Blöcke, in der Config `villenAbstand`, abschaltbar mit `mehrereVillen`).
+- **Ohne Server-Hänger:** Die Villa wird im Hintergrund Stück für Stück gebaut. Der Server läuft dabei normal weiter (im Test längster Tick 0,1 s, vorher stand er 15 bis 18 Sekunden still). Der Neue sieht den Fortschritt in Prozent und wird nach etwa einer halben Minute vor seine Haustür gebracht.
+- **Guter Platz:** Die Mod sucht den flachsten freien Platz in der Nähe und lässt Plätze aus, über die schon eine Straße führt.
+- **Straßen zwischen den Villen:** Jede neue Villa wird ans Straßennetz angeschlossen; die Straße endet dort, wo ihre Zufahrt auf Geländehöhe ankommt. Straßen umfahren jetzt jede Villa, und der Straßenbau lädt die Welt im Hintergrund (beim ersten Betreten ruckelte der Server vorher spürbar).
+- **James und das Handy kennen die anderen Villen:** „James, fahr mich zur Villa von Aircrafter“, im Handy-Navi stehen sie gleich mit drin (auch ohne Mod). „Nach Hause“ heißt für jeden seine eigene Villa.
+- **Nummernschilder mit Namen:** Auf jedem Auto steht vorn und hinten der Name des Besitzers in Gold.
+- Die Zufahrt jeder neuen Villa ist im Hang ein offener Einschnitt statt eines Tunnels. Pflanzenreste rund um eine frisch gebaute Villa werden weggeräumt.
+
 ### Neu in 0.3.9
 
 - **Inkognito-Modus komplett neu und geprüft:** Vor der Fahrt wird die ganze Villa samt allen Bildern, Fischen, Autos, Rüstungsständern und James als genaue Kopie gespeichert und am Ziel exakt so wieder aufgestellt. Ein Vergleich Block für Block und Figur für Figur nach einmal runter und wieder hoch meldet „alles gleich“. Kein rieselnder Kies, kein auslaufendes Wasser. Wer beim Auftauchen auf der Wiese steht, steht danach oben drauf.

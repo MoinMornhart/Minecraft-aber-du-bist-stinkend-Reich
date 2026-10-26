@@ -20,6 +20,7 @@
 [Hubschrauber](#-hubschrauber) &nbsp;·&nbsp;
 [Fernseher](#-fernseher-youtube-im-spiel-mit-fernbedienung) &nbsp;·&nbsp;
 [Handy](#-goldenes-handy) &nbsp;·&nbsp;
+[Nachbarn](#️-nachbarschaft-jeder-bekommt-seine-eigene-villa) &nbsp;·&nbsp;
 [Agent](#️-agenten-ausrüstung) &nbsp;·&nbsp;
 [Einstellungen](#️-einstellungen)
 
@@ -431,6 +432,23 @@ Eintragen geht auf drei Wegen: im Chat („James, behandle Aircrafter als Gast�
 
 <br>
 
+## 🏘️ Nachbarschaft: jeder bekommt seine eigene Villa
+
+Auf einem Server mit Freunden bekommt **jeder neue Spieler seine eigene Villa** – mit Butler, Fuhrpark, Hubschrauber, Bunker, Festung und allem, was dazugehört. Die Villen stehen mit großem Abstand im Raster rund um die erste (Standard 320 Blöcke). Die Mod sucht dafür zuerst den **flachsten freien Platz** in der Nähe und lässt Plätze aus, über die schon eine Straße führt.
+
+Gebaut wird **im Hintergrund**, Stück für Stück: Der Server läuft dabei normal weiter, der Neue sieht den Fortschritt in Prozent über der Schnellleiste und wird nach etwa einer halben Minute vor seine Haustür gebracht. Seine Zugangskarte gilt nur für seine Villa, James heißt „James · Name“, und **auf jedem Nummernschild** seines Fuhrparks steht sein Name in Gold.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/nachbar_strasse.jpg" alt="Straße zur Nachbarvilla"><br><sub><b>Straße zur Nachbarvilla:</b> den Hang hinunter bis an ihre Zufahrt</sub></td>
+<td width="50%"><img src="docs/bilder/nachbar_kennzeichen.jpg" alt="Nummernschild mit Namen"><br><sub><b>Nummernschild</b> mit dem Namen des Besitzers, hinten und vorn</sub></td>
+</tr>
+</table>
+
+Jede neue Villa wird ans **Straßennetz** angeschlossen, und James kennt sie: „James, fahr mich zur Villa von Aircrafter“. Im Handy-Navi stehen die Villen der anderen gleich mit drin. Abschalten lässt sich die Nachbarschaft in der Config (`mehrereVillen`, Abstand `villenAbstand`).
+
+<br>
+
 ## 🕶️ Agenten-Ausrüstung
 
 <img src="docs/bilder/waffenkammer.jpg" alt="Waffenkammer im Bunker" width="100%">
@@ -564,7 +582,7 @@ Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die
 
 ## ⚙️ Einstellungen
 
-Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Lava-Graben an/aus, Name, Anrede und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Claude-Schlüssel und -Modell, Höchstgeschwindigkeit des Autos, Tempo von Hubschrauber und Chauffeur, Straßenbau an/aus, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port, Videos im Fernseher, Lautstärke des Fernsehers sowie die Update-Prüfung.
+Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, eigene Villa für jeden neuen Spieler und Abstand der Villen, Lava-Graben an/aus, Name, Anrede und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Claude-Schlüssel und -Modell, Höchstgeschwindigkeit des Autos, Tempo von Hubschrauber und Chauffeur, Straßenbau an/aus, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port, Videos im Fernseher, Lautstärke des Fernsehers sowie die Update-Prüfung.
 
 ## 🔄 Updates
 

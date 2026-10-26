@@ -87,6 +87,12 @@ public final class StrassenBau {
     private final double startAbstand;
     /** Was zuletzt den Weg versperrt hat (für die Fehlersuche im Log). */
     private String letzteSperre = "";
+    /** Chunks, die für den Bau mit einem Lade-Ticket gehalten werden (Schlüssel aus x und z, siehe {@link #chunk}). */
+    private final java.util.Set<Long> gehalten = new java.util.HashSet<>();
+    /** So viele Ticks wurde schon auf Chunks gewartet (danach wird notfalls direkt geladen). */
+    private int wartet;
+    /** Chunks rund um die Spitze, die geladen sein müssen (2 = 5 × 5 Chunks, 32 Blöcke in jede Richtung). */
+    private static final int UMKREIS = 2;
 
     StrassenBau(ServerLevel welt, String name, Vec3 ziel, Vec3 start, float richtung, int eltern, int abzweig) {
         this.welt = welt;
@@ -138,8 +144,57 @@ public final class StrassenBau {
     void tick() {
         long start = System.nanoTime();
         for (int i = 0; i < PRO_TICK && !fertig && System.nanoTime() - start < BUDGET; i++) {
+            if (!umgebungBereit()) {
+                return;                                        // nächsten Tick weiter, Minecraft erzeugt die Chunks
+            }
             schritt();
         }
+    }
+
+    /**
+     * Fordert die Chunks rund um die Spitze im Hintergrund an (Lade-Ticket) und meldet, ob alle schon da sind. Vorher
+     * lud der Bau jeden neuen Chunk sofort und blockierend: Beim ersten Betreten einer Welt (vier Straßen auf einmal)
+     * ruckelte der Server dadurch spürbar. Nach 30 s Warten geht es notfalls mit direktem Laden weiter.
+     */
+    private boolean umgebungBereit() {
+        int cx0 = (int) Math.floor(x) >> 4, cz0 = (int) Math.floor(z) >> 4;
+        boolean alle = true;
+        for (int cx = cx0 - UMKREIS; cx <= cx0 + UMKREIS; cx++) {
+            for (int cz = cz0 - UMKREIS; cz <= cz0 + UMKREIS; cz++) {
+                if (gehalten.add(chunk(cx, cz))) {
+                    welt.getChunkSource().updateChunkForced(new net.minecraft.world.level.ChunkPos(cx, cz), true);
+                }
+                if (welt.getChunkSource().getChunkNow(cx, cz) == null) {
+                    alle = false;
+                }
+            }
+        }
+        // Weit hinten liegende Chunks wieder freigeben (die Straße dahinter ist fertig gebaut)
+        gehalten.removeIf(k -> {
+            int cx = (int) (long) k, cz = (int) (k >> 32);
+            if (Math.max(Math.abs(cx - cx0), Math.abs(cz - cz0)) > UMKREIS + 2) {
+                welt.getChunkSource().updateChunkForced(new net.minecraft.world.level.ChunkPos(cx, cz), false);
+                return true;
+            }
+            return false;
+        });
+        if (alle) {
+            wartet = 0;
+            return true;
+        }
+        return ++wartet > 20 * 30;
+    }
+
+    private static long chunk(int cx, int cz) {
+        return (cx & 0xFFFFFFFFL) | ((long) cz << 32);
+    }
+
+    /** Alle Lade-Tickets des Baus zurückgeben (auch beim Beenden des Servers, sonst blieben die Chunks geladen). */
+    void freigeben() {
+        for (long k : gehalten) {
+            welt.getChunkSource().updateChunkForced(new net.minecraft.world.level.ChunkPos((int) k, (int) (k >> 32)), false);
+        }
+        gehalten.clear();
     }
 
     private void schritt() {
@@ -318,6 +373,7 @@ public final class StrassenBau {
     private void abschliessen() {
         fertig = true;
         bauen(Integer.MAX_VALUE);
+        freigeben();
     }
 
     /**
@@ -479,7 +535,8 @@ public final class StrassenBau {
         if (welt.getBlockState(p).is(de.moinmornhart.stinkendreich.register.ModBloecke.LANDMINE)) {
             return false;
         }
-        if (VillaPlatzierung.villa().map(v -> v.enthaelt(p)).orElse(false) || SpielerBloecke.istGesetzt(welt, p)
+        VillaPlatzierung.VillaInfo villa = VillaPlatzierung.bei(p);           // jede Villa, nicht nur die am Spawn
+        if ((villa != null && villa.enthaelt(p)) || SpielerBloecke.istGesetzt(welt, p)
                 || welt.getBlockEntity(p) != null) {
             return true;
         }

@@ -20,6 +20,24 @@ public interface StrukturZugriff {
     @Accessor("entityInfoList")
     List<StructureTemplate.StructureEntityInfo> stinkendreich$figuren();
 
+    /** Die Blocklisten der Vorlage (die Villa hat genau eine), für das Bauen in Scheiben. */
+    @Accessor("palettes")
+    List<StructureTemplate.Palette> stinkendreich$paletten();
+
+    /** Minecrafts eigenes Aufstellen der Figuren einer Vorlage (genau wie beim normalen Setzen der Struktur). */
+    //? if >=1.21.6 {
+    @Invoker("placeEntities")
+    void stinkendreich$figurenAufstellen(ServerLevelAccessor welt, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.Mirror spiegel,
+                                         net.minecraft.world.level.block.Rotation drehung, net.minecraft.core.BlockPos drehpunkt,
+                                         net.minecraft.world.level.levelgen.structure.BoundingBox bereich, boolean fertigmachen,
+                                         net.minecraft.util.ProblemReporter meldungen);
+    //?} else {
+    /*@Invoker("placeEntities")
+    void stinkendreich$figurenAufstellen(ServerLevelAccessor welt, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.Mirror spiegel,
+                                         net.minecraft.world.level.block.Rotation drehung, net.minecraft.core.BlockPos drehpunkt,
+                                         net.minecraft.world.level.levelgen.structure.BoundingBox bereich, boolean fertigmachen);
+    *///?}
+
     //? if >=1.21.6 {
     @Invoker("createEntityIgnoreException")
     static Optional<Entity> stinkendreich$figurBauen(net.minecraft.util.ProblemReporter meldungen, ServerLevelAccessor welt, CompoundTag daten) {

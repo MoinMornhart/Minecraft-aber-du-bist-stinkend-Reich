@@ -7,6 +7,19 @@ server /villa stufe 0
 server /butler strasse dorf
 server /villa ort 160 80 175 139 22
 warte 30
+bis 900 Straße Endportal: Ende
+merke
+server /villa nachbar Aircrafter
+bis 600 Baustelle: Villa 1 fertig
+merke
+bis 900 Straße Villa von Aircrafter: Ende
+server /villa hin 1
+warte 2
+server /villa ort 55.5 26 94 180 0
+server /execute at @p run summon stinkendreich:gelaendewagen ~ ~ ~ {Rotation:[180f,0f]}
+warte 8
+server /villa hin 0
+warte 5
 server /clear @p
 taste F1
 server /tick rate 6.667
@@ -363,6 +376,24 @@ server /villa inkognito aus
 merke
 server fahrt 11 | 56.00 46.00 150.00 180.0 16.0 | 90.00 52.00 140.00 160.0 18.0 | 118.00 58.00 128.00 139.0 19.0
 bis 159 Fahrt fertig
+server /time set 6000
+kapitel Neue Freunde bekommen ihre eigene Villa
+server /villa hin 1
+warte 3
+server /villa ort 55 75 200 180 35
+warte 6
+merke
+server fahrt 10 | 55.00 75.00 200.00 180.0 35.0 | 55.00 60.00 160.00 180.0 30.0 | 55.00 48.00 130.00 180.0 20.0
+bis 150 Fahrt fertig
+server /time set 6000
+kapitel … mit Straße und ihrem Namen auf dem Nummernschild
+server /villa ort 55.5 26.3 99.5 180 12
+warte 3
+merke
+server fahrt 5 | 55.50 26.30 99.50 180.0 12.0 | 55.50 26.30 98.40 180.0 14.0
+bis 105 Fahrt fertig
+server /villa hin 0
+warte 3
 kapitel Minecraft, aber du bist stinkend reich
 server /time set 12650
 server /villa ort 56 52 142 180 22
