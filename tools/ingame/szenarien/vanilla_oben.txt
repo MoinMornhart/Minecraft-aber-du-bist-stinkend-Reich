@@ -1,0 +1,10 @@
+# Server-Version: Villa von oben (Vergleich Spieler mit und ohne Mod)
+warte 8
+server /gamemode spectator
+server /time set 6000
+server /villa ort 55.5 70 40 0 70
+warte 6
+bild o01_von_oben
+server /execute as @p at @s run setblock ~ ~-3 ~ minecraft:gold_block
+warte 2
+bild o02_goldblock

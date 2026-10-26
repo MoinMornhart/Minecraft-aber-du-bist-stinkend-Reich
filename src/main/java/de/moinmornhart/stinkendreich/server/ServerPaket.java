@@ -113,12 +113,12 @@ public final class ServerPaket {
     private static final class ItemUebersetzung implements PolymerItem {
         @Override
         public Item getPolymerItem(ItemStack stack, PacketContext kontext) {
-            return Items.PAPER;
+            return ModErkennung.hatMod(kontext) ? stack.getItem() : Items.PAPER;
         }
 
         @Override
         public boolean canSyncRawToClient(PacketContext kontext) {
-            return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION));
+            return ModErkennung.hatMod(kontext);
         }
     }
 
@@ -140,12 +140,13 @@ public final class ServerPaket {
         PolymerEntityUtils.registerOverlay(typ, new PolymerSyncedObject<EntityType<?>>() {
             @Override
             public EntityType<?> getPolymerReplacement(EntityType<?> t, PacketContext kontext) {
-                return ersatz;
+                // Spieler mit Mod bekommen immer die echte Figur (sonst passen Typ und Daten nicht zusammen)
+                return ModErkennung.hatMod(kontext) ? t : ersatz;
             }
 
             @Override
             public boolean canSyncRawToClient(PacketContext kontext) {
-                return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION));
+                return ModErkennung.hatMod(kontext);
             }
         }, (java.util.function.Function<T, PolymerEntity>) e -> e instanceof de.moinmornhart.stinkendreich.auto.AutoEntity auto
                 ? FahrzeugAnzeige.uebersetzung(auto, typ)
@@ -153,7 +154,7 @@ public final class ServerPaket {
                 : new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
-                return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION)) ? typ : ersatz;
+                return ModErkennung.hatMod(kontext) ? typ : ersatz;
             }
 
             @Override

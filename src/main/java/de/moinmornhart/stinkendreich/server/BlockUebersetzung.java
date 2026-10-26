@@ -83,12 +83,15 @@ final class BlockUebersetzung implements PolymerBlock, BlockWithElementHolder {
 
     @Override
     public BlockState getPolymerBlockState(BlockState zustand, PacketContext kontext) {
+        if (ModErkennung.hatMod(kontext)) {
+            return zustand;     // Spieler mit Mod: der echte Block
+        }
         return ersatz.getOrDefault(zustand, Blocks.BARRIER.defaultBlockState());
     }
 
     @Override
     public boolean canSyncRawToClient(PacketContext kontext) {
-        return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION));
+        return ModErkennung.hatMod(kontext);
     }
 
     // ------------------------------------------------------------------

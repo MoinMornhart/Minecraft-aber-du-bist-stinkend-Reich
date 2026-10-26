@@ -62,7 +62,7 @@ fi
 # ---------- 2. Welt als Einzelspieler-Spielstand vorbereiten ----------
 # (bei VANILLA=1 spielt der normale Client in einem eigenen Ordner auf dem Server)
 KLIENT_ORDNER="$RUN"
-[[ "${VANILLA:-0}" == 1 ]] && KLIENT_ORDNER="$RUN/vanilla"
+[[ "${VANILLA:-0}" == 1 && "${MITMOD:-0}" != 1 ]] && KLIENT_ORDNER="$RUN/vanilla"
 mkdir -p "$KLIENT_ORDNER"
 rm -rf "$RUN/saves/testwelt" "$KLIENT_ORDNER/screenshots"
 mkdir -p "$RUN/saves"
@@ -137,9 +137,19 @@ if [[ "${VANILLA:-0}" == 1 ]]; then
     kill -0 "$SERVER" 2>/dev/null || { melde "FEHLER: Server ist abgestürzt"; tail -60 "$LOGS/server_spiel.log"; exit 1; }
     sleep 1
   done
-  melde "Normales Minecraft (ohne Mod) startet …"
-  python3 "$ROOT/tools/ingame/vanilla_klient.py" "$V" "$KLIENT_ORDNER" "localhost:${PORT:-25565}" Philip \
-    > "$LOGS/client.log" 2>&1 </dev/null &
+  if [[ "${MITMOD:-0}" == 1 ]]; then
+    # Spieler MIT Mod auf demselben Server (prüft, dass die Server-Version Mod-Spielern nichts übersetzt)
+    melde "Minecraft mit Mod verbindet sich mit dem Server …"
+    # Der Server hat Polymer schon geladen; der Client soll es nicht haben (MITPOLYMER=1: doch)
+    [[ "${MITPOLYMER:-0}" == 1 ]] || rm -rf "$RUN/mods"
+    ./gradlew ":$V:runClient" --console=plain \
+      --args="--quickPlayMultiplayer localhost:${PORT:-25565} --width 1280 --height 720 --username Philip" \
+      > "$LOGS/client.log" 2>&1 </dev/null &
+  else
+    melde "Normales Minecraft (ohne Mod) startet …"
+    python3 "$ROOT/tools/ingame/vanilla_klient.py" "$V" "$KLIENT_ORDNER" "localhost:${PORT:-25565}" Philip \
+      > "$LOGS/client.log" 2>&1 </dev/null &
+  fi
   CLIENT=$!
 else
 melde "Client startet …"

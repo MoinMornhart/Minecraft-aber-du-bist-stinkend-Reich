@@ -168,8 +168,17 @@ _Zuletzt aktualisiert: 2026-10-26, 02:50 Uhr (Nachtschicht, Philip schläft)_
   zusätzlich das Handy aufgeht. Getestet (26.3, `vanilla_bedien.txt`): Tastenfeld, Aufzug, Klaviatur, Kameras.
 - Tasten im Test ohne Mod: das Spielfenster ist ein Kindfenster der Wurzel (`xwininfo -root -tree`), Fahren mit
   W/A und Hubschrauber mit Leertaste geprüft (`vanilla_auto.txt`).
-- Offen: zweiter Bedienfeld-Test (Zentrale, Musik, Butler, Kabine), Fernseher, Drehteller, Spieler mit Mod auf
-  einem Polymer-Server prüfen, übrige 16 Versionen, danach Paper-Plugin.
+- Bodyguards ohne Mod: großer Türsteher im Smoking (Schaufensterpuppe mit Haut `bodyguard_mensch` aus handy.py,
+  Attribut SCALE 1,45 über `modifyRawEntityAttributeData`).
+- Spieler mit Mod auf dem Polymer-Server (`MITMOD=1`, Client ohne Polymer; `MITPOLYMER=1` mit): geht. Wichtig:
+  `ModErkennung` merkt sich beim Anmelden (`ServerConfigurationConnectionEvents.CONFIGURE`), wer die Mod hat, sonst
+  schwankt die Erkennung am Anfang der Spielphase (Figur als Ersatz, danach Mod-Daten → Verbindungsabbruch). Alle
+  Polymer-Übersetzungen fragen `ModErkennung.hatMod(PacketContext)`; ohne Kontext (Polymer beim Laden von Chunks!)
+  immer „ohne Mod“ – ein Absturz dort lässt den Server den Chunk neu erzeugen (Villa weg).
+- Tests: `vanilla_bedien.txt` (alle Bedienfelder), `vanilla_figuren.txt` (Bodyguards, Butler, Geheimclub),
+  `vanilla_oben.txt` (Villa von oben).
+- Offen: Fernseher, Drehteller, übrige 16 Versionen (Polymer gibt es für alle, Dialoge erst ab 1.21.6), danach
+  Paper-Plugin.
 
 ## Version 0.3.1 (veröffentlicht 26.10. nachts)
 

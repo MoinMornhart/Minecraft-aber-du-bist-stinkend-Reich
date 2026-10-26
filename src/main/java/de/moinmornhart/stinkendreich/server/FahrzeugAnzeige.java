@@ -107,7 +107,7 @@ final class FahrzeugAnzeige {
         return new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
-                return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION)) ? echt : ITEM_DISPLAY_TYP;
+                return ModErkennung.hatMod(kontext) ? echt : ITEM_DISPLAY_TYP;
             }
 
             @Override

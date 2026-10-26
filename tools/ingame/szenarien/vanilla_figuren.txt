@@ -1,0 +1,28 @@
+# Server-Version: Figuren für Spieler ohne Mod (Bodyguards als Türsteher, James mit Butler-Menü) und mit
+# MITMOD=1 derselbe Ablauf für einen Spieler mit Mod auf dem Polymer-Server (dort alles wie gewohnt).
+warte 8
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa ort 55.5 26 84 180 5
+warte 2
+server /execute as @p run handy bodyguards|rufen
+warte 8
+server /execute as @e[type=stinkendreich:bodyguard] run data merge entity @s {NoAI:1b}
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] ^-1.2 ^ ^3.5 facing entity @s
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=furthest] ^1.2 ^ ^3.5 facing entity @s
+warte 2
+bild f01_bodyguards
+# James: Rechtsklick öffnet das Butler-Menü
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+server /execute as @p at @s run tp @e[type=stinkendreich:butler,limit=1,sort=nearest] ^ ^ ^2.2 facing entity @s
+warte 1
+klick
+warte 2
+bild f02_butler_menue
+server /dialog clear @a
+# Tänzerinnen im Geheimclub
+server /villa ort 13 8.5 72 -110 8
+warte 3
+bild f03_geheimclub
