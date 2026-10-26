@@ -44,7 +44,7 @@ public class LaserstrahlBlock extends Block {
 
     @Override
     protected void tick(BlockState zustand, ServerLevel welt, BlockPos pos, RandomSource zufall) {
-        if (VillaZustand.get(welt.getServer()).stufe() >= 3 && senderVorhanden(welt, pos, zustand.getValue(ACHSE))) {
+        if (senderVorhanden(welt, pos, zustand.getValue(ACHSE))) {
             welt.scheduleTick(pos, this, 40);
         } else {
             welt.removeBlock(pos, false);
@@ -55,7 +55,7 @@ public class LaserstrahlBlock extends Block {
         for (Direction d : new Direction[]{Direction.fromAxisAndDirection(achse, Direction.AxisDirection.POSITIVE),
                 Direction.fromAxisAndDirection(achse, Direction.AxisDirection.NEGATIVE)}) {
             BlockPos.MutableBlockPos p = pos.mutable();
-            for (int i = 1; i <= LaserSenderBlock.REICHWEITE; i++) {
+            for (int i = 1; i <= LaserSenderBlock.MAX_REICHWEITE; i++) {
                 p.move(d);
                 BlockState s = welt.getBlockState(p);
                 if (s.getBlock() instanceof LaserSenderBlock) {

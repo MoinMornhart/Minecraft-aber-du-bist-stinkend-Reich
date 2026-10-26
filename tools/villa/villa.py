@@ -39,6 +39,7 @@ UG_DECKE = 22          # Decke des Untergeschosses
 HX0, HX1, HZ0, HZ1 = 30, 79, 36, 67
 # Aufzugsschacht (außen 4x4, innen 2x2), Tür nach Süden
 AX0, AX1, AZ0, AZ1 = 56, 59, 37, 40
+MAUER_OBEN = G + 8       # Krone der Innenmauer (Gitter, Lichter, Geschütze, Himmelslaser)
 # Ab hier ist der Garagenboden über der Rampe offen (genug Kopfhöhe auch für die hohe G-Klasse)
 RAMPE_OFFEN_AB = 55
 # Rampe in die Tiefgarage (Fahrbahn x RAMPE_X0 … RAMPE_X1), mittig unter dem Garagentor
@@ -96,14 +97,15 @@ def grundstueck() -> None:
     # Für die Mod: Bereich des Grabens (Kasten + Breite des Rings). Ist die Alarmanlage an und ein Bewohner im
     # Haus, wird aus dem Wasser Lava (siehe Graben.java).
     b.marke("graben", 6, G - 3, 6, n - 6, G - 1, n - 6, 5)
-    # Innenmauer: weiß mit schwarzem Abschluss und Sicherheitsgitter
-    for y in range(G + 1, G + 4):
+    # Innenmauer (MAUER_OBEN hoch): weiß mit schwarzem Abschluss und Sicherheitsgitter; auf der Krone sitzen die
+    # Himmelslaser und Abwehrgeschütze der Festung (siehe festung())
+    for y in range(G + 1, MAUER_OBEN - 1):
         b.ring(12, 12, n - 12, n - 12, y, WEISS, breite=2)
-    b.ring(12, 12, n - 12, n - 12, G + 4, SCHWARZ, breite=2)
-    b.ring(12, 12, n - 12, n - 12, G + 5, "iron_bars")
+    b.ring(12, 12, n - 12, n - 12, MAUER_OBEN - 1, SCHWARZ, breite=2)
+    b.ring(12, 12, n - 12, n - 12, MAUER_OBEN, "iron_bars")
     for i in range(12, n - 11, 9):
         for x, z in ((i, 12), (i, n - 12), (12, i), (n - 12, i)):
-            b.setze(x, G + 5, z, LICHT)
+            b.setze(x, MAUER_OBEN, z, LICHT)
 
 
 def tor_und_bruecke() -> None:
@@ -116,9 +118,9 @@ def tor_und_bruecke() -> None:
     b.luft(x0 + 1, G + 1, n - 13, x1 - 1, G + 5, n - 12)
     # Torpfeiler mit Lichtern
     for x in (x0, x1):
-        b.quader(x, G + 1, n - 13, x, G + 6, n - 12, SCHWARZ)
-        b.setze(x, G + 7, n - 13, LICHT)
-        b.setze(x, G + 7, n - 12, LICHT)
+        b.quader(x, G + 1, n - 13, x, MAUER_OBEN, n - 12, SCHWARZ)
+        b.setze(x, MAUER_OBEN + 1, n - 13, LICHT)
+        b.setze(x, MAUER_OBEN + 1, n - 12, LICHT)
     b.marke("tor", x0 + 1, G + 1, n - 13, x1 - 1, G + 4, n - 12)
     # Brücke
     b.quader(x0, G, n - 12, x1, G, n - 1, QUARZ)
@@ -629,7 +631,7 @@ def obergeschoss() -> None:
     b.quader(66, y, 60, 66, y, 61, "gold_block")
     b.quader(72, y, 60, 72, y, 61, "gold_block")
     # Drei flache Monitore, die äußeren schräg zum Platz; davor Tastatur und Maus
-    for x, winkel in ((68, "rechts"), (69, "gerade"), (70, "links")):
+    for x, winkel in ((68, "rechts"), (69, "gerade"), (70, "links")):     # äußere nach innen zum Stuhl (Philips Bild)
         mech(x, y + 1, 61, "monitor", "north", {"winkel": winkel})
     deko(b, 69, y + 1, 60, "tastatur", "north")
     reihe(b, 69, y, 59, 1, "gamingstuhl", "south")
@@ -1228,14 +1230,7 @@ def bunker() -> None:
     b.quader(62, y, 59, 62, y + 2, 59, "deepslate_tiles")
     b.setze(62, y + 2, 58, "deepslate_tiles")
     tuer(b, 62, y, 58, "east", "stinkendreich:bunkertuer")
-    # Kommandozentrale (Nordwest)
-    b.quader(x0 + 2, y + 1, z0 + 1, 51, y + 3, z0 + 1, SCHWARZ)
-    for x in range(x0 + 3, 51, 2):
-        b.marke("bunker_monitor", x, y + 2, z0 + 1)
-    tisch(b, x0 + 3, y, z0 + 4, 50, z0 + 4, "polished_blackstone_slab")
-    for x in range(x0 + 4, 50, 3):
-        reihe(b, x, y, z0 + 6, 1, "gamingstuhl", "north")
-    b.marke("bunker_zentrale", 45, y, 44)
+    kommandozentrale(y, y0, y1)
     # Waffenkammer (Nordost): sechs Rüstungsständer mit voll verzauberten Sets (die Mod rüstet sie beim
     # Platzieren aus, siehe Waffenkammer.java), davor goldene Podeste, Truhen mit Agenten-Waffen und Vorräten
     b.quader(63, y0, z0 + 1, x1 - 1, y0, 49, "polished_blackstone")              # dunkler Boden
@@ -1288,22 +1283,101 @@ def bunker() -> None:
     for x, z in ((63, 54), (71, 55)):
         deko(b, x, y, z, "goldbarren", "east")
     kronleuchter(b, 67, y1 - 1, 60)
-    # Fluchttunnel nach Westen, Leiter hoch in den Westgarten; rundum Tiefenschiefer, damit kein
-    # Grundwasser aus Höhlen hereinläuft
-    b.quader(16, y0 - 1, 59, x0 - 1, y + 3, 62, "polished_deepslate")
-    b.quader(15, y, 58, 19, G - 1, 62, "polished_deepslate")
-    b.luft(x0 - 1, y, 60, 18, y + 2, 61)
-    b.quader(x0 - 1, y0, 60, 18, y0, 61, "polished_andesite")
-    for x in range(20, x0, 5):
-        b.setze(x, y + 2, 60, LICHT)
-    for yy in range(y, G + 1):
-        b.setze(17, yy, 60, zustand("ladder", facing="east", waterlogged="false"))
-        b.setze(16, yy, 60, "polished_deepslate")
-        b.setze(17, yy, 59, "polished_deepslate")
-        b.setze(17, yy, 61, "polished_deepslate")
-        b.setze(18, yy, 59 if yy > y + 2 else 58, "polished_deepslate")
-    b.setze(17, G, 60, zustand("dark_oak_trapdoor", facing="east", half="top", open="false", powered="false", waterlogged="false"))
-    b.marke("fluchtluke", 17, G, 60)
+    # Notausgang: Fluchttunnel nach Westen unter Graben und Lava-Kanal hindurch, Leiter hoch hinter den Kanal und
+    # eine Privattür im Außenzaun (nur Bewohner) – so kommt man auch im totalen Lockdown hinaus. Rundum Tiefenschiefer,
+    # damit kein Grundwasser aus Höhlen hereinläuft; grünes Notlicht
+    b.quader(0, y0 - 1, 59, x0 - 1, y + 3, 62, "polished_deepslate")
+    b.luft(x0 - 1, y, 60, 0, y + 2, 61)
+    b.quader(x0 - 1, y0, 60, 0, y0, 61, "polished_andesite")
+    for x in range(5, x0, 5):
+        b.setze(x, y + 2, 60, zustand("verdant_froglight", axis="y"))
+    # Weiter nach Westen gräbt die Mod beim Bau der Welt: 50 Blöcke unter dem Gelände bis zu einer versteckten
+    # Falltür im Boden, die nur mit Zugangskarte aufgeht (Festungsbau.notausgang): Rand x, Höhe, z, Länge
+    b.marke("notausgang", 0, y, 60, 50)
+    # Notausgang-Schilder: über dem Geheimregal in der Suite und über der Panzertür im Gang
+    deko(b, 37, y + 3, 61, "notausgang_links", "east")
+    deko(b, 37, y + 3, 60, "notausgang_rechts", "east")
+    deko(b, 54, y + 3, 59, "notausgang_links", "east")
+    deko(b, 54, y + 3, 58, "notausgang_rechts", "east")
+
+
+def kommandozentrale(y: int, y0: int, y1: int) -> None:
+    """Kommandozentrale im Bunker (x 37–52, z 31–49), eingerichtet wie das Büro oben: Monitorwand mit zwölf Bildschirmen
+    (zeigen alle Kameras), Chefschreibtisch mit drei Monitoren, Tastatur und der Sicherheitszentrale, an der allein sich
+    die Festung (Stufe 4) einschalten lässt, Bedienplätze an den Seiten, Bücherwand, Kronleuchter. Eine Prunktür führt
+    in die Bunker-Suite."""
+    b.quader(37, y0, 31, 52, y0, 49, "polished_blackstone")
+    b.quader(40, y0, 33, 50, y0, 47, "red_wool")
+    b.quader(51, y0, 44, 52, y0, 45, "red_wool")                            # Läufer von der Banktür
+    # Monitorwand: schwarz mit Goldrahmen, zwei Reihen Bildschirme
+    b.quader(37, y, 30, 52, y1 - 2, 30, "gold_block")
+    b.quader(38, y + 1, 30, 51, y1 - 2, 30, SCHWARZ)
+    for x in range(39, 51, 2):
+        for dy in (2, 4):
+            b.marke("bunker_monitor", x, y + dy, 31)
+    # Goldleiste oben an den Wänden (nicht über die Stahlrippen der Ostwand)
+    b.quader(37, y1 - 1, 30, 52, y1 - 1, 30, "gold_block")
+    b.quader(36, y1 - 1, 31, 36, y1 - 1, 49, "gold_block")
+    for z in range(31, 50):
+        if z not in (35, 47):
+            b.setze(53, y1 - 1, z, "gold_block")
+    # Chefschreibtisch mit Goldenden, drei Monitoren, Tastatur und der Zentrale
+    b.quader(42, y, 36, 48, y, 37, "polished_blackstone")
+    b.quader(42, y, 36, 42, y, 37, "gold_block")
+    b.quader(48, y, 36, 48, y, 37, "gold_block")
+    for x, winkel in ((44, "links"), (45, "gerade"), (46, "rechts")):     # äußere nach innen zum Stuhl
+        mech(x, y + 1, 36, "monitor", "south", {"winkel": winkel})
+    deko(b, 45, y + 1, 37, "tastatur", "south")
+    reihe(b, 45, y, 38, 1, "gamingstuhl", "north")
+    deko(b, 43, y + 1, 37, "geldstapel", "south")
+    deko(b, 48, y + 1, 37, "pokal", "south")
+    b.marke("bunker_zentrale", 47, y + 1, 36)                               # Zentrale: siehe mechanismen()
+    # Bedienplätze an der West- und Ostwand
+    for z in (39, 41):
+        b.setze(37, y, z, "polished_blackstone")
+        mech(37, y + 1, z, "monitor", "east", {"winkel": "gerade"})
+        reihe(b, 38, y, z, 1, "gamingstuhl", "west")
+        b.setze(52, y, z - 3, "polished_blackstone")
+        mech(52, y + 1, z - 3, "monitor", "west", {"winkel": "gerade"})
+        reihe(b, 51, y, z - 3, 1, "gamingstuhl", "east")
+    # Besprechungstisch aus Marmor mit Lederstühlen im hinteren Teil
+    tisch(b, 41, y, 44, 47, 45, "polished_blackstone_slab")
+    for x in (42, 44, 46):
+        reihe(b, x, y, 43, 1, "esszimmerstuhl", "south")
+        reihe(b, x, y, 46, 1, "esszimmerstuhl", "north")
+    for z in (44, 45):
+        reihe(b, 40, y, z, 1, "esszimmerstuhl", "east")
+        reihe(b, 48, y, z, 1, "esszimmerstuhl", "west")
+    kronleuchter(b, 44, y1 - 1, 45)
+    # Bücherwand im Westen (bündig in der Wand), Kronleuchter über dem Schreibtisch
+    b.quader(36, y, 43, 36, y + 3, 48, "bookshelf")
+    gemaelde(b, 37, y + 1, 34, "east", "privatjet", 3, 2)
+    kronleuchter(b, 45, y1 - 1, 40)
+    for x, z in ((37, 31), (52, 49), (37, 49)):
+        pflanze(b, x, y, z, "potted_bamboo")
+    # Prunktür in die Bunker-Suite (Flügel bei x 52 und 51)
+    doppeltuer(b, 52, y, 50, "south", "stinkendreich:prunktuer")
+
+
+def festung() -> None:
+    """Festung (Sicherheitsstufe 4): Abwehrgeschütze auf der Innenmauer und Landminen im Rasen. Beide sind nur in
+    der Festung scharf und treffen nur Monster und Eindringlinge (siehe Festung.java)."""
+    n = GROESSE[0] - 1
+    # Mauerkrone rundherum abwechselnd: Abwehrgeschütz (Blick nach außen), Himmelslaser, Geschütz, Laser …
+    # Die Laser sind dieselben roten Strahlen wie im Bunker und im Tresor, nur 40 Blöcke senkrecht nach oben
+    # (ab Stufe 3 an, in der Festung tödlich); die Geschütze fahren nur in der Festung aus.
+    nr = 0
+    for k in range(14, n - 13, 4):
+        for x, z, blick in ((k, 12, "north"), (k, n - 12, "south"), (12, k, "west"), (n - 12, k, "east")):
+            if not basisname(b.hole(x, MAUER_OBEN, z) or "air").endswith(("iron_bars", "air")):
+                continue                                                    # nicht auf die Lichter
+            if (k // 4) % 2 == 0:
+                mech(x, MAUER_OBEN, z, "abwehrgeschuetz", blick)
+            else:
+                mech(x, MAUER_OBEN, z, "laser_sender", zustand_extra={"facing": "up"}, reichweite="40")
+            nr += 1
+    # Die Landminen legt die Mod beim Bau der Welt in einem 40 Blöcke breiten Gürtel rund um das Grundstück
+    # (siehe Festungsbau.java), genau wie das Ende des Notausgangs 50 Blöcke westlich.
 
 
 def warnstreifen(x0: int, z0: int, x1: int, z1: int, y: int) -> None:
@@ -1492,7 +1566,7 @@ def mechanismen() -> None:
     # Banktür der Kommandozentrale im Bunker: Kartenleser im Flur und drinnen
     mech(54, BUNKER + 2, 43, "kartenleser", "east")
     mech(52, BUNKER + 2, 43, "kartenleser", "west")
-    mech(45, BUNKER + 1, 44, "sicherheitszentrale", "north")
+    mech(47, BUNKER + 2, 36, "sicherheitszentrale", "south", kommando="ja")  # Kommandozentrale: nur hier Stufe 4
     for m in b.marken["monitor"] + b.marken["bunker_monitor"]:
         mech(m[0], m[1], m[2], "monitor", "south", {"winkel": "wand"})
     for (x, y, z, r) in ((50, G + 5, n - 11, "south"), (59, G + 5, n - 14, "north"), (51, EG + 4, HZ1 + 1, "south"),
@@ -1665,6 +1739,7 @@ def main() -> None:
     mechanismen()
     licht_im_garten()
     lichter()
+    festung()
 
     # Wo ein Bewohner als „zu Hause“ gilt (für den Lava-Graben): Haus mit Penthouse und Terrassen, Garage, Untergeschoss, Bunker
     b.marke("haus", HX0, EG, HZ0, HX1, LANDEPLATZ + 4, HZ1 + 6)                 # samt Balkon und Dachterrasse

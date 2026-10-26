@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/deko/notausgang_links"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/deko/notausgang_links",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/deko/notausgang_links",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/deko/notausgang_links",
+      "y": 270
+    }
+  }
+}

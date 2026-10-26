@@ -1,0 +1,79 @@
+# Video für Philip: Aufzug in den Bunker rufen, Kommandozentrale, Festung einschalten, die Villa verwandelt sich
+# (Sirenen, Geschütze, Himmelslaser, Minen, Zugbrücke, Lava), dann raus durch den Notausgang und die versteckte Falltür.
+# Aufnahme in Zeitlupe (/tick rate 6,667), video.py spielt sie mit ZEITLUPE=3 wieder schnell ab.
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/festung_video.txt
+#         ZEITLUPE=3 python3 tools/ingame/video.py build/ingame/26.3/festung_roh.mp4 build/ingame/26.3/festung_kapitel.txt \
+#             build/ingame/26.3/festung.mp4 "Modus: FESTUNG" "Minecraft, aber du bist stinkend reich"
+warte 30
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /difficulty normal
+server /villa stufe 1
+server /gamemode survival @p
+server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+taste F1
+server /villa ort 58 26 43.5 180 6
+warte 4
+server /tick rate 6.667
+warte 3
+video start festung
+kapitel Mit der Zugangskarte in den Bunker
+warte 3
+klient aufzug Untergrundbasis
+warte 30
+kapitel Die Kommandozentrale
+server /gamemode spectator @p
+merke
+server fahrt 5 | 57.5 6.1 43 0 5 | 53.5 6.5 44.5 90 8 | 46 7.4 42 160 14 | 45.5 7.2 40 180 22
+bis 60 Fahrt fertig
+server /gamemode survival @p
+server /villa ort 45.5 6 39.6 180 25
+warte 4
+klient zentralemenue
+warte 5
+kapitel Festung einschalten – nur hier unten
+linksklick 640 407
+warte 9
+kapitel Die Villa wird zur Festung
+server /gamemode spectator @p
+merke
+server fahrt 16 | 55 40 150 180 15 | -15 50 125 222 22 | -32 55 55 270 22 | 55 72 -35 0 32 | 142 55 55 90 22 | 112 45 150 140 18
+bis 200 Fahrt fertig
+kapitel Minen rund um das Grundstück
+server /villa minentest
+warte 15
+kapitel Abwehrgeschütze und Himmelslaser
+server /villa ort 41 31 79 51 15
+warte 3
+server /summon minecraft:vindicator -25.5 88 32.5 {NoAI:1b}
+server /summon minecraft:vindicator -23.5 88 34.5 {NoAI:1b}
+server /summon minecraft:vindicator -27.5 88 31.5 {NoAI:1b}
+warte 18
+kapitel Raus durch den Notausgang
+server /gamemode survival @p
+server /villa ort 38.2 6 61.0 90 5
+warte 3
+druecke shift
+warte 4
+loslassen shift
+warte 6
+server /gamemode spectator @p
+merke
+server fahrt 7 | 37.5 6.1 61 90 0 | 20 6.1 61 90 0 | -20 6.1 61 90 0 | -47.5 6.1 61 90 0 | -49.5 6.1 60.5 90 -70
+bis 100 Fahrt fertig
+kapitel Die versteckte Falltür – nur mit Zugangskarte
+server /gamemode survival @p
+server /villa luke
+warte 5
+klick
+warte 6
+kapitel Draußen: die Festung
+server /gamemode spectator @p
+merke
+server fahrt 8 | -47 30 61 270 10 | -60 45 75 250 12 | -75 60 90 240 15
+bis 120 Fahrt fertig
+warte 4
+video stopp
+server /tick rate 20
+server /villa stufe 1

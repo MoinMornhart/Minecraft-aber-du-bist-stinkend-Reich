@@ -1,0 +1,78 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "notausgang_gruen": "stinkendreich:block/deko/notausgang_gruen",
+    "notausgang_mann": "stinkendreich:block/deko/notausgang_mann",
+    "particle": "stinkendreich:block/deko/notausgang_mann"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        3,
+        15
+      ],
+      "to": [
+        16,
+        13,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.0,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#notausgang_mann"
+        },
+        "south": {
+          "uv": [
+            0.0,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#notausgang_gruen"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            3,
+            1,
+            13
+          ],
+          "texture": "#notausgang_gruen"
+        },
+        "west": {
+          "uv": [
+            15,
+            3,
+            16.0,
+            13
+          ],
+          "texture": "#notausgang_gruen"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            15,
+            16.0,
+            16.0
+          ],
+          "texture": "#notausgang_gruen"
+        },
+        "down": {
+          "uv": [
+            0.0,
+            0.0,
+            16.0,
+            1
+          ],
+          "texture": "#notausgang_gruen"
+        }
+      }
+    }
+  ]
+}

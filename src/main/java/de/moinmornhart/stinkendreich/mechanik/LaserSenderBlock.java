@@ -3,6 +3,7 @@ package de.moinmornhart.stinkendreich.mechanik;
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.register.ModBloecke;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +22,8 @@ import net.minecraft.world.phys.Vec3;
  */
 public class LaserSenderBlock extends MechanikBlock {
     public static final int REICHWEITE = 24;
+    /** Größte Länge eines Strahls (Himmelslaser auf der Mauer, Wert {@code reichweite} aus dem Bauplan). */
+    public static final int MAX_REICHWEITE = 64;
 
     public LaserSenderBlock(Properties eigenschaften) {
         super(eigenschaften, Ausrichtung.ALLE, false, false);
@@ -39,38 +42,54 @@ public class LaserSenderBlock extends MechanikBlock {
     @Override
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity daten) {
         VillaZustand z = VillaZustand.get(welt.getServer());
-        boolean an = z.stufe() >= 3;
+        // Himmelslaser (nach oben) fahren in der Festung als Welle rund um die Villa hoch
+        boolean an = z.stufe() >= 3 && (zustand.getValue(Eigenschaften.RICHTUNG_ALLE) != Direction.UP || !z.festung()
+                || Festung.bereit(z, pos, true));
         Direction richtung = zustand.getValue(Eigenschaften.RICHTUNG_ALLE);
         BlockState strahl = ModBloecke.LASERSTRAHL.defaultBlockState().setValue(LaserstrahlBlock.ACHSE, richtung.getAxis());
 
+        int reichweite = Mth.clamp(daten.zahl("reichweite", REICHWEITE), 1, MAX_REICHWEITE);
+        // Animation: der Strahl wächst je Takt um zwei Blöcke und schrumpft beim Abschalten genauso von oben
         int laenge = 0;
         BlockPos.MutableBlockPos p = pos.mutable();
-        for (int i = 1; i <= REICHWEITE; i++) {
+        for (int i = 1; i <= reichweite; i++) {
             p.move(richtung);
-            BlockState s = welt.getBlockState(p);
-            if (s.is(ModBloecke.LASERSTRAHL)) {
-                if (!an) {
-                    welt.removeBlock(p, false);
-                }
-            } else if (s.isAir()) {
-                if (an) {
-                    welt.setBlock(p, strahl, 3);
-                }
-            } else {
+            if (!welt.getBlockState(p).is(ModBloecke.LASERSTRAHL)) {
                 break;
             }
             laenge = i;
         }
-        if (!an || laenge == 0) {
+        if (!an) {
+            for (int i = laenge; i > Math.max(0, laenge - 2); i--) {
+                welt.removeBlock(pos.relative(richtung, i), false);
+            }
             return;
         }
-        // Wer steht im Strahl?
+        for (int neu = 0; neu < 2 && laenge < reichweite; neu++) {
+            BlockPos q = pos.relative(richtung, laenge + 1);
+            if (!welt.getBlockState(q).isAir()) {
+                break;
+            }
+            welt.setBlock(q, strahl, 3);
+            laenge++;
+        }
+        if (laenge == 0) {
+            return;
+        }
+        // Wer steht im Strahl? In der Festung (Stufe 4) trifft er auch Monster und brennt richtig
         BlockPos ende = pos.relative(richtung, laenge);
         AABB bereich = new AABB(Vec3.atCenterOf(pos.relative(richtung)), Vec3.atCenterOf(ende)).inflate(0.3);
-        for (LivingEntity e : welt.getEntitiesOfClass(LivingEntity.class, bereich, z::istEindringling)) {
-            z.alarm(e.blockPosition(), Component.translatable("stinkendreich.alarm.grund.laser", e.getDisplayName()));
-            Kompat.schaden(e, welt, 3.0F);
+        boolean festung = z.festung();
+        for (LivingEntity e : welt.getEntitiesOfClass(LivingEntity.class, bereich,
+                x -> festung ? Festung.ziel(x, z) : z.istEindringling(x))) {
+            if (e instanceof net.minecraft.world.entity.player.Player) {
+                z.alarm(e.blockPosition(), Component.translatable("stinkendreich.alarm.grund.laser", e.getDisplayName()));
+            }
+            Kompat.schaden(e, welt, festung ? 12.0F : 3.0F);
             e.addEffect(new MobEffectInstance(MobEffects.GLOWING, 20 * 30, 0));
+            if (festung) {
+                e.igniteForSeconds(4.0F);
+            }
         }
     }
 }

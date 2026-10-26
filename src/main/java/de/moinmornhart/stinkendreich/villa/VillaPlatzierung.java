@@ -161,6 +161,10 @@ public final class VillaPlatzierung {
                 .orElseThrow(() -> new IllegalStateException("Strukturdatei villa/villa.nbt fehlt"));
         vorlage.placeInWorld(welt, ursprung, ursprung, new StructurePlaceSettings(), welt.getRandom(), Block.UPDATE_CLIENTS);
         zufahrtBauen(welt, ursprung, plan, y0, rand);
+        // Festung außerhalb des Bauplans: Minengürtel rund ums Grundstück, Notausgang bis zur versteckten Falltür
+        int minen = Festungsbau.minenfeld(welt, ursprung, plan, ZUFAHRT_X0, ZUFAHRT_X1);
+        BlockPos luke = Festungsbau.notausgang(welt, ursprung, plan);
+        StinkendReich.LOGGER.info("Festung: {} Minen, Notausgang bei {}", minen, luke);
 
         VillaInfo villa = new VillaInfo(ursprung, plan);
         Kompat.setzeSpawnPunkt(welt, villa.spawn(), villa.spawnBlick());
@@ -255,7 +259,7 @@ public final class VillaPlatzierung {
     }
 
     /** Höhe des natürlichen Bodens (erste Luft über Erde/Stein), ohne Bäume und Pflanzen. */
-    private static int bodenHoehe(ServerLevel welt, int x, int z) {
+    static int bodenHoehe(ServerLevel welt, int x, int z) {
         int y = welt.getHeight(Heightmap.Types.WORLD_SURFACE, x, z);
         int min = Kompat.minY(welt);
         BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos(x, y, z);

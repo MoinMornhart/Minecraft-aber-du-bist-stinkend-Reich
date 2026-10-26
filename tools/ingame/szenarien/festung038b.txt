@@ -1,0 +1,48 @@
+# 0.3.6: Festung mit Schwierigkeit „Normal“ (sonst verschwinden Monster): Himmelslaser, Mine im Gürtel ums Grundstück,
+# Abwehrgeschütze, Kommandozentrale mit Besprechungstisch, Büro-Monitore, versteckte Luke des Notausgangs
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /difficulty normal
+warte 30
+server /gamemode spectator @p
+taste F1
+server /villa ort 45.0 8.4 48.6 180 12
+warte 3
+bild y01_kommando
+server /villa ort 69.5 33.3 57.4 0 28
+warte 2
+bild y02_buero_monitore
+server /villa stufe 4
+warte 3
+server /villa ort 55 60 175 180 18
+warte 6
+bild y03_himmelslaser
+server /villa ort 12 40 128 160 30
+warte 4
+bild y04_minenguertel
+video start mine
+server /villa minentest
+warte 4
+video stopp
+server /villa ort 41 31 79 51 15
+warte 2
+video start geschuetz
+server /summon minecraft:vindicator -25.5 88 32.5 {NoAI:1b}
+server /summon minecraft:vindicator -23.5 88 34.5 {NoAI:1b}
+server /summon minecraft:vindicator -27.5 88 31.5 {NoAI:1b}
+warte 6
+video stopp
+server /villa ort 20.5 6.05 61.0 90 0
+warte 2
+bild y05_tunnel
+server /villa luke
+warte 3
+bild y06_luke_zu
+server /gamemode survival @p
+server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+warte 1
+klick
+warte 1.5
+bild y07_luke_offen
+server /villa stufe 1

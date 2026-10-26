@@ -56,6 +56,19 @@ public final class AutotestKlient {
         StinkendReich.LOGGER.warn("Autotest: Haltestelle {} nicht gefunden", ziel);
     }
 
+    /** Nächste Sicherheitszentrale bis 5 Blöcke um den Spieler. */
+    private static java.util.Optional<net.minecraft.core.BlockPos> naechsteZentrale(Minecraft client) {
+        net.minecraft.core.BlockPos mitte = client.player.blockPosition();
+        net.minecraft.core.BlockPos beste = null;
+        for (net.minecraft.core.BlockPos q : net.minecraft.core.BlockPos.betweenClosed(mitte.offset(-5, -3, -5), mitte.offset(5, 3, 5))) {
+            if (client.level.getBlockState(q).getBlock() instanceof de.moinmornhart.stinkendreich.mechanik.SicherheitszentraleBlock
+                    && (beste == null || q.distSqr(mitte) < beste.distSqr(mitte))) {
+                beste = q.immutable();
+            }
+        }
+        return java.util.Optional.ofNullable(beste);
+    }
+
     private static java.util.Optional<de.moinmornhart.stinkendreich.fernseher.FernseherEntity> naechsterFernseher(Minecraft client) {
         return client.level.getEntitiesOfClass(de.moinmornhart.stinkendreich.fernseher.FernseherEntity.class,
                         client.player.getBoundingBox().inflate(16), t -> true)
@@ -80,9 +93,14 @@ public final class AutotestKlient {
                             .stream().min(Comparator.comparingDouble(client.player::distanceToSqr))
                             .ifPresent(b -> KlientBruecke.butler.accept(b.getId()));
                     case "fernsehermenue" -> naechsterFernseher(client).ifPresent(tv -> KlientBruecke.fernseher.accept(tv.getId()));
+                    case "zentralemenue" -> naechsteZentrale(client).ifPresent(KlientBruecke.zentrale);
                     default -> {
                         if (z.startsWith("aufzug ")) {
                             aufzug(client, z.substring(7).trim());
+                        } else if (z.startsWith("zentrale ")) {
+                            // wie ein Knopf der nächsten Sicherheitszentrale, z. B. „zentrale stufe:4“
+                            String wert = z.substring(9).trim();
+                            naechsteZentrale(client).ifPresent(pos -> KompatClient.sende("zentrale", pos, wert));
                         } else if (z.startsWith("fernseher ")) {
                             // wie ein Knopf im Fernseher-Menü, z. B. „fernseher !abspielen|dQw4w9WgXcQ“
                             String befehl = z.substring(10).trim();

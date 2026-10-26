@@ -12,6 +12,9 @@
 [**▶️ Trailer**](docs/trailer.mp4) &nbsp;·&nbsp;
 [Installation](#-installation) &nbsp;·&nbsp;
 [Villa](#️-die-villa) &nbsp;·&nbsp;
+[Ankommen](#-ankommen-tor-zugbrücke-und-zugangskarte) &nbsp;·&nbsp;
+[Bunker](#️-bunker-und-festung) &nbsp;·&nbsp;
+[Festung](#-modus-festung) &nbsp;·&nbsp;
 [Butler](#-butler-james) &nbsp;·&nbsp;
 [Fuhrpark](#️-fuhrpark) &nbsp;·&nbsp;
 [Hubschrauber](#-hubschrauber) &nbsp;·&nbsp;
@@ -33,7 +36,7 @@
 
 In **jeder neuen Welt** steht am Spawn deine Villa – egal welcher Welttyp. Das Gelände drumherum wird geebnet und weich an die Landschaft angeblendet. Du startest vor dem Tor, mit der Zugangskarte in der Tasche. Bestehende Welten bleiben unberührt.
 
-Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke und Teakbänken · Ballsaal · Wohnzimmer mit Konzertflügel · Esszimmer für 18 Gäste · Luxusküche · Nachtclub im Keller mit Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen).
+Wassergraben mit Zugbrücke (wird im Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke und Teakbänken · Ballsaal · Wohnzimmer mit Konzertflügel · Esszimmer für 18 Gäste · Luxusküche · Nachtclub im Keller mit Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Kommandozentrale, Bunker-Suite, Waffenkammer, Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen) und Notausgang.
 
 <table>
 <tr>
@@ -49,6 +52,22 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td><img src="docs/bilder/garten_lounge.jpg" alt="Garten-Lounge"><br><sub><b>Garten-Lounge</b> im Westgarten mit Sofas, Marmortisch und Kronleuchter</sub></td>
 </tr>
 </table>
+
+## 🚪 Ankommen: Tor, Zugbrücke und Zugangskarte
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/bruecke.gif" alt="Die Zugbrücke fährt ein"><br><sub><b>Zugbrücke:</b> Geländer klappen weg, die Brücke senkt sich und gleitet ein, Mauern wachsen hoch</sub></td>
+<td width="50%"><img src="docs/bilder/bruecke_eingefahren.jpg" alt="Eingefahrene Zugbrücke"><br><sub><b>Eingefahren:</b> statt der Brücke Mauern über dem Graben</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/tor.jpg" alt="Eingangstor"><br><sub><b>Tor:</b> geht nur für Bewohner und Kartenbesitzer auf</sub></td>
+<td><img src="docs/bilder/zugangskarte.jpg" alt="Zugangskarte am Kartenleser"><br><sub><b>Zugangskarte</b> an den Kartenleser halten, die Tür geht auf</sub></td>
+</tr>
+</table>
+
+- **Zugbrücke:** Mit dem **Brückenschalter** innen an der Haustür, außen am Tor, im **Handy** („Zugbrücke ein/aus“) oder mit „Butler, mach die Brücke zu“ sicherst du die Brücke. Sie fährt dann mit Animation ein, und Mauern schützen vor dem Sturz in den Graben. Kommst du zu Fuß ans Tor oder fährst mit dem Auto aus der Garage, erkennt sie dich und fährt von selbst aus; 8 Sekunden nachdem alle drüben sind, fährt sie wieder ein.
+- **Wer darf was:** Der erste Spieler in der Welt ist der **Eigentümer**. Wer eine **Zugangskarte** trägt, ist **Bewohner** und darf alles wie du: Tore, Brücke, Kartenleser, Aufzug in den Bunker. Nur die **Alarmstufe** stellt der Eigentümer ein.
 
 ### 🥂 Drinnen: Party und Luxus
 
@@ -114,7 +133,58 @@ Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link ein
 
 **Fernbedienung:** Rechtsklick mit der Fernbedienung in der Hand öffnet das Menü des nächsten Fernsehers (bis 32 Blöcke). **Schleichen + Rechtsklick** auf einen Block legt sie ab, sie liegt dann flach auf Nachttisch oder Tisch. Rechtsklick auf die abgelegte Fernbedienung steuert den Fernseher ebenfalls. In der Villa liegt je eine im Schlafzimmer und im Penthouse-Kino.
 
-### 🔐 29 Mechanismen – alles eigene Blöcke
+### 🛡️ Bunker und Festung
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/bunker_suite.jpg" alt="Bunker-Suite mit riesigem Fernseher"><br><sub><b>Bunker-Suite:</b> Samtsofas vor dem 8 × 4 Blöcke großen Fernseher</sub></td>
+<td width="50%"><img src="docs/bilder/kommandozentrale.jpg" alt="Kommandozentrale"><br><sub><b>Kommandozentrale:</b> Monitorwand mit allen Kameras, Chefschreibtisch mit der Zentrale</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/bunker_gang.jpg" alt="Bunkergang"><br><sub><b>Bunkergang:</b> Stahlrippen, Rohre, Warnstreifen und roter Läufer</sub></td>
+<td><img src="docs/bilder/bunker_bad.jpg" alt="Bunker-Bad"><br><sub><b>Bad</b> mit goldener Toilette, Badewanne und Regendusche</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/bunker_bett.jpg" alt="Kingsize-Bett im Bunker"><br><sub><b>Schlafen</b> im Kingsize-Bett, rechts das Geheimregal</sub></td>
+<td><img src="docs/bilder/notausgang.jpg" alt="Notausgang"><br><sub><b>Notausgang:</b> versteckte Falltür 50 Blöcke neben der Villa</sub></td>
+</tr>
+</table>
+
+- **In den Bunker** fährt der Aufzug nur mit **Zugangskarte**. Unten warten Kommandozentrale, Waffenkammer, Geldspeicher und die **Bunker-Suite** hinter der Panzertür: riesiger Fernseher, Küche, Bad, Kingsize-Bett.
+- **Festung:** Den totalen Lockdown schaltest du nur hier unten ein, siehe [Modus: FESTUNG](#-modus-festung).
+- **Notausgang:** Vor dem Bücherregal in der Suite schleichen, es gleitet auf. Der Tunnel führt 50 Blöcke unter Graben, Lava und Minengürtel hindurch zu einer **versteckten Falltür** im Rasen, die nur mit Zugangskarte auf- und zugeht.
+
+## 🚨 Modus: FESTUNG
+
+<img src="docs/bilder/festung.jpg" alt="Die Villa im Modus Festung: Laser in den Himmel, Lava im Graben" width="100%">
+
+Der totale Lockdown. Die Villa wird uneinnehmbar – von allen Seiten und auch von oben.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/festung_geschuetz.jpg" alt="Abwehrgeschütze schießen"><br><sub><b>Abwehrgeschütze</b> fahren aus und treffen jeden Gegner</sub></td>
+<td width="50%"><img src="docs/bilder/festung_mine.jpg" alt="Minengürtel"><br><sub><b>Minengürtel:</b> rotes Licht = scharf</sub></td>
+</tr>
+</table>
+
+**Einschalten:** nur an der Sicherheitszentrale auf dem Chefschreibtisch der **Kommandozentrale im Bunker** (Knopf „Festung“), und nur der Eigentümer darf das. Ausschalten genauso, mit einer der Stufen 0 bis 3.
+
+**Was dann passiert** – alles mit Animation, im Chat erscheint nichts, nur über der Hotbar steht „⚠ FESTUNG AKTIV ⚠“:
+
+| | |
+|---|---|
+| 🚨 **Sirenen** | heulen im ganzen Haus, alle Warnleuchten blinken |
+| 🔫 **Abwehrgeschütze** | fahren nacheinander rund um die Mauer aus und schießen mit Lasern auf jedes Monster und jeden Eindringling bis 32 Blöcke weit; auf der Mauerkrone wechseln sich Geschütze und Himmelslaser ab |
+| 🔴 **Himmelslaser** | wachsen auf der Mauerkrone als Welle rundherum 40 Blöcke senkrecht in den Himmel; wer sie berührt, verbrennt – so kommt auch mit Elytra oder als Phantom niemand von oben herein |
+| 💣 **Minen** | im 40 Blöcke breiten Gürtel rund um das Grundstück werden von innen nach außen scharf; wer als Monster oder Eindringling drauftritt, fliegt in die Luft |
+| 🌉 **Zugbrücke** | fährt ein und kommt nur noch für Bewohner heraus |
+| 🌋 **Graben** | wird zu Lava, Rollläden und Tor gehen zu, die Laser im Haus sind an |
+
+**Wer verschont bleibt:** du, alle Bewohner und jeder mit Zugangskarte, James, Mitarbeiter, Bodyguards, Tänzerinnen, Tiere und Dorfbewohner. Explosionen und Laser beschädigen keine Blöcke.
+
+**Raus kommst du** auch im Lockdown: durch den Notausgang hinter dem Bücherregal in der Bunker-Suite (davor schleichen). Der Tunnel endet 50 Blöcke neben der Villa an einer versteckten Falltür im Rasen, die nur mit Zugangskarte aufgeht.
+
+### 🔐 32 Mechanismen – alles eigene Blöcke
 
 <table>
 <tr>
@@ -136,9 +206,9 @@ Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link ein
 
 | Bereich | Was drin ist |
 |---|---|
-| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 · Lava-Graben, solange die Anlage an und du auf dem Grundstück bist (im Lockdown immer) · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat |
-| 🪪 **Zugang** | Zugangskarte · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Portaltür als Haustür · Rollläden · Schiebetüren · Privattür (nur Bewohner) · Sicherheitstüren für Büro und Kontrollraum und Banktür im Bunker (nur mit Zugangskarte, bleiben offen, bis du sie schließt) |
-| 🛗 **Im Haus** | Aufzug zu allen Etagen und in den Bunker · Überwachungsraum mit Kameras · Geheimgang hinter dem Bücherregal · magischer Eingang zum Geheimclub (schleichen) · Panikraum · Fluchttunnel |
+| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 und Festung · Lava-Graben, solange die Anlage an und du auf dem Grundstück bist (im Lockdown immer) · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat · **Festung**: Minengürtel ums Grundstück, Abwehrgeschütze und Himmelslaser auf der Mauer |
+| 🪪 **Zugang** | Zugangskarte (wer eine hat, ist Bewohner) · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Zugbrücke mit Schaltern innen und außen · Portaltür als Haustür · Rollläden · Schiebetüren · Privattür (nur Bewohner) · Sicherheitstüren für Büro und Kontrollraum und Banktür im Bunker (nur mit Zugangskarte, bleiben offen, bis du sie schließt) |
+| 🛗 **Im Haus** | Aufzug zu allen Etagen, in den Bunker nur mit Zugangskarte · Überwachungsraum und Kommandozentrale mit Kameras · magische Geheimregale (schleichen) zum Geheimclub und zum Notausgang · Bunker-Suite hinter der Panzertür · Notausgang zu einer versteckten Falltür 50 Blöcke neben der Villa |
 | 💎 **Tresor** | Schmuck-Tresor mit Fallen und versteckten Entschärfknöpfen |
 | 🛁 **Komfort** | Zwei Konzertflügel zum Spielen · Nachttische mit Schublade · Poolabdeckung · Wasserrutsche mit Schub · beheizter Whirlpool · Badewanne zum Reinsetzen · Toilette mit Spülung · Kamin · Garagentor |
 
@@ -177,6 +247,7 @@ Sprich ihn im Chat an – mit „Butler“ oder seinem Namen –, nimm `/butler 
 | `Butler, fahr mich zum Strand` · `fahr mich dahin` · `fahr mich nach Hause` | chauffiert dich zum gemerkten Ort, dahin, wo du hinschaust, oder zur Villa |
 | `Butler, merk dir den Ort als Strand` | merkt sich die Stelle, an der du stehst (`/butler orte` zeigt alle) |
 | `Butler, hol den Hubschrauber` · `flieg mich zum Strand` | holt dich mit dem Hubschrauber ab, fliegt dich hin und landet |
+| `Butler, mach die Brücke zu` · `Brücke auf` | fährt die Zugbrücke ein oder aus |
 | `folg mir` · `bleib hier` · `geh nach Hause` · `komm her` · `stopp` · `hilfe` | genau das |
 
 Außerdem: `/butler rufen` holt ihn herbei (oder stellt dir einen eigenen ein), `/butler truhe` macht die angeschaute Truhe zu seiner Lieferkiste, und das **Butler-Glöckchen** ruft ihn auch.
@@ -271,6 +342,7 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 | **Aufträge** | wie im Chat: Eisen, Diamanten, Holz, Essen, Truhen sortieren – oder ein eigener Satz |
 | **Mitarbeiter bestellen** | eine Mitarbeiterkiste kommt ins Inventar |
 | **Bodyguards rufen / heim** | zwei Leibwächter kommen oder gehen nach Hause |
+| **Zugbrücke ein/aus** | sichert die Brücke oder fährt sie wieder aus (nur Bewohner) |
 
 **Mitarbeiter:** Stell die Mitarbeiterkiste auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Sie graben sich selbst zum Erz und bringen jede Ladung in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis und Holz), Schleichen + Rechtsklick zeigt, was er gerade dabeihat.
 
@@ -413,7 +485,7 @@ Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die
 
 ## ⚙️ Einstellungen
 
-Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Lava-Graben an/aus, Name und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Höchstgeschwindigkeit des Autos, Tempo von Hubschrauber und Chauffeur, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port sowie die Update-Prüfung.
+Alle Einstellungen stehen mit Erklärung in `config/stinkendreich.json`, unter anderem: Villa an/aus, Breite der Anblendung, Lava-Graben an/aus, Name, Anrede und Arbeitstempo des Butlers, Suchradius, Jagen erlaubt, Claude-Schlüssel und -Modell, Höchstgeschwindigkeit des Autos, Tempo von Hubschrauber und Chauffeur, Straßenbau an/aus, Hörweite der Musikanlage, Musikordner, Spotify-Client-ID und -Port, Videos im Fernseher, Lautstärke des Fernsehers sowie die Update-Prüfung.
 
 ## 🔄 Updates
 
@@ -429,7 +501,7 @@ Beim Start schaut die Mod in den Releases dieses Projekts nach einer neueren Ver
 ./gradlew :1.21.4:buildAndCollect  # nur eine Version
 ```
 
-Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus `tools/ingame/szenarien/fotos.txt`.
+Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py`.
 
 **Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
 

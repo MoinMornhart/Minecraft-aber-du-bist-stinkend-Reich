@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 09:15 Uhr (Philip ist wach)_
+_Zuletzt aktualisiert: 2026-10-26, 12:40 Uhr (Philip ist wach)_
 
 ## Erledigt
 
@@ -213,6 +213,28 @@ _Zuletzt aktualisiert: 2026-10-26, 09:15 Uhr (Philip ist wach)_
   Haut, Überzüge mit `dehnen`) mit Klickfeld. Übersetzt in 1.21.5–1.21.10 und 26.3, noch nicht im Spiel geprüft
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
+
+## Version 0.3.6 (in Arbeit, Philips Wünsche vom 26.10. mittags)
+
+- Erledigt (26.3 geprüft): Haustür öffnet alle drei Reihen (`TorsteuerungBlock.spalteSchalten`), Teppich unter der Tür,
+  James sitzt in der Limo tiefer (`vehicleAttachment` 0,6), **Zugbrücke** (`mechanik/Zugbruecke`, Marke „bruecke“,
+  Animation mit Block-Displays: ab 26.3 BlockState als `id`/`properties`, davor `Name`/`Properties`; Mauern davor,
+  Sicherung, fährt für Bewohner zu Fuß und im Auto aus, Schalter innen/außen, Handy, James, `/villa bruecke ein|aus`).
+- Rechte: Zugangskarte = Bewohner (`VillaZustand.istBewohner`), Alarmstufe nur der Eigentümer (erster Bewohner).
+- Aufzug: Haltestelle „Untergrundbasis“ (Wert `karte=ja`) nur mit Zugangskarte (`AufzugstafelBlock.nurMitKarte`).
+- Bunker-Suite (`bunker_suite()` in villa.py): Fernseher 8 × 4 (`FernseherEntity.setzeGroesse`, Marke mit Breite/Höhe),
+  Bad mit Goldtoilette, Kingsize-Bett, Küche; Gang mit Stahlrippen, Rohren, Warnstreifen (`bunker_gang()`).
+  Geheimregal im Bunker geht per Schleichen auf wie am Club (gleiche `Geheimgang`-Logik).
+- In Arbeit: **Stufe 4 „Festung“** (`VillaZustand.FESTUNG`, nur an der Zentrale mit `kommando=ja` in der
+  Kommandozentrale), `Festung` (Ziele: Monster + Eindringlinge), `LandmineBlock` (55 Minen im Rasen, `festung()` in
+  villa.py), `AbwehrgeschuetzBlock` (9 auf der Innenmauer, Laser 40 Blöcke), Zugbrücke in der Festung immer gesichert,
+  Notausgang (Tunnel unter Graben und Lava hindurch bis x 2, Leiter, Luke, Privattür im Außenzaun, grüne Schilder
+  `notausgang_links/_rechts` aus deko.py), Kommandozentrale wie das Büro (`kommandozentrale()`), Tür zur Suite.
+  Test: `festung038.txt`, Testhilfe `klient zentrale <wert>` und `klient zentralemenue`.
+- Danach: README komplett neu mit allen Bildern geprüft (Philip: Drohnenbild veraltet), Trailer, Release 0.3.6.
+- Ganz am Schluss (Philip: „Rest des Tages dafür“): **Paper-Plugin** und **mehrere Villen auf dem Server** mit
+  Abstand, Straßen zwischen den Villen, Villen im Handy-Navi, Besitzer über dem Butler, auf der Zugangskarte und
+  auf dem Nummernschild.
 
 ## Version 0.3.5 (veröffentlicht 26.10. vormittags, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.5)
 

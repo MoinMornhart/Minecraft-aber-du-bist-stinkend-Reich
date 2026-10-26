@@ -273,8 +273,61 @@ def tex_zugangskarte():
     return img
 
 
+def tex_landmine():
+    """Oberseite der Landmine: olivgrüner Stahl mit Nieten im Kreis."""
+    img, d = neu((74, 80, 52))
+    rauschen(img, 5, 21)
+    d.ellipse([1, 1, 14, 14], outline=(52, 56, 36))
+    for x, y in ((8, 2), (13, 8), (8, 13), (2, 8), (4, 4), (12, 4), (12, 12), (4, 12)):
+        d.point((x, y), fill=(120, 126, 92))
+    return img
+
+
+def tex_landmine_licht(an: bool):
+    img, d = neu((255, 40, 30) if an else (90, 18, 16))
+    if an:
+        d.rectangle([5, 5, 10, 10], fill=(255, 200, 180))
+    return img
+
+
+def tex_geschuetz():
+    """Gehäuse des Abwehrgeschützes: dunkler Stahl mit Goldkante und Warnstreifen."""
+    img, d = metall(23, (46, 48, 52))
+    d.line([(0, 0), (15, 0)], fill=(212, 175, 55))
+    for i in range(-16, 16, 5):
+        d.polygon([(i, 15), (i + 2, 15), (i + 7, 11), (i + 5, 11)], fill=(230, 190, 30))
+    return img
+
+
+def tex_geschuetz_lauf():
+    img, d = neu((20, 20, 22))
+    rauschen(img, 3, 24)
+    d.rectangle([5, 5, 10, 10], fill=(6, 6, 8))
+    return img
+
+
+def tex_geheimluke():
+    """Versteckte Falltür: Rasen wie auf einer Wiese (Ebenen-Grün), kaum sichtbare Fuge am Rand."""
+    rnd = random.Random(31)
+    img = Image.new("RGBA", (16, 16))
+    px = img.load()
+    for x in range(16):
+        for y in range(16):
+            g = rnd.randint(-14, 14)
+            px[x, y] = (max(0, 98 + g), max(0, 158 + g), max(0, 68 + g // 2), 255)
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, 15, 15], outline=(84, 138, 58))
+    return img
+
+
 TEXTUREN = {
     "technik_seite": tex_technik_seite,
+    "geheimluke": tex_geheimluke,
+    "landmine": tex_landmine,
+    "landmine_licht": lambda: tex_landmine_licht(False),
+    "landmine_licht_an": lambda: tex_landmine_licht(True),
+    "geschuetz": tex_geschuetz,
+    "geschuetz_lauf": tex_geschuetz_lauf,
     "kartenleser": lambda: tex_kartenleser(False),
     "kartenleser_an": lambda: tex_kartenleser(True),
     "tastenfeld": lambda: tex_tastenfeld(False),
@@ -336,6 +389,43 @@ def m_kamera() -> dict:
             {"from": [5, 7, 6], "to": [11, 12, 14], "rotation": {"angle": -22.5, "axis": "x", "origin": [8, 10, 14]},
              "faces": {"north": {"texture": "#l"}, "south": {"texture": "#g"}, "east": {"texture": "#g"},
                        "west": {"texture": "#g"}, "up": {"texture": "#g"}, "down": {"texture": "#g"}}},
+        ],
+    }
+
+
+def m_landmine(licht: str) -> dict:
+    """Flacher Minenteller mit Deckel und rotem Licht in der Mitte."""
+    t, l = B("landmine"), B(licht)
+    alle = ("north", "south", "east", "west", "up", "down")
+    return {
+        "parent": "minecraft:block/block",
+        "textures": {"particle": t, "t": t, "l": l},
+        "elements": [
+            {"from": [3, 0, 3], "to": [13, 1, 13], "faces": {f: {"texture": "#t"} for f in alle}},
+            {"from": [5, 1, 5], "to": [11, 2, 11], "faces": {f: {"texture": "#t"} for f in alle}},
+            {"from": [7, 2, 7], "to": [9, 2.5, 9], "faces": {f: {"texture": "#l"} for f in alle}},
+        ],
+    }
+
+
+def m_geschuetz(eingefahren: bool = False) -> dict:
+    """Abwehrgeschütz: Sockel, Drehkopf mit Goldring, zwei Läufe nach vorn (Norden). Eingefahren steckt der Kopf
+    im Sockel und die Läufe sind verborgen (außerhalb der Festung)."""
+    g, lauf, gold = B("geschuetz"), B("geschuetz_lauf"), "minecraft:block/gold_block"
+    alle = ("north", "south", "east", "west", "up", "down")
+    def teil(von, bis, tex):
+        return {"from": von, "to": bis, "faces": {f: {"texture": tex} for f in alle}}
+    return {
+        "parent": "minecraft:block/block",
+        "textures": {"particle": g, "g": g, "l": lauf, "gold": gold},
+        "elements": [teil([2, 0, 2], [14, 3, 14], "#g"), teil([4, 3, 4], [12, 5, 12], "#g"), teil([5, 5, 5], [11, 6, 11], "#gold")]
+        if eingefahren else [
+            teil([2, 0, 2], [14, 3, 14], "#g"),
+            teil([5, 3, 5], [11, 4, 11], "#gold"),
+            teil([4, 4, 4], [12, 10, 12], "#g"),
+            teil([5, 6, -3], [7, 8, 4], "#l"),
+            teil([9, 6, -3], [11, 8, 4], "#l"),
+            teil([7, 10, 6], [9, 11, 10], "#l"),
         ],
     }
 
@@ -411,6 +501,17 @@ def bs_alle(modell: str) -> dict:
         if y:
             e["y"] = y
         v[f"facing={f}"] = e
+    return {"variants": v}
+
+
+def bs_falltuer(name: str) -> dict:
+    """Blockzustände einer Falltür wie im Spiel (Richtung × Hälfte × offen)."""
+    v = {}
+    for f, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+        v[f"facing={f},half=bottom,open=false"] = {"model": B(name), "y": y}
+        v[f"facing={f},half=top,open=false"] = {"model": B(name + "_top"), "y": y}
+        v[f"facing={f},half=bottom,open=true"] = {"model": B(name + "_open"), "y": y}
+        v[f"facing={f},half=top,open=true"] = {"model": B(name + "_open"), "x": 180, "y": (y + 180) % 360}
     return {"variants": v}
 
 
@@ -498,6 +599,17 @@ BLOECKE: dict[str, dict] = {
                            zustand=bs_waagerecht(B("kaminsteuerung")), de="Kaminschalter", en="Fireplace Switch"),
     "brueckenschalter": dict(modelle={"brueckenschalter": m_wandplatte(B("brueckenschalter"))},
                              zustand=bs_waagerecht(B("brueckenschalter")), de="Brückenschalter", en="Drawbridge Switch"),
+    "landmine": dict(modelle={"landmine": m_landmine("landmine_licht"), "landmine_an": m_landmine("landmine_licht_an")},
+                     zustand={"variants": {"lit=false": {"model": B("landmine")}, "lit=true": {"model": B("landmine_an")}}},
+                     de="Landmine (scharf in Stufe 4)", en="Land Mine (armed at level 4)"),
+    "geheimluke": dict(modelle={"geheimluke": {"parent": "minecraft:block/template_trapdoor_bottom", "textures": {"texture": B("geheimluke")}},
+                                "geheimluke_top": {"parent": "minecraft:block/template_trapdoor_top", "textures": {"texture": B("geheimluke")}},
+                                "geheimluke_open": {"parent": "minecraft:block/template_trapdoor_open", "textures": {"texture": B("geheimluke")}}},
+                       zustand=bs_falltuer("geheimluke"), de="Versteckte Falltür (nur mit Zugangskarte)",
+                       en="Hidden Trapdoor (key card only)"),
+    "abwehrgeschuetz": dict(modelle={"abwehrgeschuetz": m_geschuetz(), "abwehrgeschuetz_ein": m_geschuetz(eingefahren=True)},
+                            zustand=bs_waagerecht("", {"powered=true": B("abwehrgeschuetz"), "powered=false": B("abwehrgeschuetz_ein")}),
+                            de="Abwehrgeschütz", en="Defense Turret"),
 }
 
 TEXTE_DE = {
@@ -507,6 +619,8 @@ TEXTE_DE = {
     "stinkendreich.stufe.1": "Stufe 1 – Alarm",
     "stinkendreich.stufe.2": "Stufe 2 – Lockdown",
     "stinkendreich.stufe.3": "Stufe 3 – Laser",
+    "stinkendreich.stufe.4": "Festung",
+    "stinkendreich.festung.an": "⚠ FESTUNG AKTIV ⚠",
     "stinkendreich.stufe.gesetzt": "Sicherheitssystem: %s",
     "stinkendreich.alarm.start": "ALARM! %s (bei %s %s %s)",
     "stinkendreich.alarm.ende": "Alarm beendet.",
@@ -518,9 +632,11 @@ TEXTE_DE = {
     "stinkendreich.alarm.grund.karte": "%s hat ohne Karte versucht, eine Tür zu öffnen",
     "stinkendreich.alarm.grund.code": "%s hat dreimal einen falschen Code eingegeben",
     "stinkendreich.alarm.grund.tresor": "%s hat die Tresorfalle ausgelöst",
+    "stinkendreich.alarm.grund.mine": "%s ist auf eine Mine getreten",
     "stinkendreich.zentrale.status": "Sicherheitssystem: %s · Zustand: %s · Bewohner: %s",
     "stinkendreich.zentrale.eingetragen": "Du bist jetzt Bewohner der Villa.",
     "stinkendreich.zentrale.nur_eigentuemer": "Die Alarmstufe kann nur der Eigentümer der Villa einstellen.",
+    "stinkendreich.zentrale.nur_bunker": "Die Festung lässt sich nur in der Kommandozentrale im Bunker einschalten.",
     "stinkendreich.zentrale.alarm_aus": "Alarm abschalten",
     "stinkendreich.zentrale.eintragen": "Mich als Bewohner eintragen",
     "stinkendreich.zugang.verweigert": "Zugriff verweigert.",
@@ -584,6 +700,8 @@ TEXTE_EN = {
     "stinkendreich.stufe.1": "Level 1 – Alarm",
     "stinkendreich.stufe.2": "Level 2 – Lockdown",
     "stinkendreich.stufe.3": "Level 3 – Lasers",
+    "stinkendreich.stufe.4": "Fortress",
+    "stinkendreich.festung.an": "⚠ FORTRESS ACTIVE ⚠",
     "stinkendreich.stufe.gesetzt": "Security system: %s",
     "stinkendreich.alarm.start": "ALARM! %s (at %s %s %s)",
     "stinkendreich.alarm.ende": "Alarm ended.",
@@ -595,9 +713,11 @@ TEXTE_EN = {
     "stinkendreich.alarm.grund.karte": "%s tried to open a door without a card",
     "stinkendreich.alarm.grund.code": "%s entered a wrong code three times",
     "stinkendreich.alarm.grund.tresor": "%s triggered the vault trap",
+    "stinkendreich.alarm.grund.mine": "%s stepped on a mine",
     "stinkendreich.zentrale.status": "Security system: %s · State: %s · Residents: %s",
     "stinkendreich.zentrale.eingetragen": "You are now a resident of the villa.",
     "stinkendreich.zentrale.nur_eigentuemer": "Only the owner of the villa can change the alarm level.",
+    "stinkendreich.zentrale.nur_bunker": "The fortress mode can only be switched on in the bunker's command center.",
     "stinkendreich.zentrale.alarm_aus": "Turn off alarm",
     "stinkendreich.zentrale.eintragen": "Register me as resident",
     "stinkendreich.zugang.verweigert": "Access denied.",

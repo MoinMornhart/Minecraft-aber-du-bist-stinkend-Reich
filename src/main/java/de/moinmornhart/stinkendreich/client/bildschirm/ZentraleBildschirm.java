@@ -1,6 +1,9 @@
 package de.moinmornhart.stinkendreich.client.bildschirm;
 
 import de.moinmornhart.stinkendreich.client.KompatClient;
+import de.moinmornhart.stinkendreich.mechanik.SicherheitszentraleBlock;
+import de.moinmornhart.stinkendreich.mechanik.VillaZustand;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
@@ -15,7 +18,9 @@ public class ZentraleBildschirm extends MenueBildschirm {
 
     @Override
     protected void knoepfe() {
-        for (int stufe = 0; stufe <= 3; stufe++) {
+        // Stufe 4 (Festung) gibt es nur an der Zentrale in der Kommandozentrale im Bunker
+        boolean bunker = SicherheitszentraleBlock.kommandozentrale(Minecraft.getInstance().level, pos);
+        for (int stufe = 0; stufe <= (bunker ? VillaZustand.MAX_STUFE : VillaZustand.FESTUNG - 1); stufe++) {
             int s = stufe;
             knopf(Component.translatable("stinkendreich.stufe." + s), () -> senden("stufe:" + s));
         }

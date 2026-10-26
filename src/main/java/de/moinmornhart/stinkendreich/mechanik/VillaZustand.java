@@ -32,10 +32,13 @@ import java.util.UUID;
  * entschärfte Tresorfallen. Wird im Weltordner als {@code stinkendreich-zustand.json} gespeichert.
  *
  * <p>Stufen: 0 = aus, 1 = Alarm bei Eindringlingen, 2 = zusätzlich Lockdown (Rollläden, Tor zu),
- * 3 = zusätzlich Laser.</p>
+ * 3 = zusätzlich Laser, 4 = Festung (totaler Lockdown): Zugbrücke eingefahren, Minen scharf, Abwehrgeschütze
+ * schießen auf Monster und Eindringlinge. Stufe 4 lässt sich nur an der Zentrale im Bunker einschalten.</p>
  */
 public final class VillaZustand {
-    public static final int MAX_STUFE = 3;
+    public static final int MAX_STUFE = 4;
+    /** Ab dieser Stufe ist die Villa eine Festung (siehe {@link Festung}). */
+    public static final int FESTUNG = 4;
     private static final String DATEI = StinkendReich.MOD_ID + "-zustand.json";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static VillaZustand aktuell;
@@ -43,6 +46,8 @@ public final class VillaZustand {
     private int stufe = 1;
     private final Map<UUID, String> bewohner = new LinkedHashMap<>();
     private long alarmBis;
+    /** Spielzeit, zu der die Festung eingeschaltet wurde (für die Animation; nicht gespeichert, 0 = schon lange an). */
+    private long festungSeit;
     private long tresorEntschaerftBis;
     /** Wann welcher Entschärfknopf zuletzt gedrückt wurde (nicht gespeichert). */
     private final Map<BlockPos, Long> entschaerfDruecke = new HashMap<>();
@@ -147,11 +152,30 @@ public final class VillaZustand {
         return stufe;
     }
 
+    /** Totaler Lockdown: Minen und Abwehrgeschütze scharf, Zugbrücke bleibt für Fremde eingefahren. */
+    public boolean festung() {
+        return stufe >= FESTUNG;
+    }
+
     public void setzeStufe(int neu) {
+        boolean warFestung = festung();
         stufe = Math.max(0, Math.min(MAX_STUFE, neu));
         speichern();
+        if (festung() && !warFestung) {
+            // Festung: Sirenen und Warnleuchten im ganzen Haus, Geschütze, Laser und Minen fahren nacheinander hoch
+            // (siehe Festung.verzoegerung). Nur über der Hotbar, nichts im Chat.
+            festungSeit = jetzt(server);
+            alarmBis = festungSeit + 20 * 12;
+            anBewohner(Component.translatable("stinkendreich.festung.an").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), true);
+            return;
+        }
         anBewohner(Component.translatable("stinkendreich.stufe.gesetzt",
                 Component.translatable("stinkendreich.stufe." + stufe)).withStyle(ChatFormatting.AQUA), true);
+    }
+
+    /** Ticks seit dem Einschalten der Festung (groß, wenn sie schon vor dem Laden der Welt an war). */
+    public long festungTicks() {
+        return festungSeit == 0 ? Long.MAX_VALUE / 2 : jetzt(server) - festungSeit;
     }
 
     // ---------------- Bewohner ----------------
@@ -201,8 +225,9 @@ public final class VillaZustand {
         alarmBis = jetzt(server) + 20 * 30;
         if (neu) {
             StinkendReich.LOGGER.info("Alarm bei {}: {}", ort.toShortString(), grund.getString());
+            // In der Festung nur über der Hotbar (Philip: „im Chat soll nichts kommen“)
             anBewohner(Component.translatable("stinkendreich.alarm.start", grund, ort.getX(), ort.getY(), ort.getZ())
-                    .withStyle(ChatFormatting.RED, ChatFormatting.BOLD), false);
+                    .withStyle(ChatFormatting.RED, ChatFormatting.BOLD), festung());
         }
     }
 

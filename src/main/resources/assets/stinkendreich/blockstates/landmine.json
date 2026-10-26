@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "stinkendreich:block/landmine"
+    },
+    "lit=true": {
+      "model": "stinkendreich:block/landmine_an"
+    }
+  }
+}

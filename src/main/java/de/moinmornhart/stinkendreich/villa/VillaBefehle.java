@@ -60,6 +60,8 @@ public final class VillaBefehle {
                         .then(Commands.literal("bruecke").requires(Kompat.istOperator())
                                 .then(Commands.literal("ein").executes(k -> bruecke(k, true)))
                                 .then(Commands.literal("aus").executes(k -> bruecke(k, false))))
+                        .then(Commands.literal("minentest").requires(Kompat.istOperator()).executes(VillaBefehle::minentest))
+                        .then(Commands.literal("luke").requires(Kompat.istOperator()).executes(VillaBefehle::luke))
                         .then(Commands.literal("ort").requires(Kompat.istOperator())
                                 .then(Commands.argument("x", DoubleArgumentType.doubleArg())
                                         .then(Commands.argument("y", DoubleArgumentType.doubleArg())
@@ -118,6 +120,53 @@ public final class VillaBefehle {
                 u.getY() + DoubleArgumentType.getDouble(k, "y"),
                 u.getZ() + DoubleArgumentType.getDouble(k, "z"), blick, neigung);
         return 1;
+    }
+
+    /** Testhilfe: stellt einen reglosen Diener (Monster) auf die nächste Landmine bis 32 Blöcke um den Spieler. */
+    private static int minentest(CommandContext<CommandSourceStack> k) {
+        ServerLevel welt = k.getSource().getLevel();
+        BlockPos mitte = BlockPos.containing(k.getSource().getPosition());
+        BlockPos beste = null;
+        for (BlockPos q : BlockPos.betweenClosed(mitte.offset(-32, -24, -32), mitte.offset(32, 24, 32))) {
+            if (welt.getBlockState(q).is(de.moinmornhart.stinkendreich.register.ModBloecke.LANDMINE)
+                    && (beste == null || q.distSqr(mitte) < beste.distSqr(mitte))) {
+                beste = q.immutable();
+            }
+        }
+        if (beste == null) {
+            k.getSource().sendFailure(Component.literal("Keine Mine in der Nähe"));
+            return 0;
+        }
+        // Kamera 7 Blöcke südlich und 4 höher, Blick auf die Mine
+        if (k.getSource().getEntity() instanceof net.minecraft.server.level.ServerPlayer sp) {
+            Kompat.versetzen(sp, beste.getX() + 0.5, beste.getY() + 4.0, beste.getZ() + 7.5, 180.0F, 30.0F);
+        }
+        Kompat.befehl(k.getSource().getServer(), "summon minecraft:vindicator " + (beste.getX() + 0.5) + " " + beste.getY()
+                + " " + (beste.getZ() + 0.5) + " {NoAI:1b}");
+        StinkendReich.LOGGER.info("Minentest: Diener auf der Mine bei {}", beste);
+        return 1;
+    }
+
+    /** Testhilfe: stellt den Spieler neben die versteckte Falltür des Notausgangs (Blick auf die Luke). */
+    private static int luke(CommandContext<CommandSourceStack> k) throws CommandSyntaxException {
+        Optional<VillaPlatzierung.VillaInfo> villa = VillaPlatzierung.villa();
+        if (villa.isEmpty() || VillaDaten.get().marke("notausgang").isEmpty()) {
+            k.getSource().sendFailure(Component.translatable("stinkendreich.villa.keine"));
+            return 0;
+        }
+        com.google.gson.JsonArray m = VillaDaten.get().marke("notausgang").get(0);
+        BlockPos u = villa.get().ursprung();
+        int x = u.getX() + m.get(0).getAsInt() - m.get(3).getAsInt(), z = u.getZ() + m.get(2).getAsInt();
+        ServerLevel welt = k.getSource().getLevel();
+        for (int y = Kompat.maxY(welt) - 1; y > Kompat.minY(welt); y--) {
+            if (welt.getBlockState(new BlockPos(x, y, z)).is(de.moinmornhart.stinkendreich.register.ModBloecke.GEHEIMLUKE)) {
+                teleport(k.getSource(), x + 3.5, y + 1.0, z + 0.5, 90.0F, 35.0F);
+                StinkendReich.LOGGER.info("Luke des Notausgangs bei {} {} {}", x, y, z);
+                return 1;
+            }
+        }
+        k.getSource().sendFailure(Component.literal("Keine Luke gefunden"));
+        return 0;
     }
 
     /**

@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,powered=true": {
+      "model": "stinkendreich:block/abwehrgeschuetz"
+    },
+    "facing=north,powered=false": {
+      "model": "stinkendreich:block/abwehrgeschuetz_ein"
+    },
+    "facing=east,powered=true": {
+      "model": "stinkendreich:block/abwehrgeschuetz",
+      "y": 90
+    },
+    "facing=east,powered=false": {
+      "model": "stinkendreich:block/abwehrgeschuetz_ein",
+      "y": 90
+    },
+    "facing=south,powered=true": {
+      "model": "stinkendreich:block/abwehrgeschuetz",
+      "y": 180
+    },
+    "facing=south,powered=false": {
+      "model": "stinkendreich:block/abwehrgeschuetz_ein",
+      "y": 180
+    },
+    "facing=west,powered=true": {
+      "model": "stinkendreich:block/abwehrgeschuetz",
+      "y": 270
+    },
+    "facing=west,powered=false": {
+      "model": "stinkendreich:block/abwehrgeschuetz_ein",
+      "y": 270
+    }
+  }
+}

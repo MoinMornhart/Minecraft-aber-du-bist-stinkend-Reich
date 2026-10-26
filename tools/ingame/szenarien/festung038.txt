@@ -1,0 +1,78 @@
+# 0.3.6: Kommandozentrale, Festung (Stufe 4) nur dort, Brücke fährt ein, Mine und Abwehrgeschütze gegen Diener, Notausgang
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /gamemode spectator @p
+taste F1
+# Kommandozentrale im Bunker
+server /villa ort 45.0 8.3 43.5 180 8
+warte 3
+bild z01_kommando
+server /villa ort 51.2 9.6 47.6 140 18
+warte 2
+bild z02_kommando_schraeg
+# Stufe 4 im Büro oben: abgelehnt
+server /gamemode survival @p
+server /villa ort 71.5 32 58.5 0 30
+warte 2
+klient zentrale stufe:4
+warte 1.5
+bild z03_buero_abgelehnt
+# In der Kommandozentrale: Menü mit Stufe 4, Festung an
+server /villa ort 45.5 6 39.6 180 25
+warte 2
+klient zentralemenue
+warte 1.5
+bild z04_menue
+klient schliessen
+klient zentrale stufe:4
+warte 2
+bild z05_festung_an
+# Brücke fährt ein, weil niemand am Tor ist
+server /gamemode spectator @p
+server /villa ort 55 33 120 180 28
+warte 14
+bild z06_bruecke_drin
+# Mine im Vorgarten: ein Diener tritt darauf
+server /villa ort 46.5 29.5 85.5 180 32
+warte 3
+bild z07_mine_scharf
+server /summon minecraft:vindicator -9.5 88 23.5 {NoAI:1b}
+warte 0.3
+bild z08_mine_boom
+warte 0.6
+bild z09_mine_boom2
+warte 2
+bild z10_mine_danach
+# Abwehrgeschütze gegen drei Diener auf dem Rasen
+server /villa ort 41 31 79 51 15
+warte 2
+server /summon minecraft:vindicator -25.5 88 32.5 {NoAI:1b}
+server /summon minecraft:vindicator -23.5 88 34.5 {NoAI:1b}
+server /summon minecraft:vindicator -27.5 88 31.5 {NoAI:1b}
+warte 0.5
+bild z11_geschuetz1
+warte 0.5
+bild z12_geschuetz2
+warte 0.5
+bild z13_geschuetz3
+warte 4
+bild z14_geschuetz_danach
+server /villa ort 13 33 96 225 30
+warte 2
+bild z15_geschuetz_nah
+# Notausgang
+server /villa ort 57.5 8.5 58.6 90 -12
+warte 2
+bild n01_schild_gang
+server /villa ort 41.5 8.5 60.6 90 -12
+warte 2
+bild n02_schild_suite
+server /villa ort 33.5 7.6 61.0 90 0
+warte 2
+bild n03_tunnel
+server /villa ort -2.5 28 60.5 -90 25
+warte 3
+bild n04_ausgang_draussen
+server /villa stufe 1

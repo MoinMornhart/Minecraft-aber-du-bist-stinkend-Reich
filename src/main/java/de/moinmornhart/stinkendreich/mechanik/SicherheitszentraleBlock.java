@@ -38,7 +38,7 @@ public class SicherheitszentraleBlock extends MechanikBlock {
             Kompat.nachricht(spieler, Component.translatable("stinkendreich.zentrale.status",
                     Component.translatable("stinkendreich.stufe." + z.stufe()),
                     Component.translatable(z.alarmAktiv() ? "stinkendreich.alarm.an" : "stinkendreich.alarm.aus"),
-                    String.join(", ", z.bewohner().values())).withStyle(ChatFormatting.AQUA), false);
+                    String.join(", ", z.bewohner().values())).withStyle(ChatFormatting.AQUA), true);   // nicht im Chat
             de.moinmornhart.stinkendreich.netz.OhneMod.zeigen(spieler, "zentrale", pos);
         }
         return InteractionResult.SUCCESS;
@@ -79,13 +79,26 @@ public class SicherheitszentraleBlock extends MechanikBlock {
                     return;
                 }
                 try {
-                    z.setzeStufe(Integer.parseInt(wert.substring(6)));
+                    int neu = Integer.parseInt(wert.substring(6));
+                    // Die Festung (totaler Lockdown) geht nur an der Zentrale in der Kommandozentrale im Bunker
+                    if (neu >= VillaZustand.FESTUNG && !kommandozentrale(spieler.level(), pos)) {
+                        Kompat.nachricht(spieler, Component.translatable("stinkendreich.zentrale.nur_bunker").withStyle(ChatFormatting.RED), true);
+                        ton(spieler, false);
+                        return;
+                    }
+                    z.setzeStufe(neu);
                     ton(spieler, true);
                 } catch (NumberFormatException ignoriert) {
                     // ungültiger Wert: nichts tun
                 }
             }
         });
+    }
+
+    /** Steht diese Zentrale in der Kommandozentrale im Bunker (Wert {@code kommando=ja} aus dem Bauplan)? */
+    public static boolean kommandozentrale(net.minecraft.world.level.BlockGetter welt, BlockPos pos) {
+        MechanikBlockEntity d = daten(welt, pos);
+        return d != null && "ja".equals(d.text("kommando", ""));
     }
 
     private static void verweigert(ServerPlayer spieler, VillaZustand z, BlockPos pos) {

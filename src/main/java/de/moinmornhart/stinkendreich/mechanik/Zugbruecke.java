@@ -225,7 +225,8 @@ public final class Zugbruecke {
         if (wer != null) {
             zuletztJemandDa = jetzt;
         }
-        boolean sollDrin = zustand.brueckeGesichert() && wer == null && jetzt - zuletztJemandDa >= WARTEN_TICKS;
+        // In der Festung (Stufe 4) ist die Brücke immer gesichert: nur für Bewohner fährt sie heraus
+        boolean sollDrin = (zustand.brueckeGesichert() || zustand.festung()) && wer == null && jetzt - zuletztJemandDa >= WARTEN_TICKS;
         if (sollDrin != zustand.brueckeEingefahren()) {
             starten(welt, o, sollDrin, wer);
         }

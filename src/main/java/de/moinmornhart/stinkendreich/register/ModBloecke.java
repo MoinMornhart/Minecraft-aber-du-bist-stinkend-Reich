@@ -102,6 +102,16 @@ public final class ModBloecke {
     public static final Block KAMINSTEUERUNG = block("kaminsteuerung", KaminsteuerungBlock::new, technik());
     /** Fährt die Zugbrücke über den Graben ein und aus (siehe {@link de.moinmornhart.stinkendreich.mechanik.Zugbruecke}). */
     public static final Block BRUECKENSCHALTER = block("brueckenschalter", de.moinmornhart.stinkendreich.mechanik.BrueckenschalterBlock::new, technik());
+    /** Landmine im Rasen, nur in der Festung (Stufe 4) scharf (siehe {@link de.moinmornhart.stinkendreich.mechanik.LandmineBlock}). */
+    public static final Block LANDMINE = block("landmine", de.moinmornhart.stinkendreich.mechanik.LandmineBlock::new,
+            technik().noCollision().noOcclusion());
+    /** Versteckte Falltür am Ende des Notausgangs: sieht aus wie Rasen, nur mit Zugangskarte zu öffnen. */
+    public static final Block GEHEIMLUKE = block("geheimluke", p -> new de.moinmornhart.stinkendreich.mechanik.GeheimlukeBlock(BlockSetType.IRON, p),
+            BlockBehaviour.Properties.of().strength(50.0F, 3600000.0F).sound(SoundType.GRASS).noOcclusion()
+                    .isValidSpawn((s, w, pos, typ) -> false));
+    /** Abwehrgeschütz auf der Mauer, schießt in der Festung auf Monster und Eindringlinge. */
+    public static final Block ABWEHRGESCHUETZ = block("abwehrgeschuetz", de.moinmornhart.stinkendreich.mechanik.AbwehrgeschuetzBlock::new,
+            technik().noOcclusion().strength(50.0F, 3600000.0F));
 
     // ---------- Türen zum Aufklappen (wie Holz- und Eisentüren) ----------
     /** Weiß lackiert mit Goldbeschlägen, für Wohnräume. */
@@ -139,7 +149,7 @@ public final class ModBloecke {
             FabricBlockEntityTypeBuilder.create(MechanikBlockEntity::new,
                     SICHERHEITSZENTRALE, LASER_SENDER, BEWEGUNGSMELDER, ALARMSIRENE, WARNLEUCHTE, KARTENLESER, TASTENFELD,
                     TUERKLINGEL, TORSTEUERUNG, GEHEIMSCHALTER, AUFZUGSTAFEL, FALLENPLATTE, ENTSCHAERFKNOPF, KAMERA, MONITOR,
-                    WHIRLPOOLDUESE, KAMINSTEUERUNG, BRUECKENSCHALTER).build());
+                    WHIRLPOOLDUESE, KAMINSTEUERUNG, BRUECKENSCHALTER, LANDMINE, ABWEHRGESCHUETZ).build());
 
     private ModBloecke() {
     }

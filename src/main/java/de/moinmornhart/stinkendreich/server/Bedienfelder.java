@@ -74,7 +74,8 @@ final class Bedienfelder {
     private static void zentrale(ServerPlayer spieler, BlockPos pos) {
         VillaZustand z = VillaZustand.get(spieler.level().getServer());
         List<ActionButton> knoepfe = new ArrayList<>();
-        for (int stufe = 0; stufe <= 3; stufe++) {
+        boolean bunker = de.moinmornhart.stinkendreich.mechanik.SicherheitszentraleBlock.kommandozentrale(spieler.level(), pos);
+        for (int stufe = 0; stufe <= (bunker ? VillaZustand.MAX_STUFE : VillaZustand.FESTUNG - 1); stufe++) {
             knoepfe.add(knopf(Component.translatable("stinkendreich.stufe." + stufe), BREITE, aktion("zentrale", pos, "stufe:" + stufe)));
         }
         knoepfe.add(knopf(Component.translatable("stinkendreich.zentrale.alarm_aus"), BREITE, aktion("zentrale", pos, "alarm_aus")));

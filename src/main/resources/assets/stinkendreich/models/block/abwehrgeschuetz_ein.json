@@ -1,0 +1,107 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/geschuetz",
+    "g": "stinkendreich:block/geschuetz",
+    "l": "stinkendreich:block/geschuetz_lauf",
+    "gold": "minecraft:block/gold_block"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        2
+      ],
+      "to": [
+        14,
+        3,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#g"
+        },
+        "south": {
+          "texture": "#g"
+        },
+        "east": {
+          "texture": "#g"
+        },
+        "west": {
+          "texture": "#g"
+        },
+        "up": {
+          "texture": "#g"
+        },
+        "down": {
+          "texture": "#g"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        4
+      ],
+      "to": [
+        12,
+        5,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#g"
+        },
+        "south": {
+          "texture": "#g"
+        },
+        "east": {
+          "texture": "#g"
+        },
+        "west": {
+          "texture": "#g"
+        },
+        "up": {
+          "texture": "#g"
+        },
+        "down": {
+          "texture": "#g"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        5,
+        5
+      ],
+      "to": [
+        11,
+        6,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#gold"
+        },
+        "south": {
+          "texture": "#gold"
+        },
+        "east": {
+          "texture": "#gold"
+        },
+        "west": {
+          "texture": "#gold"
+        },
+        "up": {
+          "texture": "#gold"
+        },
+        "down": {
+          "texture": "#gold"
+        }
+      }
+    }
+  ]
+}

@@ -396,6 +396,40 @@ def neon(text: str, farbe) -> Image.Image:
     return img
 
 
+GRUEN_NOT = (0, 150, 72)
+
+
+def m_notausgang_gruen():
+    img, d = neu(GRUEN_NOT)
+    return img
+
+
+def m_notausgang_mann():
+    """Linke Hälfte des Notausgang-Schilds: weißes Männchen, das nach rechts zur Tür läuft (Zeilen 3–12)."""
+    img, d = neu(GRUEN_NOT)
+    w = (255, 255, 255, 255)
+    d.rectangle([9, 3, 10, 4], fill=w)                               # Kopf
+    d.line([(9, 5), (7, 8)], fill=w, width=2)                        # Rumpf
+    d.line([(9, 6), (12, 7)], fill=w)                                # Arm vorn
+    d.line([(8, 6), (5, 5)], fill=w)                                 # Arm hinten
+    d.line([(7, 9), (9, 10), (10, 12)], fill=w)                      # Bein vorn
+    d.line([(7, 9), (5, 10), (3, 11)], fill=w)                       # Bein hinten
+    d.line([(13, 8), (15, 8)], fill=w)                               # Pfeil nach rechts
+    d.point((14, 7), fill=w)
+    d.point((14, 9), fill=w)
+    return img
+
+
+def m_notausgang_tuer():
+    """Rechte Hälfte: offene Tür (weißer Rahmen, Licht dahinter)."""
+    img, d = neu(GRUEN_NOT)
+    w = (255, 255, 255, 255)
+    d.rectangle([3, 3, 10, 12], outline=w)
+    d.rectangle([4, 4, 9, 12], fill=(200, 255, 220, 255))
+    d.polygon([(4, 4), (7, 5), (7, 12), (4, 12)], fill=w)           # aufgeschwungener Flügel
+    return img
+
+
 def m_fluegel_tasten():
     img, d = neu((240, 240, 236))
     for x in range(0, 16, 2):
@@ -704,6 +738,7 @@ MATERIALIEN = {
     "neon_club": lambda: neon("CLUB", (40, 220, 255)),
     "neon_wein": lambda: neon("WEIN", (255, 70, 90)),
     "neon_show": lambda: neon("SHOW", (255, 60, 200)),
+    "notausgang_gruen": m_notausgang_gruen, "notausgang_mann": m_notausgang_mann, "notausgang_tuer": m_notausgang_tuer,
     "sektglas": m_sektglas, "flasche_gruen": m_flasche_gruen, "badewasser": m_badewasser, "goldmuenzen": m_goldmuenzen,
     "gaming_schwarz": m_gaming_schwarz, "gaming_rot": m_gaming_rot,
     "leder_weiss": m_leder_weiss, "samt_schwarz": m_samt_schwarz, "satin_gold": m_satin_gold, "satin_schwarz": m_satin_schwarz, "laken": m_laken,
@@ -1171,6 +1206,10 @@ BLOECKE = {
     "neon_vip": (neonschild("neon_vip"), None, 10, False, "glas", "pickaxe", "Leuchtschrift VIP", "Neon Sign VIP"),
     "neon_club": (neonschild("neon_club"), None, 10, False, "glas", "pickaxe", "Leuchtschrift CLUB", "Neon Sign CLUB"),
     "neon_wein": (neonschild("neon_wein"), None, 10, False, "glas", "pickaxe", "Leuchtschrift WEIN", "Neon Sign WINE"),
+    "notausgang_links": ([k([0, 3, 15], [16, 13, 16], "notausgang_gruen", north="notausgang_mann")], None, 8, False, "glas",
+                         "pickaxe", "Notausgang-Schild (links)", "Emergency Exit Sign (left)"),
+    "notausgang_rechts": ([k([0, 3, 15], [16, 13, 16], "notausgang_gruen", north="notausgang_tuer")], None, 8, False, "glas",
+                          "pickaxe", "Notausgang-Schild (rechts)", "Emergency Exit Sign (right)"),
     "kopfteil": ([k([0, 0, 0], [16, 16, 16], "samt_rot", north="samt_knoepfe")], None, 0, True, "wolle", "axe", "Gepolstertes Kopfteil", "Tufted Headboard"),
     "tastatur": (tastatur(), [[0, 0, 2.5, 16, 1.4, 13.5]], 0, False, "stein", "pickaxe", "Tastatur, Maus und Schreibunterlage", "Keyboard, Mouse and Desk Mat"),
     "nachttisch": (nachttisch(), [[1, 0, 1, 15, 14, 15]], 0, True, "holz", "axe", "Nachttisch", "Nightstand"),
