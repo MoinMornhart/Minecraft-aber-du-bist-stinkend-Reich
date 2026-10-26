@@ -1,0 +1,12 @@
+# Monitore genau von oben: Büro-Schreibtisch (Monitore bei x 68–70, z 61, Stuhl z 59) und Bunker (x 44–46, z 36, Stuhl z 38)
+server /gamemode spectator
+server /time set 6000
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 69.5 36 60 0 90
+warte 3
+bild m01_buero_oben
+server /villa ort 45.5 12 37 0 90
+warte 3
+bild m02_bunker_oben

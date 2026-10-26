@@ -1,0 +1,49 @@
+# Nachtest: Monitore von oben (zum Stuhl?), versteckte Falltür (nur Rasen sichtbar, zu und offen), Smart-Home-Seite
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 69.5 36 60 0 90
+warte 3
+bild m01_buero_oben
+server /villa ort 69.5 35.2 56.6 0 40
+warte 2
+bild m01b_buero_schraeg
+server /villa ort 45.5 12 37 0 90
+warte 3
+bild m02_bunker_oben
+server /villa ort 45.5 11.2 39.4 180 40
+warte 2
+bild m02b_bunker_schraeg
+server /gamemode creative
+server /villa luke
+warte 3
+bild l01_luke_zu
+server /execute as @p at @s run tp @s ~ ~4 ~-3 0 40
+warte 2
+bild l02_luke_zu_weit
+server /villa luke
+server /gamemode survival @p
+server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+warte 1
+klick
+warte 2
+bild l03_luke_offen
+server /gamemode creative
+taste F1
+server /villa ort 43 26 50 180 -10
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 2
+klick
+warte 1.5
+linksklick 640 524
+warte 1.5
+bild h04_smart
+linksklick 690 272
+warte 1.5
+bild h05_smart_licht_aus
+linksklick 590 272
+warte 1
+klient schliessen

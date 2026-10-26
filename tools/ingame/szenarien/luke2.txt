@@ -1,0 +1,20 @@
+# Versteckte Falltür in der Grasfarbe der Umgebung: zu (nah und weiter weg), mit Karte offen
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /gamemode creative
+server /villa luke
+warte 3
+bild l01_luke_zu
+server /execute as @p at @s run tp @s ~ ~4 ~-3 0 40
+warte 2
+bild l02_luke_zu_weit
+server /villa luke
+server /gamemode survival @p
+server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+warte 2
+klick
+warte 2
+bild l03_luke_offen

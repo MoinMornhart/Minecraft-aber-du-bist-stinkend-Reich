@@ -323,7 +323,7 @@ def tex_smartlicht(farbe):
 
 
 def tex_geheimluke():
-    """Versteckte Falltür: Rasen wie auf einer Wiese (Ebenen-Grün), kaum sichtbare Fuge am Rand."""
+    """Versteckte Falltür: Rasen wie auf einer Wiese (Ebenen-Grün), ohne Fuge."""
     rnd = random.Random(31)
     img = Image.new("RGBA", (16, 16))
     px = img.load()
@@ -331,9 +331,7 @@ def tex_geheimluke():
         for y in range(16):
             g = rnd.randint(-14, 14)
             px[x, y] = (max(0, 98 + g), max(0, 158 + g), max(0, 68 + g // 2), 255)
-    d = ImageDraw.Draw(img)
-    d.rectangle([0, 0, 15, 15], outline=(84, 138, 58))
-    return img
+    return img                                  # keine Fuge am Rand, damit man die Luke nicht sieht
 
 
 TEXTUREN = {
@@ -532,6 +530,20 @@ def m_smartlicht(farbe: str) -> dict:
                          teil([4.5, 2, 4.5], [11.5, 9, 11.5], "#glas"), teil([6, 1, 6], [10, 2, 10], "#glas")]}
 
 
+def m_rasenluke(von, bis, rasenseite: str) -> dict:
+    """Versteckte Falltür: Oberseite mit der echten Grastextur des Spiels, im Spiel mit der Grasfarbe der Umgebung
+    eingefärbt (tintindex 0, siehe StinkendReichClient), sonst Erde – so sieht man sie im Rasen nicht."""
+    flaechen = {}
+    for f in ("north", "south", "east", "west", "up", "down"):
+        if f == rasenseite or (rasenseite == "north" and f == "south"):
+            flaechen[f] = {"texture": "#rasen", "tintindex": 0}
+        else:
+            flaechen[f] = {"texture": "#erde"}
+    return {"parent": "minecraft:block/block", "textures": {"particle": "minecraft:block/dirt", "erde": "minecraft:block/dirt",
+                                                            "rasen": "minecraft:block/grass_block_top"},
+            "elements": [{"from": von, "to": bis, "faces": flaechen}]}
+
+
 def bs_falltuer(name: str) -> dict:
     """Blockzustände einer Falltür wie im Spiel (Richtung × Hälfte × offen)."""
     v = {}
@@ -635,9 +647,9 @@ BLOECKE: dict[str, dict] = {
                                              {"model": B("smartlicht" if (an and f == "warm") else (f"smartlicht_{f}" if an else "smartlicht_aus"))}
                                              for f in SMART_FARBEN for an in (True, False)}},
                        de="Smart-Home-Lampe", en="Smart Home Lamp"),
-    "geheimluke": dict(modelle={"geheimluke": {"parent": "minecraft:block/template_trapdoor_bottom", "textures": {"texture": B("geheimluke")}},
-                                "geheimluke_top": {"parent": "minecraft:block/template_trapdoor_top", "textures": {"texture": B("geheimluke")}},
-                                "geheimluke_open": {"parent": "minecraft:block/template_trapdoor_open", "textures": {"texture": B("geheimluke")}}},
+    "geheimluke": dict(modelle={"geheimluke": m_rasenluke([0, 0, 0], [16, 3, 16], "up"),
+                                "geheimluke_top": m_rasenluke([0, 13, 0], [16, 16, 16], "up"),
+                                "geheimluke_open": m_rasenluke([0, 0, 13], [16, 16, 16], "north")},
                        zustand=bs_falltuer("geheimluke"), de="Versteckte Falltür (nur mit Zugangskarte)",
                        en="Hidden Trapdoor (key card only)"),
     "abwehrgeschuetz": dict(modelle={"abwehrgeschuetz": m_geschuetz(), "abwehrgeschuetz_ein": m_geschuetz(eingefahren=True)},

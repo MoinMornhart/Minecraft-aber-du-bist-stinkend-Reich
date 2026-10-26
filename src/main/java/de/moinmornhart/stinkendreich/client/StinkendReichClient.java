@@ -46,6 +46,16 @@ public class StinkendReichClient implements ClientModInitializer {
         KlientBruecke.butler = id -> KompatClient.zeige(new ButlerBildschirm(id));
         KlientBruecke.musikanlage = pos -> KompatClient.zeige(new MusikBildschirm(pos));
 
+        // Versteckte Falltür: Rasen in der Grasfarbe der Umgebung, damit man sie nicht sieht
+        //? if >=26.1 {
+        net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry.register(
+                java.util.List.of(net.minecraft.client.color.block.BlockTintSources.grass()), ModBloecke.GEHEIMLUKE);
+        //?} else {
+        /*net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry.BLOCK.register((zustand, welt, pos, index) ->
+                welt != null && pos != null ? net.minecraft.client.renderer.BiomeColors.getAverageGrassColor(welt, pos)
+                        : net.minecraft.world.level.GrassColor.getDefaultColor(), ModBloecke.GEHEIMLUKE);
+        *///?}
+
         // Türen und Tore mit durchsichtigen Stellen
         KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
                 ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER, ModBloecke.PRIVATTUER,

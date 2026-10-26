@@ -1,6 +1,43 @@
 {
-  "parent": "minecraft:block/template_trapdoor_bottom",
+  "parent": "minecraft:block/block",
   "textures": {
-    "texture": "stinkendreich:block/geheimluke"
-  }
+    "particle": "minecraft:block/dirt",
+    "erde": "minecraft:block/dirt",
+    "rasen": "minecraft:block/grass_block_top"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        3,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#erde"
+        },
+        "south": {
+          "texture": "#erde"
+        },
+        "east": {
+          "texture": "#erde"
+        },
+        "west": {
+          "texture": "#erde"
+        },
+        "up": {
+          "texture": "#rasen",
+          "tintindex": 0
+        },
+        "down": {
+          "texture": "#erde"
+        }
+      }
+    }
+  ]
 }

@@ -109,21 +109,21 @@ public class HandyBildschirm extends Screen {
                 knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
             }
             case SMART -> {
-                // Smart Home: je Zeile zwei Knöpfe (an/aus), dazu acht Lichtfarben
+                // Smart Home: je Zeile zwei Knöpfe (an/aus), dazu acht Lichtfarben; das Handy bleibt dabei offen
                 int halb = (KNOPF_B - 4) / 2;
                 for (String[] zeile : new String[][]{{"rollo", "zu", "auf"}, {"bruecke", "zu", "auf"}, {"licht", "an", "aus"},
                         {"disco", "an", "aus"}, {"automatik", "an", "aus"}}) {
                     addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[1]),
-                            b -> senden("smart|" + zeile[0] + "|" + zeile[1])).bounds(x, y, halb, KNOPF_H).build());
+                            b -> anfragen("smart|" + zeile[0] + "|" + zeile[1])).bounds(x, y, halb, KNOPF_H).build());
                     addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[2]),
-                            b -> senden("smart|" + zeile[0] + "|" + zeile[2])).bounds(x + halb + 4, y, halb, KNOPF_H).build());
+                            b -> anfragen("smart|" + zeile[0] + "|" + zeile[2])).bounds(x + halb + 4, y, halb, KNOPF_H).build());
                     y += KNOPF_H + ABSTAND;
                 }
                 int fx = x, fb = (KNOPF_B - 7 * 2) / 8;
                 for (var f : de.moinmornhart.stinkendreich.mechanik.Eigenschaften.Lichtfarbe.values()) {
                     String name = f.getSerializedName();
                     Button knopf = Button.builder(Component.literal("■").withStyle(s -> s.withColor(FARBEN.get(name))),
-                            b -> senden("smart|farbe|" + name)).bounds(fx, y, fb, KNOPF_H).build();
+                            b -> anfragen("smart|farbe|" + name)).bounds(fx, y, fb, KNOPF_H).build();
                     knopf.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
                             Component.translatable("stinkendreich.smarthome.farbe." + name)));
                     addRenderableWidget(knopf);

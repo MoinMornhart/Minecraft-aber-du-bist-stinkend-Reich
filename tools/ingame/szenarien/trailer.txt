@@ -25,6 +25,14 @@ merke
 server fahrt 4 | 55.90 27.00 106.00 180.0 4.0 | 55.60 27.20 88.00 180.0 2.0
 bis 96 Fahrt fertig
 server /time set 6000
+kapitel … mit Zugbrücke über dem Graben
+server /villa ort 55 33 120 180 28
+warte 3
+server /villa bruecke ein
+warte 15
+server /villa bruecke aus
+warte 12
+server /time set 6000
 kapitel … und einer Haustür aus Gold
 server /gamemode creative
 server /villa ort 55 26.5 76 180 2
@@ -107,6 +115,21 @@ merke
 server fahrt 4 | 68.20 41.00 50.00 196.0 19.0 | 70.00 41.00 47.00 211.0 19.0
 bis 96 Fahrt fertig
 server /time set 6000
+kapitel Smart Home: Licht, Farben, Disco – per Handy
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /villa ort 43 27 57 0 -28
+warte 3
+server /execute as @p run handy smart|licht|an
+server /execute as @p run handy smart|farbe|lila
+warte 6
+server /execute as @p run handy smart|farbe|blau
+warte 4.5
+server /execute as @p run handy smart|disco|an
+warte 12
+server /execute as @p run handy smart|disco|aus
+server /execute as @p run handy smart|farbe|warm
+server /clear @p
+server /time set 6000
 kapitel Ein Nachtclub im Keller
 server /villa ort 42.00 17.60 61.50 165.0 8.0
 warte 3
@@ -142,6 +165,46 @@ warte 3
 merke
 server fahrt 4 | 67.50 11.50 52.20 -20.0 25.0 | 67.50 10.00 52.60 0.0 25.0
 bis 96 Fahrt fertig
+server /time set 6000
+kapitel Eine Bunker-Suite mit Riesen-Fernseher
+server /villa ort 44.5 9.2 60.5 180 14
+klient fernseher !abspielen|aqz-KE-bpKQ
+warte 6
+server /villa ort 52.86 10.40 59.13 105.0 24.0
+warte 3
+merke
+server fahrt 4 | 52.86 10.40 59.13 105.0 24.0 | 51.50 10.40 58.50 115.0 24.0
+bis 96 Fahrt fertig
+klient fernseher !stopp
+server /time set 6000
+kapitel Die Kommandozentrale
+merke
+server fahrt 5 | 53.50 6.50 44.50 90.0 8.0 | 46.00 7.40 42.00 160.0 14.0 | 45.50 7.20 40.00 180.0 22.0
+bis 105 Fahrt fertig
+server /time set 6000
+kapitel Modus FESTUNG
+server /villa stufe 4
+warte 3
+merke
+server fahrt 12 | 55.00 40.00 150.00 180.0 15.0 | -15.00 50.00 125.00 222.0 22.0 | -32.00 55.00 55.00 270.0 22.0 | 55.00 72.00 -35.00 0.0 32.0
+bis 168 Fahrt fertig
+server /time set 6000
+kapitel Abwehrgeschütze, Himmelslaser, Minen
+server /difficulty normal
+server /villa ort 56 33 90 180 6
+server /execute as @p at @s run summon zombie ^ ^-6 ^9
+server /execute as @p at @s run summon zombie ^3 ^-6 ^11
+warte 15
+server /kill @e[type=zombie]
+server /difficulty peaceful
+server /time set 6000
+kapitel Raus durch den geheimen Notausgang
+server /villa luke
+warte 3
+merke
+server fahrt 6 | -47.00 30.00 61.00 270.0 10.0 | -60.00 45.00 75.00 250.0 12.0 | -75.00 60.00 90.00 240.0 15.0
+bis 114 Fahrt fertig
+server /villa stufe 0
 server /time set 6000
 kapitel Tiefgarage mit Drehteller
 server /gamemode creative

@@ -84,39 +84,45 @@ final class Festungsbau {
                 }
             }
         }
-        // Schacht am Ende: Leiter an der Westwand hoch bis knapp unter die Oberfläche
-        // Höhe der Luke: tiefste Stelle rund um den Schacht, damit am Hang nichts aus dem Boden ragt
-        int oben = Integer.MAX_VALUE;
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 2; dz++) {
-                int grund = VillaPlatzierung.bodenHoehe(welt, ursprung.getX() + ende + dx, ursprung.getZ() + z + dz);
-                oben = Math.min(oben, grund - 1 - ursprung.getY());           // oberster fester Block
-            }
-        }
-        oben = Math.max(oben, y + 4);
+        // Schacht am Ende: Die Luke liegt bündig in der Oberfläche über dem Schacht. Rundherum wird ein kleines Stück
+        // Wiese auf genau diese Höhe gebracht (Erde mit Rasen, darüber frei), damit weder Schachtwände noch eine Mulde
+        // zu sehen sind – nur Gras.
         int wx = ursprung.getX() + ende, wz = ursprung.getZ() + z;
-        int schachtOben = VillaPlatzierung.bodenHoehe(welt, wx, wz) - 1 - ursprung.getY();
-        BlockState leiter = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST);
-        for (int ly = y - 1; ly < oben; ly++) {
-            for (int dz = -1; dz <= 2; dz++) {
-                setze(welt, ursprung, ende - 1, ly, z + dz, wand);
-                if (ly > y + 2 || dz < 0 || dz > 1) {
-                    setze(welt, ursprung, ende + 1, ly, z + dz, wand);     // über und neben dem Tunnelende zu
+        int oben = Math.max(VillaPlatzierung.bodenHoehe(welt, wx, wz) - 1 - ursprung.getY(), y + 4);   // Höhe der Luke
+        BlockState erde = Blocks.DIRT.defaultBlockState();
+        BlockState rasen = Blocks.GRASS_BLOCK.defaultBlockState();
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 4; dz++) {
+                int grund = VillaPlatzierung.bodenHoehe(welt, wx + dx, wz + dz) - 1 - ursprung.getY();
+                for (int ly = Math.min(grund, oben - 3); ly < oben; ly++) {
+                    setze(welt, ursprung, ende + dx, ly, z + dz, erde);       // auffüllen
+                }
+                setze(welt, ursprung, ende + dx, oben, z + dz, rasen);
+                for (int ly = oben + 1; ly <= Math.max(grund, oben) + 1; ly++) {
+                    setze(welt, ursprung, ende + dx, ly, z + dz, luft);       // abtragen, Pflanzen weg
                 }
             }
-            setze(welt, ursprung, ende, ly, z - 1, wand);
-            setze(welt, ursprung, ende, ly, z + 2, wand);
-            setze(welt, ursprung, ende, ly, z + 1, ly <= y + 2 && ly >= y ? luft : wand);
+        }
+        // Schachtwände aus Tiefenschiefer nur unter der Erdschicht, Leiter an der Westwand bis unter die Luke
+        BlockState leiter = Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.EAST);
+        for (int ly = y - 1; ly < oben; ly++) {
+            boolean unten = ly < oben - 1;                                 // die oberste Lage bleibt Rasen/Erde
+            BlockState w = unten ? wand : erde;
+            for (int dz = -1; dz <= 2; dz++) {
+                setze(welt, ursprung, ende - 1, ly, z + dz, w);
+                if (ly > y + 2 || dz < 0 || dz > 1) {
+                    setze(welt, ursprung, ende + 1, ly, z + dz, w);       // über und neben dem Tunnelende zu
+                }
+            }
+            setze(welt, ursprung, ende, ly, z - 1, w);
+            setze(welt, ursprung, ende, ly, z + 2, w);
+            setze(welt, ursprung, ende, ly, z + 1, ly <= y + 2 && ly >= y ? luft : w);
             setze(welt, ursprung, ende, ly, z, ly == y - 1 ? boden : leiter);
         }
-        // Versteckte Falltür bündig im Boden, darüber frei
+        // Versteckte Falltür bündig im Rasen (obere Hälfte, also genau auf Bodenhöhe)
         BlockState luke = ModBloecke.GEHEIMLUKE.defaultBlockState()
                 .setValue(TrapDoorBlock.FACING, Direction.EAST).setValue(TrapDoorBlock.HALF, Half.TOP);
         setze(welt, ursprung, ende, oben, z, luke);
-        // Über der Luke frei bis zur Oberfläche dieser Stelle (kleine Mulde im Gelände)
-        for (int ly = oben + 1; ly <= Math.max(oben + 1, schachtOben); ly++) {
-            setze(welt, ursprung, ende, ly, z, luft);
-        }
         return ursprung.offset(ende, oben, z);
     }
 

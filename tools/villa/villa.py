@@ -631,7 +631,7 @@ def obergeschoss() -> None:
     b.quader(66, y, 60, 66, y, 61, "gold_block")
     b.quader(72, y, 60, 72, y, 61, "gold_block")
     # Drei flache Monitore, die äußeren schräg zum Platz; davor Tastatur und Maus
-    for x, winkel in ((68, "links"), (69, "gerade"), (70, "rechts")):     # äußere zum Stuhl hin (im Spiel geprüft)
+    for x, winkel in ((68, "rechts"), (69, "gerade"), (70, "links")):     # äußere zum Stuhl hin (von oben geprüft)
         mech(x, y + 1, 61, "monitor", "north", {"winkel": winkel})
     deko(b, 69, y + 1, 60, "tastatur", "north")
     reihe(b, 69, y, 59, 1, "gamingstuhl", "south")
@@ -1325,7 +1325,7 @@ def kommandozentrale(y: int, y0: int, y1: int) -> None:
     b.quader(42, y, 36, 48, y, 37, "polished_blackstone")
     b.quader(42, y, 36, 42, y, 37, "gold_block")
     b.quader(48, y, 36, 48, y, 37, "gold_block")
-    for x, winkel in ((44, "rechts"), (45, "gerade"), (46, "links")):     # äußere zum Stuhl hin (im Spiel geprüft)
+    for x, winkel in ((44, "links"), (45, "gerade"), (46, "rechts")):     # äußere zum Stuhl hin (von oben geprüft)
         mech(x, y + 1, 36, "monitor", "south", {"winkel": winkel})
     deko(b, 45, y + 1, 37, "tastatur", "south")
     reihe(b, 45, y, 38, 1, "gamingstuhl", "north")

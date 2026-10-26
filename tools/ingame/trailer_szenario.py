@@ -69,6 +69,8 @@ fahrt(9, (160, 80, 175, 139, 22), (118, 58, 128, 139, 19), (80, 48, 138, 165, 16
 titel("Mit eigenem Tor")
 z("server /villa ort 55.9 27 106 180 4", "warte 2")
 fahrt(4, (55.9, 27, 106, 180, 4), (55.6, 27.2, 88, 180, 2))
+titel("… mit Zugbrücke über dem Graben")
+z("server /villa ort 55 33 120 180 28", "warte 1", "server /villa bruecke ein", "warte 5", "server /villa bruecke aus", "warte 4")
 titel("… und einer Haustür aus Gold")
 z("server /gamemode creative", "server /villa ort 55 26.5 76 180 2", "warte 1", "server /villa ort 55 26 70 180 2", "warte 2.5",
   "server /gamemode spectator")
@@ -102,6 +104,11 @@ z("klient fernseher !stopp")
 titel("Whirlpool auf dem Dach")
 zufahren(4, 70, 41, 47, 211, 19)
 
+titel("Smart Home: Licht, Farben, Disco – per Handy")
+z("server /item replace entity @p weapon.mainhand with stinkendreich:handy", "server /villa ort 43 27 57 0 -28", "warte 1",
+  "server /execute as @p run handy smart|licht|an", "server /execute as @p run handy smart|farbe|lila", "warte 2",
+  "server /execute as @p run handy smart|farbe|blau", "warte 1.5", "server /execute as @p run handy smart|disco|an", "warte 4",
+  "server /execute as @p run handy smart|disco|aus", "server /execute as @p run handy smart|farbe|warm", "server /clear @p")
 titel("Ein Nachtclub im Keller")
 zufahren(4, 42, 17.6, 58, 180, 8)
 titel("… und ein Geheimclub hinter dem Bücherregal")
@@ -113,6 +120,24 @@ titel("Ein Bunker mit Waffenkammer")
 zufahren(5, 64.2, 7.5, 40, 270, 10, zurueck=1, schwenk=10)
 titel("Und ein Berg aus Gold")
 zufahren(4, 67.5, 10, 52.6, 0, 25, zurueck=0.4, schwenk=-20, hoch=1.5)
+
+titel("Eine Bunker-Suite mit Riesen-Fernseher")
+z("server /villa ort 44.5 9.2 60.5 180 14", "klient fernseher !abspielen|aqz-KE-bpKQ", "warte 2")
+zufahren(4, 51.5, 10.4, 58.5, 115, 24, zurueck=1.5, schwenk=-10)
+z("klient fernseher !stopp")
+titel("Die Kommandozentrale")
+fahrt(5, (53.5, 6.5, 44.5, 90, 8), (46, 7.4, 42, 160, 14), (45.5, 7.2, 40, 180, 22))
+titel("Modus FESTUNG")
+z("server /villa stufe 4", "warte 1")
+fahrt(12, (55, 40, 150, 180, 15), (-15, 50, 125, 222, 22), (-32, 55, 55, 270, 22), (55, 72, -35, 0, 32))
+titel("Abwehrgeschütze, Himmelslaser, Minen")
+z("server /difficulty normal", "server /villa ort 56 33 90 180 6",
+  "server /execute as @p at @s run summon zombie ^ ^-6 ^9", "server /execute as @p at @s run summon zombie ^3 ^-6 ^11", "warte 5",
+  "server /kill @e[type=zombie]", "server /difficulty peaceful")
+titel("Raus durch den geheimen Notausgang")
+z("server /villa luke", "warte 1")
+fahrt(6, (-47, 30, 61, 270, 10), (-60, 45, 75, 250, 12), (-75, 60, 90, 240, 15))
+z("server /villa stufe 0")
 
 titel("Tiefgarage mit Drehteller")
 z("server /gamemode creative", "server /villa ort 91.5 17 45.2 180 30", "warte 1",
