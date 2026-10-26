@@ -32,7 +32,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * XXL-Fernseher (5 × 2,8 Blöcke) an der Wand. Rechtsklick öffnet das Menü für einen YouTube-Link.
+ * XXL-Fernseher (5 × 2,8 Blöcke, auf Wunsch größer, siehe {@link #setzeGroesse}) an der Wand. Rechtsklick öffnet das
+ * Menü für einen YouTube-Link.
  * Gespeichert und an alle Spieler verteilt werden nur die Video-Kennung (11 Zeichen) und der Stand der Wiedergabe
  * (läuft seit Spielzeit X / angehalten bei Position Y). Jeder Klient zeigt daraus selbst Vorschaubild oder Video
  * (siehe {@code FernseherVideos}), so sehen alle dieselbe Stelle. Auf Wunsch läuft das Video im Browser des PCs.
@@ -42,6 +43,10 @@ public class FernseherEntity extends Mob {
     private static final EntityDataAccessor<String> VIDEO = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
     /** Wiedergabe: "" = keine, "L&lt;Tick&gt;" = läuft (Position 0 war bei diesem Spielzeit-Tick), "P&lt;Ticks&gt;" = angehalten. */
     private static final EntityDataAccessor<String> WIEDERGABE = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
+    /** Bildgröße in Blöcken als „Breite;Höhe“, "" = Standardgröße (der Bunker-Fernseher füllt so seinen Goldrahmen). */
+    private static final EntityDataAccessor<String> GROESSE = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
+    /** Standardgröße in Blöcken (Modell 80 × 45 Pixel). */
+    public static final float STANDARD_BREITE = 5.0F, STANDARD_HOEHE = 2.8125F;
     private static final Pattern KENNUNG = Pattern.compile("(?:v=|youtu\\.be/|shorts/|embed/|live/)([A-Za-z0-9_-]{11})");
     private static final Pattern NUR_KENNUNG = Pattern.compile("[A-Za-z0-9_-]{11}");
 
@@ -172,11 +177,55 @@ public class FernseherEntity extends Mob {
         entityData.set(VIDEO, kennung == null ? "" : kennung);
     }
 
+    /**
+     * Macht das Bild breite × hoehe Blöcke groß (unten mittig an der Position des Fernsehers). Das Modell wird dafür
+     * gestreckt; das Klickfeld bleibt in der Mitte.
+     */
+    public void setzeGroesse(float breite, float hoehe) {
+        boolean standard = breite == STANDARD_BREITE && hoehe == STANDARD_HOEHE;
+        entityData.set(GROESSE, standard || breite <= 0 || hoehe <= 0 ? "" : breite + ";" + hoehe);
+    }
+
+    public float breite() {
+        return masse()[0];
+    }
+
+    public float hoehe() {
+        return masse()[1];
+    }
+
+    private float[] masse() {
+        String g = entityData.get(GROESSE);
+        int t = g.indexOf(';');
+        if (t > 0) {
+            try {
+                return new float[]{Float.parseFloat(g.substring(0, t)), Float.parseFloat(g.substring(t + 1))};
+            } catch (NumberFormatException ignoriert) {
+                // beschädigter Wert: Standardgröße
+            }
+        }
+        return new float[]{STANDARD_BREITE, STANDARD_HOEHE};
+    }
+
+    /** Raum, den das Bild einnimmt (zum Zeichnen: ein großer Fernseher verschwindet sonst am Bildrand). */
+    public net.minecraft.world.phys.AABB bildKasten() {
+        double r = Math.max(breite(), getBbWidth()) / 2;
+        return new net.minecraft.world.phys.AABB(getX() - r, getY(), getZ() - r, getX() + r, getY() + Math.max(hoehe(), getBbHeight()), getZ() + r);
+    }
+
+    //? if <1.21.2 {
+    /*@Override
+    public net.minecraft.world.phys.AABB getBoundingBoxForCulling() {
+        return bildKasten();
+    }
+    *///?}
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder daten) {
         super.defineSynchedData(daten);
         daten.define(VIDEO, "");
         daten.define(WIEDERGABE, "");
+        daten.define(GROESSE, "");
     }
 
     @Override
@@ -238,6 +287,7 @@ public class FernseherEntity extends Mob {
         super.addAdditionalSaveData(ausgabe);
         ausgabe.putString("stinkendreich_video", video());
         ausgabe.putString("stinkendreich_wiedergabe", wiedergabe());
+        ausgabe.putString("stinkendreich_groesse", entityData.get(GROESSE));
     }
 
     @Override
@@ -245,6 +295,7 @@ public class FernseherEntity extends Mob {
         super.readAdditionalSaveData(eingabe);
         setzeVideo(kennung(eingabe.getStringOr("stinkendreich_video", "")));
         entityData.set(WIEDERGABE, eingabe.getStringOr("stinkendreich_wiedergabe", ""));
+        entityData.set(GROESSE, eingabe.getStringOr("stinkendreich_groesse", ""));
     }
     //?} else if >=1.21.5 {
     /*@Override
@@ -252,6 +303,7 @@ public class FernseherEntity extends Mob {
         super.addAdditionalSaveData(tag);
         tag.putString("stinkendreich_video", video());
         tag.putString("stinkendreich_wiedergabe", wiedergabe());
+        tag.putString("stinkendreich_groesse", entityData.get(GROESSE));
     }
 
     @Override
@@ -259,6 +311,7 @@ public class FernseherEntity extends Mob {
         super.readAdditionalSaveData(tag);
         setzeVideo(kennung(tag.getStringOr("stinkendreich_video", "")));
         entityData.set(WIEDERGABE, tag.getStringOr("stinkendreich_wiedergabe", ""));
+        entityData.set(GROESSE, tag.getStringOr("stinkendreich_groesse", ""));
     }
     *///?} else {
     /*@Override
@@ -266,6 +319,7 @@ public class FernseherEntity extends Mob {
         super.addAdditionalSaveData(tag);
         tag.putString("stinkendreich_video", video());
         tag.putString("stinkendreich_wiedergabe", wiedergabe());
+        tag.putString("stinkendreich_groesse", entityData.get(GROESSE));
     }
 
     @Override
@@ -273,6 +327,7 @@ public class FernseherEntity extends Mob {
         super.readAdditionalSaveData(tag);
         setzeVideo(kennung(tag.getString("stinkendreich_video")));
         entityData.set(WIEDERGABE, tag.getString("stinkendreich_wiedergabe"));
+        entityData.set(GROESSE, tag.getString("stinkendreich_groesse"));
     }
     *///?}
 }

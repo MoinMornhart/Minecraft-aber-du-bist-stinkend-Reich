@@ -168,7 +168,7 @@ public final class VillaPlatzierung {
         // Der Butler wartet in der Halle auf seinen Herrn
         JsonArray b = plan.ersteMarke("butler");
         ButlerVerwaltung.villaButlerErzeugen(welt, villa.weltPos(b.get(0).getAsDouble(), b.get(1).getAsDouble(), b.get(2).getAsDouble()));
-        // XXL-Fernseher im Penthouse
+        // XXL-Fernseher (Penthouse, Gästezimmer, Bunker; die Marke kann Breite und Höhe in Blöcken mitbringen)
         for (JsonArray m : plan.marke("fernseher")) {
             de.moinmornhart.stinkendreich.fernseher.FernseherEntity tv = de.moinmornhart.stinkendreich.register.ModEntities.FERNSEHER.create(welt
                     //? if >=1.21.2
@@ -179,6 +179,9 @@ public final class VillaPlatzierung {
                 Kompat.versetzen(tv, ursprung.getX() + m.get(0).getAsDouble(), ursprung.getY() + m.get(1).getAsDouble(),
                         ursprung.getZ() + m.get(2).getAsDouble(), blick, 0.0F);
                 tv.setYBodyRot(blick);
+                if (m.size() >= 6) {
+                    tv.setzeGroesse((float) m.get(4).getAsDouble(), (float) m.get(5).getAsDouble());
+                }
                 welt.addFreshEntity(tv);
             }
         }

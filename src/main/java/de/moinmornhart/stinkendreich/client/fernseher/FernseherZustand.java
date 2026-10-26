@@ -10,4 +10,6 @@ public class FernseherZustand extends LivingEntityRenderState {
 /*public class FernseherZustand {*/
     public String video = "";
     public int tvId;
+    /** Bildgröße in Blöcken (siehe FernseherEntity.setzeGroesse). */
+    public float breite = 5.0F, hoehe = 2.8125F;
 }

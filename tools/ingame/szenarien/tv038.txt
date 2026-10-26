@@ -1,0 +1,32 @@
+# 0.3.6: riesiger Fernseher im Bunker (8 × 4 Blöcke bis zur Goldkante), Video darauf, Geheimregal im Bunker per Schleichen
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /gamemode spectator @p
+taste F1
+server /villa ort 45.0 8.4 60.5 180 6
+warte 3
+bild f01_tv_aus
+klient fernseher !abspielen|aqz-KE-bpKQ
+warte 8
+bild f02_tv_video
+server /villa ort 45.0 7.2 57.4 180 -4
+warte 2
+bild f03_vom_sofa
+server /villa ort 50.5 9.8 55.5 125 18
+warte 2
+bild f04_schraeg
+klient fernseher !stopp
+# Geheimregal vor dem Fluchttunnel: mit Karte davor schleichen, es funkelt und gleitet auf
+server /gamemode survival @p
+server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+server /villa ort 38.2 6 61.0 90 5
+warte 2
+bild f05_regal_zu
+druecke shift
+warte 1.2
+bild f06_regal_magie
+loslassen shift
+warte 1.5
+bild f07_regal_offen

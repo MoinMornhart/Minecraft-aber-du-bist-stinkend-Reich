@@ -89,7 +89,7 @@ final class FahrzeugAnzeige {
             ItemStack modell = new ItemStack(Items.PAPER);
             modell.set(DataComponents.ITEM_MODEL, itemModell(auto.art, AutoEntity.FARBEN[auto.farbe()]));
             return modell;
-        }, null);
+        }, null, null);
     }
 
     /**
@@ -100,7 +100,12 @@ final class FahrzeugAnzeige {
     static PolymerEntity uebersetzung(net.minecraft.world.entity.Entity e, String name, EntityType<?> echt) {
         ItemStack modell = new ItemStack(Items.PAPER);
         modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/" + name));
-        return uebersetzung(echt, () -> 1.0F, () -> modell, e instanceof AufzugKabine ? null : () -> licht(e));
+        // Ein großer Fernseher (Bunker) ist gestreckt wie beim Renderer der Mod
+        java.util.function.Supplier<Vector3f> dehnung = e instanceof de.moinmornhart.stinkendreich.fernseher.FernseherEntity tv
+                ? () -> new Vector3f(tv.breite() / de.moinmornhart.stinkendreich.fernseher.FernseherEntity.STANDARD_BREITE,
+                        tv.hoehe() / de.moinmornhart.stinkendreich.fernseher.FernseherEntity.STANDARD_HOEHE, 1.0F)
+                : null;
+        return uebersetzung(echt, () -> 1.0F, () -> modell, e instanceof AufzugKabine ? null : () -> licht(e), dehnung);
     }
 
     /**
@@ -112,7 +117,7 @@ final class FahrzeugAnzeige {
             ItemStack modell = new ItemStack(Items.PAPER);
             modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/figur/" + haut(e)));
             return modell;
-        }, null);
+        }, null, null);
     }
 
     /** Name der Haut einer Menschenfigur ({@code textures/entity/<haut>.png}). */
@@ -142,11 +147,13 @@ final class FahrzeugAnzeige {
 
     /**
      * Anzeige-Figur mit einem Modell im Entity-Modellraum (y nach unten, Boden bei y = 24 Pixel); {@code licht} ist
-     * {@code null}, wenn das Licht am Fußpunkt gelten soll (Fahrzeuge, die sich bewegen).
+     * {@code null}, wenn das Licht am Fußpunkt gelten soll (Fahrzeuge, die sich bewegen). {@code dehnung} streckt das
+     * Modell je Achse (Breite, Höhe, Tiefe), {@code null} = gar nicht.
      */
     private static PolymerEntity uebersetzung(EntityType<?> echt, java.util.function.Supplier<Float> massstab,
                                               java.util.function.Supplier<ItemStack> modell,
-                                              java.util.function.Supplier<Integer> licht) {
+                                              java.util.function.Supplier<Integer> licht,
+                                              java.util.function.Supplier<Vector3f> dehnung) {
         return new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
@@ -163,12 +170,13 @@ final class FahrzeugAnzeige {
                 daten.add(PolymerKompat.item(modell.get()));
                 if (erstes) {
                     daten.add(PolymerKompat.itemArt((byte) ItemDisplayContext.NONE.ordinal()));
-                    daten.add(PolymerKompat.skalierung(new Vector3f(m, m, m)));
+                    Vector3f d = dehnung == null ? new Vector3f(1, 1, 1) : dehnung.get();
+                    daten.add(PolymerKompat.skalierung(new Vector3f(m * d.x, m * d.y, m * d.z)));
                     // Modellraum (y nach unten, vorn = -Z) um die z-Achse auf den Kopf drehen wie der Renderer der Mod
                     // (scale -1, -1, 1); zusammen mit der halben Drehung, die Minecraft bei Item-Anzeigen selbst
                     // einbaut, schaut das Modell dann in die Blickrichtung der Figur. Boden auf Höhe 0.
                     daten.add(PolymerKompat.drehungLinks(new Quaternionf().rotateZ((float) Math.PI)));
-                    daten.add(PolymerKompat.verschiebung(new Vector3f(0, 1.5F * massstab.get(), 0)));
+                    daten.add(PolymerKompat.verschiebung(new Vector3f(0, 1.5F * massstab.get() * d.y, 0)));
                     daten.add(PolymerKompat.teleportDauer(3));
                     daten.add(PolymerKompat.sichtweite(2.0F));
                     if (licht != null) {

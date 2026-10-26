@@ -1356,7 +1356,8 @@ def bunker_suite(y: int, y0: int, y1: int) -> None:
     # Lounge: Medienwand mit Goldrahmen an der Nordwand, XXL-Fernseher, Samtsofas als U, Teppich
     b.quader(40, y, 50, 49, y1 - 2, 50, "gold_block")
     b.quader(41, y + 1, 50, 48, y1 - 2, 50, SCHWARZ)
-    b.marke("fernseher", 44.5, y + 0.4, 51.15, 0.0)                         # Bild nach Süden zu den Sofas
+    # Riesiger Fernseher: füllt die ganze schwarze Fläche bis zur Goldkante (x 41–48, y+1 … y+4 = 8 × 4 Blöcke)
+    b.marke("fernseher", 45.0, y + 1, 51.15, 0.0, 8.0, 4.0)                 # Bild nach Süden zu den Sofas
     b.quader(41, y0, 52, 48, y0, 55, "red_wool")
     reihe(b, 41, y, 56, 8, "sofa_samt", "north")                            # hinten: x 41 … 48
     reihe(b, 40, y, 53, 3, "sofa_samt", "east")                             # links: z 53 … 55
