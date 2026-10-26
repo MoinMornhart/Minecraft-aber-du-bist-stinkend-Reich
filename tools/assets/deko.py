@@ -844,6 +844,34 @@ def gamingstuhl(spalte):
     return t
 
 
+def esszimmerstuhl(spalte):
+    """Esszimmerstuhl (Blick nach Norden): weißes Lederpolster, hohe gepolsterte Lehne im Goldrahmen, Goldbeine.
+    Steht immer einzeln; Rechtsklick setzt sich drauf."""
+    t = [k([x, 0, z], [x + 1.5, 7, z + 1.5], "gold") for x, z in ((3, 3), (11.5, 3), (3, 11.5), (11.5, 11.5))]
+    t += [k([2.5, 6.5, 2.5], [13.5, 7, 13.5], "gold"),                                   # Zarge
+          k([2.5, 7, 2.5], [13.5, 9, 13.5], "leder_weiss"),                              # Sitzpolster
+          k([3, 9, 12], [13, 21, 13.5], "leder_weiss"),                                  # Lehne
+          k([2.5, 9, 11.5], [3, 21.5, 14], "gold"), k([13, 9, 11.5], [13.5, 21.5, 14], "gold"),
+          k([2.5, 21, 11.5], [13.5, 21.5, 14], "gold")]
+    return t
+
+
+def gartenbank(spalte):
+    """Gartenbank aus Teak (Sitzrichtung Norden): drei Sitzlatten, zwei Rückenlatten auf schwarzen Querstreben;
+    an den Enden schwarze Metallwangen mit Armlehne (links = Westen aus Sicht des Sitzenden), in der Mitte Stützen."""
+    t = [k([0, 6, 2], [16, 7, 5], "teak"), k([0, 6, 5.5], [16, 7, 8.5], "teak"), k([0, 6, 9], [16, 7, 12], "teak"),
+         k([0, 8, 12.5], [16, 10.5, 13.5], "teak"), k([0, 11.5, 12.5], [16, 14, 13.5], "teak"),
+         k([0, 5, 3], [16, 6, 4], "lack_schwarz"), k([0, 5, 10], [16, 6, 11], "lack_schwarz")]
+    for ende, x in (("links", 0.5), ("rechts", 14)):
+        if spalte in (ende, "einzeln"):
+            t += [k([x, 0, 2.5], [x + 1.5, 9, 4], "lack_schwarz"),                     # Bein vorn bis zur Armlehne
+                  k([x, 0, 11], [x + 1.5, 14, 12.5], "lack_schwarz"),                  # Bein hinten bis zur Lehne
+                  k([x, 9, 2.5], [x + 1.5, 10, 12.5], "lack_schwarz")]                 # Armlehne
+    if spalte == "mitte":
+        t += [k([7.25, 0, 3], [8.75, 5, 4.5], "lack_schwarz"), k([7.25, 0, 10], [8.75, 5, 11.5], "lack_schwarz")]
+    return t
+
+
 def _wanne(kopf):
     """Freistehende Badewanne aus zwei Teilen (Blick nach Norden): Kopfteil hinten mit Lehne und Handtuch,
     Fußteil vorn mit goldenem Wasserhahn. Weiße Keramik, Goldrand, Goldfüße, Wasser bis knapp unter den Rand."""
@@ -1168,6 +1196,8 @@ BLOECKE = {
 
 # Sitzhöhe in Pixeln für Sitzmöbel (Rechtsklick setzt sich drauf)
 SITZE = {"liege_kopf": 7, "wanne_kopf": 4, "klavierbank": 11}
+# Mit Schublade zum Hineinlegen (NachttischBlock, 9 Plätze)
+SCHUBLADE = {"nachttisch"}
 # Liegt auf Möbeln: bis zu so vielen Pixeln tiefer (FernbedienungBlock)
 TIEFER = {"fernbedienung": 8}
 # Rechtsklick öffnet das Spielfenster des Flügels (KlavierBlock)
@@ -1193,6 +1223,10 @@ VERBUND = {
                    "Holztafel", "Wooden Table", None),
     "gamingstuhl": (gamingstuhl, [[2, 0, 2, 14, 8, 14], [3, 8, 12, 13, 16, 15]], 0, True, "wolle", "axe",
                     "Gaming-Stuhl", "Gaming Chair", 8),
+    "esszimmerstuhl": (esszimmerstuhl, [[2.5, 0, 2.5, 13.5, 9, 13.5], [2.5, 9, 11.5, 13.5, 16, 14]], 0, True, "wolle", "axe",
+                       "Esszimmerstuhl", "Dining Chair", 9),
+    "gartenbank": (gartenbank, [[0, 0, 2, 16, 7, 13], [0, 7, 12.5, 16, 14, 13.5]], 0, True, "holz", "axe",
+                   "Gartenbank", "Garden Bench", 7),
 }
 
 FLAECHEN = ("north", "south", "east", "west", "up", "down")
@@ -1270,6 +1304,7 @@ def kingsize_bett(de: dict, en: dict) -> None:
                                                             "properties": {"part": "head"}}]}],
                    "conditions": [{"condition": "minecraft:survives_explosion"}]}]})
     de[f"block.{NS}.kingsize_bett"], en[f"block.{NS}.kingsize_bett"] = "XXL-Kingsize-Bett", "XXL King-Size Bed"
+    de[f"container.{NS}.schublade"], en[f"container.{NS}.schublade"] = "Schublade", "Drawer"
 
 
 def main() -> dict:
@@ -1320,6 +1355,8 @@ def main() -> dict:
             eintrag["klavier"] = True
         if name in TIEFER:
             eintrag["fernbedienung"] = True
+        if name in SCHUBLADE:
+            eintrag["schublade"] = True
         liste.append(eintrag)
         werkzeuge[werkzeug].append(f"{NS}:{name}")
         de[f"block.{NS}.{name}"], en[f"block.{NS}.{name}"] = name_de, name_en

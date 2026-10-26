@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=north,spalte=links": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_links"
+    },
+    "facing=east,spalte=links": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_links",
+      "y": 90
+    },
+    "facing=south,spalte=links": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_links",
+      "y": 180
+    },
+    "facing=west,spalte=links": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_links",
+      "y": 270
+    },
+    "facing=north,spalte=mitte": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_mitte"
+    },
+    "facing=east,spalte=mitte": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_mitte",
+      "y": 90
+    },
+    "facing=south,spalte=mitte": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_mitte",
+      "y": 180
+    },
+    "facing=west,spalte=mitte": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_mitte",
+      "y": 270
+    },
+    "facing=north,spalte=rechts": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_rechts"
+    },
+    "facing=east,spalte=rechts": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_rechts",
+      "y": 90
+    },
+    "facing=south,spalte=rechts": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_rechts",
+      "y": 180
+    },
+    "facing=west,spalte=rechts": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_rechts",
+      "y": 270
+    },
+    "facing=north,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_einzeln"
+    },
+    "facing=east,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_einzeln",
+      "y": 90
+    },
+    "facing=south,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_einzeln",
+      "y": 180
+    },
+    "facing=west,spalte=einzeln": {
+      "model": "stinkendreich:block/deko/esszimmerstuhl_einzeln",
+      "y": 270
+    }
+  }
+}

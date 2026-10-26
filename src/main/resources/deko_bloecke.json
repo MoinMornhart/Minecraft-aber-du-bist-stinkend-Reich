@@ -846,7 +846,8 @@
     ],
     "licht": 0,
     "fest": true,
-    "klang": "holz"
+    "klang": "holz",
+    "schublade": true
   },
   {
     "name": "tischlampe",
@@ -1298,5 +1299,57 @@
     "klang": "wolle",
     "verbund": true,
     "sitz": 8
+  },
+  {
+    "name": "esszimmerstuhl",
+    "form": [
+      [
+        2.5,
+        0,
+        2.5,
+        13.5,
+        9,
+        13.5
+      ],
+      [
+        2.5,
+        9,
+        11.5,
+        13.5,
+        16,
+        14
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "wolle",
+    "verbund": true,
+    "sitz": 9
+  },
+  {
+    "name": "gartenbank",
+    "form": [
+      [
+        0,
+        0,
+        2,
+        16,
+        7,
+        13
+      ],
+      [
+        0,
+        7,
+        12.5,
+        16,
+        14,
+        13.5
+      ]
+    ],
+    "licht": 0,
+    "fest": true,
+    "klang": "holz",
+    "verbund": true,
+    "sitz": 7
   }
 ]

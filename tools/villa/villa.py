@@ -208,9 +208,8 @@ def garten() -> None:
     b.setze(79, G + 1, 17, zustand("smooth_quartz_slab", type="top", waterlogged="false"))
     b.marke("grill", 78, G + 1, 17)
     tisch(b, 78, G + 1, 21, 82, 22)
-    for x in range(78, 83):
-        stuhl(b, x, G + 1, 20, "south")
-        stuhl(b, x, G + 1, 23, "north")
+    reihe(b, 82, G + 1, 20, 5, "gartenbank", "south")                       # Teakbänke auf beiden Seiten
+    reihe(b, 78, G + 1, 23, 5, "gartenbank", "north")
     # Bäume und Beete
     for x, z, art in ((20, 20, "oak"), (26, 30, "birch"), (20, 44, "oak"), (22, 60, "birch"), (19, 76, "oak"),
                       (88, 28, "oak"), (92, 40, "birch"), (30, 20, "birch"), (86, 18, "oak"), (28, 88, "birch")):
@@ -336,10 +335,22 @@ def treppe_und_aufzug() -> None:
         b.marke("aufzug", name, AX0 + 2, y + 1, AZ1 + 1)
 
 
+def konzertfluegel(x0: int, y: int, z0: int, tasten: str) -> None:
+    """Konzertflügel (3 × 3, spielbar): großes Modell im mittleren Block, acht unsichtbare Teile drumherum, davor die
+    Klavierbank. (x0, z0) ist die Ecke im Nordwesten; tasten = Seite mit der Klaviatur (north oder east)."""
+    for x in range(x0, x0 + 3):
+        for z in range(z0, z0 + 3):
+            deko(b, x, y, z, "konzertfluegel" if (x, z) == (x0 + 1, z0 + 1) else "fluegel_teil", tasten)
+    if tasten == "north":
+        deko(b, x0 + 1, y, z0 - 1, "klavierbank", "south")
+    else:
+        deko(b, x0 + 3, y, z0 + 1, "klavierbank", "west")
+
+
 def erdgeschoss() -> None:
     """Ballsaal (Halle), Wohnzimmer mit Aquarium und Kamin, Luxusküche mit Personalküche, Esszimmer."""
     y = EG + 1
-    # --- Ballsaal: Marmor im Schachbrett, roter Teppich mit Goldkante, Säulen, Konzertflügel, Sektturm ---
+    # --- Ballsaal: Marmor im Schachbrett, roter Teppich mit Goldkante, Säulen, Sektturm ---
     for x in range(50, 60):
         for z in range(HZ0 + 1, HZ1):
             b.setze(x, EG, z, QUARZ if (x + z) % 2 == 0 else "polished_blackstone")
@@ -351,12 +362,6 @@ def erdgeschoss() -> None:
             b.setze(x, y, z, "chiseled_quartz_block")
             b.quader(x, y + 1, z, x, OG - 2, z, zustand("quartz_pillar", axis="y"))
             b.setze(x, OG - 1, z, "gold_block")
-    # Konzertflügel (3 × 3, spielbar): großes Modell im mittleren Block, acht unsichtbare Teile drumherum; die Bank
-    # davor, wer darauf sitzt, schaut nach Süden auf die Tasten
-    for x in range(57, 60):
-        for z in range(62, 65):
-            deko(b, x, y, z, "konzertfluegel" if (x, z) == (58, 63) else "fluegel_teil", "north")
-    deko(b, 58, y, 61, "klavierbank", "south")
     b.setze(52, y, 64, "gold_block")
     deko(b, 52, y + 1, 64, "sektturm")
     pflanze(b, 51, y, HZ1 - 1, "potted_bamboo")
@@ -404,6 +409,9 @@ def erdgeschoss() -> None:
         deko(b, HX0 + 1, y + 1, z, "pokal", "east")
     pflanze(b, HX0 + 1, y, HZ1 - 1, "potted_fern")
     pflanze(b, 46, y, HZ0 + 1, "potted_azalea_bush")
+    # Konzertflügel gleich links hinter der Tür aus dem Ballsaal (Philip: „wenn du reingehst gleich links“); der
+    # Weg ins Zimmer führt nördlich daran vorbei
+    konzertfluegel(43, y, 64, "north")
     kronleuchter(b, 37, OG - 1, 50)
     kronleuchter(b, 42, OG - 1, 50)
 
@@ -459,8 +467,8 @@ def erdgeschoss() -> None:
     # --- Esszimmer: lange Marmortafel mit Kerzen, zwei Kronleuchter, Bildnis von James ---
     tisch(b, 66, y, 56, 74, 58, "smooth_quartz_slab")
     for x in range(66, 75):
-        stuhl(b, x, y, 55, "south", "dark_oak_stairs")
-        stuhl(b, x, y, 59, "north", "dark_oak_stairs")
+        reihe(b, x, y, 55, 1, "esszimmerstuhl", "south")
+        reihe(b, x, y, 59, 1, "esszimmerstuhl", "north")
     for x in (67, 70, 73):
         b.setze(x, y + 1, 57, zustand("yellow_candle", candles="3", lit="true", waterlogged="false"))
     kronleuchter(b, 68, OG - 1, 57)
@@ -607,7 +615,7 @@ def obergeschoss() -> None:
         b.marke("monitor", x, y + 2, HZ0 + 1)
     tisch(b, 69, y, 40, HX1 - 1, 40, "polished_blackstone_slab")
     for x in (71, 74, 77):
-        stuhl(b, x, y, 42, "north", "polished_blackstone_stairs")
+        reihe(b, x, y, 42, 1, "gamingstuhl", "north")
 
     # Büro mit Sicherheitszentrale (Südosten): Chefschreibtisch mit drei Überwachungsmonitoren
     # (Rechtsklick zeigt alle Kameras der Villa), Geld, Pokal, Gemälde
@@ -660,6 +668,8 @@ def penthouse() -> None:
         deko(b, x, y, z0 + 5, "barhocker")
     deko(b, x0 + 4, y + 1, z0 + 3, "cocktail")
     deko(b, x0 + 8, y + 1, z0 + 3, "champagner")
+    # Konzertflügel zwischen Hausbar und Lounge an der Westwand, die Tasten zum Raum hin (Bank im Osten)
+    konzertfluegel(x0 + 1, y, 44, "east")
     # XXL-Kingsize-Bett im Nordosten: ein Bett aus einem Stück (4 × 3 Blöcke, Satindecke, weißes Fell), Samt-
     # Kopfteil mit Goldrahmen in der Wand, Nachttische mit Lampen, Bettbank, lila Leuchtband im Boden
     kingsize_bett(b, 61, y, z0 + 1, 4, "north")
@@ -1216,7 +1226,7 @@ def bunker() -> None:
         b.marke("bunker_monitor", x, y + 2, z0 + 1)
     tisch(b, x0 + 3, y, z0 + 4, 50, z0 + 4, "polished_blackstone_slab")
     for x in range(x0 + 4, 50, 3):
-        stuhl(b, x, y, z0 + 6, "north", "polished_blackstone_stairs")
+        reihe(b, x, y, z0 + 6, 1, "gamingstuhl", "north")
     b.marke("bunker_zentrale", 45, y, 44)
     # Waffenkammer (Nordost): sechs Rüstungsständer mit voll verzauberten Sets (die Mod rüstet sie beim
     # Platzieren aus, siehe Waffenkammer.java), davor goldene Podeste, Truhen mit Agenten-Waffen und Vorräten

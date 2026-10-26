@@ -63,6 +63,16 @@ public final class ModDeko {
                 boolean verbund = o.has("verbund") && o.get("verbund").getAsBoolean();
                 boolean spuelen = o.has("spuelen") && o.get("spuelen").getAsBoolean();
                 boolean klavier = o.has("klavier") && o.get("klavier").getAsBoolean();
+                if (o.has("schublade") && o.get("schublade").getAsBoolean()) {
+                    // Nachttisch mit Schublade: Block mit Block-Entity für den Inhalt
+                    var block = ModRegister.block(name, q -> new de.moinmornhart.stinkendreich.moebel.NachttischBlock(q, kaesten, fest, sitz), p);
+                    BLOECKE.put(name, block);
+                    de.moinmornhart.stinkendreich.moebel.SchubladeBlockEntity.TYP = net.minecraft.core.Registry.register(
+                            net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE, StinkendReich.id("schublade"),
+                            net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder
+                                    .create(de.moinmornhart.stinkendreich.moebel.SchubladeBlockEntity::new, block).build());
+                    continue;
+                }
                 if (o.has("fernbedienung") && o.get("fernbedienung").getAsBoolean()) {
                     // Fernbedienung: eigenes Item (in der Hand steuert sie den Fernseher)
                     BLOECKE.put(name, ModRegister.block(name, q -> new de.moinmornhart.stinkendreich.fernseher.FernbedienungBlock(q, kaesten, fest, sitz),
