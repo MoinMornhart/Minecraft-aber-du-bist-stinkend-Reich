@@ -79,12 +79,12 @@ public class StinkendReich implements ModInitializer {
         VillaPlatzierung.registrieren();
         VillaBefehle.registrieren();
         ButlerBefehle.registrieren();
-        // Server-Version: liegt Polymer auf dem Server, sehen auch Spieler ohne Mod alles (ab 26.1)
+        // Server-Version: liegt Polymer auf dem Server, sehen auch Spieler ohne Mod alles (ab 1.21.10)
         if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("polymer-core")) {
-            //? if >=26.1 {
+            //? if >=1.21.10 {
             de.moinmornhart.stinkendreich.server.ServerPaket.registrieren();
             //?} else
-            /*LOGGER.warn("Polymer gefunden, die Server-Version für Spieler ohne Mod gibt es bisher nur ab Minecraft 26.1");*/
+            /*LOGGER.warn("Polymer gefunden, die Server-Version für Spieler ohne Mod gibt es bisher nur ab Minecraft 1.21.10");*/
         }
         AutoSteuerung.registrieren();
         Autotest.registrieren();

@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=26.1 {
+//? if >=1.21.10 {
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.netz.ModErkennung;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
@@ -12,7 +12,10 @@ import eu.pb4.polymer.core.api.other.PolymerSoundEvent;
 import eu.pb4.polymer.core.api.utils.PolymerSyncedObject;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.virtualentity.api.BlockWithElementHolder;
+//? if >=26.1 {
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+//?} else
+/*import xyz.nucleoid.packettweaker.PacketContext;*/
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -57,7 +60,7 @@ public final class ServerPaket {
         if (kontext == null) {
             return false;
         }
-        net.minecraft.network.Connection verbindung = kontext.get(PacketContext.CONNECTION);
+        net.minecraft.network.Connection verbindung = PolymerKompat.verbindung(kontext);
         return verbindung != null && ModErkennung.hatMod(verbindung);
     }
 
@@ -217,15 +220,27 @@ public final class ServerPaket {
             super(welt);
         }
 
+        /**
+         * Das Feld für den Schriftzug (privat). Gesucht über seinen Datentyp, nicht über den Namen: In der fertigen
+         * .jar für 1.21.x tragen die Felder von Minecraft andere Namen als beim Entwickeln.
+         */
         @SuppressWarnings("unchecked")
         private static EntityDataAccessor<Optional<Component>> beschreibung() {
-            try {
-                java.lang.reflect.Field f = Mannequin.class.getDeclaredField("DATA_DESCRIPTION");
-                f.setAccessible(true);
-                return (EntityDataAccessor<Optional<Component>>) f.get(null);
-            } catch (ReflectiveOperationException ex) {
-                return null;
+            for (java.lang.reflect.Field f : Mannequin.class.getDeclaredFields()) {
+                if (!java.lang.reflect.Modifier.isStatic(f.getModifiers()) || !EntityDataAccessor.class.isAssignableFrom(f.getType())) {
+                    continue;
+                }
+                try {
+                    f.setAccessible(true);
+                    EntityDataAccessor<?> a = (EntityDataAccessor<?>) f.get(null);
+                    if (a.serializer() == net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_COMPONENT) {
+                        return (EntityDataAccessor<Optional<Component>>) a;
+                    }
+                } catch (ReflectiveOperationException ex) {
+                    // nächstes Feld
+                }
             }
+            return null;
         }
     }
 }

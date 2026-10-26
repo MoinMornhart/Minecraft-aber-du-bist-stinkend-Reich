@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=26.1 {
+//? if >=1.21.10 {
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.netz.ModErkennung;
 import eu.pb4.polymer.blocks.api.BlockModelType;
@@ -14,7 +14,10 @@ import eu.pb4.polymer.virtualentity.api.attachment.HolderAttachment;
 import eu.pb4.polymer.virtualentity.api.elements.InteractionElement;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
 import eu.pb4.polymer.virtualentity.api.elements.VirtualElement;
+//? if >=26.1 {
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+//?} else
+/*import xyz.nucleoid.packettweaker.PacketContext;*/
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -126,7 +129,10 @@ final class BlockUebersetzung implements PolymerBlock, BlockWithElementHolder {
         /** Klickfeld: leitet Rechtsklicks an den echten Block weiter, als hätte der Spieler ihn angeklickt. */
         private final InteractionElement klick = new InteractionElement(new VirtualElement.InteractionHandler() {
             @Override
+            //? if >=26.1 {
             public void interact(ServerPlayer spieler, InteractionHand hand, Vec3 ort, boolean zweite) {
+            //?} else
+            /*public void interact(ServerPlayer spieler, InteractionHand hand) {*/
                 if (getAttachment() instanceof BlockAwareAttachment a) {
                     BlockPos pos = a.getBlockPos();
                     spieler.gameMode.useItemOn(spieler, spieler.level(), spieler.getItemInHand(hand), hand,

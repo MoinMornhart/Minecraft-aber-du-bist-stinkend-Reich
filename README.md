@@ -346,12 +346,12 @@ Gut zu wissen:
 
 Die Zahl hinter `+mc` muss **genau** deiner Version entsprechen. 1.21 bis 1.21.11 brauchen Java 21, 26.x braucht Java 25 (der offizielle Launcher bringt das passende Java mit).
 
-### 🖥️ Server: Freunde spielen ohne Mod mit (Vorschau, nur 26.3)
+### 🖥️ Server: Freunde spielen ohne Mod mit (Vorschau, Minecraft 1.21.10 bis 26.3)
 
-Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modrinth.com/mod/polymer) können Freunde mit ganz normalem Minecraft 26.3 mitspielen, ohne etwas zu installieren:
+Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modrinth.com/mod/polymer) können Freunde mit ganz normalem Minecraft mitspielen, ohne etwas zu installieren:
 
-1. Fabric-Server für 26.3 aufsetzen, [Fabric API](https://modrinth.com/mod/fabric-api) und diese Mod (`+mc26.3.jar`) in `mods` legen.
-2. Polymer für 26.3 (`polymer-bundled-0.18.5+26.3.jar` oder neuer) ebenfalls in `mods` legen.
+1. Fabric-Server aufsetzen, [Fabric API](https://modrinth.com/mod/fabric-api) und die passende Datei dieser Mod in `mods` legen.
+2. `polymer-bundled` für dieselbe Minecraft-Version ebenfalls in `mods` legen (für 26.3 z. B. `polymer-bundled-0.18.5+26.3.jar`, für 1.21.11 `0.15.2+1.21.11`).
 3. Server starten. Wer ohne Mod beitritt, bekommt automatisch ein Ressourcenpaket (annehmen).
 
 Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos und Hubschrauber. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik, Spotify und der Fernseher gehen nur mit der Mod. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).

@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=26.1 {
+//? if >=1.21.10 {
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,10 +14,12 @@ import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.attachment.EntityAttachment;
-import eu.pb4.polymer.virtualentity.api.data.DisplayEntityData;
 import eu.pb4.polymer.virtualentity.api.elements.InteractionElement;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+//? if >=26.1 {
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+//?} else
+/*import xyz.nucleoid.packettweaker.PacketContext;*/
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,7 +28,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -55,21 +56,7 @@ final class FahrzeugAnzeige {
 
     /** Anzeige-Figur für Items (über die ID, die Typ-Konstanten liegen je nach Version woanders). */
     private static final EntityType<?> ITEM_DISPLAY_TYP = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace("item_display"));
-    private static final EntityDataAccessor<ItemStack> ITEM = feld("DATA_ITEM_STACK_ID");
-    private static final EntityDataAccessor<Byte> ITEM_ART = feld("DATA_ITEM_DISPLAY_ID");
-
     private FahrzeugAnzeige() {
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> EntityDataAccessor<T> feld(String name) {
-        try {
-            java.lang.reflect.Field f = Display.ItemDisplay.class.getDeclaredField(name);
-            f.setAccessible(true);
-            return (EntityDataAccessor<T>) f.get(null);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Anzeige-Feld " + name + " fehlt", e);
-        }
     }
 
     /** Klickfelder an jedes geladene Fahrzeug hängen (nur für Spieler ohne Mod sichtbar). */
@@ -116,16 +103,15 @@ final class FahrzeugAnzeige {
                     return;
                 }
                 float m = massstab.get() * (1 / VERKLEINERT);
-                daten.add(SynchedEntityData.DataValue.create(ITEM, modell.get()));
+                daten.add(PolymerKompat.item(modell.get()));
                 if (erstes) {
-                    daten.add(SynchedEntityData.DataValue.create(ITEM_ART, (byte) ItemDisplayContext.NONE.ordinal()));
-                    daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.SCALE, new Vector3f(m, m, m)));
+                    daten.add(PolymerKompat.itemArt((byte) ItemDisplayContext.NONE.ordinal()));
+                    daten.add(PolymerKompat.skalierung(new Vector3f(m, m, m)));
                     // Modellraum (y nach unten, vorn = -Z) um die x-Achse auf den Kopf drehen, Boden auf Höhe 0
-                    daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.LEFT_ROTATION, new Quaternionf().rotateX((float) Math.PI)));
-                    daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.TRANSLATION,
-                            new Vector3f(0, 1.5F * massstab.get(), 0)));
-                    daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.TELEPORTATION_DURATION, 3));
-                    daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.VIEW_RANGE, 2.0F));
+                    daten.add(PolymerKompat.drehungLinks(new Quaternionf().rotateX((float) Math.PI)));
+                    daten.add(PolymerKompat.verschiebung(new Vector3f(0, 1.5F * massstab.get(), 0)));
+                    daten.add(PolymerKompat.teleportDauer(3));
+                    daten.add(PolymerKompat.sichtweite(2.0F));
                 }
             }
         };
@@ -167,14 +153,14 @@ final class FahrzeugAnzeige {
                     return neu;
                 });
                 sitz.setOffset(auto.getPassengerRidingPosition(insasse).subtract(auto.position()));
-                sendPacket(eu.pb4.polymer.virtualentity.api.VirtualEntityUtils.createClientboundSetPassengersPacket(
+                sendPacket(PolymerKompat.mitfahrer(
                         sitz.getEntityId(), new int[]{insasse.getId()}));
             }
             sitze.entrySet().removeIf(e -> {
                 if (jetzt.contains(e.getKey())) {
                     return false;
                 }
-                sendPacket(eu.pb4.polymer.virtualentity.api.VirtualEntityUtils.createClientboundSetPassengersPacket(
+                sendPacket(PolymerKompat.mitfahrer(
                         e.getValue().getEntityId(), new int[0]));
                 removeElement(e.getValue());
                 return true;

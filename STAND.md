@@ -181,8 +181,13 @@ _Zuletzt aktualisiert: 2026-10-26, 02:50 Uhr (Nachtschicht, Philip schläft)_
   StinkendReich, Handy, HandyItem, AutoEntity, HubschrauberEntity; `deps.polymer` für 26.1–26.3). Geprüft mit
   `vanilla_figuren.txt` in 26.1.2 und 26.2. Vorsicht beim Umstellen: nur diese Stellen ändern, nicht alle
   `>=26.x`-Fences im Projekt.
-- Offen: Fernseher, Drehteller, 1.21.9–1.21.11 (Polymer 0.14/0.15: `xyz.nucleoid.packettweaker.PacketContext`,
-  andere Paketnamen für Anzeige-Daten), darunter ohne Schaufensterpuppen/Dialoge, danach Paper-Plugin.
+- Server-Version jetzt ab 1.21.10 (Fences `//? if >=1.21.10`). Unterschiede der Polymer-Versionen in
+  `server/PolymerKompat` (Paket-Kontext: ab 26.1 Fabric `PacketContext`, davor `xyz.nucleoid.packettweaker`;
+  Anzeige-Daten `DisplayEntityData` bzw. `DisplayTrackedData`; Kamera- und Mitfahrer-Pakete selbst gebaut).
+  1.21.9 fehlt (Polymer 0.14.2 kann keine Haut für Schaufensterpuppen). Keine Reflexion über Feldnamen: in der
+  fertigen .jar für 1.21.x heißen die Felder anders (ab 26.1 ist Minecraft nicht mehr verschleiert).
+  Geprüft mit `vanilla_figuren.txt`: 1.21.10, 1.21.11, 26.1.2, 26.2, 26.3.
+- Offen: Fernseher, Drehteller, 1.21–1.21.9 (ohne Schaufensterpuppen, bis 1.21.5 ohne Dialoge), Paper-Plugin.
 
 ## Version 0.3.2 (veröffentlicht 26.10. nachts)
 

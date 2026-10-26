@@ -61,7 +61,7 @@ public final class Handy {
         p.level().playSound(null, p.blockPosition(), SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS, 0.6F, 1.6F);
         switch (was) {
             case "seite" -> {
-                //? if >=26.1
+                //? if >=1.21.10
                 de.moinmornhart.stinkendreich.server.HandyDialog.oeffnen(p, angabe);
                 return;
             }

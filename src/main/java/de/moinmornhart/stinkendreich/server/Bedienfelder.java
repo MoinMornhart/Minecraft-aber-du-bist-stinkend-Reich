@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=26.1 {
+//? if >=1.21.10 {
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.JsonOps;
 import de.moinmornhart.stinkendreich.klavier.Klavier;

@@ -1,13 +1,12 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=26.1 {
+//? if >=1.21.10 {
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.mechanik.Eigenschaften;
 import de.moinmornhart.stinkendreich.mechanik.KameraBlock;
 import de.moinmornhart.stinkendreich.netz.Netz;
 import de.moinmornhart.stinkendreich.netz.OhneMod;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
-import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils;
 import eu.pb4.polymer.virtualentity.api.attachment.ChunkAttachment;
 import eu.pb4.polymer.virtualentity.api.elements.ItemDisplayElement;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -158,10 +157,10 @@ final class KameraBlick {
     private static boolean takt(ServerPlayer sp, Blick b) {
         var eingabe = sp.getLastClientInput();
         if (b.warten > 0 && --b.warten == 0) {
-            sp.connection.send(VirtualEntityUtils.createClientboundSetCameraPacket(b.figur.getEntityId()));
+            sp.connection.send(PolymerKompat.kamera(b.figur.getEntityId()));
         }
         if (eingabe.shift()) {
-            sp.connection.send(VirtualEntityUtils.createClientboundSetCameraPacket(sp.getId()));
+            sp.connection.send(PolymerKompat.kamera(sp.getId()));
             b.halter.destroy();
             return false;
         }
