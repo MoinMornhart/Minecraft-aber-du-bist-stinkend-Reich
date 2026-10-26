@@ -123,15 +123,18 @@ public final class ServerPaket {
     }
 
     /**
-     * Figuren: James, Mitarbeiter und Tänzerinnen als Schaufensterpuppe (Menschenfigur) mit ihrer eigenen Haut aus
-     * dem Ressourcenpaket, Bodyguards als Eisengolem, Fahrzeuge und Aufzugskabine als Anzeige-Figur mit Modell,
+     * Figuren: James, Mitarbeiter, Tänzerinnen und Bodyguards als Schaufensterpuppe (Menschenfigur) mit eigener Haut
+     * aus dem Ressourcenpaket, Fahrzeuge und Aufzugskabine als Anzeige-Figur mit Modell,
      * alles andere vorerst als Rüstungsständer.
      */
     private static <T extends Entity> void figurUebersetzen(EntityType<T> typ) {
         String name = BuiltInRegistries.ENTITY_TYPE.getKey(typ).getPath();
-        boolean mensch = name.equals("butler") || name.equals("mitarbeiter") || name.equals("taenzerin");
+        // Bodyguards: ohne Mod ein großer Türsteher im Smoking (Menschenfigur, 1,45-fach), denn die Haut eines
+        // Eisengolems lässt sich nicht für einzelne Golems austauschen
+        boolean bodyguard = name.equals("bodyguard");
+        boolean mensch = bodyguard || name.equals("butler") || name.equals("mitarbeiter") || name.equals("taenzerin");
         // Sitze sind unsichtbar (leere Anzeige-Figur), Fahrzeuge zeigen ihr Modell (FahrzeugAnzeige)
-        String ersatzName = mensch ? "mannequin" : name.equals("bodyguard") ? "iron_golem"
+        String ersatzName = mensch ? "mannequin"
                 : name.equals("sitz") || name.equals("aufzugkabine") || typIstFahrzeug(typ) ? "item_display" : "armor_stand";
         EntityType<?> ersatz = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(ersatzName));
         PolymerEntityUtils.registerOverlay(typ, new PolymerSyncedObject<EntityType<?>>() {
@@ -156,10 +159,20 @@ public final class ServerPaket {
             @Override
             public void modifyRawTrackedData(List<SynchedEntityData.DataValue<?>> daten, ServerPlayer spieler, boolean erstes) {
                 if (mensch && erstes && !ModErkennung.hatMod(spieler)) {
-                    daten.add(SynchedEntityData.DataValue.create(Puppe.PROFIL, haut(e, name)));
+                    daten.add(SynchedEntityData.DataValue.create(Puppe.PROFIL, haut(e, bodyguard ? "bodyguard_mensch" : name)));
                     if (Puppe.BESCHREIBUNG != null) {
                         daten.add(SynchedEntityData.DataValue.create(Puppe.BESCHREIBUNG, Optional.empty()));
                     }
+                }
+            }
+
+            @Override
+            public void modifyRawEntityAttributeData(List<net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket.AttributeSnapshot> daten,
+                                                     ServerPlayer spieler, boolean erstes) {
+                if (bodyguard && !ModErkennung.hatMod(spieler)) {
+                    daten.removeIf(a -> a.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.SCALE));
+                    daten.add(new net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket.AttributeSnapshot(
+                            net.minecraft.world.entity.ai.attributes.Attributes.SCALE, 1.45, List.of()));
                 }
             }
         });

@@ -9,6 +9,7 @@
 ### Jede neue Welt beginnt in deiner eigenen Luxusvilla –<br>mit Butler James, Fuhrpark in der Tiefgarage, Hubschrauber auf dem Dach und Agenten-Ausrüstung im Bunker.
 
 [**⬇️ Herunterladen**](https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/latest) &nbsp;·&nbsp;
+[**▶️ Trailer**](docs/trailer.mp4) &nbsp;·&nbsp;
 [Installation](#-installation) &nbsp;·&nbsp;
 [Villa](#️-die-villa) &nbsp;·&nbsp;
 [Butler](#-butler-james) &nbsp;·&nbsp;
@@ -23,6 +24,9 @@
 <br>
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
+
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (3 Minuten, echtes Minecraft)" width="100%"></a>
+<p align="center"><sub>▶️ Trailer ansehen: Villa, Butler, Straßen, Hubschrauber, Handy, Bodyguards und Agenten-Ausrüstung in 3 Minuten</sub></p>
 
 ## 🏛️ Die Villa
 

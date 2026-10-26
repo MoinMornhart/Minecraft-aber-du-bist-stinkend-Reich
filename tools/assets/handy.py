@@ -334,6 +334,74 @@ def mitarbeiter() -> Image.Image:
 
 
 # ---------------------------------------------------------------------------
+# Bodyguard als Mensch (64×64, Spieler-Haut) für Spieler ohne Mod (Server-Version: Schaufensterpuppe, größer)
+# ---------------------------------------------------------------------------
+
+def bodyguard_mensch() -> Image.Image:
+    """Glatzköpfiger Türsteher im Smoking mit Sonnenbrille und Ohrstöpsel (Spieler-Hautlayout mit linken Gliedern)."""
+    zufall = random.Random(13)
+    img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
+    haut = (176, 128, 96)
+    jacke, jacke_hell = (24, 24, 30), (42, 42, 52)
+    hemd, fliege = (240, 240, 236), (14, 14, 16)
+
+    def kopf(s, x, y, w, h):
+        if s == "unten":
+            return dunkler(haut)
+        if s == "vorn":
+            if y == 3 and 1 <= x <= 6:
+                return (12, 12, 14) if x not in (3, 4) else (40, 40, 44)      # Sonnenbrille
+            if y == 2 and x in (1, 2, 5, 6):
+                return dunkler(haut, 0.7)                                     # Augenbrauen
+            if y == 6 and 2 <= x <= 5:
+                return dunkler(haut, 0.75)                                    # Mund
+        if s in ("rechts", "links") and y == 3:
+            return (12, 12, 14)                                               # Bügel der Brille
+        if s == "rechts" and y == 4 and x == 3:
+            return (60, 60, 64)                                               # Ohrstöpsel
+        return haut if zufall.random() > 0.06 else dunkler(haut, 0.94)
+    wuerfel(img, 0, 0, 8, 8, 8, kopf)
+
+    def koerper(s, x, y, w, h):
+        if s == "oben":
+            return jacke
+        if s == "unten":
+            return jacke
+        if s == "vorn":
+            if y == 0 and 3 <= x <= 4:
+                return fliege                                                 # Fliege
+            if y < 6 and abs(x - 3.5) < 1.6 - y * 0.2:
+                return hemd
+            if y < 6 and abs(x - 3.5) < 1.9 - y * 0.2:
+                return jacke_hell                                             # Revers
+            if x in (3, 4) and y in (7, 9):
+                return (60, 60, 66)                                           # Knöpfe
+        return jacke if (x + y) % 6 else jacke_hell
+    wuerfel(img, 16, 16, 8, 12, 4, koerper)
+
+    def arm(s, x, y, w, h):
+        if s == "oben":
+            return jacke
+        if y >= 11:
+            return hemd if s != "unten" else haut                             # Manschette
+        if s == "unten":
+            return haut
+        return jacke if (x + y) % 5 else jacke_hell
+    wuerfel(img, 40, 16, 4, 12, 4, arm)
+    wuerfel(img, 32, 48, 4, 12, 4, arm)
+
+    def bein(s, x, y, w, h):
+        if s == "unten" or y >= 10:
+            return (10, 10, 12) if y < 11 or s == "unten" else (36, 36, 40)  # Lackschuhe
+        if s == "rechts" and x == 2:
+            return (40, 40, 48)                                               # Galonstreifen
+        return (20, 20, 26)
+    wuerfel(img, 0, 16, 4, 12, 4, bein)
+    wuerfel(img, 16, 48, 4, 12, 4, bein)
+    return img
+
+
+# ---------------------------------------------------------------------------
 # Bodyguard (128×128, Eisengolem-Modell)
 # ---------------------------------------------------------------------------
 
@@ -428,6 +496,7 @@ def main() -> dict:
         schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
     mitarbeiter().save(ASSETS / "textures/entity/mitarbeiter.png")
     bodyguard().save(ASSETS / "textures/entity/bodyguard.png")
+    bodyguard_mensch().save(ASSETS / "textures/entity/bodyguard_mensch.png")
     return {"de": TEXTE_DE, "en": TEXTE_EN}
 
 
