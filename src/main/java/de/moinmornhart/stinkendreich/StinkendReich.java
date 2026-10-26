@@ -81,7 +81,7 @@ public class StinkendReich implements ModInitializer {
         ButlerBefehle.registrieren();
         // Server-Version: liegt Polymer auf dem Server, sehen auch Spieler ohne Mod alles (ab 1.21.9)
         if (net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("polymer-core")) {
-            //? if >=1.21.9 {
+            //? if >=1.21.6 {
             de.moinmornhart.stinkendreich.server.ServerPaket.registrieren();
             //?} else
             /*LOGGER.warn("Polymer gefunden, die Server-Version für Spieler ohne Mod gibt es bisher nur ab Minecraft 1.21.9");*/

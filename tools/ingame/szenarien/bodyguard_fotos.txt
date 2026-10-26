@@ -1,0 +1,25 @@
+# Fotos der Bodyguards (mit Mod): von vorn, von der Seite, von schräg hinten, ohne Anzeige (F1)
+warte 30
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa ort 55.5 26 84 180 5
+warte 2
+server /execute as @p run handy bodyguards|rufen
+warte 8
+server /execute as @e[type=stinkendreich:bodyguard] run data merge entity @s {NoAI:1b}
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] ^-1.4 ^ ^4.5 facing entity @s
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=furthest] ^1.4 ^ ^4.5 facing entity @s
+server /gamemode spectator
+taste F1
+warte 3
+server /villa ort 55.5 27.2 84 180 8
+warte 3
+bild g01_vorn
+server /villa ort 51 27.4 79.5 -90 6
+warte 3
+bild g02_seite
+server /villa ort 52 28.5 75.5 -35 15
+warte 3
+bild g03_schraeg

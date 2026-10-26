@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.9 {
+//? if >=1.21.6 {
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.netz.ModErkennung;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
@@ -30,6 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
+//? if >=1.21.9
 import net.minecraft.world.entity.decoration.Mannequin;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
@@ -149,23 +150,18 @@ public final class ServerPaket {
         boolean bodyguard = name.equals("bodyguard");
         boolean mensch = bodyguard || name.equals("butler") || name.equals("mitarbeiter") || name.equals("taenzerin");
         // Sitze sind unsichtbar (leere Anzeige-Figur), Fahrzeuge zeigen ihr Modell (FahrzeugAnzeige)
-        String ersatzName = mensch ? "mannequin"
-                : name.equals("sitz") || MODELLE.contains(name) || typIstFahrzeug(typ) ? "item_display" : "armor_stand";
+        // Menschen ab 1.21.9 als Schaufensterpuppe mit eigener Haut, davor als Standbild (FahrzeugAnzeige.figur)
+        //? if >=1.21.9 {
+        boolean puppe = mensch;
+        //?} else
+        /*boolean puppe = false;*/
+        String ersatzName = puppe ? "mannequin"
+                : mensch || name.equals("sitz") || MODELLE.contains(name) || typIstFahrzeug(typ) ? "item_display" : "armor_stand";
         EntityType<?> ersatz = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(ersatzName));
-        PolymerEntityUtils.registerOverlay(typ, new PolymerSyncedObject<EntityType<?>>() {
-            @Override
-            public EntityType<?> getPolymerReplacement(EntityType<?> t, PacketContext kontext) {
-                // Spieler mit Mod bekommen immer die echte Figur (sonst passen Typ und Daten nicht zusammen)
-                return mitMod(kontext) ? t : ersatz;
-            }
-
-            @Override
-            public boolean canSyncRawToClient(PacketContext kontext) {
-                return mitMod(kontext);
-            }
-        }, (java.util.function.Function<T, PolymerEntity>) e -> e instanceof de.moinmornhart.stinkendreich.auto.AutoEntity auto
+        java.util.function.Function<T, PolymerEntity> uebersetzer = e -> e instanceof de.moinmornhart.stinkendreich.auto.AutoEntity auto
                 ? FahrzeugAnzeige.uebersetzung(auto, typ)
                 : MODELLE.contains(name) ? FahrzeugAnzeige.uebersetzung(e, name, typ)
+                : mensch && !puppe ? FahrzeugAnzeige.figur(e, typ, bodyguard ? 1.45F : 1.0F)
                 : new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
@@ -178,25 +174,42 @@ public final class ServerPaket {
                     return;
                 }
                 // Puppen behalten die Daten aller Lebewesen (Gesundheit, Haltung …), Anzeige-Figuren nur die jeder Figur
-                fremdeDatenEntfernen(daten, mensch ? 15 : 8);
-                if (mensch && erstes) {
-                    daten.add(SynchedEntityData.DataValue.create(Puppe.PROFIL, haut(e, bodyguard ? "bodyguard_mensch" : name)));
+                fremdeDatenEntfernen(daten, puppe ? 15 : 8);
+                //? if >=1.21.9 {
+                if (puppe && erstes) {
+                    daten.add(SynchedEntityData.DataValue.create(Puppe.PROFIL, haut(e)));
                     if (Puppe.BESCHREIBUNG != null) {
                         daten.add(SynchedEntityData.DataValue.create(Puppe.BESCHREIBUNG, Optional.empty()));
                     }
                 }
+                //?}
             }
 
             @Override
             public void modifyRawEntityAttributeData(List<net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket.AttributeSnapshot> daten,
                                                      ServerPlayer spieler, boolean erstes) {
-                if (bodyguard && !ModErkennung.hatMod(spieler)) {
+                if (bodyguard && puppe && !ModErkennung.hatMod(spieler)) {
                     daten.removeIf(a -> a.attribute().equals(net.minecraft.world.entity.ai.attributes.Attributes.SCALE));
                     daten.add(new net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket.AttributeSnapshot(
                             net.minecraft.world.entity.ai.attributes.Attributes.SCALE, 1.45, List.of()));
                 }
             }
-        });
+        };
+        //? if >=1.21.9 {
+        PolymerEntityUtils.registerOverlay(typ, new PolymerSyncedObject<EntityType<?>>() {
+            @Override
+            public EntityType<?> getPolymerReplacement(EntityType<?> t, PacketContext kontext) {
+                // Spieler mit Mod bekommen immer die echte Figur (sonst passen Typ und Daten nicht zusammen)
+                return mitMod(kontext) ? t : ersatz;
+            }
+
+            @Override
+            public boolean canSyncRawToClient(PacketContext kontext) {
+                return mitMod(kontext);
+            }
+        }, uebersetzer);
+        //?} else
+        /*PolymerEntityUtils.registerOverlay(typ, (it.unimi.dsi.fastutil.Function<T, PolymerEntity>) o -> uebersetzer.apply((T) o));*/
     }
 
     /**
@@ -217,14 +230,14 @@ public final class ServerPaket {
         return false;
     }
 
+    //? if >=1.21.9 {
     /**
      * Die Haut einer Figur (Textur aus dem Ressourcenpaket, Tänzerinnen je nach Kostüm). Gebaut über das Datenformat
      * von Minecraft ({@code {"texture": …, "model": "wide"}}), das gibt es ab 1.21.9 überall gleich.
      */
-    private static ResolvableProfile haut(Entity e, String name) {
-        String textur = e instanceof de.moinmornhart.stinkendreich.club.TaenzerinEntity t ? "entity/taenzerin_" + t.variante() : "entity/" + name;
+    private static ResolvableProfile haut(Entity e) {
         com.google.gson.JsonObject json = new com.google.gson.JsonObject();
-        json.addProperty("texture", StinkendReich.id(textur).toString());
+        json.addProperty("texture", StinkendReich.id("entity/" + FahrzeugAnzeige.haut(e)).toString());
         json.addProperty("model", "wide");
         return ResolvableProfile.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).getOrThrow();
     }
@@ -261,5 +274,6 @@ public final class ServerPaket {
             return null;
         }
     }
+    //?}
 }
 //?}

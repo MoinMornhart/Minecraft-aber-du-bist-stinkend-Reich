@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.9 {
+//? if >=1.21.6 {
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -71,6 +71,14 @@ final class FahrzeugAnzeige {
                 // Die Kabine ist durchklickbar (Klicks gehen an die Tafeln dahinter), braucht also nur Sitze
                 EntityAttachment.ofTicking(new Halter(kabine, false), kabine);
             }
+            //? if <1.21.9 {
+            /*else if (e instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity
+                    || e instanceof de.moinmornhart.stinkendreich.club.TaenzerinEntity
+                    || e instanceof de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity) {
+                // Standbilder sind nicht anklickbar: das Klickfeld leitet an die Figur weiter (Butler-Menü)
+                EntityAttachment.ofTicking(new Halter(e, true), e);
+            }
+            *///?}
         });
     }
 
@@ -94,6 +102,31 @@ final class FahrzeugAnzeige {
         modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/" + name));
         return uebersetzung(echt, () -> 1.0F, () -> modell, e instanceof AufzugKabine ? null : () -> licht(e));
     }
+
+    /**
+     * James, Mitarbeiter, Tänzerinnen und Bodyguards in Versionen ohne Schaufensterpuppe (bis 1.21.8): ein Standbild
+     * (Spielermodell mit ihrer Haut), das mit der echten Figur mitläuft.
+     */
+    static PolymerEntity figur(net.minecraft.world.entity.Entity e, EntityType<?> echt, float massstab) {
+        return uebersetzung(echt, () -> massstab, () -> {
+            ItemStack modell = new ItemStack(Items.PAPER);
+            modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/figur/" + haut(e)));
+            return modell;
+        }, null);
+    }
+
+    /** Name der Haut einer Menschenfigur ({@code textures/entity/<haut>.png}). */
+    static String haut(net.minecraft.world.entity.Entity e) {
+        if (e instanceof de.moinmornhart.stinkendreich.club.TaenzerinEntity t) {
+            return "taenzerin_" + t.variante();
+        }
+        String name = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath();
+        return name.equals("bodyguard") ? "bodyguard_mensch" : name;
+    }
+
+    /** Alle Häute, für die ein Standbild ins Ressourcenpaket kommt. */
+    private static final String[] HAEUTE = {"butler", "mitarbeiter", "bodyguard_mensch", "taenzerin_0", "taenzerin_1",
+            "taenzerin_2", "taenzerin_3"};
 
     /** Licht an Fußpunkt und Mitte der Figur (jeweils das hellere), gepackt wie bei Anzeige-Figuren. */
     private static int licht(net.minecraft.world.entity.Entity e) {
@@ -212,6 +245,9 @@ final class FahrzeugAnzeige {
     /** Schreibt Modelle, Item-Definitionen und Texturen aller Fahrzeuge ins Ressourcenpaket. */
     static void ressourcen(ResourcePackBuilder paket) {
         kabine(paket);
+        for (String haut : HAEUTE) {
+            figurModell(paket, haut);
+        }
         for (Autotyp art : Autotyp.values()) {
             JsonObject daten = lesen("assets/stinkendreich/fahrzeuge/" + art.name + ".json");
             if (daten == null) {
@@ -256,6 +292,59 @@ final class FahrzeugAnzeige {
         // Drehteller (client/drehteller/DrehtellerModell) und Fernseher (client/fernseher/FernseherModell)
         einfachesModell(paket, "drehteller", "drehteller", 512, 128, 24, new float[][]{{0, 0, -54, -1, -54, 108, 1, 108}});
         einfachesModell(paket, "fernseher", "fernseher/aus", 256, 64, 24, new float[][]{{0, 0, -40, -45, -1, 80, 45, 2}});
+    }
+
+    /**
+     * Standbild einer Menschenfigur: die Kästen des Spielermodells (breite Arme, Haut 64 × 64) mit Überzügen,
+     * stehend. Item-Modell {@code stinkendreich:polymer/figur/<haut>}.
+     */
+    private static void figurModell(ResourcePackBuilder paket, String haut) {
+        byte[] textur = bytes("assets/stinkendreich/textures/entity/" + haut + ".png");
+        if (textur == null) {
+            return;
+        }
+        // Teil: Drehpunkt x, y, z; Kästen: u, v, x, y, z, Breite, Höhe, Tiefe, Dehnung
+        Object[][] teile = {
+                {"kopf", new float[]{0, 0, 0}, new float[][]{{0, 0, -4, -8, -4, 8, 8, 8, 0}, {32, 0, -4, -8, -4, 8, 8, 8, 0.5F}}},
+                {"koerper", new float[]{0, 0, 0}, new float[][]{{16, 16, -4, 0, -2, 8, 12, 4, 0}, {16, 32, -4, 0, -2, 8, 12, 4, 0.25F}}},
+                {"arm_r", new float[]{-5, 2, 0}, new float[][]{{40, 16, -3, -2, -2, 4, 12, 4, 0}, {40, 32, -3, -2, -2, 4, 12, 4, 0.25F}}},
+                {"arm_l", new float[]{5, 2, 0}, new float[][]{{32, 48, -1, -2, -2, 4, 12, 4, 0}, {48, 48, -1, -2, -2, 4, 12, 4, 0.25F}}},
+                {"bein_r", new float[]{-1.9F, 12, 0}, new float[][]{{0, 16, -2, 0, -2, 4, 12, 4, 0}, {0, 32, -2, 0, -2, 4, 12, 4, 0.25F}}},
+                {"bein_l", new float[]{1.9F, 12, 0}, new float[][]{{16, 48, -2, 0, -2, 4, 12, 4, 0}, {0, 48, -2, 0, -2, 4, 12, 4, 0.25F}}},
+        };
+        JsonArray teilListe = new JsonArray();
+        for (Object[] t : teile) {
+            float[] dreh = (float[]) t[1];
+            JsonArray liste = new JsonArray();
+            for (float[] k : (float[][]) t[2]) {
+                JsonObject kasten = new JsonObject();
+                kasten.add("uv", arr(k[0], k[1]));
+                kasten.add("von", arr(k[2], k[3], k[4]));
+                kasten.add("masse", arr(k[5], k[6], k[7]));
+                kasten.addProperty("dehnen", k[8]);
+                liste.add(kasten);
+            }
+            JsonObject teil = new JsonObject();
+            teil.addProperty("name", (String) t[0]);
+            teil.add("pivot", arr(dreh[0], dreh[1], dreh[2]));
+            teil.add("drehung", arr(0, 0, 0));
+            teil.add("kaesten", liste);
+            teilListe.add(teil);
+        }
+        JsonObject daten = new JsonObject();
+        daten.addProperty("breite", 64);
+        daten.addProperty("hoehe", 64);
+        daten.add("teile", teilListe);
+        JsonObject m = modell(daten);
+        String id = "stinkendreich:item/polymer/figur/" + haut;
+        JsonObject texturen = new JsonObject();
+        texturen.addProperty("lack", id);
+        texturen.addProperty("particle", id);
+        m.add("textures", texturen);
+        paket.addData("assets/stinkendreich/textures/item/polymer/figur/" + haut + ".png", textur);
+        paket.addStringData("assets/stinkendreich/models/item/polymer/figur/" + haut + ".json", m.toString());
+        paket.addStringData("assets/stinkendreich/items/polymer/figur/" + haut + ".json",
+                "{\"model\":{\"type\":\"minecraft:model\",\"model\":\"" + id + "\"}}");
     }
 
     /**
@@ -327,10 +416,13 @@ final class FahrzeugAnzeige {
             for (JsonElement k : teil.getAsJsonArray("kaesten")) {
                 JsonObject kasten = k.getAsJsonObject();
                 float[] von = vec(kasten.getAsJsonArray("von")), masse = vec(kasten.getAsJsonArray("masse"));
+                // Überzüge (Hut, Jacke, Ärmel) sind ringsum etwas größer, die Textur gehört zur ursprünglichen Größe
+                float g = kasten.has("dehnen") ? kasten.get("dehnen").getAsFloat() : 0;
                 float[] uv = vec(kasten.getAsJsonArray("uv"));
                 JsonObject el = new JsonObject();
-                el.add("from", arr(p(pivot[0] + von[0]), p(pivot[1] + von[1]), p(pivot[2] + von[2])));
-                el.add("to", arr(p(pivot[0] + von[0] + masse[0]), p(pivot[1] + von[1] + masse[1]), p(pivot[2] + von[2] + masse[2])));
+                el.add("from", arr(p(pivot[0] + von[0] - g), p(pivot[1] + von[1] - g), p(pivot[2] + von[2] - g)));
+                el.add("to", arr(p(pivot[0] + von[0] + masse[0] + g), p(pivot[1] + von[1] + masse[1] + g),
+                        p(pivot[2] + von[2] + masse[2] + g)));
                 if (dreh[0] != 0 || dreh[1] != 0 || dreh[2] != 0) {
                     JsonObject r = new JsonObject();
                     r.add("origin", arr(p(pivot[0]), p(pivot[1]), p(pivot[2])));

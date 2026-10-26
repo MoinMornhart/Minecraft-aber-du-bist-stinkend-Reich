@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.9 {
+//? if >=1.21.6 {
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.JsonOps;
 import de.moinmornhart.stinkendreich.butler.ButlerEntity;
