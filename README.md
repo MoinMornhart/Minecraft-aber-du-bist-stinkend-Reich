@@ -36,7 +36,7 @@
 
 In **jeder neuen Welt** steht am Spawn deine Villa – egal welcher Welttyp. Das Gelände drumherum wird geebnet und weich an die Landschaft angeblendet. Du startest vor dem Tor, mit der Zugangskarte in der Tasche. Bestehende Welten bleiben unberührt.
 
-Wassergraben mit Zugbrücke (wird im Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke und Teakbänken · Ballsaal · Wohnzimmer mit Konzertflügel · Esszimmer für 18 Gäste · Luxusküche · Nachtclub im Keller mit Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Kommandozentrale, Bunker-Suite, Waffenkammer, Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen) und Notausgang.
+Wassergraben mit Zugbrücke (wird im Lockdown und in der Festung zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke und Teakbänken · Ballsaal · Wohnzimmer mit Konzertflügel und Haifischbecken · Esszimmer für 18 Gäste · Luxusküche · Nachtclub im Keller mit großer Bar vor dem Meeresaquarium, VIP-Seerestaurant unter einer Glaskuppel und Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Kommandozentrale, Bunker-Suite, Waffenkammer, Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen) und Notausgang.
 
 <table>
 <tr>
@@ -89,6 +89,22 @@ Wassergraben mit Zugbrücke (wird im Alarm zum Lava-Graben) · zwei Glaskuppel-B
 <td><img src="docs/bilder/geheimclub.jpg" alt="Geheimclub"><br><sub><b>Geheimclub</b> hinter dem Bücherregal: Show-Bühne mit Tänzerinnen an den Stangen</sub></td>
 </tr>
 </table>
+
+### 🦈 Unterwasser: VIP-Seerestaurant und Haifischbecken
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/seerestaurant.jpg" alt="VIP-Seerestaurant unter der Glaskuppel"><br><sub><b>VIP-Seerestaurant:</b> Dinner unter einer Glaskuppel mitten im Meeresaquarium</sub></td>
+<td width="50%"><img src="docs/bilder/club_bar.jpg" alt="Bar vor dem Aquarium"><br><sub><b>Neue Bar</b> vor der Glaswand zum Aquarium, davor die große Tanzfläche</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/haibecken.jpg" alt="Haifischbecken im Wohnzimmer"><br><sub><b>Haifischbecken</b> unter dem Glasboden im Wohnzimmer</sub></td>
+<td><img src="docs/bilder/haifalle.jpg" alt="Haifalle"><br><sub><b>Roter Knopf:</b> der freche Gast landet bei den Haien</sub></td>
+</tr>
+</table>
+
+- **Seerestaurant:** Vom Club führt ein Glastunnel durchs Aquarium in die Kuppel. Rundherum Sand, Seegras, Tang, Korallen, Tropenfische, Schildkröten, Delfine – und zwei Haie.
+- **Haifischbecken:** Im Wohnzimmer ist ein Teil des Bodens aus Glas, darunter schwimmen Haie (von unten sieht man sie über der Tanzfläche des Clubs). Drückt ein Bewohner den roten Knopf an der Wand, landet der nächste Gast, der kein Bewohner ist, auf der Glasfläche, die Platten klappen auf, und er fällt zu den Haien. Greift jemand einen Bewohner an, passiert das von selbst.
 
 ### 🛏️ Penthouse: dein privater Schlafbereich
 
@@ -206,7 +222,7 @@ Der totale Lockdown. Die Villa wird uneinnehmbar – von allen Seiten und auch v
 
 | Bereich | Was drin ist |
 |---|---|
-| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 und Festung · Lava-Graben, solange die Anlage an und du auf dem Grundstück bist (im Lockdown immer) · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat · **Festung**: Minengürtel ums Grundstück, Abwehrgeschütze und Himmelslaser auf der Mauer |
+| 🚨 **Sicherheit** | Sicherheitsstufen 0–3 und Festung · Lava-Graben im Lockdown und in der Festung · Laserschranken · Bewegungsmelder · Sirenen · Warnleuchten · Alarm im Chat · **Festung**: Minengürtel ums Grundstück, Abwehrgeschütze und Himmelslaser auf der Mauer |
 | 🪪 **Zugang** | Zugangskarte (wer eine hat, ist Bewohner) · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Zugbrücke mit Schaltern innen und außen · Portaltür als Haustür · Rollläden · Schiebetüren · Privattür (nur Bewohner) · Sicherheitstüren für Büro und Kontrollraum und Banktür im Bunker (nur mit Zugangskarte, bleiben offen, bis du sie schließt) |
 | 🛗 **Im Haus** | Aufzug zu allen Etagen, in den Bunker nur mit Zugangskarte · Überwachungsraum und Kommandozentrale mit Kameras · magische Geheimregale (schleichen) zum Geheimclub und zum Notausgang · Bunker-Suite hinter der Panzertür · Notausgang zu einer versteckten Falltür 50 Blöcke neben der Villa |
 | 💎 **Tresor** | Schmuck-Tresor mit Fallen und versteckten Entschärfknöpfen |
@@ -373,6 +389,7 @@ Unter allen Decken der Villa hängen **Smart-Lampen**. Im Handy steuerst du das 
 | **■ Farben** | Weiß, Warmweiß, Rot, Grün, Blau, Lila, Pink, Gold |
 | **Disco an / aus** | die Lampen wechseln reihum die Farbe |
 | **Automatik an / aus** | abends: Rollläden runter, Licht an, Brücke ein · morgens: alles wieder auf |
+| **🕶 Inkognito / Villa zurück** | Für Geheimagenten: Die ganze Villa fährt Lage für Lage in den Boden, bis nur noch Wiese übrig ist – und taucht auf Knopfdruck wieder auf, mit allen Möbeln, Truhen und Autos. Der Bunker bleibt, rein kommst du durch die versteckte Falltür |
 
 Ohne Handy geht es auch: Rechtsklick auf eine Lampe schaltet nur diese eine.
 

@@ -1117,6 +1117,170 @@ def keller() -> None:
     b.marke("drehteller", RAMPE_X0 + 1.5, y, 40.5)
 
 
+def club_ausbau() -> None:
+    """Nachtclub größer (Philip, 26.10.): Der Club wächst nach Süden bis z 70, die Bar zieht an die neue Südwand –
+    eine Glaswand zum Meeresaquarium, hinter der die Fische schwimmen. Wo die alte Bar stand, ist jetzt Platz für eine
+    große Tanzfläche. Im Südosten führt ein Glastunnel ins VIP-Seerestaurant."""
+    y = UG + 1
+    oben = UG_DECKE - 1
+    # Hülle für den neuen Teil (zum Gelände hin dicht), dann Raum z 66–70
+    b.quader(29, UG - 1, 66, 55, EG - 1, 71, "polished_deepslate")
+    b.luft(31, y, 60, 47, oben, 65)                                       # alte Bar weg
+    b.luft(31, y, 66, 53, oben, 70)
+    b.quader(31, UG, 60, 47, UG, 70, "polished_blackstone")
+    b.quader(31, UG, 66, 53, UG, 70, "polished_blackstone")
+    b.quader(31, UG_DECKE, 66, 53, UG_DECKE, 70, SCHWARZ)
+    for x in (30, 54):
+        b.quader(x, y, 66, x, oben, 70, SCHWARZ)
+        b.quader(x, y + 3, 66, x, y + 3, 70, "crying_obsidian")
+    # Geheimgang zum Geheimclub (Regal in der Westwand bei z 63–64) bleibt frei: Bar beginnt erst bei x 33
+    # Südwand: Glas zum Aquarium (unten und oben schwarz)
+    b.quader(30, UG, 71, 54, UG_DECKE, 71, SCHWARZ)
+    b.quader(31, y, 71, 53, oben, 71, "glass")
+    # Neue, längere Bar vor der Glaswand: Theke z 67/68, Barhocker davor mit Blick zur Theke, Flaschenregale seitlich
+    b.quader(33, y, 68, 48, y, 68, "polished_blackstone")
+    b.quader(33, y, 67, 48, y, 67, "gold_block")
+    for x in range(33, 49, 2):
+        deko(b, x, y, 66, "barhocker", "south")
+    for x, ding in ((34, "cocktail"), (37, "champagner"), (40, "cocktail"), (43, "champagner"), (46, "cocktail"), (48, "sektturm")):
+        deko(b, x, y + 1, 68, ding)
+    for z in (69, 70):
+        for dy in (0, 1):
+            deko(b, 32, y + dy, z, "flaschenregal", "east")
+            deko(b, 49, y + dy, z, "flaschenregal", "west")
+    deko(b, 40, y + 3, 70, "neon_bar", "north")
+    b.setze(41, oben, 69, LICHT)
+    # Große Tanzfläche (x 35–47, z 42–58) mit mehr Discokugeln
+    for x in range(35, 48):
+        for z in range(42, 59):
+            if b.hole(x, UG, z) is not None:
+                deko(b, x, UG, z, "tanzflaeche")
+    for x in range(35, 48):
+        for z in range(42, 59):
+            if (x, z) not in ((x2, z2) for x2 in range(41, 47) for z2 in range(43, 58)) and (x + z) % 4 == 0 and x % 3 == 0:
+                if b.hole(x, oben, z) in (None, "minecraft:air"):
+                    deko(b, x, oben, z, "discokugel")
+    # Eingang zum VIP-Seerestaurant: Durchgang in der Glaswand bei x 50–51, Leuchtschrift darüber
+    b.luft(50, y, 71, 51, y + 2, 71)
+    b.quader(50, y + 3, 71, 51, y + 3, 71, "gold_block")
+    deko(b, 52, y + 3, 70, "neon_vip", "north")
+
+
+def seerestaurant() -> None:
+    """VIP-Seerestaurant unter dem Südgarten: ein großes Meeresaquarium (x 31–59, z 72–96) mit Sand, Seegras, Tang,
+    Korallen und vielen Fischen; mitten darin eine Glaskuppel (Mitte x 46, z 85, Radius 7), in der man an einer
+    Marmortafel speist, rundherum Wasser. Der Weg aus dem Club führt durch einen Glastunnel."""
+    boden = UG                      # Kuppelboden auf Clubhöhe
+    # Hülle und Wasser
+    b.quader(30, boden - 2, 71, 60, UG_DECKE + 1, 97, "polished_deepslate")
+    b.quader(31, boden, 72, 59, UG_DECKE, 96, "water")
+    b.quader(31, boden - 1, 72, 59, boden - 1, 96, "sand")
+    for x in range(33, 59, 4):
+        for z in range(74, 96, 4):
+            b.setze(x, boden - 1, z, LICHT)                           # Licht im Sand
+    for x in range(33, 59, 5):
+        for z in range(74, 96, 5):
+            b.setze(x, UG_DECKE + 1, z, LICHT)                        # und von oben
+    # Kuppel
+    mx, mz, r = 46, 85, 7
+    for x in range(mx - r - 1, mx + r + 2):
+        for z in range(mz - r - 1, mz + r + 2):
+            for yy in range(boden, boden + r + 1):
+                d = ((x - mx) ** 2 + (yy - boden) ** 2 + (z - mz) ** 2) ** 0.5
+                if d <= r - 0.5:
+                    b.setze(x, yy, z, QUARZ if yy == boden else "air")
+                elif d <= r + 0.5:
+                    b.setze(x, yy, z, "glass")
+    # Glastunnel vom Club (z 71) bis in die Kuppel
+    for z in range(72, 81):
+        b.quader(49, boden, z, 52, boden + 4, z, "glass")
+        b.quader(50, boden, z, 51, boden, z, QUARZ)
+        b.luft(50, boden + 1, z, 51, boden + 3, z)
+    # Goldring im Kuppelboden, Lichter, Tafel mit Stühlen, Sektturm
+    for x in range(mx - 6, mx + 7):
+        for z in range(mz - 6, mz + 7):
+            d = ((x - mx) ** 2 + (z - mz) ** 2) ** 0.5
+            if 5.0 <= d <= 5.8 and b.hole(x, boden, z) == "minecraft:smooth_quartz":
+                b.setze(x, boden, z, "gold_block")
+            elif d < 1.0:
+                b.setze(x, boden, z, LICHT)
+    y = boden + 1
+    tisch(b, 44, y, 84, 48, 86, "smooth_quartz_slab")
+    for x in range(44, 49):
+        reihe(b, x, y, 83, 1, "esszimmerstuhl", "south")
+        reihe(b, x, y, 87, 1, "esszimmerstuhl", "north")
+    reihe(b, 43, y, 85, 1, "esszimmerstuhl", "east")
+    reihe(b, 49, y, 85, 1, "esszimmerstuhl", "west")
+    deko(b, 46, y + 1, 85, "sektturm")
+    deko(b, 44, y + 1, 84, "champagner")
+    deko(b, 48, y + 1, 86, "cocktail")
+    for (x, z) in ((41, 85), (51, 85), (46, 80), (46, 90)):
+        b.setze(x, y + 2, z, zustand("light", level="13", waterlogged="false"))
+    kronleuchter(b, 46, boden + r - 1, 85)
+    # Unterwasserwelt: Seegras, Tang, Korallenblöcke mit Korallen, Seegurken
+    import random
+    rnd = random.Random(84)
+    korallen = ("brain", "tube", "fire", "horn", "bubble")
+    for x in range(31, 60):
+        for z in range(72, 97):
+            if b.hole(x, boden, z) != "minecraft:water":
+                continue
+            w = rnd.random()
+            if w < 0.22:
+                b.setze(x, boden, z, zustand("seagrass"))
+            elif w < 0.30:
+                hoehe = rnd.randint(3, 6)
+                for dy in range(hoehe):
+                    ok = b.hole(x, boden + dy, z) == "minecraft:water"
+                    if not ok:
+                        break
+                    letzte = dy == hoehe - 1 or b.hole(x, boden + dy + 1, z) != "minecraft:water"
+                    b.setze(x, boden + dy, z, zustand("kelp", age="20") if letzte else "kelp_plant")
+                    if letzte:
+                        break
+            elif w < 0.36:
+                art = rnd.choice(korallen)
+                b.setze(x, boden, z, f"{art}_coral_block")
+                if b.hole(x, boden + 1, z) == "minecraft:water":
+                    b.setze(x, boden + 1, z, zustand(f"{art}_coral" if rnd.random() < 0.5 else f"{art}_coral_fan",
+                                                     waterlogged="true"))
+            elif w < 0.39:
+                b.setze(x, boden, z, zustand("sea_pickle", pickles=str(rnd.randint(2, 4)), waterlogged="true"))
+    # Fische: bunte Tropenfische, Lachse, Kabeljau, Schildkröten, zwei Delfine und zwei Haie
+    varianten = (117506305, 67764993, 50790401, 117899265, 185008129, 67371009, 235340288, 918529, 16778497, 50660352)
+    for i in range(28):
+        while True:
+            x, z = rnd.uniform(32, 59), rnd.uniform(73, 96)
+            if ((x - mx) ** 2 + (z - mz) ** 2) ** 0.5 > r + 1.5 and not (48 <= x <= 53 and z < 80):
+                break
+        art = "tropical_fish" if i < 18 else ("salmon" if i < 22 else ("cod" if i < 25 else "turtle"))
+        daten = {"id": f"minecraft:{art}", "PersistenceRequired": ("b", 1), "Rotation": [rnd.uniform(0, 360), 0.0],
+                 "Motion": [0.0, 0.0, 0.0], "Pos": [0.0, 0.0, 0.0]}
+        if art == "tropical_fish":
+            daten["Variant"] = varianten[i % len(varianten)]
+        b.entity(x, boden + rnd.uniform(1.0, 5.5), z, daten)
+    for (x, z, art) in ((35.5, 80.5, "minecraft:dolphin"), (56.5, 90.5, "minecraft:dolphin"),
+                        (36.5, 92.5, "stinkendreich:hai"), (56.5, 77.5, "stinkendreich:hai")):
+        b.entity(x, boden + 3.0, z, {"id": art, "PersistenceRequired": ("b", 1), "Rotation": [0.0, 0.0],
+                                       "Motion": [0.0, 0.0, 0.0], "Pos": [0.0, 0.0, 0.0]})
+
+
+def haibecken() -> None:
+    """Haifischbecken im Wohnzimmer (x 42–45, z 44–56): unter einem Glasboden aus Haifallen-Platten schwimmen zwei
+    Haie, von unten sieht man sie durch die Glasdecke über der Tanzfläche des Clubs. Der rote Knopf an der Wand
+    (x 48, z 46) wirft einen frechen Gast hinein (Haifalle öffnet sich für ein paar Sekunden)."""
+    x0, x1, z0, z1 = 42, 45, 44, 56
+    b.quader(x0 - 1, UG_DECKE - 1, z0 - 1, x1 + 1, EG - 1, z1 + 1, "glass")    # Wände und Boden (Club-Decke) aus Glas
+    b.quader(x0, UG_DECKE, z0, x1, EG - 1, z1, "water")
+    b.quader(x0 - 1, EG, z0 - 1, x1 + 1, EG, z1 + 1, "gold_block")           # Goldrahmen im Wohnzimmerboden
+    b.quader(x0, EG, z0, x1, EG, z1, "stinkendreich:haifalle")
+    b.marke("haibecken", (x0 + x1 + 1) / 2, UG_DECKE, (z0 + z1 + 1) / 2)
+    for (x, z) in ((43.5, 47.5), (44.5, 53.5)):
+        b.entity(x, UG_DECKE + 0.2, z, {"id": "stinkendreich:hai", "PersistenceRequired": ("b", 1), "Rotation": [0.0, 0.0],
+                                         "Motion": [0.0, 0.0, 0.0], "Pos": [0.0, 0.0, 0.0]})
+    b.setze(48, EG + 1, 46, zustand("stinkendreich:haifalle_schalter", facing="west"))
+
+
 def geheimclub() -> None:
     """Geheimer Club unter dem Westgarten: Eingang hinter einem Bücherregal an der Bar des Nachtclubs (Schalter im
     Regal), Treppe hinab, Show-Bühne mit Tanzstangen und Leuchtschrift, Samtnischen, Bar, Discokugel."""
@@ -1734,6 +1898,8 @@ def main() -> None:
     poolparty()
     bunker()
     keller()
+    seerestaurant()
+    club_ausbau()
     geheimclub()
     # Treppe und Aufzug nach allen Räumen, die beim Bau Luft schaffen (sonst fehlte der Schacht im Bunker)
     treppe_und_aufzug()
@@ -1741,6 +1907,7 @@ def main() -> None:
     licht_im_garten()
     lichter()
     festung()
+    haibecken()
 
     # Wo ein Bewohner als „zu Hause“ gilt (für den Lava-Graben): Haus mit Penthouse und Terrassen, Garage, Untergeschoss, Bunker
     b.marke("haus", HX0, EG, HZ0, HX1, LANDEPLATZ + 4, HZ1 + 6)                 # samt Balkon und Dachterrasse

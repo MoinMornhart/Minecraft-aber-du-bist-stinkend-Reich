@@ -1,0 +1,66 @@
+# 0.3.6 Neues: Club-Bar vor dem Aquarium, VIP-Seerestaurant in der Glaskuppel, Haifischbecken mit Falle, Inkognito
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 40.5 18 57 0 8
+warte 4
+bild a01_club_bar
+server /villa ort 50.5 16.5 73 0 5
+warte 3
+bild a02_tunnel
+server /villa ort 46.5 16.6 79.8 0 8
+warte 3
+bild a03_kuppel_innen
+server /villa ort 46.5 18 81 180 -5
+warte 2
+bild a04_kuppel_blick
+server /villa ort 34 19 84 270 5
+warte 3
+bild a05_kuppel_aussen
+server /villa ort 44 29.5 41 0 50
+warte 3
+bild a06_haibecken_oben
+server /villa ort 44 17 49 0 -70
+warte 3
+bild a07_haibecken_club
+server /difficulty normal
+server /gamemode survival @p
+server /villa ort 46.5 26 46.5 270 8
+server /summon minecraft:zombie 40.5 26 45.5 {NoAI:1b}
+warte 2
+klick
+warte 0.6
+server /gamemode spectator @p
+server /villa ort 44 29.5 41 0 55
+bild a08_haifalle_auf
+warte 2
+bild a09_haifalle_danach
+server /villa ort 44 23.5 48 0 30
+warte 1
+bild a10_im_becken
+server /difficulty peaceful
+server /villa ort 118 58 128 139 19
+warte 6
+bild i01_villa
+server /villa inkognito an
+warte 3
+bild i02_runter1
+warte 3
+bild i03_runter2
+warte 6
+bild i04_weg
+server /villa ort 56 40 150 180 15
+warte 3
+bild i05_wiese
+server /villa ort 118 58 128 139 19
+server /villa inkognito aus
+warte 4
+bild i06_hoch1
+warte 8
+bild i07_wieder_da
+server /villa ort 46.5 16.6 79.8 0 8
+warte 3
+bild i08_kuppel_danach

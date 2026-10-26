@@ -60,6 +60,9 @@ public final class VillaBefehle {
                         .then(Commands.literal("bruecke").requires(Kompat.istOperator())
                                 .then(Commands.literal("ein").executes(k -> bruecke(k, true)))
                                 .then(Commands.literal("aus").executes(k -> bruecke(k, false))))
+                        .then(Commands.literal("inkognito").requires(Kompat.istOperator())
+                                .then(Commands.literal("an").executes(k -> inkognito(k, true)))
+                                .then(Commands.literal("aus").executes(k -> inkognito(k, false))))
                         .then(Commands.literal("minentest").requires(Kompat.istOperator()).executes(VillaBefehle::minentest))
                         .then(Commands.literal("luke").requires(Kompat.istOperator()).executes(VillaBefehle::luke))
                         .then(Commands.literal("ort").requires(Kompat.istOperator())
@@ -148,6 +151,15 @@ public final class VillaBefehle {
     }
 
     /** Testhilfe: stellt den Spieler neben die versteckte Falltür des Notausgangs (Blick auf die Luke). */
+    private static int inkognito(CommandContext<CommandSourceStack> k, boolean an) {
+        String fehler = de.moinmornhart.stinkendreich.mechanik.Inkognito.schalten(k.getSource().getServer(), an);
+        if (fehler != null) {
+            k.getSource().sendFailure(Component.translatable(fehler));
+            return 0;
+        }
+        return 1;
+    }
+
     private static int luke(CommandContext<CommandSourceStack> k) throws CommandSyntaxException {
         Optional<VillaPlatzierung.VillaInfo> villa = VillaPlatzierung.villa();
         if (villa.isEmpty() || VillaDaten.get().marke("notausgang").isEmpty()) {

@@ -1,3 +1,15 @@
+### Neu in 0.3.6
+
+- **Modus FESTUNG (Stufe 4):** nur in der neuen Kommandozentrale im Bunker einschaltbar. Die Villa macht komplett dicht: Sirenen, Zugbrücke ein, Lava im Graben, auf der höheren Mauer abwechselnd Abwehrgeschütze und Laser in den Himmel, ein Minengürtel rund ums Grundstück. Alles fährt mit Animation hoch, nichts kommt in den Chat. Bewohner und Kartenbesitzer bleiben verschont.
+- **Notausgang:** Vom Bunker führt ein Tunnel 50 Blöcke weit zu einer versteckten Falltür im Rasen, die nur mit Zugangskarte aufgeht.
+- **Bunker:** Bunker-Suite mit 8 × 4 Blöcke großem Fernseher, Bad mit Goldtoilette, Kingsize-Bett und Küche; der Aufzug fährt nur mit Zugangskarte in den Bunker; Kommandozentrale mit Monitorwand und Chefschreibtisch.
+- **Zugbrücke** mit Animation (Schalter, Handy, James) und neue Haustür, die alle drei Reihen öffnet.
+- **Smart Home im Handy:** Rollläden, Zugbrücke, Licht an/aus in acht Farben, Disco, Automatik (abends zu, morgens auf) und **Inkognito-Modus**: Die ganze Villa fährt in den Boden und taucht wieder auf.
+- **Club:** größere Bar vor einer Glaswand zum Meeresaquarium, große Tanzfläche, **VIP-Seerestaurant** unter einer Glaskuppel mitten im Aquarium (Fische, Korallen, Delfine, Haie).
+- **Haifischbecken** im Wohnzimmer unter einem Glasboden: Ein roter Knopf wirft freche Gäste zu den Haien, wer einen Bewohner angreift, landet von selbst dort.
+- **Lava** im Graben jetzt nur noch im Lockdown und in der Festung.
+- Monitore am Büro- und Bunker-Schreibtisch zeigen zum Stuhl.
+
 ### Neu in 0.3.5
 
 - **Nachttisch mit Schublade:** Rechtsklick auf einen Nachttisch öffnet seine Schublade mit 9 Plätzen, zum Beispiel für Zugangskarte, Uhr und Gold. Beim Abbauen fällt der Inhalt heraus. Das geht auch mit Nachttischen in bestehenden Welten.

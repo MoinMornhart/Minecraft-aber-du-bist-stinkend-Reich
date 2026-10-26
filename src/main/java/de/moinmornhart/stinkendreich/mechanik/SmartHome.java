@@ -97,6 +97,13 @@ public final class SmartHome {
                 }
             }
             case "automatik" -> z.setzeSmart("automatik", an);
+            case "inkognito" -> {
+                String fehler = Inkognito.schalten(server, an);
+                if (fehler != null) {
+                    Kompat.nachricht(p, Component.translatable(fehler).withStyle(ChatFormatting.RED), true);
+                    return;
+                }
+            }
             default -> {
                 return;
             }
@@ -107,7 +114,7 @@ public final class SmartHome {
     }
 
     private static void tick(MinecraftServer server) {
-        if (server.getTickCount() % 10 != 0 || VillaPlatzierung.villa().isEmpty()) {
+        if (server.getTickCount() % 10 != 0 || VillaPlatzierung.villa().isEmpty() || Inkognito.aktiv(server)) {
             return;
         }
         VillaZustand z = VillaZustand.get(server);

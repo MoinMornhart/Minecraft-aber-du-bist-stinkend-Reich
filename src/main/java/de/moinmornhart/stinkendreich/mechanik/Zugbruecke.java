@@ -202,6 +202,9 @@ public final class Zugbruecke {
     // ---------------- Automatik ----------------
 
     private static void tick(MinecraftServer server) {
+        if (Inkognito.aktiv(server)) {
+            return;                                     // Villa versteckt: keine Brücke
+        }
         if (lauf != null) {
             fahren(server);
         } else if (server.getTickCount() % 10 == 0) {

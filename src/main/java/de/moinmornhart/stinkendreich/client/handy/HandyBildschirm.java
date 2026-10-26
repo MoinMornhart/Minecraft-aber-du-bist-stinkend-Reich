@@ -112,7 +112,7 @@ public class HandyBildschirm extends Screen {
                 // Smart Home: je Zeile zwei Knöpfe (an/aus), dazu acht Lichtfarben; das Handy bleibt dabei offen
                 int halb = (KNOPF_B - 4) / 2;
                 for (String[] zeile : new String[][]{{"rollo", "zu", "auf"}, {"bruecke", "zu", "auf"}, {"licht", "an", "aus"},
-                        {"disco", "an", "aus"}, {"automatik", "an", "aus"}}) {
+                        {"disco", "an", "aus"}, {"automatik", "an", "aus"}, {"inkognito", "an", "aus"}}) {
                     addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[1]),
                             b -> anfragen("smart|" + zeile[0] + "|" + zeile[1])).bounds(x, y, halb, KNOPF_H).build());
                     addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[2]),

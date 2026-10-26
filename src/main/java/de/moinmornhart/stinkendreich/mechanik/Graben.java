@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Lava-Graben: Ist die Alarmanlage an (Stufe 1 oder höher) und ein Bewohner zu Hause (irgendwo auf dem Grundstück
- * innerhalb des Grabens, also auch im Garten, oder in einem der Bereiche „haus“ aus villa.json), füllt sich der
- * Graben rund um das Grundstück mit Lava. Im Lockdown (Stufe 2 und 3) ist immer Lava darin, auch wenn niemand zu
- * Hause ist. Sonst ist Wasser darin. Getauscht wird in zwei Schritten: erst alles leeren, im nächsten Tick neu füllen. So berühren
+ * Lava-Graben: Nur im Lockdown (Stufe 2 und 3) und in der Festung (Stufe 4) füllt sich der Graben rund um das
+ * Grundstück mit Lava, sonst ist Wasser darin. Getauscht wird in zwei Schritten: erst alles leeren, im nächsten Tick neu füllen. So berühren
  * sich Wasser und Lava nie (das gäbe Obsidian). Blöcke, die jemand in den Graben gebaut hat, bleiben.
  * Ein- und ausschalten: Config „lavaGraben“.
  */
@@ -50,6 +48,9 @@ public final class Graben {
     }
 
     private static void tick(MinecraftServer server) {
+        if (Inkognito.aktiv(server)) {
+            return;                                     // Villa versteckt: kein Graben
+        }
         ServerLevel welt = server.overworld();
         if (fuellenMitLava != null) {
             fuellen(welt, fuellenMitLava);
@@ -70,7 +71,7 @@ public final class Graben {
         }
         VillaZustand zustand = VillaZustand.get(server);
         boolean soll = Konfig.get().lavaGraben
-                && (zustand.stufe() >= 2 || zustand.stufe() >= 1 && bewohnerZuHause(welt, villa, zustand));
+                && zustand.stufe() >= 2;                 // nur im Lockdown und in der Festung (Philip, 26.10.)
         if (istLava == null) {
             istLava = welt.getBlockState(felder.get(felder.size() / 2)).is(Blocks.LAVA);
         }
@@ -102,33 +103,6 @@ public final class Graben {
         }
         istLava = lava;
         fuellenMitLava = null;
-    }
-
-    private static boolean bewohnerZuHause(ServerLevel welt, VillaPlatzierung.VillaInfo villa, VillaZustand zustand) {
-        // Grundstück: alles innerhalb des Grabenrings, vom Keller bis hoch über das Dach
-        JsonArray g = villa.plan().marke("graben").get(0);
-        int breite = g.get(6).getAsInt();
-        BlockPos innenA = villa.weltPos(g.get(0).getAsInt() + breite, 0, g.get(2).getAsInt() + breite);
-        BlockPos innenB = villa.weltPos(g.get(3).getAsInt() - breite, 90, g.get(5).getAsInt() - breite);
-        for (ServerPlayer p : welt.players()) {
-            if (!zustand.istBewohner(p)) {
-                continue;
-            }
-            BlockPos s = p.blockPosition();
-            if (s.getX() >= innenA.getX() && s.getX() <= innenB.getX() && s.getY() >= innenA.getY() && s.getY() <= innenB.getY()
-                    && s.getZ() >= innenA.getZ() && s.getZ() <= innenB.getZ()) {
-                return true;
-            }
-            for (JsonArray m : villa.plan().marke("haus")) {
-                BlockPos a = villa.weltPos(m.get(0).getAsDouble(), m.get(1).getAsDouble(), m.get(2).getAsDouble());
-                BlockPos b = villa.weltPos(m.get(3).getAsDouble(), m.get(4).getAsDouble(), m.get(5).getAsDouble());
-                if (s.getX() >= a.getX() && s.getX() <= b.getX() && s.getY() >= a.getY() && s.getY() <= b.getY()
-                        && s.getZ() >= a.getZ() && s.getZ() <= b.getZ()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /** Ring aus der Marke „graben“: Kasten (x0 y0 z0 x1 y1 z1) und Breite des Rings nach innen. */
