@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 06:40 Uhr (Nachtschicht, Philip schläft)_
+_Zuletzt aktualisiert: 2026-10-26, 07:45 Uhr (Philip ist wach)_
 
 ## Erledigt
 
@@ -208,9 +208,13 @@ _Zuletzt aktualisiert: 2026-10-26, 06:40 Uhr (Nachtschicht, Philip schläft)_
   `looking_at_block_state: alwaysOn` zeigt oben links den Blockzustand, auf den man schaut (ab 26.x).
 - `test.sh` wartet jetzt, bis Server und Client wirklich beendet sind (sonst schrieb ein noch speichernder Server in
   die Welt des nächsten Laufs: „Failed to load level data“).
-- Offen: 1.21–1.21.8 (ohne Schaufensterpuppen, bis 1.21.5 ohne Dialoge), Paper-Plugin.
+- In Arbeit: 1.21.6–1.21.8 (Polymer 0.13, `deps.polymer` eingetragen, Server-Fences jetzt `>=1.21.6`). Dort gibt
+  es keine Schaufensterpuppen: Menschenfiguren werden zum Standbild (`FahrzeugAnzeige.figur`, Spielermodell mit
+  Haut, Überzüge mit `dehnen`) mit Klickfeld. Übersetzt in 1.21.5–1.21.10 und 26.3, noch nicht im Spiel geprüft
+  (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
+- Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
 
-## Version 0.3.3 (veröffentlicht 26.10. morgens)
+## Version 0.3.3 (veröffentlicht 26.10. morgens, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.3)
 
 - Server-Version 1.21.9–26.3 mit allen Darstellungs-Fixes (siehe oben), Drehteller und Fernseher ohne Mod,
   Chauffeur-Rettung. Vorher geprüft: alle 17 Versionen übersetzen, 26.3 ohne Mod (`vanilla_richtung`, `_auto`,
