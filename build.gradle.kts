@@ -61,10 +61,6 @@ dependencies {
 
 loom {
     fabricModJsonPath = rootProject.file("src/main/resources/fabric.mod.json")
-    accessWidenerPath = sc.process(
-        rootProject.file("src/main/resources/stinkendreich.ct"),
-        "build/processed.ct"
-    )
 
     decompilerOptions.named("vineflower") {
         options.put("mark-corresponding-synthetics", "1")

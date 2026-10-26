@@ -18,7 +18,6 @@
     "client": ["de.moinmornhart.stinkendreich.client.StinkendReichClient"]
   },
   "mixins": ["stinkendreich.mixins.json"],
-  "accessWidener": "stinkendreich.ct",
   "depends": {
     "fabricloader": "*",
     "minecraft": "${minecraft}",
