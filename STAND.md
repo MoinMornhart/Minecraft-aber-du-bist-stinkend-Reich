@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 16:55 Uhr (Release 0.3.6 angestoßen)_
+_Zuletzt aktualisiert: 2026-10-26, 16:56 Uhr (Release 0.3.6 online, Trailer wird aufgenommen)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -254,7 +254,7 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   Abstand, Straßen zwischen den Villen, Villen im Handy-Navi, Besitzer über dem Butler, auf der Zugangskarte und
   auf dem Nummernschild.
 
-## Version 0.3.6 (Release angestoßen 26.10. ~16:55)
+## Version 0.3.6 (veröffentlicht 26.10. 16:54, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.6)
 
 - Inkognito (`mechanik/Inkognito`): Villa fährt Schritt für Schritt um `tiefe()` = hoehe − bodenY + 2 nach unten
   (Spalten je Tick in 4 Streifen, nur geänderte Blöcke), Strukturdatei `inkognito/villa` für Truhen-Inhalte, Deckel aus
