@@ -2,6 +2,10 @@
 
 _Zuletzt aktualisiert: 2026-10-26, 13:05 Uhr (Philip ist wach)_
 
+**Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
+veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
+Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`, dann Artifact mit derselben Datei.
+
 ## Erledigt
 
 - **Baustein 1: Multi-Version-Setup.** Stonecutter 0.9.8 mit 17 Versionen (1.21 bis 1.21.11 mit Java 21, 26.1 bis 26.3 mit Java 25), eine .jar je Version, Mojang-Namen über `loom-back-compat`. Alle Versionsunterschiede stecken in `Kompat`/`KompatClient` oder in `//?`-Bedingungen.
