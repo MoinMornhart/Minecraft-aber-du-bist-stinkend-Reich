@@ -4,11 +4,15 @@
 - **Notausgang:** Vom Bunker führt ein Tunnel 50 Blöcke weit zu einer versteckten Falltür im Rasen, die nur mit Zugangskarte aufgeht.
 - **Bunker:** Bunker-Suite mit 8 × 4 Blöcke großem Fernseher, Bad mit Goldtoilette, Kingsize-Bett und Küche; der Aufzug fährt nur mit Zugangskarte in den Bunker; Kommandozentrale mit Monitorwand und Chefschreibtisch.
 - **Zugbrücke** mit Animation (Schalter, Handy, James) und neue Haustür, die alle drei Reihen öffnet.
-- **Smart Home im Handy:** Rollläden, Zugbrücke, Licht an/aus in acht Farben, Disco, Automatik (abends zu, morgens auf) und **Inkognito-Modus**: Die ganze Villa fährt in den Boden und taucht wieder auf.
+- **Smart Home im Handy:** ein Schalter je Funktion mit Symbol und farbigem Zustand: Rollläden, Zugbrücke, Licht in acht Farben, Disco, Automatik (abends zu, morgens auf), Krisenbunker und Haibecken.
+- **Inkognito-Modus:** Die ganze Villa fährt wie ein Aufzug in die Erde, darüber schließt sich eine Wiese, auf der Tarnbäume wachsen. Unten bleibt alles erhalten, wer drei Blöcke tief gräbt, landet im Haus. Auf Knopfdruck fährt sie mit allem wieder hoch. Wer drinnen steht, fährt ohne Schaden mit.
+- **Krisenbunker:** Der Aufzug ist komplett gesperrt, Rollläden zu, Zugbrücke hoch, nur noch der Bunker lebt. Raus geht es dann nur über den Notausgang.
+- **Echte Regenduschen** im Bad oben und im Bunker: Armatur aufdrehen, es regnet bis zum Boden und rauscht.
 - **Club:** größere Bar vor einer Glaswand zum Meeresaquarium, große Tanzfläche, **VIP-Seerestaurant** unter einer Glaskuppel mitten im Aquarium (Fische, Korallen, Delfine, Haie).
-- **Haifischbecken** im Wohnzimmer unter einem Glasboden: Ein roter Knopf wirft freche Gäste zu den Haien, wer einen Bewohner angreift, landet von selbst dort.
+- **Haifischbecken** im Wohnzimmer unter einem Glasboden mit echten Haien: Ein roter Knopf oder das Handy wirft freche Gäste zu den Haien, wer einen Bewohner angreift, landet von selbst dort.
 - **Lava** im Graben jetzt nur noch im Lockdown und in der Festung.
 - Monitore am Büro- und Bunker-Schreibtisch zeigen zum Stuhl.
+- **Klares Glas** ohne Rahmen in der ganzen Welt, wie bei beliebten Ressourcenpaketen.
 
 ### Neu in 0.3.5
 

@@ -98,8 +98,8 @@ Wassergraben mit Zugbrücke (wird im Lockdown und in der Festung zum Lava-Graben
 <td width="50%"><img src="docs/bilder/club_bar.jpg" alt="Bar vor dem Aquarium"><br><sub><b>Neue Bar</b> vor der Glaswand zum Aquarium, davor die große Tanzfläche</sub></td>
 </tr>
 <tr>
-<td><img src="docs/bilder/haibecken.jpg" alt="Haifischbecken im Wohnzimmer"><br><sub><b>Haifischbecken</b> unter dem Glasboden im Wohnzimmer</sub></td>
-<td><img src="docs/bilder/haifalle.jpg" alt="Haifalle"><br><sub><b>Roter Knopf:</b> der freche Gast landet bei den Haien</sub></td>
+<td><img src="docs/bilder/haibecken.jpg" alt="Hai im Haifischbecken"><br><sub><b>Haifischbecken</b> unter dem Glasboden im Wohnzimmer – über der Tanzfläche des Clubs</sub></td>
+<td><img src="docs/bilder/haifalle.jpg" alt="Haifalle offen"><br><sub><b>Falle offen:</b> Roter Knopf oder Handy, und der freche Gast landet bei den Haien</sub></td>
 </tr>
 </table>
 
@@ -358,7 +358,7 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 | **Aufträge** | wie im Chat: Eisen, Diamanten, Holz, Essen, Truhen sortieren – oder ein eigener Satz |
 | **Mitarbeiter bestellen** | eine Mitarbeiterkiste kommt ins Inventar |
 | **Bodyguards rufen / heim** | zwei Leibwächter kommen oder gehen nach Hause |
-| **Smart Home** | Rollläden, Zugbrücke, Licht, Lichtfarbe, Disco und Automatik – siehe unten (nur Bewohner) |
+| **Smart Home** | Rollläden, Zugbrücke, Licht, Lichtfarbe, Disco, Automatik, Inkognito, Krisenbunker und Haibecken – siehe unten (nur Bewohner) |
 
 **Mitarbeiter:** Stell die Mitarbeiterkiste auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Sie graben sich selbst zum Erz und bringen jede Ladung in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis und Holz), Schleichen + Rechtsklick zeigt, was er gerade dabeihat.
 
@@ -381,15 +381,30 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 
 Unter allen Decken der Villa hängen **Smart-Lampen**. Im Handy steuerst du das ganze Haus:
 
-| Knopf | Was passiert |
+Jede Funktion hat einen eigenen Schalter mit Symbol, der Zustand steht farbig daneben (grün = an). Ein Tipp schaltet um.
+
+| Schalter | Was passiert |
 |---|---|
-| **Rollläden ▼ / ▲** | alle Rollläden fahren runter oder hoch |
-| **Brücke ein / aus** | die Zugbrücke fährt ein oder aus |
-| **Licht an / aus** | alle Lampen der Villa auf einmal |
+| **▤ Rollläden** | alle Rollläden fahren runter oder hoch |
+| **⇄ Zugbrücke** | die Zugbrücke fährt ein oder aus |
+| **☀ Licht** | alle Lampen der Villa auf einmal |
 | **■ Farben** | Weiß, Warmweiß, Rot, Grün, Blau, Lila, Pink, Gold |
-| **Disco an / aus** | die Lampen wechseln reihum die Farbe |
-| **Automatik an / aus** | abends: Rollläden runter, Licht an, Brücke ein · morgens: alles wieder auf |
-| **🕶 Inkognito / Villa zurück** | Für Geheimagenten: Die ganze Villa fährt Lage für Lage in den Boden, bis nur noch Wiese übrig ist – und taucht auf Knopfdruck wieder auf, mit allen Möbeln, Truhen und Autos. Der Bunker bleibt, rein kommst du durch die versteckte Falltür |
+| **♫ Disco** | die Lampen wechseln reihum die Farbe |
+| **☾ Automatik** | abends: Rollläden runter, Licht an, Brücke ein · morgens: alles wieder auf |
+| **◐ Inkognito** | Für Geheimagenten: Die ganze Villa fährt wie ein Aufzug in die Erde, darüber schließt sich eine Wiese mit Bäumen. Unten bleibt alles stehen – wer drei Blöcke tief gräbt, landet im Haus. Auf Knopfdruck fährt sie wieder hoch, mit allem, was du unten verändert hast. Wer drinnen steht, fährt einfach mit |
+| **☢ Krisenbunker** | Das Haus ist tot, nur der Bunker lebt: Aufzug komplett gesperrt, Rollläden zu, Zugbrücke hoch. Raus nur über den Notausgang |
+| **♒ Haibecken** | wirft den nächsten frechen Gast zu den Haien (ohne Gast geht der Glasboden kurz auf) |
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/inkognito_fahrt.jpg" alt="Villa fährt in die Erde"><br><sub><b>Inkognito:</b> Die Villa fährt in die Erde, oben bleibt nur Wiese</sub></td>
+<td width="50%"><img src="docs/bilder/inkognito_wiese.jpg" alt="Wiese mit Tarnbäumen"><br><sub><b>Getarnt:</b> Auf der Wiese wachsen Bäume – niemand ahnt etwas</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/inkognito_unten.jpg" alt="Wohnzimmer unter der Erde"><br><sub><b>Unter der Erde</b> ist alles noch da – hier das Wohnzimmer</sub></td>
+<td><img src="docs/bilder/dusche_bunker.jpg" alt="Regendusche läuft"><br><sub><b>Echte Regendusche</b> im Bad und im Bunker: Armatur aufdrehen, es regnet und rauscht</sub></td>
+</tr>
+</table>
 
 Ohne Handy geht es auch: Rechtsklick auf eine Lampe schaltet nur diese eine.
 

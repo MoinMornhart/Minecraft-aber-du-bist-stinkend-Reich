@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 13:05 Uhr (Philip ist wach)_
+_Zuletzt aktualisiert: 2026-10-26, 16:55 Uhr (Release 0.3.6 angestoßen)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -253,6 +253,18 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 - Ganz am Schluss (Philip: „Rest des Tages dafür“): **Paper-Plugin** und **mehrere Villen auf dem Server** mit
   Abstand, Straßen zwischen den Villen, Villen im Handy-Navi, Besitzer über dem Butler, auf der Zugangskarte und
   auf dem Nummernschild.
+
+## Version 0.3.6 (Release angestoßen 26.10. ~16:55)
+
+- Inkognito (`mechanik/Inkognito`): Villa fährt Schritt für Schritt um `tiefe()` = hoehe − bodenY + 2 nach unten
+  (Spalten je Tick in 4 Streifen, nur geänderte Blöcke), Strukturdatei `inkognito/villa` für Truhen-Inhalte, Deckel aus
+  Erde/Gras ringweise, Tarnbäume (`tarnung`, Zufall aus Villa-Position), Figuren fahren mit (Bilder per setPos +
+  neu anmelden, `ButlerEntity.hoeheVerschieben`), kein Wand-/Fallschaden während der Fahrt. Server-Stopp: Fahrt
+  wird ohne Animation zu Ende gebracht. Test: `inkognito_video.txt`, `inkognito_figuren.txt`, `haie036.txt`.
+- Haie (`hai/HaiEntity`, `client/hai/HaiRenderer` färbt die Delfin-Textur zur Laufzeit um), Haifalle (`mechanik/Haifalle*`),
+  Smart Home `haie|auf`, Krisenbunker (`smart krisenbunker`: Aufzug gesperrt in `Aufzug`), Smart-Home-Seite mit
+  Zustand (`SmartHome.status`, Rückmeldung „smart“). Duschen (`mechanik/Dusche*`, Szenario `dusche036.txt`).
+- Alle 17 Versionen übersetzen (Hai: kein `canBreatheUnderwater`-Override, in 1.21–1.21.5 final).
 
 ## Version 0.3.5 (veröffentlicht 26.10. vormittags, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.5)
 
