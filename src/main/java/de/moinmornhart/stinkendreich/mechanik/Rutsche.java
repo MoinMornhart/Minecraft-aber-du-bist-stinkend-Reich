@@ -25,7 +25,7 @@ public final class Rutsche {
 
     private static void tick(MinecraftServer server) {
         var villa = VillaPlatzierung.villa().orElse(null);
-        if (villa == null) {
+        if (villa == null || Inkognito.aktiv(server)) {      // versenkt liegt die Rutsche nicht mehr an ihrer Marke
             return;
         }
         for (JsonArray m : villa.plan().marke("rutsche")) {
