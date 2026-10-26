@@ -80,6 +80,7 @@ public class StinkendReichClient implements ClientModInitializer {
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(FernseherModell.SCHICHT, FernseherModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.FERNSEHER, FernseherRenderer::new);
         KlientBruecke.fernseher = id -> KompatClient.zeige(new FernseherBildschirm(id));
+        de.moinmornhart.stinkendreich.client.fernseher.FernseherVideos.registrieren();
         // Konzertflügel: Spielfenster mit Klaviatur
         KlientBruecke.klavier = pos -> KompatClient.zeige(new de.moinmornhart.stinkendreich.client.klavier.KlavierBildschirm(pos));
         // Sitzplätze auf Möbeln sind unsichtbar
@@ -108,6 +109,13 @@ public class StinkendReichClient implements ClientModInitializer {
                 de.moinmornhart.stinkendreich.netz.ModErkennung.Hallo.TYP, (paket, kontext) -> { });
         net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(
                 de.moinmornhart.stinkendreich.netz.ModErkennung.Hallo.TYP, (paket, kontext) -> { });
+        // Daten vom Server für Bildschirme der Mod (z. B. die Orte, die James kennt, für das Handy-Navi)
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(
+                de.moinmornhart.stinkendreich.netz.Rueckmeldung.TYP, (paket, kontext) -> kontext.client().execute(() -> {
+                    if (paket.art().equals("orte")) {
+                        de.moinmornhart.stinkendreich.client.handy.HandyBildschirm.orteEmpfangen(paket.wert());
+                    }
+                }));
         // Musikanlage: eigene Dateien abspielen, Spotify-Fernbedienung
         MusikKlient.registrieren();
         AutotestKlient.registrieren();

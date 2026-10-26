@@ -34,6 +34,9 @@ public final class ModMusik {
      */
     public static final SoundEvent MUSIK = ModRegister.sound("musik");
 
+    /** Ton des Fernsehers: ebenfalls ein Strom mit dem leeren Fabric-Klang, die Daten liefert der Video-Abspieler. */
+    public static final SoundEvent FERNSEHER_TON = ModRegister.sound("fernseher_ton");
+
     private ModMusik() {
     }
 

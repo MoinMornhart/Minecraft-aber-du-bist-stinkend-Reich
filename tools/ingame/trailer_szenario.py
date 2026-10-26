@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Schreibt das Drehbuch für den Trailer der Mod (tools/ingame/szenarien/trailer.txt).
 
-Kürzer und schneller als der Rundgang (video_szenario.py): etwa 90 Sekunden, kurze Kamerafahrten mit großen
-Schlagzeilen, dazwischen die besten Vorführungen (Tor, Portaltür, Konzertflügel, Geheimclub, Butler, Auto,
-Hubschrauber, Handy, Bodyguards, Straße zum Dorf, Agenten-Waffen) und am Ende die Villa bei Sonnenuntergang.
+Kürzer und schneller als der Rundgang (video_szenario.py): kurze Kamerafahrten mit großen Schlagzeilen,
+dazwischen die besten Vorführungen (Tor, Portaltür, Konzertflügel, Fernseher mit Video und Fernbedienung, Geheimclub,
+Butler, Auto, Hubschrauber, Handy mit Navi, Bodyguards, Straße zum Dorf, Agenten-Waffen) und am Ende die Villa bei
+Sonnenuntergang. Der Fernseher spielt ein Video von der Platte (YouTube ist beim Dreh nicht erreichbar), in Zeitlupe.
 
 Aufruf: python3 tools/ingame/trailer_szenario.py
-Danach: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer.txt
+Danach: SICHTWEITE=12 STINKENDREICH_TESTVIDEO=<video.mp4> STINKENDREICH_VIDEOTEMPO=0.333 \
+            tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer.txt
         ZEITLUPE=3 python3 tools/ingame/video.py build/ingame/26.3/trailer_roh.mp4 build/ingame/26.3/trailer_kapitel.txt \\
             build/ingame/26.3/trailer.mp4 "Minecraft, aber du bist stinkend reich" "Fabric-Mod für 1.21 bis 26.3"
 """
@@ -86,6 +88,12 @@ z("server /villa ort 57.5 26 66 180 5", "warte 1",
 
 titel("Ein Penthouse über den Wolken")
 zufahren(5, 62.5, 39.4, 43.2, 180, 22, zurueck=2.5, schwenk=12)
+titel("Ein Fernseher, der Videos wirklich abspielt")
+z("server /villa ort 63.5 39.6 41.6 0 10", "klient fernseher !abspielen|aqz-KE-bpKQ", "warte 3")
+zufahren(5, 63.5, 39.6, 42.4, 0, 8, zurueck=2, schwenk=8)
+titel("… mit Fernbedienung")
+zufahren(3.5, 62.6, 39.4, 43.6, -20, 48, zurueck=1, schwenk=-10)
+z("klient fernseher !stopp")
 titel("Whirlpool auf dem Dach")
 zufahren(4, 70, 41, 47, 211, 19)
 
@@ -116,8 +124,12 @@ z("server /villa ort 66 47.5 60 135 18", "warte 1.5", "server /gamemode creative
 
 titel("Ein goldenes Handy")
 z("server /gamemode creative", "server /villa ort 55.5 26 90 180 -6", "warte 1.5",
-  "server /item replace entity @p weapon.mainhand with stinkendreich:handy", "warte 0.5", "klick", "warte 2.5")
-titel("Bodyguards im Smoking")
+  "server /item replace entity @p weapon.mainhand with stinkendreich:handy", "warte 0.5",
+  "server /execute as @p run handy ort|merken|Strandbar", "server /execute as @p run handy ort|merken|Meine Mine",
+  "klick", "warte 2.5")
+titel("… mit Navi zu deinen Lieblingsorten")
+z("linksklick 640 272", "warte 1.2", "linksklick 640 406", "warte 2.5", "taste Escape", "warte 0.5", "klick", "warte 1.5")
+titel("Bodyguards: Eisengolems im Sakko")
 z("merke", "linksklick 640 440", "bis 10 Bodyguards sind da", "warte 1", "server /gamemode spectator",
   "server /execute at @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] run tp @p ^ ^1.6 ^5 facing entity "
   "@e[type=stinkendreich:bodyguard,limit=1,sort=nearest] eyes", "warte 3")

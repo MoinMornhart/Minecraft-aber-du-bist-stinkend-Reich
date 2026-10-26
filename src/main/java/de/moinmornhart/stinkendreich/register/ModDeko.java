@@ -63,6 +63,12 @@ public final class ModDeko {
                 boolean verbund = o.has("verbund") && o.get("verbund").getAsBoolean();
                 boolean spuelen = o.has("spuelen") && o.get("spuelen").getAsBoolean();
                 boolean klavier = o.has("klavier") && o.get("klavier").getAsBoolean();
+                if (o.has("fernbedienung") && o.get("fernbedienung").getAsBoolean()) {
+                    // Fernbedienung: eigenes Item (in der Hand steuert sie den Fernseher)
+                    BLOECKE.put(name, ModRegister.block(name, q -> new de.moinmornhart.stinkendreich.fernseher.FernbedienungBlock(q, kaesten, fest, sitz),
+                            p, de.moinmornhart.stinkendreich.fernseher.FernbedienungItem::new));
+                    continue;
+                }
                 BLOECKE.put(name, ModRegister.block(name, q -> verbund ? new VerbundDekoBlock(q, kaesten, fest, sitz)
                         : spuelen ? new de.moinmornhart.stinkendreich.mechanik.ToiletteBlock(q, kaesten, fest, sitz)
                         : klavier ? new de.moinmornhart.stinkendreich.klavier.KlavierBlock(q, kaesten, fest, sitz)

@@ -9,4 +9,5 @@ public class FernseherZustand extends LivingEntityRenderState {
 //?} else
 /*public class FernseherZustand {*/
     public String video = "";
+    public int tvId;
 }

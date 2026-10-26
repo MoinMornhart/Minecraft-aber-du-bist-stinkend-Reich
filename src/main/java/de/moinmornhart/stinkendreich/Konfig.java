@@ -81,6 +81,14 @@ public final class Konfig {
     /** Port für die Rückmeldung nach der Spotify-Anmeldung (Redirect-URI http://127.0.0.1:Port/callback). */
     public int spotifyPort = 8888;
 
+    // ---------- Fernseher ----------
+    /** YouTube-Videos im XXL-Fernseher abspielen (Bild und Ton im Spiel). Aus = nur Vorschaubild und Browser-Knopf. */
+    public boolean fernseherVideos = true;
+    /** Zustimmung, dass die Mod yt-dlp, FFmpeg und Deno herunterlädt (wird im Spiel einmal gefragt). */
+    public boolean fernseherHilfsprogrammeLaden = false;
+    /** Lautstärke der Fernseher, 0.0 bis 1.0 (dazu gilt der Regler „Jukebox/Notenblöcke“). */
+    public double fernseherLautstaerke = 1.0;
+
     // ---------- Update ----------
     /** Beim Start auf GitHub nach einer neuen Version suchen. */
     public boolean updatePruefen = true;
@@ -112,6 +120,16 @@ public final class Konfig {
         }
     }
 
+    /** Schreibt die aktuellen Einstellungen in die Datei (z. B. nach einer Zustimmung im Spiel). */
+    public static void speichern() {
+        Path pfad = FabricLoader.getInstance().getConfigDir().resolve(StinkendReich.MOD_ID + ".json");
+        try {
+            speichern(pfad);
+        } catch (IOException e) {
+            StinkendReich.LOGGER.warn("Konfiguration {} konnte nicht gespeichert werden", pfad, e);
+        }
+    }
+
     private static void speichern(Path pfad) throws IOException {
         JsonObject json = GSON.toJsonTree(aktuell).getAsJsonObject();
         Map<String, String> erklaerung = new LinkedHashMap<>();
@@ -136,6 +154,9 @@ public final class Konfig {
         erklaerung.put("musikOrdner", "Ordner für eigene Musik (OGG und MP3), relativ zum Minecraft-Ordner");
         erklaerung.put("spotifyClientId", "Client-ID deiner eigenen Spotify-App (developer.spotify.com, siehe README unter „Musik“). Kein Secret nötig. Leer = ohne Spotify");
         erklaerung.put("spotifyPort", "Port für die Spotify-Anmeldung. Bei Spotify muss genau http://127.0.0.1:<Port>/callback als Redirect-URI eingetragen sein");
+        erklaerung.put("fernseherVideos", "YouTube-Videos im Fernseher abspielen (true/false); aus = nur Vorschaubild und Browser-Knopf");
+        erklaerung.put("fernseherHilfsprogrammeLaden", "Zustimmung zum einmaligen Herunterladen von yt-dlp, FFmpeg und Deno nach stinkendreich/werkzeuge (wird im Spiel gefragt)");
+        erklaerung.put("fernseherLautstaerke", "Lautstärke der Fernseher von 0.0 bis 1.0");
         erklaerung.put("updatePruefen", "Beim Start nach neuen Versionen auf GitHub suchen");
         erklaerung.put("githubToken", "Nur nötig, wenn das GitHub-Repo privat ist");
         JsonObject mitErklaerung = new JsonObject();

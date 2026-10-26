@@ -24,6 +24,8 @@ import java.util.List;
  *   <li>{@code anruf|limo} – James kommt mit der Stretch-Limo und wartet am Steuer</li>
  *   <li>{@code anruf|heli} – James kommt mit dem Hubschrauber und landet neben dir</li>
  *   <li>{@code fahr|Ziel} – James holt dich mit der Limo ab und fährt dich hin (Villa, Dorf, Endportal …)</li>
+ *   <li>{@code orte} – schickt dem Handy die Liste der Orte, die James kennt</li>
+ *   <li>{@code ort|merken|Name} / {@code ort|vergessen|Name} – Ort hier speichern (James kennt ihn dann) oder löschen</li>
  *   <li>{@code liefer|Was} – Lieferservice: James bringt Tiere oder Waren (siehe {@link Lieferservice})</li>
  *   <li>{@code auftrag|Text} – ein Auftrag wie im Chat („hol 32 Eisen“)</li>
  *   <li>{@code mitarbeiter} – eine Mitarbeiterkiste kommt ins Inventar</li>
@@ -58,7 +60,9 @@ public final class Handy {
         }
         String[] teile = wert.split("\\|", 2);
         String was = teile[0], angabe = teile.length > 1 ? teile[1] : "";
-        p.level().playSound(null, p.blockPosition(), SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS, 0.6F, 1.6F);
+        if (!was.equals("orte")) {
+            p.level().playSound(null, p.blockPosition(), SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS, 0.6F, 1.6F);
+        }
         switch (was) {
             case "seite" -> {
                 //? if >=1.21.6
@@ -112,9 +116,35 @@ public final class Handy {
                 }
             }
             case "auftrag" -> ButlerBefehle.verarbeiten(p, angabe, true);
+            case "orte" -> orteSenden(p, b);
+            case "ort" -> {
+                String[] teil = angabe.split("\\|", 2);
+                String name = teil.length > 1 ? teil[1].trim() : "";
+                if (name.length() > 32) {
+                    name = name.substring(0, 32).trim();
+                }
+                if (teil[0].equals("merken") && !de.moinmornhart.stinkendreich.butler.Sprache.normalisieren(name).isEmpty()) {
+                    b.ortMerken(name, p.blockPosition());
+                    b.sagen(Component.translatable("stinkendreich.butler.ort.gemerkt", de.moinmornhart.stinkendreich.butler.Sprache.normalisieren(name)));
+                } else if (teil[0].equals("vergessen")) {
+                    b.ortVergessen(name);
+                }
+                orteSenden(p, b);
+                // Ohne Mod: die Navi-Seite mit dem neuen Ort gleich wieder öffnen
+                //? if >=1.21.6 {
+                if (!de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(p)) {
+                    de.moinmornhart.stinkendreich.server.HandyDialog.oeffnen(p, "navi");
+                }
+                //?}
+            }
             default -> {
             }
         }
+    }
+
+    /** Die Orte, die James kennt, an das Handy (eine Zeile je Ort, alphabetisch). */
+    private static void orteSenden(ServerPlayer p, ButlerEntity b) {
+        Netz.melden(p, "orte", String.join("\n", new java.util.TreeSet<>(b.orte().keySet())));
     }
 
     /** Der Butler des Spielers; hat er noch keinen, wird er jetzt eingestellt. */

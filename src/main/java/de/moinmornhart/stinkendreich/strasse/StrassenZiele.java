@@ -26,7 +26,7 @@ public final class StrassenZiele {
             new String[]{"dorf", "dorf", "doerfer", "village", "siedlung"},
             new String[]{"endportal", "endportal", "end portal", "ende", "festung", "stronghold", "end"},
             new String[]{"netherportal", "netherportal", "nether portal", "nether", "portal"},
-            new String[]{"mine", "mine", "bergwerk", "minenschacht", "mineshaft", "stollen"});
+            new String[]{"mine", "mine", "minen", "erzmine", "bergwerk", "minenschacht", "mineshaft", "stollen", "zeche", "schacht"});
 
     private StrassenZiele() {
     }

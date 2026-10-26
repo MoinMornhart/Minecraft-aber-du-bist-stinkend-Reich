@@ -12,6 +12,7 @@
 - **Villa erscheint in jeder neuen Welt** (egal welcher Welttyp) am Spawn, mit geebneter Fläche und angeblendetem Gelände. Bestehende Welten bleiben unberührt.
 - **Reihenfolge der Bausteine:** Multi-Version-Setup → Villa (Feature 1) → Butler (Feature 2) → Bonzenauto (Feature 3).
 - **Bilder:** Jeden sichtbaren Zwischenstand als echten Minecraft-Screenshot an Philip in den Chat schicken (SendUserFile) und auf die Fortschrittsseite legen.
+- **Abschluss jeder Arbeitsrunde (Philip, 26.10.):** Immer als letzter Schritt, bevor eine Runde als fertig gemeldet wird: README auf den neuen Stand bringen und den Trailer neu aufnehmen, mit den Neuerungen (`tools/ingame/trailer_szenario.py`, `tools/ingame/video.py`), ins README einbinden (`docs/trailer.mp4`) und an Philip schicken.
 
 ## Harte Regeln
 

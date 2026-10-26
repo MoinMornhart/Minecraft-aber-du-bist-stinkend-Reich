@@ -1,0 +1,32 @@
+# Fernbedienung: liegt auf dem Nachttisch (Schlafzimmer OG) und dem Loungetisch (Penthouse-Kino), in der Hand
+# öffnet sie das Fernseher-Menü; danach läuft das Testvideo im Penthouse-Fernseher (STINKENDREICH_TESTVIDEO).
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /gamerule advance_time false
+taste F1
+warte 2
+server /villa ort 33.5 32.3 61.5 140 45
+warte 5
+bild r01_nachttisch
+server /villa ort 63.5 38.6 41.4 0 30
+warte 4
+bild r02_kinotisch
+server /gamemode creative @p
+server /villa ort 63.5 38 42.2 0 5
+warte 2
+server /item replace entity @p weapon.mainhand with stinkendreich:fernbedienung
+warte 1
+klick
+warte 2
+bild r03_menue_aus_der_hand
+klient fernseher !abspielen|aqz-KE-bpKQ
+klient schliessen
+warte 10
+bild r04_video_penthouse
+warte 5
+bild r05_video_5s_spaeter
+server /gamemode spectator @p
+server /villa ort 63.5 39.6 41.0 0 12
+warte 4
+bild r06_kino_ganz

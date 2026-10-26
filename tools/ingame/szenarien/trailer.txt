@@ -68,6 +68,24 @@ merke
 server fahrt 5 | 62.50 39.40 45.70 192.0 22.0 | 62.50 39.40 43.20 180.0 22.0
 bis 105 Fahrt fertig
 server /time set 6000
+kapitel Ein Fernseher, der Videos wirklich abspielt
+server /villa ort 63.5 39.6 41.6 0 10
+klient fernseher !abspielen|aqz-KE-bpKQ
+warte 9
+server /villa ort 63.50 39.60 40.40 8.0 8.0
+warte 3
+merke
+server fahrt 5 | 63.50 39.60 40.40 8.0 8.0 | 63.50 39.60 42.40 0.0 8.0
+bis 105 Fahrt fertig
+server /time set 6000
+kapitel … mit Fernbedienung
+server /villa ort 62.26 39.40 42.66 -30.0 48.0
+warte 3
+merke
+server fahrt 3.5 | 62.26 39.40 42.66 -30.0 48.0 | 62.60 39.40 43.60 -20.0 48.0
+bis 90 Fahrt fertig
+klient fernseher !stopp
+server /time set 6000
 kapitel Whirlpool auf dem Dach
 server /villa ort 68.20 41.00 50.00 196.0 19.0
 warte 3
@@ -157,10 +175,22 @@ server /villa ort 55.5 26 90 180 -6
 warte 4.5
 server /item replace entity @p weapon.mainhand with stinkendreich:handy
 warte 1.5
+server /execute as @p run handy ort|merken|Strandbar
+server /execute as @p run handy ort|merken|Meine Mine
 klick
 warte 7.5
 server /time set 6000
-kapitel Bodyguards im Smoking
+kapitel … mit Navi zu deinen Lieblingsorten
+linksklick 640 272
+warte 3.6
+linksklick 640 406
+warte 7.5
+taste Escape
+warte 1.5
+klick
+warte 4.5
+server /time set 6000
+kapitel Bodyguards: Eisengolems im Sakko
 merke
 linksklick 640 440
 bis 30 Bodyguards sind da

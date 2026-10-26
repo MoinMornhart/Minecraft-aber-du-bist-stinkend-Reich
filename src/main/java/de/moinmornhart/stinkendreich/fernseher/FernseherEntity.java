@@ -33,13 +33,15 @@ import java.util.regex.Pattern;
 
 /**
  * XXL-Fernseher (5 × 2,8 Blöcke) an der Wand. Rechtsklick öffnet das Menü für einen YouTube-Link.
- * Gespeichert und an alle Spieler verteilt wird nur die Video-Kennung (11 Zeichen); jeder Klient lädt dazu
- * Vorschaubild und Titel und zeigt sie auf dem Bildschirm. Abgespielt wird das Video auf Wunsch im Browser
- * des eigenen PCs (YouTube lässt sich ohne eingebauten Browser nicht im Spiel abspielen).
+ * Gespeichert und an alle Spieler verteilt werden nur die Video-Kennung (11 Zeichen) und der Stand der Wiedergabe
+ * (läuft seit Spielzeit X / angehalten bei Position Y). Jeder Klient zeigt daraus selbst Vorschaubild oder Video
+ * (siehe {@code FernseherVideos}), so sehen alle dieselbe Stelle. Auf Wunsch läuft das Video im Browser des PCs.
  * Schleichen + Rechtsklick im Kreativmodus baut ihn ab.
  */
 public class FernseherEntity extends Mob {
     private static final EntityDataAccessor<String> VIDEO = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
+    /** Wiedergabe: "" = keine, "L&lt;Tick&gt;" = läuft (Position 0 war bei diesem Spielzeit-Tick), "P&lt;Ticks&gt;" = angehalten. */
+    private static final EntityDataAccessor<String> WIEDERGABE = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
     private static final Pattern KENNUNG = Pattern.compile("(?:v=|youtu\\.be/|shorts/|embed/|live/)([A-Za-z0-9_-]{11})");
     private static final Pattern NUR_KENNUNG = Pattern.compile("[A-Za-z0-9_-]{11}");
 
@@ -54,7 +56,7 @@ public class FernseherEntity extends Mob {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 20.0).add(Attributes.KNOCKBACK_RESISTANCE, 1.0);
     }
 
-    /** Nimmt die Aktion „fernseher“ vom Menü entgegen: „&lt;Entity-ID&gt;|&lt;Link oder leer&gt;“. */
+    /** Nimmt die Aktion „fernseher“ vom Menü entgegen: „&lt;Entity-ID&gt;|&lt;Befehl&gt;“ (siehe {@link #befehl}). */
     public static void registrieren() {
         Netz.bearbeiter("fernseher", 10, (spieler, pos, wert) -> {
             int trenner = wert.indexOf('|');
@@ -64,7 +66,7 @@ public class FernseherEntity extends Mob {
             try {
                 if (spieler.level().getEntity(Integer.parseInt(wert.substring(0, trenner))) instanceof FernseherEntity tv
                         && tv.distanceToSqr(spieler) < 16 * 16) {
-                    tv.setzeVideo(kennung(wert.substring(trenner + 1)));
+                    tv.befehl(wert.substring(trenner + 1));
                 }
             } catch (NumberFormatException ignoriert) {
                 // ungültige Nachricht
@@ -86,6 +88,86 @@ public class FernseherEntity extends Mob {
         return entityData.get(VIDEO);
     }
 
+    /**
+     * Befehl aus dem Menü: „!abspielen|Link“ (Link leer = aktuelles Video von vorn), „!pause“, „!weiter“,
+     * „!spulen|Sekunden“ (auch negativ), „!stopp“. Alles andere ist ein Link: Vorschaubild zeigen, nicht abspielen
+     * (leer = ausschalten).
+     */
+    public void befehl(String befehl) {
+        long jetzt = level().getGameTime();
+        String[] teile = befehl.split("\\|", 2);
+        String rest = teile.length > 1 ? teile[1] : "";
+        switch (teile[0]) {
+            case "!abspielen" -> {
+                String k = kennung(rest);
+                if (k.isEmpty()) {
+                    k = video();
+                }
+                if (!k.isEmpty()) {
+                    setzeVideo(k);
+                    entityData.set(WIEDERGABE, "L" + jetzt);
+                }
+            }
+            case "!pause" -> {
+                if (laeuft()) {
+                    entityData.set(WIEDERGABE, "P" + positionTicks(jetzt));
+                }
+            }
+            case "!weiter" -> {
+                if (angehalten()) {
+                    entityData.set(WIEDERGABE, "L" + (jetzt - positionTicks(jetzt)));
+                }
+            }
+            case "!spulen" -> {
+                try {
+                    long neu = Math.max(0, positionTicks(jetzt) + Long.parseLong(rest.trim()) * 20);
+                    if (laeuft()) {
+                        entityData.set(WIEDERGABE, "L" + (jetzt - neu));
+                    } else if (angehalten()) {
+                        entityData.set(WIEDERGABE, "P" + neu);
+                    }
+                } catch (NumberFormatException ignoriert) {
+                    // ungültige Sekundenzahl
+                }
+            }
+            case "!stopp" -> entityData.set(WIEDERGABE, "");
+            default -> {
+                setzeVideo(kennung(befehl));
+                entityData.set(WIEDERGABE, "");
+            }
+        }
+    }
+
+    public String wiedergabe() {
+        return entityData.get(WIEDERGABE);
+    }
+
+    /** Läuft gerade ein Video? */
+    public boolean laeuft() {
+        return wiedergabe().startsWith("L") && !video().isEmpty();
+    }
+
+    /** Ist ein Video angehalten (Standbild)? */
+    public boolean angehalten() {
+        return wiedergabe().startsWith("P") && !video().isEmpty();
+    }
+
+    /** Abspielposition in Spielticks zur angegebenen Spielzeit (0, wenn nichts läuft). */
+    public long positionTicks(long spielzeit) {
+        String w = wiedergabe();
+        try {
+            if (w.startsWith("L")) {
+                return Math.max(0, spielzeit - Long.parseLong(w.substring(1)));
+            }
+            if (w.startsWith("P")) {
+                return Math.max(0, Long.parseLong(w.substring(1)));
+            }
+        } catch (NumberFormatException ignoriert) {
+            // beschädigter Wert: wie „keine Wiedergabe“
+        }
+        return 0;
+    }
+
     public void setzeVideo(String kennung) {
         entityData.set(VIDEO, kennung == null ? "" : kennung);
     }
@@ -94,6 +176,7 @@ public class FernseherEntity extends Mob {
     protected void defineSynchedData(SynchedEntityData.Builder daten) {
         super.defineSynchedData(daten);
         daten.define(VIDEO, "");
+        daten.define(WIEDERGABE, "");
     }
 
     @Override
@@ -154,36 +237,42 @@ public class FernseherEntity extends Mob {
     protected void addAdditionalSaveData(ValueOutput ausgabe) {
         super.addAdditionalSaveData(ausgabe);
         ausgabe.putString("stinkendreich_video", video());
+        ausgabe.putString("stinkendreich_wiedergabe", wiedergabe());
     }
 
     @Override
     protected void readAdditionalSaveData(ValueInput eingabe) {
         super.readAdditionalSaveData(eingabe);
         setzeVideo(kennung(eingabe.getStringOr("stinkendreich_video", "")));
+        entityData.set(WIEDERGABE, eingabe.getStringOr("stinkendreich_wiedergabe", ""));
     }
     //?} else if >=1.21.5 {
     /*@Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putString("stinkendreich_video", video());
+        tag.putString("stinkendreich_wiedergabe", wiedergabe());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         setzeVideo(kennung(tag.getStringOr("stinkendreich_video", "")));
+        entityData.set(WIEDERGABE, tag.getStringOr("stinkendreich_wiedergabe", ""));
     }
     *///?} else {
     /*@Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);
         tag.putString("stinkendreich_video", video());
+        tag.putString("stinkendreich_wiedergabe", wiedergabe());
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         setzeVideo(kennung(tag.getString("stinkendreich_video")));
+        entityData.set(WIEDERGABE, tag.getString("stinkendreich_wiedergabe"));
     }
     *///?}
 }

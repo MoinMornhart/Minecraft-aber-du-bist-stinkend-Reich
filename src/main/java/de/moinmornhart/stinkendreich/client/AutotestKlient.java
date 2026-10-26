@@ -56,6 +56,12 @@ public final class AutotestKlient {
         StinkendReich.LOGGER.warn("Autotest: Haltestelle {} nicht gefunden", ziel);
     }
 
+    private static java.util.Optional<de.moinmornhart.stinkendreich.fernseher.FernseherEntity> naechsterFernseher(Minecraft client) {
+        return client.level.getEntitiesOfClass(de.moinmornhart.stinkendreich.fernseher.FernseherEntity.class,
+                        client.player.getBoundingBox().inflate(16), t -> true)
+                .stream().min(Comparator.comparingDouble(client.player::distanceToSqr));
+    }
+
     private static void tick(Minecraft client) {
         if (client.player == null || client.level == null || client.player.tickCount % 5 != 0) {
             return;
@@ -73,9 +79,14 @@ public final class AutotestKlient {
                     case "butlermenue" -> client.level.getEntitiesOfClass(ButlerEntity.class, client.player.getBoundingBox().inflate(16), b -> true)
                             .stream().min(Comparator.comparingDouble(client.player::distanceToSqr))
                             .ifPresent(b -> KlientBruecke.butler.accept(b.getId()));
+                    case "fernsehermenue" -> naechsterFernseher(client).ifPresent(tv -> KlientBruecke.fernseher.accept(tv.getId()));
                     default -> {
                         if (z.startsWith("aufzug ")) {
                             aufzug(client, z.substring(7).trim());
+                        } else if (z.startsWith("fernseher ")) {
+                            // wie ein Knopf im Fernseher-Menü, z. B. „fernseher !abspielen|dQw4w9WgXcQ“
+                            String befehl = z.substring(10).trim();
+                            naechsterFernseher(client).ifPresent(tv -> KompatClient.sende("fernseher", tv.blockPosition(), tv.getId() + "|" + befehl));
                         }
                     }
                 }

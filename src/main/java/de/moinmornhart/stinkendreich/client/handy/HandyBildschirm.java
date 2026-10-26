@@ -16,14 +16,20 @@ import java.util.List;
 
 /**
  * Das Handy: ein goldenes Smartphone mit Apps. Startseite: James anrufen (Limo oder Hubschrauber), Navigation
- * (James holt dich ab und fährt dich hin), Lieferservice (Tiere und Waren), Aufträge (wie im Chat), Mitarbeiter
- * bestellen, Bodyguards rufen oder heimschicken. Jede Taste schickt eine Nachricht „handy“ an den Server.
+ * (James holt dich ab und fährt dich hin; unter „Meine Orte“ eigene Ziele speichern, die James dann auch im Chat
+ * kennt), Lieferservice (Tiere und Waren), Aufträge (wie im Chat), Mitarbeiter bestellen, Bodyguards rufen oder
+ * heimschicken. Jede Taste schickt eine Nachricht „handy“ an den Server.
  */
 public class HandyBildschirm extends Screen {
     private static final int BREITE = 160, HOEHE = 270;
     private static final int KNOPF_B = 136, KNOPF_H = 18, ABSTAND = 3;
 
-    private enum Seite { START, NAVI, LIEFERUNG, AUFTRAG }
+    private enum Seite { START, NAVI, ORTE, LIEFERUNG, AUFTRAG }
+
+    /** Höchstens so viele eigene Orte passen auf eine Seite. */
+    private static final int ORTE_MAX = 7;
+    /** Die Orte, die James kennt (schickt der Server, siehe {@link #orteEmpfangen}). */
+    private static List<String> orte = List.of();
 
     private Seite seite = Seite.START;
     private EditBox eingabe;
@@ -65,16 +71,35 @@ public class HandyBildschirm extends Screen {
                     String befehl = ziel.equals("villa") ? "#villa" : ziel;
                     y = knopf(x, y, "navi." + ziel, () -> senden("fahr|" + befehl));
                 }
-                eingabe = new EditBox(font, x, y + 4, KNOPF_B, KNOPF_H, Component.translatable("stinkendreich.handy.navi.ort"));
-                eingabe.setHint(Component.translatable("stinkendreich.handy.navi.ort"));
+                y += 4;
+                knopf(x, y, "orte", () -> wechseln(Seite.ORTE));
+                knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
+            }
+            case ORTE -> {
+                // Gespeicherte Orte: Name = hinfahren, ✕ = löschen
+                List<String> liste = orte.size() > ORTE_MAX ? orte.subList(0, ORTE_MAX) : orte;
+                for (String ort : liste) {
+                    addRenderableWidget(Button.builder(Component.literal("➜ " + ort.substring(0, 1).toUpperCase(java.util.Locale.ROOT) + ort.substring(1)),
+                            b -> senden("fahr|" + ort))
+                            .bounds(x, y, KNOPF_B - 22, KNOPF_H).build());
+                    addRenderableWidget(Button.builder(Component.literal("✕"), b -> anfragen("ort|vergessen|" + ort))
+                            .bounds(x + KNOPF_B - 20, y, 20, KNOPF_H).build());
+                    y += KNOPF_H + ABSTAND;
+                }
+                if (orte.isEmpty()) {
+                    y += 14;    // Platz für den Hinweis „noch keine Orte“
+                }
+                eingabe = new EditBox(font, x, Math.max(y + 4, oben() + 192), KNOPF_B, KNOPF_H, Component.translatable("stinkendreich.handy.orte.name"));
+                eingabe.setHint(Component.translatable("stinkendreich.handy.orte.name"));
+                eingabe.setMaxLength(32);
                 addRenderableWidget(eingabe);
-                y += KNOPF_H + 8;
-                y = knopf(x, y, "navi.los", () -> {
+                knopf(x, Math.max(y + 4, oben() + 192) + KNOPF_H + 4, "orte.speichern", () -> {
                     if (!eingabe.getValue().isBlank()) {
-                        senden("fahr|" + eingabe.getValue().trim().toLowerCase(java.util.Locale.ROOT));
+                        anfragen("ort|merken|" + eingabe.getValue().trim());
+                        eingabe.setValue("");
                     }
                 });
-                knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
+                knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.NAVI));
             }
             case LIEFERUNG -> {
                 for (String was : de.moinmornhart.stinkendreich.handy.Lieferservice.ANGEBOT) {
@@ -115,7 +140,28 @@ public class HandyBildschirm extends Screen {
     private void wechseln(Seite neu) {
         seite = neu;
         eingabe = null;
+        if (neu == Seite.ORTE) {
+            anfragen("orte");
+        }
         rebuildWidgets();
+    }
+
+    /** Schickt eine Aktion an den Server, ohne das Handy zu schließen (die Antwort kommt als neue Ortsliste). */
+    private void anfragen(String wert) {
+        Minecraft mc = Minecraft.getInstance();
+        KompatClient.sende("handy", mc.player != null ? mc.player.blockPosition() : BlockPos.ZERO, wert);
+    }
+
+    /** Neue Ortsliste vom Server (Namen zeilenweise); ein offenes Handy zeigt sie sofort. */
+    public static void orteEmpfangen(String zeilen) {
+        orte = zeilen.isBlank() ? List.of() : List.of(zeilen.split("\n"));
+        if (KompatClient.offenerBildschirm() instanceof HandyBildschirm h && h.seite == Seite.ORTE) {
+            String text = h.eingabe != null ? h.eingabe.getValue() : "";
+            h.rebuildWidgets();
+            if (h.eingabe != null) {
+                h.eingabe.setValue(text);
+            }
+        }
     }
 
     /** Schickt die Aktion an den Server und schließt das Handy (wie Auflegen). */
@@ -179,6 +225,9 @@ public class HandyBildschirm extends Screen {
         schrift(g, "▮▮▮ 100%", x + BREITE - 10 - font.width("▮▮▮ 100%"), y + 14, 0xFF8BE38B, false);
         String titel = Component.translatable("stinkendreich.handy.titel." + seite.name().toLowerCase(java.util.Locale.ROOT)).getString();
         schrift(g, titel, x + BREITE / 2, y + 28, 0xFFE8BA34, true);
+        if (seite == Seite.ORTE && orte.isEmpty()) {
+            schrift(g, Component.translatable("stinkendreich.handy.orte.leer").getString(), x + BREITE / 2, y + 46, 0xFFB8BCC8, true);
+        }
     }
 
     /** Uhrzeit der Spielwelt (6000 Ticks = 12:00 Uhr). */

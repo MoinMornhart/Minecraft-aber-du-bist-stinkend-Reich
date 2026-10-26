@@ -1,0 +1,135 @@
+package de.moinmornhart.stinkendreich.client.fernseher;
+
+import de.moinmornhart.stinkendreich.Konfig;
+import de.moinmornhart.stinkendreich.client.KompatClient;
+import de.moinmornhart.stinkendreich.fernseher.FernseherEntity;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Verwaltet die Video-Abspieler aller Fernseher in der Nähe. Jeden Tick vergleicht es den Stand vom Server
+ * („läuft seit“ / „angehalten bei“) mit dem, was hier läuft, und startet, hält an oder springt an die richtige
+ * Stelle. Fernseher weiter als 48 Blöcke weg spielen nicht (spart Rechenzeit); kommt man zurück, geht es an der
+ * Stelle weiter, an der alle anderen gerade sind. Über dem Hotbar steht, was gerade passiert (Laden, Fehler).
+ */
+public final class FernseherVideos {
+    private static final Map<Integer, VideoAbspieler> SPIELER = new HashMap<>();
+    private static final double REICHWEITE = 48;
+    /** Fehler je Video und Stelle nur einmal im Chat melden. */
+    private static final Set<String> GEMELDET = new HashSet<>();
+    private static int takt;
+
+    private FernseherVideos() {
+    }
+
+    public static void registrieren() {
+        ClientTickEvents.END_CLIENT_TICK.register(FernseherVideos::tick);
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> client.execute(FernseherVideos::alleBeenden));
+    }
+
+    /** Textur mit dem laufenden Video für diesen Fernseher, sonst null (dann das Vorschaubild). */
+    public static Identifier textur(int tvId) {
+        VideoAbspieler p = SPIELER.get(tvId);
+        return p == null ? null : p.textur();
+    }
+
+    private static void tick(Minecraft mc) {
+        if (mc.level == null || mc.player == null) {
+            if (!SPIELER.isEmpty()) {
+                alleBeenden();
+            }
+            return;
+        }
+        Set<Integer> aktiv = new HashSet<>();
+        FernseherEntity naechster = null;
+        if (Konfig.get().fernseherVideos) {
+            boolean bereit = VideoWerkzeuge.bereit();
+            for (FernseherEntity tv : mc.level.getEntitiesOfClass(FernseherEntity.class, mc.player.getBoundingBox().inflate(REICHWEITE))) {
+                VideoAbspieler p = SPIELER.get(tv.getId());
+                if (tv.angehalten()) {
+                    // Standbild: das letzte Bild bleibt stehen
+                    if (p != null && p.kennung.equals(tv.video())) {
+                        p.anhalten();
+                        aktiv.add(tv.getId());
+                    }
+                    continue;
+                }
+                if (!tv.laeuft()) {
+                    continue;
+                }
+                if (tv.distanceToSqr(mc.player) < 16 * 16 && (naechster == null || tv.distanceToSqr(mc.player) < naechster.distanceToSqr(mc.player))) {
+                    naechster = tv;
+                }
+                if (!bereit) {
+                    continue;
+                }
+                double soll = tv.positionTicks(mc.level.getGameTime()) / 20.0;
+                if (p == null || !p.kennung.equals(tv.video()) || p.mussNeuStarten(soll)) {
+                    if (p != null) {
+                        p.close();
+                    }
+                    p = new VideoAbspieler(tv.getId(), tv.video(), soll, tv.getX(), tv.getY() + 1.4, tv.getZ());
+                    SPIELER.put(tv.getId(), p);
+                }
+                aktiv.add(tv.getId());
+            }
+        }
+        SPIELER.entrySet().removeIf(e -> {
+            if (aktiv.contains(e.getKey())) {
+                return false;
+            }
+            e.getValue().close();
+            return true;
+        });
+        boolean pause = mc.isPaused();
+        for (VideoAbspieler p : SPIELER.values()) {
+            p.tick(pause);
+            if (p.zustand() == VideoAbspieler.Zustand.FEHLER && GEMELDET.add(p.kennung + "@" + (int) p.start)) {
+                KompatClient.chatNachricht(mc, Component.translatable("stinkendreich.fernseher.status.fehler", p.fehler())
+                        .withStyle(ChatFormatting.RED));
+            }
+        }
+        if (naechster != null && ++takt % 20 == 0) {
+            status(mc, naechster);
+        }
+    }
+
+    /** Hinweis über der Hotbar, solange beim nächsten Fernseher etwas lädt oder fehlt. */
+    private static void status(Minecraft mc, FernseherEntity tv) {
+        Component text = null;
+        if (!VideoWerkzeuge.bereit()) {
+            if (VideoWerkzeuge.laedt()) {
+                text = Component.translatable("stinkendreich.fernseher.status.laden", VideoWerkzeuge.stand());
+            } else if (!Konfig.get().fernseherHilfsprogrammeLaden) {
+                text = Component.translatable("stinkendreich.fernseher.status.freigabe");
+            } else if (VideoWerkzeuge.fehler().isEmpty()) {
+                VideoWerkzeuge.laden();
+            } else {
+                text = Component.translatable("stinkendreich.fernseher.status.fehler", VideoWerkzeuge.fehler());
+            }
+        } else {
+            VideoAbspieler p = SPIELER.get(tv.getId());
+            if (p != null && p.zustand() == VideoAbspieler.Zustand.LAEDT) {
+                text = Component.translatable("stinkendreich.fernseher.status.video");
+            }
+        }
+        if (text != null) {
+            de.moinmornhart.stinkendreich.Kompat.nachricht(mc.player, text, true);
+        }
+    }
+
+    private static void alleBeenden() {
+        SPIELER.values().forEach(VideoAbspieler::close);
+        SPIELER.clear();
+        GEMELDET.clear();
+    }
+}

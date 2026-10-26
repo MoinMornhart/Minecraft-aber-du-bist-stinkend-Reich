@@ -50,6 +50,15 @@ public final class KompatClient {
         /*client.setScreen(bildschirm);*/
     }
 
+    /** Der gerade offene Bildschirm oder null (ab 26.2 liegt er in der Gui-Klasse). */
+    public static Screen offenerBildschirm() {
+        Minecraft client = Minecraft.getInstance();
+        //? if >=26.2 {
+        return client.gui.screen();
+        //?} else
+        /*return client.screen;*/
+    }
+
     /** Klick im Chat führt einen Befehl aus (ab 1.21.5 eigene Klassen je Klickart). */
     public static net.minecraft.network.chat.ClickEvent klickBefehl(String befehl) {
         //? if >=1.21.5 {

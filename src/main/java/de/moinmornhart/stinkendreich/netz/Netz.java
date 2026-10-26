@@ -31,8 +31,11 @@ public final class Netz {
         // Fabric hat die Methode für 26.x umbenannt
         //? if >=26.1 {
         PayloadTypeRegistry.serverboundPlay().register(Aktion.TYP, Aktion.CODEC);
-        //?} else
-        /*PayloadTypeRegistry.playC2S().register(Aktion.TYP, Aktion.CODEC);*/
+        PayloadTypeRegistry.clientboundPlay().register(Rueckmeldung.TYP, Rueckmeldung.CODEC);
+        //?} else {
+        /*PayloadTypeRegistry.playC2S().register(Aktion.TYP, Aktion.CODEC);
+        PayloadTypeRegistry.playS2C().register(Rueckmeldung.TYP, Rueckmeldung.CODEC);
+        *///?}
         ServerPlayNetworking.registerGlobalReceiver(Aktion.TYP, (aktion, kontext) -> kontext.server().execute(() ->
                 ausfuehren(kontext.player(), aktion.art(), aktion.pos(), aktion.wert())));
 
@@ -53,6 +56,13 @@ public final class Netz {
                                                     BlockPosArgument.getBlockPos(k, "pos"), StringArgumentType.getString(k, "wert"));
                                             return 1;
                                         })))))));
+    }
+
+    /** Schickt einem Spieler mit Mod Daten für einen Bildschirm (ohne Mod: nichts). */
+    public static void melden(ServerPlayer spieler, String art, String wert) {
+        if (ServerPlayNetworking.canSend(spieler, Rueckmeldung.TYP)) {
+            ServerPlayNetworking.send(spieler, new Rueckmeldung(art, wert));
+        }
     }
 
     /** Führt eine Aktion aus, aber nur in Reichweite (Schutz gegen manipulierte Pakete und Befehle). */

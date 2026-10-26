@@ -351,8 +351,20 @@ public class ButlerEntity extends PathfinderMob {
     // Orte für den Chauffeur
     // ------------------------------------------------------------------
 
+    /** Gespeicherter Ort zu einem Namen; „meine Mine“ oder „die alte Mine“ finden auch den Ort „mine“. */
     public BlockPos ort(String name) {
-        return orte.get(Sprache.normalisieren(name));
+        String n = Sprache.normalisieren(name);
+        BlockPos genau = orte.get(n);
+        if (genau != null || n.isEmpty()) {
+            return genau;
+        }
+        String treffer = null;
+        for (String ort : orte.keySet()) {
+            if ((n.endsWith(" " + ort) || n.startsWith(ort + " ")) && (treffer == null || ort.length() > treffer.length())) {
+                treffer = ort;
+            }
+        }
+        return treffer == null ? null : orte.get(treffer);
     }
 
     public void ortMerken(String name, BlockPos pos) {

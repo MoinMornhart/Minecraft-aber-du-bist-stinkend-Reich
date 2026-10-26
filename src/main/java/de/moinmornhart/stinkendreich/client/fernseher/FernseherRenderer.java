@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 
-/** Zeichnet den Fernseher mit dem Bild des gewählten Videos; der Bildschirm leuchtet selbst. */
+/** Zeichnet den Fernseher mit dem laufenden Video oder dem Vorschaubild; der Bildschirm leuchtet selbst. */
 //? if >=1.21.2 {
 public class FernseherRenderer extends MobRenderer<FernseherEntity, FernseherZustand, FernseherModell> {
 //?} else
@@ -31,16 +31,19 @@ public class FernseherRenderer extends MobRenderer<FernseherEntity, FernseherZus
     public void extractRenderState(FernseherEntity tv, FernseherZustand zustand, float zwischen) {
         super.extractRenderState(tv, zustand, zwischen);
         zustand.video = tv.video();
+        zustand.tvId = tv.getId();
     }
 
     @Override
     public Identifier getTextureLocation(FernseherZustand zustand) {
-        return FernseherBild.textur(zustand.video);
+        Identifier video = FernseherVideos.textur(zustand.tvId);
+        return video != null ? video : FernseherBild.textur(zustand.video);
     }
     //?} else {
     /*@Override
     public Identifier getTextureLocation(FernseherEntity tv) {
-        return FernseherBild.textur(tv.video());
+        Identifier video = FernseherVideos.textur(tv.getId());
+        return video != null ? video : FernseherBild.textur(tv.video());
     }
     *///?}
 }

@@ -50,6 +50,20 @@ public final class ModRegister {
         return block;
     }
 
+    /** Registriert einen Block mit eigenem Item (z. B. die Fernbedienung, die in der Hand etwas anderes tut). */
+    public static <B extends Block> B block(String name, Function<BlockBehaviour.Properties, B> fabrik, BlockBehaviour.Properties eigenschaften,
+                                            java.util.function.BiFunction<Block, Item.Properties, Item> itemFabrik) {
+        Identifier id = StinkendReich.id(name);
+        //? if >=1.21.2
+        eigenschaften.setId(ResourceKey.create(Registries.BLOCK, id));
+        B block = Registry.register(BuiltInRegistries.BLOCK, id, fabrik.apply(eigenschaften));
+        Item.Properties ip = new Item.Properties();
+        //? if >=1.21.2
+        ip = ip.setId(ResourceKey.create(Registries.ITEM, id)).useBlockDescriptionPrefix();
+        ALLE_ITEMS.add(Registry.register(BuiltInRegistries.ITEM, id, itemFabrik.apply(block, ip)));
+        return block;
+    }
+
     /** Registriert eine zweiteilige Tür samt Item, das beide Hälften setzt. */
     public static Block tuer(String name, BlockSetType art, BlockBehaviour.Properties eigenschaften) {
         return tuer(name, art, eigenschaften, ZiertuerBlock::new);

@@ -1,0 +1,43 @@
+# Fernseher spielt ein Video im Spiel: Testvideo statt YouTube (STINKENDREICH_TESTVIDEO), FFmpeg aus dem System.
+# Fernseher im Penthouse (Marke über den Sofas), Bilder beim Start, nach Pause, nach dem Spulen. Mit Mod (26.3).
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /gamerule advance_time false
+taste F1
+warte 2
+server /tp @p 240 156 200 0 20
+warte 6
+server /fill 230 150 200 250 150 214 minecraft:smooth_stone
+server /fill 230 151 211 250 156 211 minecraft:white_concrete
+server /summon stinkendreich:fernseher 240 152 210 {Rotation:[180f,0f]}
+warte 2
+server /tp @e[type=stinkendreich:fernseher] 240 151 210.5 180 0
+server /tp @p 240 151.6 203 0 0
+warte 3
+bild v01_vorschau
+klient fernseher !abspielen|aqz-KE-bpKQ
+warte 12
+bild v02_laeuft
+warte 4
+bild v03_laeuft_spaeter
+klient fernseher !pause
+warte 3
+bild v04_angehalten
+klient fernseher !weiter
+warte 4
+bild v05_weiter
+klient fernseher !spulen|30
+warte 8
+bild v06_gespult
+klient fernsehermenue
+warte 2
+taste F1
+warte 1
+bild v07_menue
+klient schliessen
+klient fernseher !stopp
+warte 3
+taste F1
+warte 1
+bild v08_gestoppt

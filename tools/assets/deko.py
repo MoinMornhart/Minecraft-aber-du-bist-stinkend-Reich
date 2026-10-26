@@ -594,6 +594,32 @@ def m_nachttisch_front():
     return img
 
 
+def m_fernbedienung_hd():
+    """Fernbedienung von oben (64 × 64, 4 Texel je Pixel; genutzt wird oben links 16 × 40 für 4 × 10 Pixel):
+    schwarzes Gehäuse mit Goldrand, rote Ein-Taste, goldenes Steuerkreuz mit OK, Zifferntasten, Lautstärkewippen."""
+    img = Image.new("RGBA", (64, 64), (18, 18, 22, 255))
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, 15, 39], fill=(26, 26, 30), outline=GOLD_DUNKEL)
+    d.ellipse([10, 2, 13, 5], fill=(220, 40, 40))                       # Ein/Aus
+    d.point((11, 3), fill=(255, 140, 140))
+    d.rectangle([3, 3, 6, 4], fill=GOLD)                                 # Schriftzug
+    d.ellipse([3, 9, 12, 18], outline=GOLD)                              # Steuerkreuz
+    d.ellipse([6, 12, 9, 15], fill=(60, 60, 68), outline=(110, 110, 120))
+    for x, y in ((7, 10), (7, 16), (4, 13), (10, 13)):
+        d.point((x, y), fill=(240, 220, 150))
+    for zeile in range(4):                                               # Ziffern 1 … 9, 0
+        for spalte in range(3):
+            if zeile == 3 and spalte != 1:
+                continue
+            x, y = 3 + spalte * 4, 21 + zeile * 4
+            d.rectangle([x, y, x + 2, y + 2], fill=(58, 58, 66))
+            d.point((x + 1, y + 1), fill=(200, 200, 210))
+    d.rectangle([1, 21, 1, 30], fill=(80, 80, 90))                       # Lautstärke
+    d.rectangle([14, 21, 14, 30], fill=(80, 80, 90))                     # Programm
+    d.rectangle([5, 37, 10, 38], fill=GOLD_DUNKEL)
+    return img
+
+
 def m_popcorn_tuete():
     img, d = neu((250, 250, 250))
     for x in range(0, 16, 4):
@@ -683,7 +709,7 @@ MATERIALIEN = {
     "leder_weiss": m_leder_weiss, "samt_schwarz": m_samt_schwarz, "satin_gold": m_satin_gold, "satin_schwarz": m_satin_schwarz, "laken": m_laken,
     "matratze": m_matratze, "kissen_weiss": m_kissen_weiss, "fell": m_fell, "teak": m_teak,
     "polster_weiss": m_polster_weiss, "handtuch": m_handtuch, "schirm": m_schirm, "schirm_glatt": m_schirm_glatt, "lampenschirm": m_lampenschirm,
-    "nachttisch_front": m_nachttisch_front, "popcorn_tuete": m_popcorn_tuete, "popcorn": m_popcorn,
+    "nachttisch_front": m_nachttisch_front, "fernbedienung_hd": m_fernbedienung_hd, "popcorn_tuete": m_popcorn_tuete, "popcorn": m_popcorn,
     "schreibunterlage": m_schreibunterlage, "buero_hd": m_buero_hd,
 }
 ANIMIERT = {"spiegel": (m_spiegel, 5), "tanz": (m_tanz, 8)}
@@ -1030,6 +1056,11 @@ def nachttisch():
     return [k([1, 0, 1], [15, 13, 15], "lack_schwarz", north="nachttisch_front"), k([0.5, 13, 0.5], [15.5, 14, 15.5], "marmor")]
 
 
+def fernbedienung():
+    """Fernbedienung, flach liegend (4 × 10 Pixel, 1 hoch), die Ein-Taste zeigt nach Norden."""
+    return [k([6, 0, 3], [10, 1, 13], "lack_schwarz", uv={"up": [0, 0, 4, 10]}, up="fernbedienung_hd")]
+
+
 def tischlampe():
     return [k([5.5, 0, 5.5], [10.5, 1, 10.5], "gold"), k([7.5, 1, 7.5], [8.5, 8, 8.5], "gold"),
             k([3, 8, 4], [13, 15, 12], "lampenschirm"), k([4, 8, 3], [12, 15, 13], "lampenschirm"),
@@ -1116,6 +1147,7 @@ BLOECKE = {
     "tastatur": (tastatur(), [[0, 0, 2.5, 16, 1.4, 13.5]], 0, False, "stein", "pickaxe", "Tastatur, Maus und Schreibunterlage", "Keyboard, Mouse and Desk Mat"),
     "nachttisch": (nachttisch(), [[1, 0, 1, 15, 14, 15]], 0, True, "holz", "axe", "Nachttisch", "Nightstand"),
     "tischlampe": (tischlampe(), [[3, 0, 3, 13, 15.5, 13]], 14, True, "glas", "pickaxe", "Tischlampe", "Table Lamp"),
+    "fernbedienung": (fernbedienung(), [[6, 0, 3, 10, 1, 13]], 0, False, "stein", "pickaxe", "Fernbedienung", "TV Remote"),
     "kinotisch": (kinotisch(), [[2, 0, 2, 14, 10, 14]], 0, True, "metall", "pickaxe", "Kinotisch mit Popcorn", "Movie Side Table"),
     "loungetisch": (loungetisch(), [[2, 0, 2, 14, 10, 14]], 0, True, "metall", "pickaxe", "Loungetisch", "Lounge Side Table"),
     "liege_kopf": (liege_kopf(), [[1.5, 0, 0, 14.5, 7, 16]], 0, True, "holz", "axe", "Strandliege (Kopfteil)", "Sun Lounger (Head)"),
@@ -1136,6 +1168,8 @@ BLOECKE = {
 
 # Sitzhöhe in Pixeln für Sitzmöbel (Rechtsklick setzt sich drauf)
 SITZE = {"liege_kopf": 7, "wanne_kopf": 4, "klavierbank": 11}
+# Liegt auf Möbeln: bis zu so vielen Pixeln tiefer (FernbedienungBlock)
+TIEFER = {"fernbedienung": 8}
 # Rechtsklick öffnet das Spielfenster des Flügels (KlavierBlock)
 KLAVIER = {"konzertfluegel", "fluegel_teil"}
 # Blöcke mit eigener Funktion beim Rechtsklick (siehe ModDeko): Toilette spült
@@ -1259,8 +1293,17 @@ def main() -> dict:
         schreibe_json(ASSETS / "models/block/deko" / f"{name}.json", modell(teile))
         modell_id = f"{NS}:block/deko/{name}"
         varianten = {}
-        for richtung, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
-            varianten[f"facing={richtung}"] = {"model": modell_id, **({"y": y} if y else {})}
+        if name in TIEFER:
+            # Zustand „tiefe“ = so viele Pixel tiefer (FernbedienungBlock wählt ihn nach der Oberkante darunter)
+            for tiefe in range(TIEFER[name] + 1):
+                tiefer = [dict(t, von=[t["von"][0], t["von"][1] - tiefe, t["von"][2]], bis=[t["bis"][0], t["bis"][1] - tiefe, t["bis"][2]])
+                          for t in teile]
+                schreibe_json(ASSETS / "models/block/deko" / f"{name}_{tiefe}.json", modell(tiefer))
+                for richtung, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+                    varianten[f"facing={richtung},tiefe={tiefe}"] = {"model": f"{modell_id}_{tiefe}", **({"y": y} if y else {})}
+        else:
+            for richtung, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
+                varianten[f"facing={richtung}"] = {"model": modell_id, **({"y": y} if y else {})}
         schreibe_json(ASSETS / "blockstates" / f"{name}.json", {"variants": varianten})
         schreibe_json(ASSETS / "models/item" / f"{name}.json", {"parent": modell_id})
         schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": modell_id}})
@@ -1275,6 +1318,8 @@ def main() -> dict:
             eintrag["spuelen"] = True
         if name in KLAVIER:
             eintrag["klavier"] = True
+        if name in TIEFER:
+            eintrag["fernbedienung"] = True
         liste.append(eintrag)
         werkzeuge[werkzeug].append(f"{NS}:{name}")
         de[f"block.{NS}.{name}"], en[f"block.{NS}.{name}"] = name_de, name_en

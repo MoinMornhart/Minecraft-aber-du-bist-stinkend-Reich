@@ -1,0 +1,139 @@
+{
+  "variants": {
+    "facing=north,tiefe=0": {
+      "model": "stinkendreich:block/deko/fernbedienung_0"
+    },
+    "facing=east,tiefe=0": {
+      "model": "stinkendreich:block/deko/fernbedienung_0",
+      "y": 90
+    },
+    "facing=south,tiefe=0": {
+      "model": "stinkendreich:block/deko/fernbedienung_0",
+      "y": 180
+    },
+    "facing=west,tiefe=0": {
+      "model": "stinkendreich:block/deko/fernbedienung_0",
+      "y": 270
+    },
+    "facing=north,tiefe=1": {
+      "model": "stinkendreich:block/deko/fernbedienung_1"
+    },
+    "facing=east,tiefe=1": {
+      "model": "stinkendreich:block/deko/fernbedienung_1",
+      "y": 90
+    },
+    "facing=south,tiefe=1": {
+      "model": "stinkendreich:block/deko/fernbedienung_1",
+      "y": 180
+    },
+    "facing=west,tiefe=1": {
+      "model": "stinkendreich:block/deko/fernbedienung_1",
+      "y": 270
+    },
+    "facing=north,tiefe=2": {
+      "model": "stinkendreich:block/deko/fernbedienung_2"
+    },
+    "facing=east,tiefe=2": {
+      "model": "stinkendreich:block/deko/fernbedienung_2",
+      "y": 90
+    },
+    "facing=south,tiefe=2": {
+      "model": "stinkendreich:block/deko/fernbedienung_2",
+      "y": 180
+    },
+    "facing=west,tiefe=2": {
+      "model": "stinkendreich:block/deko/fernbedienung_2",
+      "y": 270
+    },
+    "facing=north,tiefe=3": {
+      "model": "stinkendreich:block/deko/fernbedienung_3"
+    },
+    "facing=east,tiefe=3": {
+      "model": "stinkendreich:block/deko/fernbedienung_3",
+      "y": 90
+    },
+    "facing=south,tiefe=3": {
+      "model": "stinkendreich:block/deko/fernbedienung_3",
+      "y": 180
+    },
+    "facing=west,tiefe=3": {
+      "model": "stinkendreich:block/deko/fernbedienung_3",
+      "y": 270
+    },
+    "facing=north,tiefe=4": {
+      "model": "stinkendreich:block/deko/fernbedienung_4"
+    },
+    "facing=east,tiefe=4": {
+      "model": "stinkendreich:block/deko/fernbedienung_4",
+      "y": 90
+    },
+    "facing=south,tiefe=4": {
+      "model": "stinkendreich:block/deko/fernbedienung_4",
+      "y": 180
+    },
+    "facing=west,tiefe=4": {
+      "model": "stinkendreich:block/deko/fernbedienung_4",
+      "y": 270
+    },
+    "facing=north,tiefe=5": {
+      "model": "stinkendreich:block/deko/fernbedienung_5"
+    },
+    "facing=east,tiefe=5": {
+      "model": "stinkendreich:block/deko/fernbedienung_5",
+      "y": 90
+    },
+    "facing=south,tiefe=5": {
+      "model": "stinkendreich:block/deko/fernbedienung_5",
+      "y": 180
+    },
+    "facing=west,tiefe=5": {
+      "model": "stinkendreich:block/deko/fernbedienung_5",
+      "y": 270
+    },
+    "facing=north,tiefe=6": {
+      "model": "stinkendreich:block/deko/fernbedienung_6"
+    },
+    "facing=east,tiefe=6": {
+      "model": "stinkendreich:block/deko/fernbedienung_6",
+      "y": 90
+    },
+    "facing=south,tiefe=6": {
+      "model": "stinkendreich:block/deko/fernbedienung_6",
+      "y": 180
+    },
+    "facing=west,tiefe=6": {
+      "model": "stinkendreich:block/deko/fernbedienung_6",
+      "y": 270
+    },
+    "facing=north,tiefe=7": {
+      "model": "stinkendreich:block/deko/fernbedienung_7"
+    },
+    "facing=east,tiefe=7": {
+      "model": "stinkendreich:block/deko/fernbedienung_7",
+      "y": 90
+    },
+    "facing=south,tiefe=7": {
+      "model": "stinkendreich:block/deko/fernbedienung_7",
+      "y": 180
+    },
+    "facing=west,tiefe=7": {
+      "model": "stinkendreich:block/deko/fernbedienung_7",
+      "y": 270
+    },
+    "facing=north,tiefe=8": {
+      "model": "stinkendreich:block/deko/fernbedienung_8"
+    },
+    "facing=east,tiefe=8": {
+      "model": "stinkendreich:block/deko/fernbedienung_8",
+      "y": 90
+    },
+    "facing=south,tiefe=8": {
+      "model": "stinkendreich:block/deko/fernbedienung_8",
+      "y": 180
+    },
+    "facing=west,tiefe=8": {
+      "model": "stinkendreich:block/deko/fernbedienung_8",
+      "y": 270
+    }
+  }
+}

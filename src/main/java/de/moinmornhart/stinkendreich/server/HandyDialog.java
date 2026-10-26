@@ -52,11 +52,17 @@ public final class HandyDialog {
                 }
                 ButlerEntity b = ButlerVerwaltung.vonSpieler(spieler);
                 if (b != null) {
-                    for (String ort : b.orte().keySet()) {
-                        knoepfe.add(new ActionButton(new CommonButtonData(Component.literal(ort), BREITE),
+                    for (String ort : new java.util.TreeSet<>(b.orte().keySet())) {
+                        knoepfe.add(new ActionButton(new CommonButtonData(Component.literal("➜ " + ort), BREITE),
                                 Optional.of(befehl("fahr|" + ort))));
                     }
                 }
+                // Eigenen Ort an der aktuellen Stelle speichern: James kennt ihn danach auch im Chat
+                eingaben.add(new Input("name", new TextInput(BREITE, Component.translatable("stinkendreich.handy.orte.name"),
+                        true, "", 32, Optional.empty())));
+                knoepfe.add(new ActionButton(new CommonButtonData(Component.translatable("stinkendreich.handy.orte.speichern"), BREITE),
+                        Optional.of(new CommandTemplate(ParsedTemplate.CODEC.parse(JsonOps.INSTANCE,
+                                new JsonPrimitive("handy ort|merken|$(name)")).getOrThrow()))));
                 zurueck(knoepfe);
             }
             case "lieferung" -> {

@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 08:20 Uhr (Philip ist wach)_
+_Zuletzt aktualisiert: 2026-10-26, 08:40 Uhr (Philip ist wach)_
 
 ## Erledigt
 
@@ -227,7 +227,27 @@ _Zuletzt aktualisiert: 2026-10-26, 08:20 Uhr (Philip ist wach)_
   Abzweigung, `kurve_innen`/`kurve_aussen` runden die Zufahrt zur Garage, Mittellinie im Bogen (Mitte 80/88, r 7).
 - Mitarbeiter: neuer Skin (`handy.py` `mitarbeiter()`: Helm als Hut-Schicht mit Stirnlampe, Warnweste, Ausweis, $).
 - Tests: `eingang_mitarbeiter.txt`, `eingang_mitarbeiter2.txt` (26.3, alles OK).
-- Als Nächstes: YouTube im Fernseher (eigene Lösung mit yt-dlp, FFmpeg und Deno).
+- **YouTube im Fernseher (eigene Lösung):** `client/fernseher/VideoWerkzeuge` (yt-dlp, Deno, FFmpeg aus PATH oder nach
+  Zustimmung von GitHub nach `.minecraft/stinkendreich/werkzeuge`, yt-dlp `-U` einmal je Start), `VideoQuelle` (yt-dlp
+  `-j`, H.264 bis 480p + Ton), `VideoAbspieler` (zwei FFmpeg-Prozesse: Bilder 640×360 RGBA 30/s in die Bildschirmfläche
+  einer 2048×512-Textur bei 16/16, Ton Mono 48 kHz als `AudioStream` über `VideoTon`/`FabricSoundInstance`, Klang
+  „fernseher_ton“ mit 32 Blöcken Hörweite; Uhr startet beim ersten Tonabruf, Lücken = Stille + später überspringen,
+  überfällige Bilder verwirft schon der Lese-Thread), `FernseherVideos` (Abgleich mit dem Server je Tick, 48 Blöcke,
+  Hinweise über der Hotbar), `FernseherFreigabeBildschirm` (Zustimmung, Config `fernseherHilfsprogrammeLaden`).
+  Server: `FernseherEntity` Feld WIEDERGABE ("L<Tick>" läuft, "P<Ticks>" angehalten), Befehle `!abspielen|Link`,
+  `!pause`, `!weiter`, `!spulen|s`, `!stopp`. Test ohne YouTube: `STINKENDREICH_TESTVIDEO=<datei>` (dann nur FFmpeg),
+  Zeitlupe für Trailer `STINKENDREICH_VIDEOTEMPO=0.333`. Szenario `fernseher_video.txt` (26.3 OK: Video, Pause,
+  Spulen, Menü, Stopp). YouTube selbst ist in der Cloud nicht testbar (Downloads/Programme von außen gesperrt).
+- **Fernbedienung** (`fernseher/Fernbedienung`, `FernbedienungBlock` mit Zustand `tiefe` 0–8 = liegt auf dem Möbel,
+  `FernbedienungItem`: Rechtsklick steuert den nächsten Fernseher bis 32 Blöcke, Schleichen + Rechtsklick legt ab).
+  Modell in deko.py (`TIEFER`, Material `fernbedienung_hd`). In der Villa auf dem Nachttisch (Schlafzimmer OG) und dem
+  Loungetisch im Penthouse-Kino. Szenario `fernbedienung.txt`.
+- **Handy-Navi „Meine Orte“:** Seite ORTE im `HandyBildschirm` (Liste, ✕ löscht, Name + „Ort hier speichern“),
+  Server `Handy` Aktionen `orte`, `ort|merken|Name`, `ort|vergessen|Name`; Liste kommt als neues Paket
+  `netz/Rueckmeldung` („orte“) zurück. Ohne Mod im `HandyDialog` (Textfeld + Speichern). `ButlerEntity.ort` findet
+  auch „meine Mine“; Mine-Synonyme: minen, erzmine, zeche, schacht. Szenario `navi_orte.txt` (OK).
+- Philips Regel: am Ende jeder Runde README und Trailer (`trailer_szenario.py`, jetzt mit Fernseher, Fernbedienung,
+  Navi) neu.
 
 ## Version 0.3.3 (veröffentlicht 26.10. morgens, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.3)
 

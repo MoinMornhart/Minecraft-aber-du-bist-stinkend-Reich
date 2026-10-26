@@ -214,6 +214,11 @@ def deko(b: Bau, x: int, y: int, z: int, name: str, blick: str = "north", nass: 
     b.setze(x, y, z, zustand(f"stinkendreich:{name}", facing=blick, waterlogged=str(nass).lower()))
 
 
+def fernbedienung(b: Bau, x: int, y: int, z: int, blick: str, tiefe: int) -> None:
+    """Fernbedienung der Mod, liegt {@code tiefe} Pixel tiefer (auf einem Möbel: Nachttisch 2, Lounge-/Kinotisch 6)."""
+    b.setze(x, y, z, zustand("stinkendreich:fernbedienung", facing=blick, tiefe=str(tiefe), waterlogged="false"))
+
+
 def gemaelde(b: Bau, x: int, y: int, z: int, blick: str, name: str, breite: int, hoehe: int) -> None:
     """Gemälde der Mod. (x, y, z) = Block unten links, so wie man davor steht; blick = Richtung, in die das
     Bild schaut. Hinter allen Feldern muss eine feste Wand sein."""

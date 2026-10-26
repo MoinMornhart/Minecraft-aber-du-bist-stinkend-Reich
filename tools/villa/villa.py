@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 from bau import Bau, RICHTUNG_VEKTOR, basisname, eigenschaften, ist_voll, zustand
-from moebel import (badewanne, kingsize_bett, reihe, strandliege, aquarium, baum, bett, bilderrahmen, blumenbeet, brunnen_kuppel, deko, doppeltuer, fass, gemaelde,
+from moebel import (badewanne, kingsize_bett, reihe, strandliege, aquarium, baum, bett, bilderrahmen, blumenbeet, brunnen_kuppel, deko, fernbedienung, doppeltuer, fass, gemaelde,
                     hecke, kronleuchter, laterne, pflanze, sofa, stuhl, tisch, truhe, tuer)
 
 WURZEL = Path(__file__).resolve().parents[2]
@@ -516,7 +516,10 @@ def obergeschoss() -> None:
         b.setze(HX0, y + 1, z, "gold_block")
         b.setze(HX0, y + 2, z, "gold_block")
         deko(b, HX0 + 1, y, z, "nachttisch", "east")
-        deko(b, HX0 + 1, y + 1, z, "tischlampe", "east")
+        if z == 55:
+            deko(b, HX0 + 1, y + 1, z, "tischlampe", "east")
+        else:
+            fernbedienung(b, HX0 + 1, y + 1, z, "east", 2)                  # für den Fernseher gegenüber
     reihe(b, HX0 + 4, y, 56, 3, "bettbank", "east")                         # z 56 … 58
     b.marke("fernseher", 48.85, y + 0.4, 57.5, 90.0)                        # gegenüber dem Bett
     # Leseecke am Fenster
@@ -684,6 +687,7 @@ def penthouse() -> None:
     reihe(b, 65, y, 45, 2, "sofa_samt", "west")                             # z 45 … 44
     deko(b, 62, y, 45, "kinotisch", "south")
     deko(b, 63, y, 45, "loungetisch", "south")
+    fernbedienung(b, 63, y + 1, 45, "north", 6)                             # auf dem Loungetisch
     # Der Weg vom Aufzug (x 57–58) zur Terrassentür (x 54–55) bleibt frei: x 53 … 58 ohne Möbel
     # Lounge im Westen mit Blick über die Stadt: Sofas als U nach Süden offen, Marmortisch mit Sektturm, Fell
     b.quader(x0 + 2, DACH, 47, x0 + 9, DACH, 55, "white_wool")

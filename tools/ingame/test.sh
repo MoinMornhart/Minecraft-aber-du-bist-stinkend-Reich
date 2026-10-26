@@ -19,6 +19,8 @@
 #                   druecke <taste…> | loslassen <taste…>   (Tasten festhalten, z. B. für ein Bild mitten im Drift)
 #                   server </befehl oder Chattext>   (über eine Datei, ohne Tippen)
 #                   klient schliessen|butlermenue      (Bildschirm schließen / Butler-Menü öffnen)
+#                   klient fernsehermenue | klient fernseher <befehl>   (nächster Fernseher: Menü / Befehl wie !abspielen|Link)
+#                   tippe <text>         (tippt in ein offenes Eingabefeld, z. B. im Handy)
 #                   merke                (merkt sich die Stelle im Client-Log für das nächste „bis“)
 #                   bis <sek> <muster>   (wartet, bis eine Zeile im Client-Log nach „merke“ – sonst ab jetzt –
 #                                         zum Muster passt, höchstens <sek>)
@@ -257,6 +259,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     warte) sleep "$rest" ;;
     taste) if [[ "${VANILLA:-0}" == 1 ]]; then xdotool key --window "$FENSTER" $rest; else xdotool key $rest; fi; sleep 0.5 ;;
     befehl) xdotool key t; sleep "${TIPP_PAUSE:-1}"; xdotool type --delay 30 "$rest"; sleep 0.4; xdotool key Return; sleep 1.5 ;;
+    tippe) xdotool type --delay 40 "$rest"; sleep 0.5 ;;                 # Text in ein offenes Eingabefeld tippen
     bild) bild "$rest" ;;
     klick) xdotool click 3; sleep 1 ;;                                   # Rechtsklick (Block benutzen)
     klickbild) xdotool click 3; sleep 0.25; bild "$rest" ;;               # Rechtsklick und sofort ein Bild (z. B. Schuss)

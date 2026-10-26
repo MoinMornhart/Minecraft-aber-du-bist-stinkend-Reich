@@ -148,5 +148,15 @@
         "stream": true
       }
     ]
+  },
+  "fernseher_ton": {
+    "subtitle": "stinkendreich.ton.fernseher_ton",
+    "sounds": [
+      {
+        "name": "fabric-sound-api-v1:empty",
+        "stream": true,
+        "attenuation_distance": 32
+      }
+    ]
   }
 }

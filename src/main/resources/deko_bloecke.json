@@ -865,6 +865,23 @@
     "klang": "glas"
   },
   {
+    "name": "fernbedienung",
+    "form": [
+      [
+        6,
+        0,
+        3,
+        10,
+        1,
+        13
+      ]
+    ],
+    "licht": 0,
+    "fest": false,
+    "klang": "stein",
+    "fernbedienung": true
+  },
+  {
     "name": "kinotisch",
     "form": [
       [
