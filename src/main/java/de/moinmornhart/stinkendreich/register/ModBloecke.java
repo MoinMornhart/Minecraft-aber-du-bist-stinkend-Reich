@@ -100,6 +100,8 @@ public final class ModBloecke {
     public static final Block MONITOR = block("monitor", MonitorBlock::new, technik().lightLevel(s -> 6));
     public static final Block WHIRLPOOLDUESE = block("whirlpoolduese", WhirlpoolduseBlock::new, technik().lightLevel(s -> 10));
     public static final Block KAMINSTEUERUNG = block("kaminsteuerung", KaminsteuerungBlock::new, technik());
+    /** Fährt die Zugbrücke über den Graben ein und aus (siehe {@link de.moinmornhart.stinkendreich.mechanik.Zugbruecke}). */
+    public static final Block BRUECKENSCHALTER = block("brueckenschalter", de.moinmornhart.stinkendreich.mechanik.BrueckenschalterBlock::new, technik());
 
     // ---------- Türen zum Aufklappen (wie Holz- und Eisentüren) ----------
     /** Weiß lackiert mit Goldbeschlägen, für Wohnräume. */
@@ -137,7 +139,7 @@ public final class ModBloecke {
             FabricBlockEntityTypeBuilder.create(MechanikBlockEntity::new,
                     SICHERHEITSZENTRALE, LASER_SENDER, BEWEGUNGSMELDER, ALARMSIRENE, WARNLEUCHTE, KARTENLESER, TASTENFELD,
                     TUERKLINGEL, TORSTEUERUNG, GEHEIMSCHALTER, AUFZUGSTAFEL, FALLENPLATTE, ENTSCHAERFKNOPF, KAMERA, MONITOR,
-                    WHIRLPOOLDUESE, KAMINSTEUERUNG).build());
+                    WHIRLPOOLDUESE, KAMINSTEUERUNG, BRUECKENSCHALTER).build());
 
     private ModBloecke() {
     }

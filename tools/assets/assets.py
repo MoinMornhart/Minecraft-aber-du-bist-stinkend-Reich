@@ -157,6 +157,18 @@ def tex_kaminsteuerung():
     return img
 
 
+def tex_brueckenschalter():
+    """Schalter der Zugbrücke: Brücke über blauem Wasser, darüber ein Doppelpfeil, oben eine grüne Lampe."""
+    img, d = metall(9, (34, 36, 40))
+    d.rectangle([2, 10, 13, 12], fill=(40, 90, 170))                 # Wasser
+    d.rectangle([3, 8, 12, 9], fill=(225, 220, 205))                 # Fahrbahn
+    d.line([(3, 7), (12, 7)], fill=(212, 175, 55))                   # Geländer (Gold)
+    d.line([(5, 4), (10, 4)], fill=(240, 240, 240))                  # Doppelpfeil
+    d.point([(4, 4), (5, 3), (5, 5), (11, 4), (10, 3), (10, 5)], fill=(240, 240, 240))
+    d.rectangle([7, 1, 8, 2], fill=(60, 220, 110))                   # Lampe
+    return img
+
+
 def tex_zentrale_front():
     img, d = metall(8, (30, 32, 36))
     d.rectangle([2, 2, 13, 9], fill=(10, 24, 40))
@@ -275,6 +287,7 @@ TEXTUREN = {
     "kamera_linse": tex_kamera_linse,
     "tuerklingel": tex_tuerklingel,
     "kaminsteuerung": tex_kaminsteuerung,
+    "brueckenschalter": tex_brueckenschalter,
     "sicherheitszentrale": tex_zentrale_front,
     "monitor": tex_monitor_front,
     "monitor_wand": tex_monitor_wand,
@@ -483,6 +496,8 @@ BLOECKE: dict[str, dict] = {
                            zustand=bs_einfach(B("whirlpoolduese")), de="Whirlpool-Düse", en="Whirlpool Jet"),
     "kaminsteuerung": dict(modelle={"kaminsteuerung": m_wandplatte(B("kaminsteuerung"))},
                            zustand=bs_waagerecht(B("kaminsteuerung")), de="Kaminschalter", en="Fireplace Switch"),
+    "brueckenschalter": dict(modelle={"brueckenschalter": m_wandplatte(B("brueckenschalter"))},
+                             zustand=bs_waagerecht(B("brueckenschalter")), de="Brückenschalter", en="Drawbridge Switch"),
 }
 
 TEXTE_DE = {
@@ -538,6 +553,16 @@ TEXTE_DE = {
     "stinkendreich.klavier.hinweis": "Tasten anklicken oder spielen: Y–M, Q–U, I–+  (schwarz: S D G H J · 2 3 5 6 7 · 9 0 ´)",
     "stinkendreich.graben.lava": "Alarmanlage an und du bist zu Hause: Der Graben füllt sich mit Lava.",
     "stinkendreich.graben.wasser": "Der Graben ist wieder voller Wasser.",
+    "stinkendreich.bruecke.einfahren": "Achtung: Die Zugbrücke fährt ein …",
+    "stinkendreich.bruecke.ausfahren": "Die Zugbrücke fährt aus …",
+    "stinkendreich.bruecke.eingefahren": "Zugbrücke eingefahren. Niemand kommt mehr über den Graben.",
+    "stinkendreich.bruecke.ausgefahren": "Zugbrücke ausgefahren. Der Weg ist frei.",
+    "stinkendreich.bruecke.nur_bewohner": "Nur Bewohner der Villa können die Zugbrücke bedienen.",
+    "stinkendreich.bruecke.keine": "In dieser Welt gibt es keine Zugbrücke.",
+    "stinkendreich.bruecke.james": "James fährt die Zugbrücke für den Wagen aus.",
+    "stinkendreich.bruecke.fuer_dich": "Willkommen! Die Zugbrücke fährt für dich aus …",
+    "stinkendreich.bruecke.gesichert": "Zugbrücke gesichert: Sie fährt ein und kommt nur für Bewohner und Besitzer einer Zugangskarte heraus.",
+    "stinkendreich.bruecke.offen": "Zugbrücke offen: Sie fährt aus und bleibt draußen.",
     "stinkendreich.tresor.entschaerft": "Tresorfallen für 60 Sekunden entschärft.",
     "stinkendreich.tresor.knopf": "Klick … noch %s Knopf",
     "stinkendreich.klingel": "Es klingelt am Tor: %s",
@@ -602,6 +627,16 @@ TEXTE_EN = {
     "stinkendreich.klavier.hinweis": "Click the keys or play with Z–M, Q–U, I–]  (black: S D G H J · 2 3 5 6 7 · 9 0 =)",
     "stinkendreich.graben.lava": "Alarm armed and you are home: the moat fills with lava.",
     "stinkendreich.graben.wasser": "The moat is filled with water again.",
+    "stinkendreich.bruecke.einfahren": "Attention: the drawbridge is retracting …",
+    "stinkendreich.bruecke.ausfahren": "The drawbridge is extending …",
+    "stinkendreich.bruecke.eingefahren": "Drawbridge retracted. Nobody gets across the moat now.",
+    "stinkendreich.bruecke.ausgefahren": "Drawbridge extended. The way is clear.",
+    "stinkendreich.bruecke.nur_bewohner": "Only residents of the villa can operate the drawbridge.",
+    "stinkendreich.bruecke.keine": "There is no drawbridge in this world.",
+    "stinkendreich.bruecke.james": "James is extending the drawbridge for the car.",
+    "stinkendreich.bruecke.fuer_dich": "Welcome! The drawbridge is extending for you …",
+    "stinkendreich.bruecke.gesichert": "Drawbridge secured: it retracts and only comes out for residents and access card holders.",
+    "stinkendreich.bruecke.offen": "Drawbridge open: it extends and stays out.",
     "stinkendreich.tresor.entschaerft": "Vault traps disarmed for 60 seconds.",
     "stinkendreich.tresor.knopf": "Click … %s button(s) left",
     "stinkendreich.klingel": "Someone is ringing at the gate: %s",

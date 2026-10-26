@@ -1,0 +1,102 @@
+# Zugbrücke (Wünsche 26.10.): Sicherung per Befehl, Animation mit Ufermauern, Erkennung von Bewohnern (zu Fuß von
+# außen und innen, im Auto), Wiedereinfahren nach 8 s, James („mach die Brücke auf/zu“), Schalter und Handy.
+# Brücke: Villa x 50–59, z 101–105, Fahrbahn y 25; der Testspieler als Zuschauer zählt nicht als „jemand da“.
+warte 30
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /gamemode spectator @p
+taste F1
+server /villa ort 67 30 103.5 90 22
+warte 4
+bild b01_bruecke_seite
+server /villa bruecke ein
+warte 0.6
+bild b02_gelaender
+warte 0.9
+bild b03_senken
+warte 1.2
+bild b04_gleiten
+warte 1.3
+bild b05_gleiten2
+warte 1.3
+bild b06_mauer_waechst
+warte 2
+bild b07_eingefahren
+server /villa ort 55 31 116 180 25
+warte 2
+bild b08_von_aussen
+# Zu Fuß von außen vor die Einfahrt: die Brücke erkennt den Bewohner und fährt aus
+server /gamemode survival @p
+server /villa ort 55.5 26 113 180 10
+warte 3
+bild b09_erkannt
+warte 4
+bild b10_ausgefahren
+# Weg vom Tor (ins Haus): nach 8 s fährt sie wieder ein
+server /villa ort 55.5 26 62 180 0
+warte 16
+server /gamemode spectator @p
+server /villa ort 55 31 116 180 25
+warte 2
+bild b11_wieder_drin
+# Mit dem Auto aus dem Vorgarten: Bewohner im Wagen, 50 Blöcke von der Brücke
+server /gamemode creative @p
+server /villa ort 88 26 70 0 20
+warte 2
+server /execute at @p run summon stinkendreich:bonzenauto ~ ~ ~2
+warte 1
+server /ride @p mount @e[type=stinkendreich:bonzenauto,limit=1,sort=nearest]
+warte 8
+druecke shift
+warte 1
+loslassen shift
+server /gamemode spectator @p
+server /villa ort 55 31 116 180 25
+warte 1
+bild b12_auto
+server /kill @e[type=stinkendreich:bonzenauto]
+# James: „mach die Brücke auf“ (Sicherung aus, bleibt draußen) und „mach die Brücke zu“
+server /gamemode survival @p
+server /villa ort 55.5 26 62 180 0
+warte 12
+server Butler, mach die Brücke auf
+warte 3
+server Butler, mach die Brücke zu
+warte 9
+server /gamemode spectator @p
+server /villa ort 55 31 116 180 25
+warte 1
+bild b13_james_zu
+# Schalter innen neben der Haustür: Sicherung aus (Brücke fährt aus)
+server /gamemode survival @p
+server /villa ort 53.5 26 64.0 0 4
+warte 2
+bild b14_schalter_haustuer
+klick
+warte 8
+server /gamemode spectator @p
+server /villa ort 55 31 116 180 25
+warte 1
+bild b15_nach_schalter
+# Handy: Sicherung wieder an (der Spieler ist weit weg im Vorgarten am Haus, die Brücke fährt ein)
+server /gamemode survival @p
+server /villa ort 55 26 72 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+bild b16_handy
+linksklick 640 524
+warte 8
+server /gamemode spectator @p
+server /villa ort 55 31 116 180 25
+warte 1
+bild b17_nach_handy
+# Schalter draußen am Zaun (x 60, z 111): Sicherung aus
+server /gamemode survival @p
+server /villa ort 60.5 26 112.8 180 6
+warte 2
+bild b18_schalter_draussen
+klick
+warte 2

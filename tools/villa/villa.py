@@ -127,6 +127,9 @@ def tor_und_bruecke() -> None:
             b.setze(x, G + 1, z, zustand("quartz_slab", type="bottom", waterlogged="false"))
             b.setze(x, G + 2, z, GLAS)
     b.quader(x0 + 3, G, n - 12, x1 - 3, G, n - 1, "red_concrete")
+    # Für die Mod: das Stück über dem Wassergraben ist eine Zugbrücke (Kasten x0 y0 z0 x1 y1 z1 mit Geländer, dann die
+    # Richtung, in die sie einfährt: nach Norden unter das Tor). Siehe Zugbruecke.java.
+    b.marke("bruecke", x0, G, n - 10, x1, G + 2, n - 6, 0, -1)
     # Teppich vom Tor (auch unter dem Torflügel, kein Gras) bis direkt an die Haustür
     b.quader(x0 + 3, G, HZ1 + 1, x1 - 3, G, n - 13, "red_concrete")
     b.quader(x0 + 1, G, HZ1 + 1, x0 + 2, G, n - 13, QUARZ)
@@ -1468,6 +1471,13 @@ def mechanismen() -> None:
     b.setze(70, G + 1, 22, zustand("lever", face="floor", facing="north", powered="false"))
     mech(HX1 - 5, DACH, HZ0 + 3, "whirlpoolduese")
     mech(43, EG + 2, HZ0 + 1, "kaminsteuerung", "south")
+    # Brückenschalter: innen neben der Haustür (am schwarzen Türpfosten), innen am Torpfeiler und draußen am Zaun
+    n = GROESSE[0] - 1
+    mech(53, EG + 2, HZ1 - 1, "brueckenschalter", "north")
+    mech(59, G + 2, n - 14, "brueckenschalter", "north")
+    # … und draußen vor der Einfahrt am Außenzaun (dort Quarz statt Gitter, damit der Schalter auf etwas Festem sitzt)
+    b.setze(60, G + 2, n - 1, QUARZ)
+    mech(60, G + 2, n, "brueckenschalter", "south")
     b.setze(52, DACH + 1, 40, zustand("jukebox", has_record="false"))
 
 
@@ -1513,7 +1523,7 @@ def pruefe_vor_glas() -> list[str]:
     """Alarmanlagen, Kameras und Kartenleser dürfen nicht vor einer Glasscheibe hängen (sieht von außen und innen
     unschön aus). Liefert die Stellen, an denen das doch so ist."""
     an_der_wand = ("alarmsirene", "bewegungsmelder", "kamera", "kartenleser", "tastenfeld", "tuerklingel",
-                   "aufzugstafel", "kaminsteuerung")
+                   "aufzugstafel", "kaminsteuerung", "brueckenschalter")
     fehler = []
     for (x, y, z), block in b.bloecke.items():
         name = basisname(block).removeprefix("stinkendreich:")

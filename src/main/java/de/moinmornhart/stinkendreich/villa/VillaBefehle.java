@@ -38,6 +38,7 @@ import java.util.Set;
  *   <li>{@code /villa ort <x> <y> <z> [blick] [neigung]} – zu einer Stelle im Bauplan (nur Operatoren, für Tests)</li>
  *   <li>{@code /villa stufe <0-3>} – Sicherheitsstufe setzen (nur Operatoren)</li>
  *   <li>{@code /villa lecks} – findet Wasser, das nicht im Bauplan steht (nur Operatoren, für Tests)</li>
+ *   <li>{@code /villa bruecke ein|aus} – Sicherung der Zugbrücke an oder aus (nur Operatoren; sonst Schalter, Handy, James)</li>
  * </ul>
  */
 public final class VillaBefehle {
@@ -56,6 +57,9 @@ public final class VillaBefehle {
                                             return 1;
                                         })))
                         .then(Commands.literal("lecks").requires(Kompat.istOperator()).executes(VillaBefehle::lecks))
+                        .then(Commands.literal("bruecke").requires(Kompat.istOperator())
+                                .then(Commands.literal("ein").executes(k -> bruecke(k, true)))
+                                .then(Commands.literal("aus").executes(k -> bruecke(k, false))))
                         .then(Commands.literal("ort").requires(Kompat.istOperator())
                                 .then(Commands.argument("x", DoubleArgumentType.doubleArg())
                                         .then(Commands.argument("y", DoubleArgumentType.doubleArg())
@@ -66,6 +70,16 @@ public final class VillaBefehle {
                                                                 .then(Commands.argument("neigung", FloatArgumentType.floatArg(-90, 90))
                                                                         .executes(k -> ort(k, FloatArgumentType.getFloat(k, "blick"),
                                                                                 FloatArgumentType.getFloat(k, "neigung")))))))))));
+    }
+
+    /** Sicherung der Zugbrücke an (sie fährt ein, sobald niemand davor steht) oder aus; meldet, warum es nicht geht. */
+    private static int bruecke(CommandContext<CommandSourceStack> k, boolean einfahren) {
+        String fehler = de.moinmornhart.stinkendreich.mechanik.Zugbruecke.sichern(k.getSource().getServer(), einfahren);
+        if (fehler != null) {
+            k.getSource().sendFailure(Component.translatable(fehler));
+            return 0;
+        }
+        return 1;
     }
 
     private static int nachHause(CommandContext<CommandSourceStack> k) throws CommandSyntaxException {

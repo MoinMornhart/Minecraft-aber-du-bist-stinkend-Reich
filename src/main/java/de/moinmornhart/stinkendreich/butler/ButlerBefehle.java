@@ -389,6 +389,16 @@ public final class ButlerBefehle {
             case HILFE -> {
                 return Antwort.ok("stinkendreich.butler.hilfe");
             }
+            case BRUECKE -> {
+                // Nur Bewohner dürfen die Zugbrücke bedienen (wie am Schalter)
+                if (!de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(p.level().getServer()).istBewohner(p)) {
+                    return new Antwort(Component.translatable("stinkendreich.bruecke.nur_bewohner"), true);
+                }
+                boolean zu = "zu".equals(bf.quelle());
+                String fehler = de.moinmornhart.stinkendreich.mechanik.Zugbruecke.sichern(p.level().getServer(), zu);
+                return fehler != null ? new Antwort(Component.translatable(fehler), true)
+                        : Antwort.ok(zu ? "stinkendreich.butler.bruecke.zu" : "stinkendreich.butler.bruecke.auf");
+            }
             case FAHREN -> {
                 return fahren(b, p, bf.quelle(), false);
             }

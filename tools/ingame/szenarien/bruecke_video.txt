@@ -1,0 +1,32 @@
+# Video der Zugbrücke für Philip (und README/Trailer): Einfahren mit Ufermauern, Kamerafahrt nach draußen,
+# Ausfahren. Läuft in Zeitlupe (/tick rate 6,667), video.py spielt es mit ZEITLUPE=3 wieder schnell ab.
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/bruecke_video.txt
+#         ZEITLUPE=3 python3 tools/ingame/video.py build/ingame/26.3/bruecke_roh.mp4 build/ingame/26.3/bruecke_kapitel.txt \
+#             build/ingame/26.3/zugbruecke.mp4 "Die Zugbrücke" "Minecraft, aber du bist stinkend reich"
+warte 30
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa stufe 0
+server /gamemode spectator @p
+server /villa ort 66 32 112 135 32
+taste F1
+warte 5
+server /tick rate 6.667
+warte 3
+video start bruecke
+kapitel Die Zugbrücke fährt ein
+warte 4
+server /villa bruecke ein
+warte 20
+kapitel … und Mauern schützen vor dem Wasser
+merke
+server fahrt 6 | 66 32 112 135 32 | 55 33 121 180 26
+bis 40 Fahrt fertig
+warte 5
+kapitel Für Bewohner fährt sie von selbst aus
+server /villa bruecke aus
+warte 20
+kapitel Schalter, Handy oder „James, mach die Brücke zu“
+warte 8
+video stopp

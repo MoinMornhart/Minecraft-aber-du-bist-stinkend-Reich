@@ -260,6 +260,7 @@ public final class ButlerKI {
                 }, -1, false);
                 case "ort_merken" -> new Sprache.Befehl(Sprache.Art.ORT_MERKEN, String.valueOf(e.get("name")), -1, false);
                 case "orte_zeigen" -> Sprache.Befehl.von(Sprache.Art.ORTE);
+                case "zugbruecke" -> new Sprache.Befehl(Sprache.Art.BRUECKE, "zu".equals(String.valueOf(e.get("zustand"))) ? "zu" : "auf", -1, false);
                 default -> Sprache.Befehl.von(Sprache.Art.UNBEKANNT);
             };
         }
@@ -308,6 +309,9 @@ public final class ButlerKI {
             t.add(werkzeug("ort_merken", "Merkt sich die Stelle, an der der Herr gerade steht, unter einem Namen (für spätere Fahrten).",
                     Map.of("name", Map.of("type", "string", "description", "Kurzer Name des Ortes, z. B. strand"))));
             t.add(werkzeug("orte_zeigen", "Nennt alle gespeicherten Orte.", Map.of()));
+            t.add(werkzeug("zugbruecke", "Schaltet die Zugbrücke am Tor der Villa: \"zu\" = gesichert (fährt ein und kommt nur für "
+                    + "Bewohner und Kartenbesitzer heraus), \"auf\" = fährt aus und bleibt draußen.",
+                    Map.of("zustand", Map.of("type", "string", "description", "\"zu\" oder \"auf\""))));
             werkzeuge = t;
             return t;
         }

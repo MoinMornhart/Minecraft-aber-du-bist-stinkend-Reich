@@ -46,6 +46,12 @@ public final class VillaZustand {
     private long tresorEntschaerftBis;
     /** Wann welcher Entschärfknopf zuletzt gedrückt wurde (nicht gespeichert). */
     private final Map<BlockPos, Long> entschaerfDruecke = new HashMap<>();
+    /** Zugbrücke gesichert (eingefahren, nur für Bewohner und Kartenbesitzer heraus)? Siehe {@link Zugbruecke}. */
+    private boolean brueckeGesichert;
+    /** Zugbrücke eingefahren? Dann stehen in {@link #brueckeBloecke} die Blöcke, die beim Ausfahren zurückkommen. */
+    private boolean brueckeEingefahren;
+    /** Blöcke der eingefahrenen Brücke: „x y z|Blockzustand“ in Weltkoordinaten (siehe {@link Zugbruecke}). */
+    private final java.util.List<String> brueckeBloecke = new java.util.ArrayList<>();
     private Path pfad;
     private MinecraftServer server;
 
@@ -90,6 +96,11 @@ public final class VillaZustand {
             if (Files.exists(z.pfad)) {
                 JsonObject j = GSON.fromJson(Files.readString(z.pfad, StandardCharsets.UTF_8), JsonObject.class);
                 z.stufe = j.has("stufe") ? j.get("stufe").getAsInt() : 1;
+                z.brueckeGesichert = j.has("bruecke_gesichert") && j.get("bruecke_gesichert").getAsBoolean();
+                z.brueckeEingefahren = j.has("bruecke_eingefahren") && j.get("bruecke_eingefahren").getAsBoolean();
+                if (j.has("bruecke_bloecke")) {
+                    j.getAsJsonArray("bruecke_bloecke").forEach(e -> z.brueckeBloecke.add(e.getAsString()));
+                }
                 if (j.has("bewohner")) {
                     for (var e : j.getAsJsonArray("bewohner")) {
                         JsonObject b = e.getAsJsonObject();
@@ -115,6 +126,11 @@ public final class VillaZustand {
                 liste.add(b);
             });
             j.add("bewohner", liste);
+            j.addProperty("bruecke_gesichert", brueckeGesichert);
+            j.addProperty("bruecke_eingefahren", brueckeEingefahren);
+            JsonArray bloecke = new JsonArray();
+            brueckeBloecke.forEach(bloecke::add);
+            j.add("bruecke_bloecke", bloecke);
             Files.writeString(pfad, GSON.toJson(j), StandardCharsets.UTF_8);
         } catch (Exception e) {
             StinkendReich.LOGGER.error("Sicherheitszustand konnte nicht gespeichert werden", e);
@@ -207,6 +223,33 @@ public final class VillaZustand {
             entschaerfDruecke.clear();
         }
         return fehlt;
+    }
+
+    // ---------------- Zugbrücke ----------------
+
+    public boolean brueckeGesichert() {
+        return brueckeGesichert;
+    }
+
+    public void setzeBrueckeGesichert(boolean an) {
+        brueckeGesichert = an;
+        speichern();
+    }
+
+    public boolean brueckeEingefahren() {
+        return brueckeEingefahren;
+    }
+
+    public java.util.List<String> brueckeBloecke() {
+        return java.util.Collections.unmodifiableList(brueckeBloecke);
+    }
+
+    /** Merkt sich, ob die Brücke eingefahren ist, und (beim Einfahren) ihre Blöcke; speichert sofort. */
+    public void setzeBruecke(boolean eingefahren, java.util.List<String> bloecke) {
+        brueckeEingefahren = eingefahren;
+        brueckeBloecke.clear();
+        brueckeBloecke.addAll(bloecke);
+        speichern();
     }
 
     // ---------------- Nachrichten ----------------

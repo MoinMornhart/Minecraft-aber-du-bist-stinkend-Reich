@@ -30,6 +30,7 @@ import java.util.List;
  *   <li>{@code auftrag|Text} – ein Auftrag wie im Chat („hol 32 Eisen“)</li>
  *   <li>{@code mitarbeiter} – eine Mitarbeiterkiste kommt ins Inventar</li>
  *   <li>{@code bodyguards|rufen} / {@code bodyguards|heim} – Leibwächter rufen oder heimschicken</li>
+ *   <li>{@code bruecke} – Zugbrücke am Tor ein- oder ausfahren (nur Bewohner, siehe {@link de.moinmornhart.stinkendreich.mechanik.Zugbruecke})</li>
  * </ul>
  * Geht nur, wenn man ein Handy dabeihat.
  */
@@ -75,6 +76,10 @@ public final class Handy {
                     net.minecraft.world.level.block.Block.popResource(p.level(), p.blockPosition(), kiste);
                 }
                 Kompat.nachricht(p, Component.translatable("stinkendreich.handy.mitarbeiter.da").withStyle(ChatFormatting.GOLD), false);
+                return;
+            }
+            case "bruecke" -> {
+                de.moinmornhart.stinkendreich.mechanik.Zugbruecke.umschalten(p);
                 return;
             }
             case "bodyguards" -> {

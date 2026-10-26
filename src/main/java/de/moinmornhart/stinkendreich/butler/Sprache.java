@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public final class Sprache {
     public enum Art { HOLEN, KOCHEN, SORTIEREN, FOLGEN, BLEIBEN, HEIM, KOMMEN, STOPP, INVENTAR, STATUS, HILFE,
-        FAHREN, FLIEGEN, ORT_MERKEN, ORTE, STRASSE, UNBEKANNT }
+        FAHREN, FLIEGEN, ORT_MERKEN, ORTE, STRASSE, BRUECKE, UNBEKANNT }
 
     /** Ziele beim Fahren (in {@link Befehl#quelle()}): Villa, Blickziel, nur vorfahren; sonst Name eines Ortes. */
     public static final String ZIEL_VILLA = "#villa", ZIEL_BLICK = "#blick", ZIEL_ABHOLEN = "#abholen";
@@ -125,6 +125,11 @@ public final class Sprache {
         }
         if (enthaelt(t, "status", "was machst du", "wie weit", "wie lange")) {
             return Befehl.von(Art.STATUS);
+        }
+        // Zugbrücke: „mach die Brücke zu“, „Brücke hoch/einfahren/sichern“ bzw. „mach die Brücke auf“, „Brücke runter“
+        if (enthaelt(t, "bruecke")) {
+            boolean zu = enthaelt(t, " zu ", "einfahr", " ein ", "hoch", "schliess", "sicher", " rauf ");
+            return new Befehl(Art.BRUECKE, zu ? "zu" : "auf", -1, false);
         }
         if (enthaelt(t, "sortier", "aufraeum", "raeum", "ordne", "ordnung")) {
             return Befehl.von(Art.SORTIEREN);

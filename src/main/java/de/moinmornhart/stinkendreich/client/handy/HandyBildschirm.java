@@ -64,7 +64,8 @@ public class HandyBildschirm extends Screen {
                 y = knopf(x, y, "auftraege", () -> wechseln(Seite.AUFTRAG));
                 y = knopf(x, y, "mitarbeiter", () -> senden("mitarbeiter"));
                 y = knopf(x, y, "bodyguards", () -> senden("bodyguards|rufen"));
-                knopf(x, y, "bodyguards_heim", () -> senden("bodyguards|heim"));
+                y = knopf(x, y, "bodyguards_heim", () -> senden("bodyguards|heim"));
+                knopf(x, y, "bruecke", () -> senden("bruecke"));
             }
             case NAVI -> {
                 for (String ziel : List.of("villa", "dorf", "endportal", "netherportal", "mine")) {

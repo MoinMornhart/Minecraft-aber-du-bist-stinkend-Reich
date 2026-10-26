@@ -5,7 +5,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 
-/** Rote Warnleuchte: leuchtet, solange Alarm herrscht. */
+/** Rote Warnleuchte: blinkt, solange Alarm herrscht, und während die Zugbrücke in der Nähe fährt. */
 public class WarnleuchteBlock extends MechanikBlock {
     public WarnleuchteBlock(Properties eigenschaften) {
         super(eigenschaften, Ausrichtung.KEINE, false, false);
@@ -28,8 +28,8 @@ public class WarnleuchteBlock extends MechanikBlock {
 
     @Override
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity daten) {
-        boolean alarm = VillaZustand.get(welt.getServer()).alarmAktiv();
-        // Blinken: im Alarm abwechselnd an und aus
+        boolean alarm = VillaZustand.get(welt.getServer()).alarmAktiv() || Zugbruecke.warnen(pos);
+        // Blinken: im Alarm (und wenn die Brücke fährt) abwechselnd an und aus
         boolean an = alarm && (welt.getGameTime() / 10) % 2 == 0;
         if (an != zustand.getValue(Eigenschaften.LEUCHTET)) {
             welt.setBlock(pos, zustand.setValue(Eigenschaften.LEUCHTET, an), 3);

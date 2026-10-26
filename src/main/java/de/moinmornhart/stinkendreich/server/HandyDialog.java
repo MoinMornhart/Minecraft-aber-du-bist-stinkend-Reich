@@ -94,6 +94,7 @@ public final class HandyDialog {
                 knopf(knoepfe, "mitarbeiter", "mitarbeiter");
                 knopf(knoepfe, "bodyguards", "bodyguards|rufen");
                 knopf(knoepfe, "bodyguards_heim", "bodyguards|heim");
+                knopf(knoepfe, "bruecke", "bruecke");
             }
         }
         CommonDialogData daten = new CommonDialogData(Component.translatable("stinkendreich.handy.titel." + titel),

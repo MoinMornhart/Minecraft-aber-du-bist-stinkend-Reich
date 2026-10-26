@@ -1,0 +1,57 @@
+# Zugbrücke, Teil 2: Animation schräg von oben (für README und Trailer), Schalter draußen am Zaun, Handy.
+warte 30
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa stufe 0
+server /gamemode spectator @p
+taste F1
+server /villa ort 66 32 112 135 32
+warte 4
+bild c01_schraeg
+server /villa bruecke ein
+warte 0.7
+bild c02
+warte 0.8
+bild c03
+warte 1.0
+bild c04
+warte 1.0
+bild c05
+warte 1.0
+bild c06
+warte 1.0
+bild c07
+warte 1.5
+bild c08_mauern
+server /villa ort 55 33 120 180 28
+warte 2
+bild c09_von_aussen
+# Schalter draußen am Zaun (x 60, z 111): Sicherung aus, Brücke fährt aus
+server /gamemode survival @p
+server /villa ort 60.5 26 112.8 180 6
+warte 2
+bild c10_schalter_draussen
+taste F1
+klick
+warte 1
+bild c11_meldung
+taste F1
+warte 7
+server /gamemode spectator @p
+server /villa ort 66 32 112 135 32
+warte 1
+bild c12_ausgefahren
+# Handy (weit weg im Vorgarten): Sicherung an, Brücke fährt ein
+server /gamemode survival @p
+server /villa ort 55 26 72 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+linksklick 640 524
+warte 9
+server /gamemode spectator @p
+server /villa ort 66 32 112 135 32
+warte 1
+bild c13_nach_handy
