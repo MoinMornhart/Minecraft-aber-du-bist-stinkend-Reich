@@ -2,6 +2,7 @@ package de.moinmornhart.stinkendreich.mechanik;
 
 import de.moinmornhart.stinkendreich.register.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -103,14 +104,42 @@ public class TorsteuerungBlock extends MechanikBlock {
                 || !welt.getEntitiesOfClass(ButlerEntity.class, nah, b -> true).isEmpty();
     }
 
-    /** Setzt alle Flügel des Typs im Umkreis; true, wenn sich etwas geändert hat. */
+    /**
+     * Setzt alle Flügel des Typs im Umkreis; true, wenn sich etwas geändert hat. Ein Flügel geht immer ganz auf: Ragt
+     * er über den Umkreis hinaus (Haustür und Garagen-Schiebetür sind drei Blöcke hoch, die Steuerung sitzt unter
+     * dem Boden), werden die Blöcke darüber und darunter mitgeschaltet. Vorher blieb dort die oberste Reihe zu.
+     */
     public static boolean umschalten(ServerLevel welt, BlockPos mitte, int radius, Block typ, boolean offen) {
         boolean geaendert = false;
+        int unten = mitte.getY() - radius;
+        int oben = mitte.getY() + radius;
         for (BlockPos p : BlockPos.betweenClosed(mitte.offset(-radius, -radius, -radius), mitte.offset(radius, radius, radius))) {
             BlockState s = welt.getBlockState(p);
-            if (s.is(typ) && TorfluegelBlock.setzeOffen(welt, p, s, offen)) {
-                geaendert = true;
+            if (!s.is(typ)) {
+                continue;
             }
+            geaendert |= TorfluegelBlock.setzeOffen(welt, p, s, offen);
+            // Am Rand des Umkreises: den Flügel nach oben bzw. unten weiterverfolgen
+            if (p.getY() == oben) {
+                geaendert |= spalteSchalten(welt, p.immutable(), Direction.UP, typ, offen);
+            }
+            if (p.getY() == unten) {
+                geaendert |= spalteSchalten(welt, p.immutable(), Direction.DOWN, typ, offen);
+            }
+        }
+        return geaendert;
+    }
+
+    /** Schaltet die Blöcke des Typs, die über bzw. unter {@code start} direkt aufeinander folgen (höchstens 16). */
+    private static boolean spalteSchalten(ServerLevel welt, BlockPos start, Direction richtung, Block typ, boolean offen) {
+        boolean geaendert = false;
+        BlockPos p = start.relative(richtung);
+        for (int i = 0; i < 16; i++, p = p.relative(richtung)) {
+            BlockState s = welt.getBlockState(p);
+            if (!s.is(typ)) {
+                break;
+            }
+            geaendert |= TorfluegelBlock.setzeOffen(welt, p, s, offen);
         }
         return geaendert;
     }

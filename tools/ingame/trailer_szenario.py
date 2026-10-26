@@ -72,7 +72,7 @@ fahrt(4, (55.9, 27, 106, 180, 4), (55.6, 27.2, 88, 180, 2))
 titel("… und einer Haustür aus Gold")
 z("server /gamemode creative", "server /villa ort 55 26.5 76 180 2", "warte 1", "server /villa ort 55 26 70 180 2", "warte 2.5",
   "server /gamemode spectator")
-fahrt(3, (55, 27.6, 70, 180, 2), (55.5, 27.6, 65.5, 192, 5))
+fahrt(3, (55, 26.2, 70, 180, -2), (55, 26.2, 64.5, 186, -6))   # Augenhöhe wie ein Spieler, mitten durch die Tür
 
 titel("Ein Ballsaal mit Kronleuchtern")
 zufahren(4, 51.5, 29, 66, 200, 14, zurueck=0.8, schwenk=18)  # dahinter liegt gleich die Südwand

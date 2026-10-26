@@ -280,6 +280,7 @@ def huelle() -> None:
             b.setze(x, y, HZ1, SCHWARZ if x in pfeiler else GLAS)
     # Eingang: Öffnung für die automatische Schiebetür (siehe mechanismen())
     b.luft(54, EG + 1, HZ1, 55, EG + 3, HZ1)
+    b.quader(54, EG, HZ1, 55, EG, HZ1, "red_wool")      # roter Teppich auch unter der Tür (vorher grauer Schiefer)
     b.marke("haustuer", 54, EG + 1, HZ1, 55, EG + 3, HZ1)
     tuerrahmen(53, EG + 1, HZ1, 56, OG - 1, gold=EG + 4)
     # Balkon über dem Eingang: Obergeschoss-Platte kragt 3 Blöcke aus

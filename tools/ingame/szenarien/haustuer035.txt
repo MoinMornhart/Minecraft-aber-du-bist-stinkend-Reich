@@ -1,0 +1,45 @@
+# Eingang prüfen (Philips Bild aus dem Trailer): zu Fuß auf Augenhöhe durch die Haustür, Teppich unter der Tür,
+# Blick nach oben zu den Kronleuchtern, Kamerafahrt wie im Trailer. Weltkoordinaten = Villa + (-56, 62, -56).
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /gamemode survival
+server /villa ort 55 26 72 180 0
+warte 3
+bild h1_vor_tuer
+server /villa ort 55 26 69.5 180 0
+warte 3
+bild h2_tuer_offen
+server /villa ort 55 26 68 180 25
+warte 2
+bild h3_schwelle
+server /villa ort 55 26 67.5 180 0
+warte 2
+bild h4_in_tuer
+server /villa ort 55 26 65.5 180 0
+warte 2
+bild h5_drinnen
+server /villa ort 55 26 65.5 180 -45
+warte 2
+bild h6_decke
+server /villa ort 55 26 63 0 0
+warte 2
+bild h7_zurueck
+# Kamerafahrt wie im Trailer (Zuschauer)
+server /villa ort 55 26 70 180 2
+warte 2
+server /gamemode spectator
+merke
+server fahrt 3 | 55 26.2 70 180 -2 | 55 26.2 64.5 186 -6
+warte 1.5
+bild h8_fahrt_mitte
+bis 30 Fahrt fertig
+bild h9_fahrt_ende
+# Nachts: ist der Eingang ohne die zwei Kronleuchter hell genug?
+server /time set 18000
+server /gamemode survival
+server /villa ort 55 26 65 180 0
+warte 3
+bild h10_nachts
