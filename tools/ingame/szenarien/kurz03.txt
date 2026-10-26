@@ -67,7 +67,7 @@ server /villa ort 55.5 26 86 0 15
 warte 2
 merke
 server Butler, hol den Wagen
-bis 40 vorgefahren
+bis 60 vorgefahren
 warte 2
 server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
 warte 2
@@ -75,5 +75,5 @@ merke
 server Butler, fahr mich zum Dorf
 warte 20
 bild k05_unterwegs
-bis 200 Wir sind da|nicht weiter|fast da
+bis 360 Wir sind da|nicht weiter|fast da
 bild k06_angekommen
