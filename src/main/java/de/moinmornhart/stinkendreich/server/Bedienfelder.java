@@ -1,8 +1,9 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.10 {
+//? if >=1.21.9 {
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.JsonOps;
+import de.moinmornhart.stinkendreich.fernseher.FernseherEntity;
 import de.moinmornhart.stinkendreich.klavier.Klavier;
 import de.moinmornhart.stinkendreich.klavier.Lieder;
 import de.moinmornhart.stinkendreich.mechanik.AufzugstafelBlock;
@@ -32,14 +33,15 @@ import net.minecraft.server.dialog.input.TextInput;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Bedienfelder der Villa für Spieler ohne Mod: Sicherheitszentrale, Tastenfeld, Aufzug, Konzertflügel und
- * Musikanlage als Dialogfenster von Minecraft. Die Knöpfe lösen über {@code /stinkendreich knopf …} genau die
+ * Bedienfelder der Villa für Spieler ohne Mod: Sicherheitszentrale, Tastenfeld, Aufzug, Konzertflügel,
+ * Musikanlage und Fernseher als Dialogfenster von Minecraft. Die Knöpfe lösen über {@code /stinkendreich knopf …} genau die
  * Aktionen aus, die auch die Bildschirme der Mod schicken ({@link Netz#ausfuehren}); Reichweite und Rechte prüft
  * dieselbe Stelle.
  */
@@ -59,6 +61,7 @@ final class Bedienfelder {
         OhneMod.anmelden("aufzug", Bedienfelder::aufzug);
         OhneMod.anmelden("klavier", Bedienfelder::klavier);
         OhneMod.anmelden("musikanlage", Bedienfelder::musik);
+        OhneMod.anmelden("fernseher", Bedienfelder::fernseher);
         Netz.bearbeiter("musik_platte", 8, Bedienfelder::platte);
         Netz.bearbeiter("fenster_klaviatur", 10, (spieler, pos, wert) -> klaviatur(spieler, pos));
     }
@@ -156,6 +159,37 @@ final class Bedienfelder {
         }
         BuiltInRegistries.SOUND_EVENT.getOptional(Identifier.withDefaultNamespace("music_disc." + wert))
                 .ifPresent(ton -> welt.playSound(null, pos, ton, SoundSource.RECORDS, 4.0F, 1.0F));
+    }
+
+    /**
+     * Fernseher: YouTube-Link eingeben (dieselbe Aktion „fernseher“ wie das Menü der Mod), Video im Browser ansehen,
+     * ausschalten. Ein Bild auf dem Schirm gibt es ohne Mod nicht (das Vorschaubild lädt erst der Rechner mit Mod).
+     */
+    private static void fernseher(ServerPlayer spieler, BlockPos pos) {
+        FernseherEntity tv = null;
+        for (FernseherEntity e : spieler.level().getEntitiesOfClass(FernseherEntity.class, new AABB(pos).inflate(1.5))) {
+            if (tv == null || e.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) < tv.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos))) {
+                tv = e;
+            }
+        }
+        if (tv == null) {
+            return;
+        }
+        String id = tv.getId() + "|";
+        List<DialogBody> inhalt = new ArrayList<>();
+        List<ActionButton> knoepfe = new ArrayList<>();
+        knoepfe.add(knopf(Component.translatable("stinkendreich.fernseher.anzeigen"), 210, vorlage("fernseher", pos, id + "$(link)")));
+        if (!tv.video().isEmpty()) {
+            String link = "https://www.youtube.com/watch?v=" + tv.video();
+            inhalt.add(text(Component.translatable("stinkendreich.fernseher.laeuft", link)));
+            knoepfe.add(knopf(Component.translatable("stinkendreich.fernseher.abspielen"), 210,
+                    new StaticAction(new ClickEvent.OpenUrl(java.net.URI.create(link)))));
+        }
+        knoepfe.add(knopf(Component.translatable("stinkendreich.fernseher.aus"), 210, aktion("fernseher", pos, id)));
+        inhalt.add(text(Component.translatable("stinkendreich.ohnemod.fernseher_hinweis")));
+        List<Input> felder = List.of(new Input("link", new TextInput(BREITE + 100,
+                Component.translatable("stinkendreich.fernseher.link"), true, "", 200, Optional.empty())));
+        zeigen(spieler, Component.translatable("stinkendreich.fernseher.titel"), inhalt, felder, knoepfe, 1, DialogAction.CLOSE);
     }
 
     // ------------------------------------------------------------------

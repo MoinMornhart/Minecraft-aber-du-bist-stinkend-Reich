@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.10 {
+//? if >=1.21.9 {
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,7 +19,7 @@ import xyz.nucleoid.packettweaker.PacketContext;
 *///?}
 
 /**
- * Was sich zwischen den Polymer-Versionen unterscheidet, an einer Stelle: Polymer 0.14/0.15 (Minecraft 1.21.10 bis
+ * Was sich zwischen den Polymer-Versionen unterscheidet, an einer Stelle: Polymer 0.14/0.15 (Minecraft 1.21.9 bis
  * 1.21.11) hat den Paket-Kontext aus „packet-tweaker“ und die Anzeige-Datenfelder unter einem anderen Namen als
  * Polymer 0.16+ (26.x). Pakete für Kamera und Mitfahrer baut diese Klasse selbst (gleich in allen Versionen).
  */
@@ -45,6 +45,10 @@ final class PolymerKompat {
 
     static SynchedEntityData.DataValue<?> sichtweite(float weite) {
         return SynchedEntityData.DataValue.create(DisplayEntityData.VIEW_RANGE, weite);
+    }
+
+    static SynchedEntityData.DataValue<?> helligkeit(int licht) {
+        return SynchedEntityData.DataValue.create(DisplayEntityData.BRIGHTNESS, licht);
     }
 
     static SynchedEntityData.DataValue<?> item(ItemStack stapel) {
@@ -73,6 +77,10 @@ final class PolymerKompat {
 
     static SynchedEntityData.DataValue<?> sichtweite(float weite) {
         return SynchedEntityData.DataValue.create(DisplayTrackedData.VIEW_RANGE, weite);
+    }
+
+    static SynchedEntityData.DataValue<?> helligkeit(int licht) {
+        return SynchedEntityData.DataValue.create(DisplayTrackedData.BRIGHTNESS, licht);
     }
 
     static SynchedEntityData.DataValue<?> item(ItemStack stapel) {

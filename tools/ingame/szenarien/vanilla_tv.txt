@@ -1,0 +1,26 @@
+# Server-Version: Fernseher mit Blick nach Westen (90°) draußen und der Gästezimmer-Fernseher von nah
+warte 8
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa ort 55.5 26 80 0 0
+warte 3
+# Blick nach Süden: links (+x) ein Fernseher mit Blick nach Westen, rechts einer mit Blick nach Osten
+server /execute as @p at @s run summon stinkendreich:fernseher ^4 ^1.5 ^10 {Rotation:[90f,0f],NoAI:1b}
+server /execute as @p at @s run summon stinkendreich:fernseher ^-4 ^1.5 ^10 {Rotation:[270f,0f],NoAI:1b}
+warte 3
+# von Westen auf den linken schauen
+server /villa ort 52.5 28 90 -90 5
+warte 3
+bild t01_west_auf_90
+# von Osten auf den rechten schauen
+server /villa ort 47.5 28 90 90 5
+warte 3
+bild t02_ost_auf_270
+server /villa ort 44 33.5 57.5 -90 3
+warte 4
+bild t03_gaeste_nah
+server /execute as @e[type=stinkendreich:fernseher,distance=..8] run say TV_ROT
+server /execute as @e[type=stinkendreich:fernseher,distance=..8] run data get entity @s Rotation
+server /execute as @e[type=stinkendreich:fernseher,distance=..8] run data get entity @s Pos

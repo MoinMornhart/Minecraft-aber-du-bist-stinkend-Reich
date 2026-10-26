@@ -1,0 +1,23 @@
+# Straße zum Dorf am Fluss prüfen (26.1.1: der Wagen blieb bei x 49.5, z 372.5 in einer Rinne stecken)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 20
+server /villa ort 55.5 26 86 0 15
+warte 3
+server /butler strasse dorf
+warte 60
+server /butler strassen
+warte 60
+server /butler strassen
+server /gamemode spectator
+server /tp @p 49.5 85 372.5 0 90
+warte 8
+bild f01_von_oben
+server /tp @p 40.5 70 360.5 -35 30
+warte 5
+bild f02_schraeg
+server /tp @p 49.5 64 365.5 0 20
+warte 5
+bild f03_auf_der_strasse

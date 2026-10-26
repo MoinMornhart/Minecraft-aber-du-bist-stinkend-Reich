@@ -164,9 +164,17 @@ public final class Chauffeur {
         return Lage.FAEHRT;
     }
 
-    /** Setzt den Wagen auf den nächsten Wegpunkt, in Fahrtrichtung der Straße. */
+    /**
+     * Setzt den Wagen auf den nächsten Wegpunkt, in Fahrtrichtung der Straße. Hängt er danach wieder fest, liegt das
+     * Hindernis am Punkt selbst: dann jedes Mal ein Stück weiter vorn aufsetzen, und nie in Wasser oder Lava.
+     */
     private void zurueckAufDieStrasse(AutoEntity auto) {
         rettungen++;
+        int i = Math.min(punkt + (rettungen - 1) * 4, punkte.size() - 1);
+        while (i < punkte.size() - 1 && imWasser(auto.level(), punkte.get(i))) {
+            i++;
+        }
+        punkt = i;
         Vec3 p = punkte.get(punkt), q = punkte.get(Math.min(punkt + 1, punkte.size() - 1));
         float gier = (float) (Mth.atan2(q.z - p.z, q.x - p.x) * Mth.RAD_TO_DEG) - 90.0F;
         auto.setDeltaMovement(Vec3.ZERO);
@@ -178,6 +186,12 @@ public final class Chauffeur {
         ohneFortschritt = 0;
         besterAbstand = Double.MAX_VALUE;
         de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Chauffeur setzt den Wagen zurück auf die Straße bei {}", p);
+    }
+
+    /** Stünde ein Wagen an diesem Punkt in Wasser oder Lava? */
+    private static boolean imWasser(Level welt, Vec3 p) {
+        BlockPos fuss = BlockPos.containing(p);
+        return !welt.getFluidState(fuss).isEmpty() || !welt.getFluidState(fuss.above()).isEmpty();
     }
 
     /** Liegt der nächste Wegpunkt nach {@code i} dicht dran (Straße)? */

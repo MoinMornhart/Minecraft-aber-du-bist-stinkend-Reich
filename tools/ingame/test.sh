@@ -115,9 +115,18 @@ mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
 
 # Nur die eigenen Minecraft-Prozesse beenden (erkennbar am Arbeitsordner), falls mehrere Tests laufen
 eigene_beenden() {
-  local p
+  local p i noch
   for p in $(pgrep -f "net.fabricmc.devlaunchinjector.Main"); do
     [[ "$(readlink "/proc/$p/cwd" 2>/dev/null)" == "$RUN" ]] && kill "$p" 2>/dev/null
+  done
+  # Warten, bis alles beendet ist: ein Server, der noch speichert, würde sonst in die Welt des nächsten Laufs schreiben
+  for i in $(seq 1 60); do
+    noch=0
+    for p in $(pgrep -f "net.fabricmc.devlaunchinjector.Main"); do
+      [[ "$(readlink "/proc/$p/cwd" 2>/dev/null)" == "$RUN" ]] && noch=1
+    done
+    [[ $noch == 0 ]] && break
+    sleep 0.5
   done
 }
 aufraeumen() {

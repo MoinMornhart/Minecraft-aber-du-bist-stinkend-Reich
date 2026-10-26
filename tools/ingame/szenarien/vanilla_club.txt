@@ -1,0 +1,11 @@
+# Server-Version: Tänzerinnen im Geheimclub für Spieler ohne Mod (Blick zur Bühne und in den Raum)
+warte 8
+server /gamemode spectator
+server /time set 6000
+server /villa ort 13 8.5 72 90 8
+warte 4
+bild c01_buehne
+server /villa ort 13 8.5 72 -110 8
+warte 3
+bild c02_raum
+server /execute if entity @e[type=stinkendreich:taenzerin] run say TAENZERINNEN_DA

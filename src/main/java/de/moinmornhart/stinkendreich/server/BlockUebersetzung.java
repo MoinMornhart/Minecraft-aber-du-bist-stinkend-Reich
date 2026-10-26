@@ -1,12 +1,12 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.10 {
+//? if >=1.21.9 {
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.netz.ModErkennung;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockModel;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;
-import eu.pb4.polymer.core.api.block.PolymerBlock;
+import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
 import eu.pb4.polymer.virtualentity.api.BlockWithElementHolder;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockAwareAttachment;
@@ -49,8 +49,11 @@ import java.util.TreeSet;
  * Ressourcenpaket mit unserem Modell zeigt. Alle anderen (Möbel, Geräte, Türen …) sind für den Client eine
  * unsichtbare Barriere (gleiche Kollision, anklickbar), darüber zeigt eine Anzeige-Figur das echte Modell. Blöcke
  * ohne Kollision (z. B. die unsichtbaren Teile des Flügels) bekommen ein Klickfeld in ihrer Größe.
+ * <p>
+ * Wichtig ist {@link PolymerTexturedBlock}: Ohne diese Kennzeichnung macht Polymer aus den Notenblock-Zuständen mit
+ * unseren Modellen wieder einen gewöhnlichen Notenblock (das ist für echte Notenblöcke gedacht).
  */
-final class BlockUebersetzung implements PolymerBlock, BlockWithElementHolder {
+final class BlockUebersetzung implements PolymerTexturedBlock, BlockWithElementHolder {
     /** Alle Modelle, die als Anzeige-Item im Ressourcenpaket gebraucht werden. */
     static final Set<Identifier> ANZEIGE_MODELLE = new TreeSet<>();
 

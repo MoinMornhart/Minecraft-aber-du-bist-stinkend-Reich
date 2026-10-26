@@ -389,6 +389,7 @@
   "stinkendreich.musik.zurueck": "⏮ Zurück",
   "stinkendreich.ohnemod.code_hinweis": "Code eingeben und öffnen. Zum Ändern: alten Code oben, neuen Code darunter.",
   "stinkendreich.ohnemod.code_neu": "Neuer Code (nur zum Ändern)",
+  "stinkendreich.ohnemod.fernseher_hinweis": "Ohne Mod bleibt der Bildschirm dunkel. Das Video läuft im Browser deines PCs.",
   "stinkendreich.ohnemod.kamera": "Kamera %s",
   "stinkendreich.ohnemod.kamera_ende": "Schleichen (Shift) zum Beenden",
   "stinkendreich.ohnemod.kamera_hinweis": "Kamera wählen. Schleichen (Shift) beendet den Kamerablick.",

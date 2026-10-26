@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.10 {
+//? if >=1.21.9 {
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.netz.ModErkennung;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
@@ -26,15 +26,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
-import eu.pb4.polymer.core.api.utils.PolymerUtils;
-import net.minecraft.core.ClientAsset;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.Mannequin;
-import net.minecraft.world.entity.player.PlayerModelType;
-import net.minecraft.world.entity.player.PlayerSkin;
 import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.level.Level;
 
@@ -48,6 +44,9 @@ import java.util.Optional;
  * aus unseren eigenen Dateien und schickt es beim Betreten mit. Spieler mit Mod bekommen alles unverändert.
  */
 public final class ServerPaket {
+    /** Figuren, die für Spieler ohne Mod als Anzeige-Figur mit ihrem Modell erscheinen (siehe FahrzeugAnzeige). */
+    private static final java.util.Set<String> MODELLE = java.util.Set.of("aufzugkabine", "drehteller", "fernseher");
+
     private ServerPaket() {
     }
 
@@ -151,7 +150,7 @@ public final class ServerPaket {
         boolean mensch = bodyguard || name.equals("butler") || name.equals("mitarbeiter") || name.equals("taenzerin");
         // Sitze sind unsichtbar (leere Anzeige-Figur), Fahrzeuge zeigen ihr Modell (FahrzeugAnzeige)
         String ersatzName = mensch ? "mannequin"
-                : name.equals("sitz") || name.equals("aufzugkabine") || typIstFahrzeug(typ) ? "item_display" : "armor_stand";
+                : name.equals("sitz") || MODELLE.contains(name) || typIstFahrzeug(typ) ? "item_display" : "armor_stand";
         EntityType<?> ersatz = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(ersatzName));
         PolymerEntityUtils.registerOverlay(typ, new PolymerSyncedObject<EntityType<?>>() {
             @Override
@@ -166,7 +165,7 @@ public final class ServerPaket {
             }
         }, (java.util.function.Function<T, PolymerEntity>) e -> e instanceof de.moinmornhart.stinkendreich.auto.AutoEntity auto
                 ? FahrzeugAnzeige.uebersetzung(auto, typ)
-                : e instanceof de.moinmornhart.stinkendreich.mechanik.AufzugKabine kabine ? FahrzeugAnzeige.uebersetzung(kabine, typ)
+                : MODELLE.contains(name) ? FahrzeugAnzeige.uebersetzung(e, name, typ)
                 : new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
@@ -175,7 +174,12 @@ public final class ServerPaket {
 
             @Override
             public void modifyRawTrackedData(List<SynchedEntityData.DataValue<?>> daten, ServerPlayer spieler, boolean erstes) {
-                if (mensch && erstes && !ModErkennung.hatMod(spieler)) {
+                if (ModErkennung.hatMod(spieler)) {
+                    return;
+                }
+                // Puppen behalten die Daten aller Lebewesen (Gesundheit, Haltung …), Anzeige-Figuren nur die jeder Figur
+                fremdeDatenEntfernen(daten, mensch ? 15 : 8);
+                if (mensch && erstes) {
                     daten.add(SynchedEntityData.DataValue.create(Puppe.PROFIL, haut(e, bodyguard ? "bodyguard_mensch" : name)));
                     if (Puppe.BESCHREIBUNG != null) {
                         daten.add(SynchedEntityData.DataValue.create(Puppe.BESCHREIBUNG, Optional.empty()));
@@ -195,6 +199,15 @@ public final class ServerPaket {
         });
     }
 
+    /**
+     * Entfernt die Datenfelder der echten Figur ab Nummer {@code ab}. Polymer reicht ein Feld an den Ersatz weiter,
+     * wenn dieser an derselben Stelle ein Feld desselben Typs hat; so würde aus „ohne KI“ (Mob) bei einer
+     * Anzeige-Figur „dreht sich immer zum Spieler“ und aus einer Zahl des Autos die Helligkeit.
+     */
+    static void fremdeDatenEntfernen(List<SynchedEntityData.DataValue<?>> daten, int ab) {
+        daten.removeIf(wert -> wert.id() >= ab);
+    }
+
     private static boolean typIstFahrzeug(EntityType<?> typ) {
         for (var art : de.moinmornhart.stinkendreich.auto.Autotyp.values()) {
             if (de.moinmornhart.stinkendreich.register.ModEntities.auto(art) == typ) {
@@ -204,11 +217,16 @@ public final class ServerPaket {
         return false;
     }
 
-    /** Die Haut einer Figur (Textur aus dem Ressourcenpaket, Tänzerinnen je nach Kostüm). */
+    /**
+     * Die Haut einer Figur (Textur aus dem Ressourcenpaket, Tänzerinnen je nach Kostüm). Gebaut über das Datenformat
+     * von Minecraft ({@code {"texture": …, "model": "wide"}}), das gibt es ab 1.21.9 überall gleich.
+     */
     private static ResolvableProfile haut(Entity e, String name) {
         String textur = e instanceof de.moinmornhart.stinkendreich.club.TaenzerinEntity t ? "entity/taenzerin_" + t.variante() : "entity/" + name;
-        return PolymerUtils.createProfileComponent(new PlayerSkin.Patch(Optional.of(new ClientAsset.ResourceTexture(StinkendReich.id(textur))),
-                Optional.empty(), Optional.empty(), Optional.of(PlayerModelType.WIDE)));
+        com.google.gson.JsonObject json = new com.google.gson.JsonObject();
+        json.addProperty("texture", StinkendReich.id(textur).toString());
+        json.addProperty("model", "wide");
+        return ResolvableProfile.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).getOrThrow();
     }
 
     /** Zugriff auf die Datenfelder der Schaufensterpuppe (Haut und der Schriftzug „NPC“ darunter). */

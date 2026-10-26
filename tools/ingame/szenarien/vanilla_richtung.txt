@@ -1,0 +1,31 @@
+# Server-Version: Richtung und Helligkeit der Anzeige-Figuren (zwei Fernseher, einer nach Norden, einer nach Süden),
+# dazu Deckenblöcke und Notenblock-Zustände zum Vergleich
+warte 8
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa ort 55.5 26 80 0 0
+warte 3
+server /execute as @p at @s run summon stinkendreich:fernseher ^3 ^1.5 ^10 {Rotation:[180f,0f],NoAI:1b}
+server /execute as @p at @s run summon stinkendreich:fernseher ^-3 ^1.5 ^10 {Rotation:[0f,0f],NoAI:1b}
+server /execute as @p at @s run summon stinkendreich:bonzenauto ^ ^ ^16 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":2}"}
+# Blöcke: links Deckenblock Holz (schwebend und auf dem Boden), rechts ein echter Notenblock
+server /execute as @p at @s run setblock ^2 ^2 ^5 stinkendreich:decke_holz
+server /execute as @p at @s run setblock ^1 ^2 ^5 stinkendreich:decke_teppich_rot
+server /execute as @p at @s run setblock ^0 ^2 ^5 stinkendreich:decke_gold
+server /execute as @p at @s run setblock ^-1 ^2 ^5 minecraft:note_block
+server /execute as @p at @s run setblock ^-2 ^2 ^5 stinkendreich:laser_sender
+warte 3
+server /villa ort 55.5 28 78 0 10
+warte 3
+bild r01_von_sueden
+server /villa ort 55.5 28 102 180 10
+warte 3
+bild r02_von_norden
+server /villa ort 47 28 96 -90 15
+warte 3
+bild r03_auto_seite
+server /villa ort 55.5 27.5 80.5 0 25
+warte 3
+bild r04_bloecke

@@ -2,6 +2,7 @@ package de.moinmornhart.stinkendreich.fernseher;
 
 import de.moinmornhart.stinkendreich.mechanik.KlientBruecke;
 import de.moinmornhart.stinkendreich.netz.Netz;
+import de.moinmornhart.stinkendreich.netz.OhneMod;
 import de.moinmornhart.stinkendreich.register.ModItems;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -141,6 +142,9 @@ public class FernseherEntity extends Mob {
         }
         if (level().isClientSide()) {
             KlientBruecke.fernseher.accept(getId());
+        } else {
+            // Spieler ohne Mod (Server-Version): das Menü als Dialogfenster
+            OhneMod.zeigen(spieler, "fernseher", blockPosition());
         }
         return InteractionResult.SUCCESS;
     }

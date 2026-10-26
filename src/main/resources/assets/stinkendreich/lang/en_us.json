@@ -389,6 +389,7 @@
   "stinkendreich.musik.zurueck": "⏮ Back",
   "stinkendreich.ohnemod.code_hinweis": "Enter the code and open. To change it: old code on top, new code below.",
   "stinkendreich.ohnemod.code_neu": "New code (only to change it)",
+  "stinkendreich.ohnemod.fernseher_hinweis": "Without the mod the screen stays dark. The video plays in your PC's browser.",
   "stinkendreich.ohnemod.kamera": "Camera %s",
   "stinkendreich.ohnemod.kamera_ende": "Sneak (Shift) to leave",
   "stinkendreich.ohnemod.kamera_hinweis": "Pick a camera. Sneak (Shift) ends the camera view.",

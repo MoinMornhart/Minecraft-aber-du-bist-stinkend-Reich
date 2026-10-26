@@ -61,6 +61,7 @@ deps.fabric_api = "0.136.1+1.21.8"
 # Diese .jar läuft genau auf Minecraft 1.21.9
 mod.mc_compat = "1.21.9"
 deps.fabric_api = "0.134.1+1.21.9"
+deps.polymer = "0.14.2+1.21.9"
 
 ["1.21.10"]
 # Diese .jar läuft genau auf Minecraft 1.21.10

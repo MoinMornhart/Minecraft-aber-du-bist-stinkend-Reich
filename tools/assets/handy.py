@@ -106,6 +106,7 @@ TEXTE_DE = {
     "stinkendreich.ohnemod.kamera_ende": "Schleichen (Shift) zum Beenden",
     "stinkendreich.ohnemod.keine_kamera": "Keine Kamera in der Nähe.",
     "stinkendreich.ohnemod.klaviatur": "Selbst spielen (Klaviatur)",
+    "stinkendreich.ohnemod.fernseher_hinweis": "Ohne Mod bleibt der Bildschirm dunkel. Das Video läuft im Browser deines PCs.",
 }
 TEXTE_EN = {
     "item.stinkendreich.handy": "Golden Phone",
@@ -190,6 +191,7 @@ TEXTE_EN = {
     "stinkendreich.ohnemod.kamera_ende": "Sneak (Shift) to leave",
     "stinkendreich.ohnemod.keine_kamera": "No camera nearby.",
     "stinkendreich.ohnemod.klaviatur": "Play yourself (keyboard)",
+    "stinkendreich.ohnemod.fernseher_hinweis": "Without the mod the screen stays dark. The video plays in your PC's browser.",
 }
 
 

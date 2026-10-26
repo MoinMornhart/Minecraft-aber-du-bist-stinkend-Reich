@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.10 {
+//? if >=1.21.9 {
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -44,10 +44,10 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Autos, Hubschrauber und die Aufzugskabine für Spieler ohne Mod. Aus den Fahrzeugdaten der Mod
+ * Autos, Hubschrauber, Aufzugskabine, Drehteller und Fernseher für Spieler ohne Mod. Aus den Fahrzeugdaten der Mod
  * (assets/stinkendreich/fahrzeuge) baut diese Klasse beim Erstellen des Ressourcenpakets ein Item-Modell je Fahrzeug
- * und Lackfarbe (seit 26.x dürfen Modellteile beliebig gedreht sein, so werden auch die runden Räder genau), dazu das
- * Modell der Kabine. Für den Client ist das Fahrzeug dann eine Anzeige-Figur mit diesem Modell; ein unsichtbares
+ * und Lackfarbe (seit 26.x dürfen Modellteile beliebig gedreht sein, so werden auch die runden Räder genau), dazu die
+ * Modelle von Kabine, Drehteller und Fernseher (der zeigt ohne Mod nur das Bild „aus“). Für den Client ist das Fahrzeug dann eine Anzeige-Figur mit diesem Modell; ein unsichtbares
  * Klickfeld leitet Rechtsklicks an den echten Wagen weiter.
  */
 final class FahrzeugAnzeige {
@@ -64,6 +64,9 @@ final class FahrzeugAnzeige {
         ServerEntityEvents.ENTITY_LOAD.register((e, welt) -> {
             if (e instanceof AutoEntity auto) {
                 EntityAttachment.ofTicking(new Halter(auto, true), auto);
+            } else if (e instanceof de.moinmornhart.stinkendreich.fernseher.FernseherEntity tv) {
+                // Der Fernseher ist für Spieler ohne Mod nur ein Bild; das Klickfeld öffnet sein Menü
+                EntityAttachment.ofTicking(new Halter(tv, true), tv);
             } else if (e instanceof AufzugKabine kabine) {
                 // Die Kabine ist durchklickbar (Klicks gehen an die Tafeln dahinter), braucht also nur Sitze
                 EntityAttachment.ofTicking(new Halter(kabine, false), kabine);
@@ -78,19 +81,39 @@ final class FahrzeugAnzeige {
             ItemStack modell = new ItemStack(Items.PAPER);
             modell.set(DataComponents.ITEM_MODEL, itemModell(auto.art, AutoEntity.FARBEN[auto.farbe()]));
             return modell;
-        });
+        }, null);
     }
 
-    /** Die Aufzugskabine als Anzeige-Figur mit ihrem Modell. */
-    static PolymerEntity uebersetzung(AufzugKabine kabine, EntityType<?> echt) {
+    /**
+     * Aufzugskabine, Drehteller oder Fernseher als Anzeige-Figur mit ihrem Modell ({@code polymer/<name>}). Eine
+     * Anzeige-Figur nimmt das Licht an ihrem Fußpunkt; der liegt beim Fernseher an der Wand im Boden (alles schwarz).
+     * Für die Figuren, die stehen bleiben, gilt deshalb das Licht in ihrer Mitte.
+     */
+    static PolymerEntity uebersetzung(net.minecraft.world.entity.Entity e, String name, EntityType<?> echt) {
         ItemStack modell = new ItemStack(Items.PAPER);
-        modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/aufzugkabine"));
-        return uebersetzung(echt, () -> 1.0F, () -> modell);
+        modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/" + name));
+        return uebersetzung(echt, () -> 1.0F, () -> modell, e instanceof AufzugKabine ? null : () -> licht(e));
     }
 
-    /** Anzeige-Figur mit einem Modell im Entity-Modellraum (y nach unten, Boden bei y = 24 Pixel). */
+    /** Licht an Fußpunkt und Mitte der Figur (jeweils das hellere), gepackt wie bei Anzeige-Figuren. */
+    private static int licht(net.minecraft.world.entity.Entity e) {
+        net.minecraft.world.level.Level welt = e.level();
+        net.minecraft.core.BlockPos fuss = e.blockPosition();
+        net.minecraft.core.BlockPos mitte = net.minecraft.core.BlockPos.containing(e.getX(), e.getY() + e.getBbHeight() / 2, e.getZ());
+        int block = Math.max(welt.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, fuss),
+                welt.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, mitte));
+        int himmel = Math.max(welt.getBrightness(net.minecraft.world.level.LightLayer.SKY, fuss),
+                welt.getBrightness(net.minecraft.world.level.LightLayer.SKY, mitte));
+        return new net.minecraft.util.Brightness(block, himmel).pack();
+    }
+
+    /**
+     * Anzeige-Figur mit einem Modell im Entity-Modellraum (y nach unten, Boden bei y = 24 Pixel); {@code licht} ist
+     * {@code null}, wenn das Licht am Fußpunkt gelten soll (Fahrzeuge, die sich bewegen).
+     */
     private static PolymerEntity uebersetzung(EntityType<?> echt, java.util.function.Supplier<Float> massstab,
-                                              java.util.function.Supplier<ItemStack> modell) {
+                                              java.util.function.Supplier<ItemStack> modell,
+                                              java.util.function.Supplier<Integer> licht) {
         return new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
@@ -102,16 +125,22 @@ final class FahrzeugAnzeige {
                 if (ModErkennung.hatMod(spieler)) {
                     return;
                 }
+                ServerPaket.fremdeDatenEntfernen(daten, 8);
                 float m = massstab.get() * (1 / VERKLEINERT);
                 daten.add(PolymerKompat.item(modell.get()));
                 if (erstes) {
                     daten.add(PolymerKompat.itemArt((byte) ItemDisplayContext.NONE.ordinal()));
                     daten.add(PolymerKompat.skalierung(new Vector3f(m, m, m)));
-                    // Modellraum (y nach unten, vorn = -Z) um die x-Achse auf den Kopf drehen, Boden auf Höhe 0
-                    daten.add(PolymerKompat.drehungLinks(new Quaternionf().rotateX((float) Math.PI)));
+                    // Modellraum (y nach unten, vorn = -Z) um die z-Achse auf den Kopf drehen wie der Renderer der Mod
+                    // (scale -1, -1, 1); zusammen mit der halben Drehung, die Minecraft bei Item-Anzeigen selbst
+                    // einbaut, schaut das Modell dann in die Blickrichtung der Figur. Boden auf Höhe 0.
+                    daten.add(PolymerKompat.drehungLinks(new Quaternionf().rotateZ((float) Math.PI)));
                     daten.add(PolymerKompat.verschiebung(new Vector3f(0, 1.5F * massstab.get(), 0)));
                     daten.add(PolymerKompat.teleportDauer(3));
                     daten.add(PolymerKompat.sichtweite(2.0F));
+                    if (licht != null) {
+                        daten.add(PolymerKompat.helligkeit(licht.get()));
+                    }
                 }
             }
         };
@@ -216,18 +245,30 @@ final class FahrzeugAnzeige {
      * tools/assets/aufzug.py), im Format der Fahrzeugdaten, damit dasselbe Umrechnen greift.
      */
     private static void kabine(ResourcePackBuilder paket) {
-        byte[] textur = bytes("assets/stinkendreich/textures/entity/aufzugkabine.png");
-        if (textur == null) {
-            return;
-        }
         // u, v, x, y, z, Breite, Höhe, Tiefe
-        float[][] kaesten = {
+        einfachesModell(paket, "aufzugkabine", "aufzugkabine", 256, 256, 0, new float[][]{
                 {0, 0, -14, 23, -14, 28, 1, 28}, {0, 30, -14, -22, -14, 28, 1, 28}, {120, 0, -7, -21, -7, 14, 1, 14},
                 {0, 60, -14, -21, -12, 1, 44, 26}, {0, 60, 13, -21, -12, 1, 44, 26}, {0, 132, -12, -21, 13, 24, 44, 1},
                 {120, 20, -14, -21, -14, 2, 44, 2}, {120, 20, 12, -21, -14, 2, 44, 2}, {120, 20, -14, -21, 12, 2, 44, 2},
                 {120, 20, 12, -21, 12, 2, 44, 2}, {140, 20, -12, -21, -14, 24, 3, 1}, {140, 30, -13, 9, -11, 1, 1, 20},
                 {140, 30, 12, 9, -11, 1, 1, 20}, {60, 132, -11, 17, 6, 22, 6, 6}, {120, 132, -12, 15, 5, 24, 2, 8},
-                {120, 150, -12, 4, 11, 24, 11, 2}};
+                {120, 150, -12, 4, 11, 24, 11, 2}});
+        // Drehteller (client/drehteller/DrehtellerModell) und Fernseher (client/fernseher/FernseherModell)
+        einfachesModell(paket, "drehteller", "drehteller", 512, 128, 24, new float[][]{{0, 0, -54, -1, -54, 108, 1, 108}});
+        einfachesModell(paket, "fernseher", "fernseher/aus", 256, 64, 24, new float[][]{{0, 0, -40, -45, -1, 80, 45, 2}});
+    }
+
+    /**
+     * Ein Modell aus einem Teil mit Kästen (u, v, x, y, z, Breite, Höhe, Tiefe wie in den Java-Modellen der Mod) und
+     * der Entity-Textur {@code textures/entity/<bild>.png} (Breite und Höhe wie im Java-Modell, die Textur darf ein
+     * Vielfaches sein); Item-Modell {@code stinkendreich:polymer/<name>}.
+     */
+    private static void einfachesModell(ResourcePackBuilder paket, String name, String bild, int breite, int hoehe,
+                                        float drehpunktY, float[][] kaesten) {
+        byte[] textur = bytes("assets/stinkendreich/textures/entity/" + bild + ".png");
+        if (textur == null) {
+            return;
+        }
         JsonArray liste = new JsonArray();
         for (float[] k : kaesten) {
             JsonObject kasten = new JsonObject();
@@ -237,25 +278,25 @@ final class FahrzeugAnzeige {
             liste.add(kasten);
         }
         JsonObject teil = new JsonObject();
-        teil.addProperty("name", "kabine");
-        teil.add("pivot", arr(0, 0, 0));
+        teil.addProperty("name", name);
+        teil.add("pivot", arr(0, drehpunktY, 0));
         teil.add("drehung", arr(0, 0, 0));
         teil.add("kaesten", liste);
         JsonObject daten = new JsonObject();
-        daten.addProperty("breite", 256);
-        daten.addProperty("hoehe", 256);
+        daten.addProperty("breite", breite);
+        daten.addProperty("hoehe", hoehe);
         JsonArray teile = new JsonArray();
         teile.add(teil);
         daten.add("teile", teile);
         JsonObject m = modell(daten);
         JsonObject texturen = new JsonObject();
-        texturen.addProperty("lack", "stinkendreich:item/polymer/aufzugkabine");
-        texturen.addProperty("particle", "stinkendreich:item/polymer/aufzugkabine");
+        texturen.addProperty("lack", "stinkendreich:item/polymer/" + name);
+        texturen.addProperty("particle", "stinkendreich:item/polymer/" + name);
         m.add("textures", texturen);
-        paket.addData("assets/stinkendreich/textures/item/polymer/aufzugkabine.png", textur);
-        paket.addStringData("assets/stinkendreich/models/item/polymer/aufzugkabine.json", m.toString());
-        paket.addStringData("assets/stinkendreich/items/polymer/aufzugkabine.json",
-                "{\"model\":{\"type\":\"minecraft:model\",\"model\":\"stinkendreich:item/polymer/aufzugkabine\"}}");
+        paket.addData("assets/stinkendreich/textures/item/polymer/" + name + ".png", textur);
+        paket.addStringData("assets/stinkendreich/models/item/polymer/" + name + ".json", m.toString());
+        paket.addStringData("assets/stinkendreich/items/polymer/" + name + ".json",
+                "{\"model\":{\"type\":\"minecraft:model\",\"model\":\"stinkendreich:item/polymer/" + name + "\"}}");
     }
 
     /**
@@ -293,10 +334,30 @@ final class FahrzeugAnzeige {
                 if (dreh[0] != 0 || dreh[1] != 0 || dreh[2] != 0) {
                     JsonObject r = new JsonObject();
                     r.add("origin", arr(p(pivot[0]), p(pivot[1]), p(pivot[2])));
+                    //? if >=1.21.11 {
                     r.addProperty("x", Math.toDegrees(dreh[0]));
                     r.addProperty("y", Math.toDegrees(dreh[1]));
                     r.addProperty("z", Math.toDegrees(dreh[2]));
                     el.add("rotation", r);
+                    //?} else {
+                    /*// Bis 1.21.10 nur eine Achse und nur -45/-22,5/0/22,5/45 Grad; andere Teile bleiben ungedreht
+                    String achse = null;
+                    float winkel = 0;
+                    int gedreht = 0;
+                    for (int a = 0; a < 3; a++) {
+                        if (dreh[a] != 0) {
+                            gedreht++;
+                            achse = "xyz".substring(a, a + 1);
+                            winkel = (float) Math.toDegrees(dreh[a]);
+                        }
+                    }
+                    float rund = Math.round(winkel / 22.5F) * 22.5F;
+                    if (gedreht == 1 && Math.abs(rund - winkel) < 0.01F && Math.abs(rund) <= 45) {
+                        r.addProperty("axis", achse);
+                        r.addProperty("angle", rund);
+                        el.add("rotation", r);
+                    }
+                    *///?}
                 }
                 el.add("faces", flaechen(uv[0], uv[1], masse[0], masse[1], masse[2], breite, hoehe));
                 elemente.add(el);
@@ -312,16 +373,23 @@ final class FahrzeugAnzeige {
         return pixel * VERKLEINERT + 8;
     }
 
-    /** Die sechs Flächen eines Kastens mit Textur-Ausschnitt (Aufteilung wie bei Minecraft-Modellen). */
+    /**
+     * Die sechs Flächen eines Kastens mit Textur-Ausschnitt, Ecke für Ecke wie bei Minecraft-Entities
+     * ({@code ModelPart.Cube}). Bei Blockmodellen beginnt das uv jeder Fläche an einer festen Ecke (unten: kleines x,
+     * großes z; Nord: großes x, großes y …), deshalb stehen manche Bereiche hier „verkehrt herum“.
+     */
     private static JsonObject flaechen(float u, float v, float w, float h, float d, int breite, int hoehe) {
+        float l = u + d, m = u + d + w, n = u + d + w + w, o = u + d + w + d, p = u + d + w + d + w;
+        float q = v, r = v + d, s = v + d + h;
         JsonObject f = new JsonObject();
-        // Modellraum: y zeigt nach unten (min y = oben), vorn ist -Z (= „north“ im Modell)
-        f.add("down", flaeche(u + d + w, v, u + d + w + w, v + d, breite, hoehe));          // max y: unten
-        f.add("up", flaeche(u + d, v + d, u + d + w, v, breite, hoehe));                    // min y: oben
-        f.add("north", flaeche(u + d, v + d, u + d + w, v + d + h, breite, hoehe));          // vorn
-        f.add("south", flaeche(u + d + w + d, v + d, u + d + w + d + w, v + d + h, breite, hoehe));
-        f.add("west", flaeche(u, v + d, u + d, v + d + h, breite, hoehe));
-        f.add("east", flaeche(u + d + w, v + d, u + d + w + d, v + d + h, breite, hoehe));
+        // Modellraum: y zeigt nach unten, „down“ (kleines y) ist also die Oberseite; die Anzeige stellt das Modell
+        // auf den Kopf
+        f.add("down", flaeche(l, q, m, r, breite, hoehe));
+        f.add("up", flaeche(m, r, n, q, breite, hoehe));
+        f.add("north", flaeche(m, s, l, r, breite, hoehe));     // vorn (-Z)
+        f.add("south", flaeche(p, s, o, r, breite, hoehe));
+        f.add("west", flaeche(l, s, u, r, breite, hoehe));
+        f.add("east", flaeche(o, s, m, r, breite, hoehe));
         return f;
     }
 

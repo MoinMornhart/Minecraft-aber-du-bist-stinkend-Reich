@@ -53,7 +53,8 @@ linksklick 640 440
 bis 15 Bodyguards sind da
 server /execute if entity @e[type=stinkendreich:bodyguard] run say BODYGUARDS_OK
 server /execute as @p at @s run summon minecraft:zombie ^ ^ ^8
-warte 12
+# Bei einem langsamen Server brauchen die Bodyguards manchmal etwas länger
+warte 20
 server /execute as @p at @s unless entity @e[type=minecraft:zombie,distance=..40] run say ZOMBIE_WEG_OK
 bild k04_bodyguards
 server /difficulty peaceful

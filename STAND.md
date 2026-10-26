@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 02:50 Uhr (Nachtschicht, Philip schläft)_
+_Zuletzt aktualisiert: 2026-10-26, 06:40 Uhr (Nachtschicht, Philip schläft)_
 
 ## Erledigt
 
@@ -187,7 +187,35 @@ _Zuletzt aktualisiert: 2026-10-26, 02:50 Uhr (Nachtschicht, Philip schläft)_
   1.21.9 fehlt (Polymer 0.14.2 kann keine Haut für Schaufensterpuppen). Keine Reflexion über Feldnamen: in der
   fertigen .jar für 1.21.x heißen die Felder anders (ab 26.1 ist Minecraft nicht mehr verschleiert).
   Geprüft mit `vanilla_figuren.txt`: 1.21.10, 1.21.11, 26.1.2, 26.2, 26.3.
-- Offen: Fernseher, Drehteller, 1.21–1.21.9 (ohne Schaufensterpuppen, bis 1.21.5 ohne Dialoge), Paper-Plugin.
+- Server-Version jetzt ab 1.21.9 (Fences `//? if >=1.21.9`, `deps.polymer` 0.14.2 für 1.21.9). Die Haut der
+  Schaufensterpuppen entsteht über das Datenformat von Minecraft (`ResolvableProfile.CODEC` mit `texture`/`model`),
+  nicht mehr über Polymers Hilfsfunktion (die fehlte in 0.14.2). Geprüft mit `vanilla_figuren.txt` in 1.21.9.
+- Drehteller und Fernseher ohne Mod: Item-Modelle wie die Aufzugskabine (`FahrzeugAnzeige.einfachesModell`), der
+  Fernseher zeigt das Bild „aus“ und hat ein Klickfeld; Rechtsklick öffnet ein Dialogfenster (YouTube-Link,
+  „Auf dem PC abspielen“ öffnet den Browser, Ausschalten), Aktion „fernseher“ wie im Menü der Mod.
+- Wichtige Fehler der Server-Version gefunden und behoben (Test `vanilla_richtung.txt`, `vanilla_modelle.txt`):
+  1. Volle Mod-Blöcke (Deckenblöcke = Böden, Laser-Sender …) erschienen als Notenblock: `BlockUebersetzung` muss
+     `PolymerTexturedBlock` sein, sonst wandelt Polymer die Texturzustände wieder in normale Notenblöcke um.
+  2. Anzeige-Figuren übernahmen Datenfelder der echten Figur, wenn Typ und Nummer passten (Polymer filtert nur
+     danach): „ohne KI“ wurde zu „dreht sich immer zum Spieler“, die Lackfarbe des Autos zur Helligkeit (Autos fast
+     schwarz). `ServerPaket.fremdeDatenEntfernen` löscht ab Feld 8 (Anzeige-Figuren) bzw. 15 (Schaufensterpuppen).
+  3. Texturkoordinaten der Modelle: jetzt Ecke für Ecke wie `ModelPart.Cube` (vorher Ober-/Unterseite vertauscht
+     und Seiten um 180° gedreht, das Fernsehbild stand auf dem Kopf).
+  4. Bis 1.21.10 dürfen Modellteile nur um eine Achse in 22,5°-Schritten gedreht sein (Autos waren dort lila);
+     `FahrzeugAnzeige` schreibt für diese Versionen das alte Format und lässt andere Drehungen weg.
+  5. Anzeige-Figuren nehmen das Licht am Fußpunkt; stehende Modelle bekommen das Licht ihrer Mitte (`licht`).
+- Testhilfe: `debug-profile.json` im Ordner des normalen Clients (`versions/<v>/run/vanilla/`) mit
+  `looking_at_block_state: alwaysOn` zeigt oben links den Blockzustand, auf den man schaut (ab 26.x).
+- `test.sh` wartet jetzt, bis Server und Client wirklich beendet sind (sonst schrieb ein noch speichernder Server in
+  die Welt des nächsten Laufs: „Failed to load level data“).
+- Offen: 1.21–1.21.8 (ohne Schaufensterpuppen, bis 1.21.5 ohne Dialoge), Paper-Plugin.
+
+## Versionstest 0.3.1 (kurz03, alle 17 Versionen)
+
+- Überall OK: Handy-Geschenk, Lieferung, Mitarbeiter, Bodyguards, Kreisel, Fahrt ins Dorf (außer einmal 26.1.1:
+  Wagen hing am Fluss in einer Rinne fest; im zweiten Lauf kam er an). In 1.21.7 und 26.1 war der Zombie nach 12 s
+  noch da (langsamer Server) → kurz03 wartet jetzt 20 s. `Chauffeur.zurueckAufDieStrasse` setzt bei wiederholtem
+  Festhängen jedes Mal 4 Punkte weiter vorn auf und nie in Wasser oder Lava.
 
 ## Version 0.3.2 (veröffentlicht 26.10. nachts)
 

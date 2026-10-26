@@ -1,0 +1,44 @@
+# Server-Version: Drehteller, Fernseher und Autos für Spieler ohne Mod (VANILLA=1 tools/ingame/test.sh 26.3 …).
+# Läuft auch mit Mod (ohne VANILLA) zum Vergleich.
+warte 8
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa ort 86.5 17.5 49 180 35
+warte 4
+bild m01_drehteller
+server /villa ort 63 39.6 40 0 4
+warte 3
+bild m03_penthouse_fernseher
+# Fernseher und Auto schauen zum Spieler (Blick nach Süden, beide mit Blick nach Norden)
+server /villa ort 55.5 26 80 0 0
+warte 3
+server /execute as @p at @s run summon stinkendreich:fernseher ^3 ^1 ^9 {Rotation:[180f,0f]}
+server /execute as @p at @s run summon stinkendreich:bonzenauto ^-4 ^ ^9 {Rotation:[180f,0f],stinkendreich:"{\"farbe\":2}"}
+server /execute as @p at @s run summon stinkendreich:supersportwagen ^-4 ^ ^16 {Rotation:[90f,0f],stinkendreich:"{\"farbe\":3}"}
+warte 3
+server /villa ort 55.5 28 78 0 10
+warte 3
+bild m04_richtung
+server /villa ort 55.5 34 82 0 60
+warte 3
+bild m05_autos_oben
+# Boden im Gästezimmer mit F3 (zeigt den Blockzustand, auf den man schaut)
+server /villa ort 44 32 57.5 -90 70
+warte 3
+taste F3
+warte 2
+bild m06_boden_f3
+taste F3
+server /villa ort 41 32 58 -90 5
+warte 3
+bild m02_gaeste_fernseher
+# Zum Schluss Rechtsklick auf den Fernseher (ohne Mod: Dialogfenster, mit Mod: Bildschirm der Mod)
+server /data merge entity @e[type=stinkendreich:fernseher,limit=1,sort=nearest] {stinkendreich_video:"aqz-KE-bpKQ"}
+server /gamemode creative
+server /villa ort 46.2 32 57.5 -90 0
+warte 3
+klick
+warte 2
+bild m07_fernseher_menue

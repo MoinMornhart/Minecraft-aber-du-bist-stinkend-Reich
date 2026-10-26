@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=1.21.10 {
+//? if >=1.21.9 {
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.mechanik.Eigenschaften;
 import de.moinmornhart.stinkendreich.mechanik.KameraBlock;
