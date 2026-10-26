@@ -110,6 +110,12 @@
       "stinkendreich:toilette"
     ]
   },
+  "dusche": {
+    "subtitle": "stinkendreich.ton.dusche",
+    "sounds": [
+      "stinkendreich:dusche"
+    ]
+  },
   "klavier_c2": {
     "subtitle": "stinkendreich.ton.klavier_c2",
     "sounds": [

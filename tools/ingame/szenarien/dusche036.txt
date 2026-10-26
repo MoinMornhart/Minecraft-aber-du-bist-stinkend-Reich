@@ -1,0 +1,22 @@
+# Regenduschen: Bad im Obergeschoss und im Bunker, aus und laufend
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 25
+server /clear @p
+taste F1
+server /villa ort 43.5 32.2 40.6 180 12
+warte 4
+bild dusche_og_aus
+server /setblock -13 94 -18 stinkendreich:duschkopf[facing=south,an=true,wand=false]
+server /setblock -13 93 -18 stinkendreich:duscharmatur[facing=south,an=true]
+warte 3
+bild dusche_og_an
+server /villa ort 47.5 6.2 64.4 0 12
+warte 4
+bild dusche_bunker_aus
+server /setblock -9 70 11 stinkendreich:duschkopf[facing=north,an=true,wand=false]
+server /setblock -9 69 11 stinkendreich:duscharmatur[facing=north,an=true]
+warte 3
+bild dusche_bunker_an

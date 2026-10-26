@@ -26,6 +26,7 @@ public final class ModSounds {
     public static final SoundEvent GELDREGEN = ModRegister.sound("geldregen");
     // Bad
     public static final SoundEvent TOILETTE = ModRegister.sound("toilette");
+    public static final SoundEvent DUSCHE = ModRegister.sound("dusche");
     // Konzertflügel: Grundtöne C2, C3, C4, C5, C6 (MIDI 36, 48, 60, 72, 84)
     public static final SoundEvent[] KLAVIER = {ModRegister.sound("klavier_c2"), ModRegister.sound("klavier_c3"),
             ModRegister.sound("klavier_c4"), ModRegister.sound("klavier_c5"), ModRegister.sound("klavier_c6")};

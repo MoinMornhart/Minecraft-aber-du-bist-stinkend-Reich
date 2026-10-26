@@ -1,0 +1,18 @@
+# Prüft, ob James und die Bilder an den Wänden mit der Villa nach unten fahren (nichts bleibt auf der Wiese)
+server /gamemode spectator
+server /time set 6000
+server /gamerule advance_time false
+warte 25
+taste F1
+server /villa inkognito an
+warte 40
+server /execute as @e[type=!player,x=-56,y=84,z=-56,dx=112,dy=30,dz=112] run say OBEN_GEBLIEBEN
+server /execute as @e[type=stinkendreich:butler] run say JAMES_IST_HIER
+server /execute as @e[type=painting,limit=3] run say BILD_IST_HIER
+server /villa ort 56 50 56 180 70
+warte 3
+bild figuren_wiese
+server /villa inkognito aus
+warte 40
+server /execute as @e[type=stinkendreich:butler] run say JAMES_WIEDER_DA
+server /execute as @e[type=painting,limit=3] run say BILD_WIEDER_DA

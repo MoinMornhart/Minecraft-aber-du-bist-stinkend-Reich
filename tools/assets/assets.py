@@ -683,6 +683,17 @@ BLOECKE: dict[str, dict] = {
     "abwehrgeschuetz": dict(modelle={"abwehrgeschuetz": m_geschuetz(), "abwehrgeschuetz_ein": m_geschuetz(eingefahren=True)},
                             zustand=bs_waagerecht("", {"powered=true": B("abwehrgeschuetz"), "powered=false": B("abwehrgeschuetz_ein")}),
                             de="Abwehrgeschütz", en="Defense Turret"),
+    # Regendusche (mechanik/Dusche): Modelle aus deko.py, Zustände facing × wand (Rohr) × an (Wasser läuft)
+    "duschkopf": dict(modelle={("duschkopf" + ("_wand" if wand else "") + ("_an" if an else "")): deko.modell(deko.duschkopf(wand, an))
+                               for wand in (False, True) for an in (False, True)},
+                      zustand={"variants": {f"an={str(an).lower()},facing={f},wand={str(wand).lower()}":
+                                            {"model": B("duschkopf" + ("_wand" if wand else "") + ("_an" if an else "")), **({"y": y} if y else {})}
+                                            for f, y in WAAGERECHT.items() for wand in (False, True) for an in (False, True)}},
+                      de="Regen-Duschkopf", en="Rain Shower Head"),
+    "duscharmatur": dict(modelle={"duscharmatur": deko.modell(deko.duscharmatur(False)),
+                                  "duscharmatur_an": deko.modell(deko.duscharmatur(True))},
+                         zustand=bs_waagerecht("", {"an=false": B("duscharmatur"), "an=true": B("duscharmatur_an")}),
+                         de="Duscharmatur", en="Shower Valve"),
 }
 
 TEXTE_DE = {
@@ -773,6 +784,7 @@ TEXTE_DE = {
     "stinkendreich.kamera.beenden": "Überwachung beenden",
     "stinkendreich.kamera.keine": "Keine Kameras in der Nähe.",
     "stinkendreich.kamera.nummer": "Kamera %s von %s",
+    "stinkendreich.dusche.kein_kopf": "Kein Duschkopf in der Nähe (bis 4 Blöcke).",
 }
 TEXTE_EN = {
     "entity.stinkendreich.hai": "Shark",
@@ -862,6 +874,7 @@ TEXTE_EN = {
     "stinkendreich.kamera.beenden": "Stop watching",
     "stinkendreich.kamera.keine": "No cameras nearby.",
     "stinkendreich.kamera.nummer": "Camera %s of %s",
+    "stinkendreich.dusche.kein_kopf": "No shower head nearby (up to 4 blocks).",
 }
 
 

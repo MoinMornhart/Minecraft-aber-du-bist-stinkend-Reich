@@ -238,6 +238,23 @@ def toilette() -> np.ndarray:
     return (klick + rauschen * huelle_wasser * 1.4 + gurgeln) * huelle(len(t), an=0.002, ab=0.4)
 
 
+def dusche() -> np.ndarray:
+    """Regendusche: gleichmäßiges Rauschen mit prasselnden Tropfen, gut 2 s lang. Die Mod legt es alle 2 s neu an;
+    weiches Ein- und Ausblenden lässt die Stücke ohne Lücke ineinander übergehen."""
+    t = zeit(2.2)
+    rnd = np.random.default_rng(11)
+    rauschen = rnd.normal(0, 1, len(t))
+    # Mischung aus dumpfem (Wasser auf dem Boden) und hellem Rauschen (Strahl aus den Düsen)
+    dumpf = np.convolve(rauschen, np.ones(10) / 10, mode="same") * 1.6
+    hell = rauschen - np.convolve(rauschen, np.ones(3) / 3, mode="same")
+    prasseln = np.zeros_like(t)
+    for start in rnd.uniform(0, 2.2, 220):
+        dt = np.maximum(0, t - start)
+        prasseln += (t >= start) * rnd.normal(0, 1, len(t)) * np.exp(-dt / 0.004) * 0.5
+    schwanken = 1 + 0.08 * np.sin(2 * np.pi * 3.1 * t)
+    return (dumpf + hell * 0.35 + prasseln) * schwanken * huelle(len(t), an=0.15, ab=0.15)
+
+
 def midi(n: float) -> float:
     return 440.0 * 2 ** ((n - 69) / 12)
 
@@ -361,6 +378,7 @@ GERAEUSCHE = {
     "laser": (laser, "Laser zischt", "Laser zaps"),
     "geldregen": (geldregen, "Geldkanone feuert", "Money cannon fires"),
     "toilette": (toilette, "Toilettenspülung", "Toilet flushes"),
+    "dusche": (dusche, "Dusche rauscht", "Shower runs"),
 }
 # Konzertflügel: fünf Grundtöne (C2 … C6); alle anderen Tasten spielt das Spiel mit verschobener Tonhöhe
 for _oktave in range(2, 7):

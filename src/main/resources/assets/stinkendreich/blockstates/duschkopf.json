@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "an=false,facing=north,wand=false": {
+      "model": "stinkendreich:block/duschkopf"
+    },
+    "an=true,facing=north,wand=false": {
+      "model": "stinkendreich:block/duschkopf_an"
+    },
+    "an=false,facing=north,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand"
+    },
+    "an=true,facing=north,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand_an"
+    },
+    "an=false,facing=east,wand=false": {
+      "model": "stinkendreich:block/duschkopf",
+      "y": 90
+    },
+    "an=true,facing=east,wand=false": {
+      "model": "stinkendreich:block/duschkopf_an",
+      "y": 90
+    },
+    "an=false,facing=east,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand",
+      "y": 90
+    },
+    "an=true,facing=east,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand_an",
+      "y": 90
+    },
+    "an=false,facing=south,wand=false": {
+      "model": "stinkendreich:block/duschkopf",
+      "y": 180
+    },
+    "an=true,facing=south,wand=false": {
+      "model": "stinkendreich:block/duschkopf_an",
+      "y": 180
+    },
+    "an=false,facing=south,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand",
+      "y": 180
+    },
+    "an=true,facing=south,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand_an",
+      "y": 180
+    },
+    "an=false,facing=west,wand=false": {
+      "model": "stinkendreich:block/duschkopf",
+      "y": 270
+    },
+    "an=true,facing=west,wand=false": {
+      "model": "stinkendreich:block/duschkopf_an",
+      "y": 270
+    },
+    "an=false,facing=west,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand",
+      "y": 270
+    },
+    "an=true,facing=west,wand=true": {
+      "model": "stinkendreich:block/duschkopf_wand_an",
+      "y": 270
+    }
+  }
+}

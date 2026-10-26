@@ -563,9 +563,9 @@ def obergeschoss() -> None:
     pflanze(b, HX0 + 1, y, HZ0 + 5, "potted_bamboo")
     pflanze(b, HX0 + 5, y, HZ0 + 5, "potted_bamboo")
     b.quader(HX0 + 12, y, HZ0 + 1, HX0 + 14, y + 3, HZ0 + 3, "glass")
-    b.luft(HX0 + 13, y, HZ0 + 2, HX0 + 13, y + 2, HZ0 + 2)
-    b.setze(HX0 + 13, y + 3, HZ0 + 2, zustand("water", level="0"))
-    b.gewollter_fluss.add((HX0 + 13, y + 3, HZ0 + 2))   # Regendusche im Glaskasten
+    b.luft(HX0 + 13, y, HZ0 + 2, HX0 + 13, y + 2, HZ0 + 3)                # Glaskasten, vorn offen
+    mech(HX0 + 13, y + 2, HZ0 + 2, "duschkopf", "south", {"an": "false", "wand": "false"})   # Regendusche
+    mech(HX0 + 13, y + 1, HZ0 + 2, "duscharmatur", "south", {"an": "false"})
     deko(b, HX0 + 8, y, HZ0 + 1, "spuele", "south")
     deko(b, HX0 + 9, y, HZ0 + 1, "spuele", "south")
     deko(b, HX0 + 17, y, HZ0 + 1, "goldtoilette", "south")
@@ -1622,9 +1622,9 @@ def bunker_suite(y: int, y0: int, y1: int) -> None:
     tuer(b, 49, y, 62, "north", "stinkendreich:prunktuer")
     b.quader(46, y0, 63, 52, y0, 68, QUARZ)
     b.quader(46, y, 66, 48, y + 3, 68, "glass")
-    b.luft(47, y, 67, 47, y + 2, 67)
-    b.setze(47, y + 3, 67, zustand("water", level="0"))
-    b.gewollter_fluss.add((47, y + 3, 67))                                  # Regendusche im Glaskasten
+    b.luft(47, y, 66, 47, y + 2, 67)                                        # Glaskasten, zum Bad hin offen
+    mech(47, y + 2, 67, "duschkopf", "north", {"an": "false", "wand": "false"})   # Regendusche
+    mech(47, y + 1, 67, "duscharmatur", "north", {"an": "false"})
     badewanne(b, 49, y, 68, "east")
     deko(b, 52, y, 66, "goldtoilette", "west")
     deko(b, 51, y, 63, "spuele", "south")

@@ -1,0 +1,47 @@
+# Neue Smart-Home-Seite, Haie aus der Nähe, Zombie in die Falle, Spieler fährt im Haus mit (Überleben)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /clear @p
+server /villa ort 43 26 57 0 -28
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 2
+klick
+warte 1.5
+linksklick 640 524
+warte 2
+bild smart_neu
+klient schliessen
+taste F1
+server /gamemode spectator
+server /villa ort 43.5 22.6 41.6 0 5
+warte 4
+bild haie_nah
+server /villa ort 44 23.5 59 180 10
+warte 3
+bild haie_nah2
+server /summon zombie -10 88 -6 {PersistenceRequired:1b}
+server /villa ort 48 30 50 90 55
+warte 2
+bild falle_vorher
+server /execute as @p run handy smart|haie|auf
+warte 0.5
+bild falle_fallen
+warte 3
+server /villa ort 44 23.5 59 180 10
+warte 1
+bild falle_drin
+server /gamemode survival
+server /villa ort 52 26 52 180 10
+warte 3
+server /villa inkognito an
+warte 20
+bild mitfahren_unten
+server /execute as @p run say LEBT
+server /data get entity @p Health
+server /villa inkognito aus
+warte 30
+bild mitfahren_oben
+server /data get entity @p Health

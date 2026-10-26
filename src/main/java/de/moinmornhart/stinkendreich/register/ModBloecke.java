@@ -123,6 +123,12 @@ public final class ModBloecke {
                     .isValidSpawn((s, w, pos, typ) -> false));
     /** Roter Knopf an der Wand: wirft den nächsten Eindringling zu den Haien. */
     public static final Block HAIFALLE_SCHALTER = block("haifalle_schalter", de.moinmornhart.stinkendreich.mechanik.HaifalleSchalterBlock::new, technik());
+    /** Regen-Duschkopf an Decke oder Wand: Rechtsklick dreht das Wasser auf (siehe {@link de.moinmornhart.stinkendreich.mechanik.Dusche}). */
+    public static final Block DUSCHKOPF = block("duschkopf", de.moinmornhart.stinkendreich.mechanik.DuschkopfBlock::new,
+            technik().noCollision().strength(1.5F, 6.0F));
+    /** Duscharmatur an der Wand: schaltet den nächsten Duschkopf (bis 4 Blöcke) an und aus. */
+    public static final Block DUSCHARMATUR = block("duscharmatur", de.moinmornhart.stinkendreich.mechanik.DuscharmaturBlock::new,
+            technik().noCollision().strength(1.5F, 6.0F));
 
     // ---------- Türen zum Aufklappen (wie Holz- und Eisentüren) ----------
     /** Weiß lackiert mit Goldbeschlägen, für Wohnräume. */
@@ -160,7 +166,7 @@ public final class ModBloecke {
             FabricBlockEntityTypeBuilder.create(MechanikBlockEntity::new,
                     SICHERHEITSZENTRALE, LASER_SENDER, BEWEGUNGSMELDER, ALARMSIRENE, WARNLEUCHTE, KARTENLESER, TASTENFELD,
                     TUERKLINGEL, TORSTEUERUNG, GEHEIMSCHALTER, AUFZUGSTAFEL, FALLENPLATTE, ENTSCHAERFKNOPF, KAMERA, MONITOR,
-                    WHIRLPOOLDUESE, KAMINSTEUERUNG, BRUECKENSCHALTER, LANDMINE, ABWEHRGESCHUETZ, HAIFALLE_SCHALTER).build());
+                    WHIRLPOOLDUESE, KAMINSTEUERUNG, BRUECKENSCHALTER, LANDMINE, ABWEHRGESCHUETZ, HAIFALLE_SCHALTER, DUSCHKOPF, DUSCHARMATUR).build());
 
     private ModBloecke() {
     }

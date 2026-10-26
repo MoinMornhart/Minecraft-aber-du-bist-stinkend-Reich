@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,an=false": {
+      "model": "stinkendreich:block/duscharmatur"
+    },
+    "facing=north,an=true": {
+      "model": "stinkendreich:block/duscharmatur_an"
+    },
+    "facing=east,an=false": {
+      "model": "stinkendreich:block/duscharmatur",
+      "y": 90
+    },
+    "facing=east,an=true": {
+      "model": "stinkendreich:block/duscharmatur_an",
+      "y": 90
+    },
+    "facing=south,an=false": {
+      "model": "stinkendreich:block/duscharmatur",
+      "y": 180
+    },
+    "facing=south,an=true": {
+      "model": "stinkendreich:block/duscharmatur_an",
+      "y": 180
+    },
+    "facing=west,an=false": {
+      "model": "stinkendreich:block/duscharmatur",
+      "y": 270
+    },
+    "facing=west,an=true": {
+      "model": "stinkendreich:block/duscharmatur_an",
+      "y": 270
+    }
+  }
+}

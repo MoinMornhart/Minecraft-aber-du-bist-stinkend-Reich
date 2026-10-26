@@ -1,0 +1,292 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "armatur": "stinkendreich:block/deko/armatur",
+    "chrom": "stinkendreich:block/deko/chrom",
+    "gold": "stinkendreich:block/deko/gold",
+    "particle": "stinkendreich:block/deko/armatur"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4,
+        15
+      ],
+      "to": [
+        12,
+        12,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#armatur"
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#chrom"
+        },
+        "east": {
+          "uv": [
+            0.0,
+            4,
+            1,
+            12
+          ],
+          "texture": "#chrom"
+        },
+        "west": {
+          "uv": [
+            15,
+            4,
+            16.0,
+            12
+          ],
+          "texture": "#chrom"
+        },
+        "up": {
+          "uv": [
+            4,
+            15,
+            12,
+            16.0
+          ],
+          "texture": "#chrom"
+        },
+        "down": {
+          "uv": [
+            4,
+            0.0,
+            12,
+            1
+          ],
+          "texture": "#chrom"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        7,
+        13.5
+      ],
+      "to": [
+        9,
+        9,
+        15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            1,
+            7,
+            2.5,
+            9
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            13.5,
+            7,
+            15,
+            9
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            7,
+            13.5,
+            9,
+            15
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            7,
+            1,
+            9,
+            2.5
+          ],
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        7.25,
+        3.5,
+        12.5
+      ],
+      "to": [
+        8.75,
+        12.5,
+        13.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7.25,
+            3.5,
+            8.75,
+            12.5
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            7.25,
+            3.5,
+            8.75,
+            12.5
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            3.5,
+            3.5,
+            12.5
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            12.5,
+            3.5,
+            13.5,
+            12.5
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            7.25,
+            12.5,
+            8.75,
+            13.5
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            7.25,
+            2.5,
+            8.75,
+            3.5
+          ],
+          "texture": "#gold"
+        }
+      },
+      "rotation": {
+        "angle": 45,
+        "axis": "z",
+        "origin": [
+          8,
+          8,
+          13
+        ]
+      }
+    },
+    {
+      "from": [
+        6.5,
+        6.5,
+        12
+      ],
+      "to": [
+        9.5,
+        9.5,
+        13.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.5,
+            6.5,
+            9.5,
+            9.5
+          ],
+          "texture": "#gold"
+        },
+        "south": {
+          "uv": [
+            6.5,
+            6.5,
+            9.5,
+            9.5
+          ],
+          "texture": "#gold"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            6.5,
+            4,
+            9.5
+          ],
+          "texture": "#gold"
+        },
+        "west": {
+          "uv": [
+            12,
+            6.5,
+            13.5,
+            9.5
+          ],
+          "texture": "#gold"
+        },
+        "up": {
+          "uv": [
+            6.5,
+            12,
+            9.5,
+            13.5
+          ],
+          "texture": "#gold"
+        },
+        "down": {
+          "uv": [
+            6.5,
+            2.5,
+            9.5,
+            4
+          ],
+          "texture": "#gold"
+        }
+      }
+    }
+  ]
+}

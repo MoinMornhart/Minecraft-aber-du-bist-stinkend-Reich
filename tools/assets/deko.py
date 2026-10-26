@@ -726,6 +726,43 @@ def m_buero_hd():
     return img
 
 
+# Regendusche (Duschkopf und Armatur, siehe assets.py und mechanik/Dusche.java)
+def m_duesen(an: bool):
+    """Unterseite der Regenbrause: dunkles Chrom mit einem Raster aus Düsen (an: hellblau leuchtend)."""
+    img, d = neu((150, 156, 166))
+    rauschen(img, 3, 21)
+    for x in range(1, 16, 2):
+        for y in range(1, 16, 2):
+            d.point((x, y), fill=(150, 205, 255) if an else (70, 74, 82))
+    return img
+
+
+def m_duschstrahl():
+    """Wasserstrahl unter der Brause (animiert): senkrechte, durchsichtige Wasserfäden, deren Tropfen nach unten
+    wandern. Nur ganze Pixel (Ausschnitt-Modus), die Lücken bleiben durchsichtig."""
+    rnd = random.Random(22)
+    spalten = [(x, rnd.randrange(8), rnd.choice(((200, 230, 255), (160, 205, 245), (235, 248, 255)))) for x in range(0, 16, 2)]
+    bilder = []
+    for schritt in range(8):
+        img, d = neu((0, 0, 0), 0)
+        for x, versatz, farbe in spalten:
+            for y in range(16):
+                if (y - schritt * 2 - versatz) % 8 < 4:
+                    d.point((x, y), fill=(*farbe, 255))
+        bilder.append(img)
+    return bilder
+
+
+def m_armatur():
+    """Rosette der Duscharmatur: Chrom mit Skala, links rot (warm), rechts blau (kalt)."""
+    img, d = neu((0, 0, 0), 0)
+    d.ellipse([0, 0, 15, 15], fill=(200, 206, 214), outline=(150, 156, 166))
+    d.ellipse([2, 2, 13, 13], fill=(222, 228, 236))
+    d.arc([1, 1, 14, 14], 120, 240, fill=(220, 50, 50))
+    d.arc([1, 1, 14, 14], -60, 60, fill=(50, 110, 230))
+    return img
+
+
 MATERIALIEN = {
     "gold": m_gold, "chrom": m_chrom, "samt_rot": m_samt_rot, "holz_dunkel": m_holz_dunkel, "marmor": m_marmor,
     "lack_weiss": m_lack_weiss, "glas": m_glas, "schwarzglas": m_schwarzglas, "keramik": m_keramik, "pink": m_pink,
@@ -746,8 +783,9 @@ MATERIALIEN = {
     "polster_weiss": m_polster_weiss, "handtuch": m_handtuch, "schirm": m_schirm, "schirm_glatt": m_schirm_glatt, "lampenschirm": m_lampenschirm,
     "nachttisch_front": m_nachttisch_front, "fernbedienung_hd": m_fernbedienung_hd, "popcorn_tuete": m_popcorn_tuete, "popcorn": m_popcorn,
     "schreibunterlage": m_schreibunterlage, "buero_hd": m_buero_hd,
+    "duesen": lambda: m_duesen(False), "duesen_an": lambda: m_duesen(True), "armatur": m_armatur,
 }
-ANIMIERT = {"spiegel": (m_spiegel, 5), "tanz": (m_tanz, 8)}
+ANIMIERT = {"spiegel": (m_spiegel, 5), "tanz": (m_tanz, 8), "duschstrahl": (m_duschstrahl, 1)}
 
 # ---------------------------------------------------------------------------
 # Modelle: Kästen in Pixeln, Vorderseite nach Norden
@@ -1179,6 +1217,38 @@ def sonnenschirm():
             k([5, 31, 5], [11, 31.5, 11], "schirm_glatt"), k([7, 31.5, 7], [9, 32, 9], "gold")]
 
 
+def duschkopf(wand: bool, an: bool):
+    """Regen-Duschkopf (Vorderseite Norden): große quadratische Chrom-Brause (14 × 14) mit Goldrand und Düsen auf der
+    Unterseite. Deckenrohr senkrecht nach oben oder Wandrohr waagerecht nach Süden (zur Wand hinter der Rückseite).
+    Läuft das Wasser, hängt unter der Brause ein Vorhang aus Wasserfäden (der Rest sind Tropfen aus Dusche.java)."""
+    t = [k([1, 10, 1], [15, 11, 15], "chrom", down="duesen_an" if an else "duesen")]
+    t += ring(9.6, 11.4, 0.6, 15.4, 0.6, "gold")
+    t.append(k([6, 11, 6], [10, 12, 10], "gold"))                                   # Gelenk über der Brause
+    if wand:
+        t += [k([7.25, 12, 7.25], [8.75, 13, 8.75], "chrom"),                       # kurzes Stück nach oben
+              k([7, 12.75, 7], [9, 14.75, 9], "gold"),                              # Winkel
+              k([7.25, 13, 9], [8.75, 14.5, 15.5], "chrom"),                        # Wandrohr
+              k([5.5, 11.5, 15.5], [10.5, 16, 16], "gold")]                         # Rosette an der Wand
+    else:
+        t += [k([7.25, 12, 7.25], [8.75, 15.5, 8.75], "chrom"),                     # Deckenrohr
+              k([5.5, 15.5, 5.5], [10.5, 16, 10.5], "gold")]                        # Rosette an der Decke
+    if an:
+        strahl = k([2, 0, 2], [14, 9.9, 14], "duschstrahl")
+        strahl["ohne"] = ("up", "down")
+        t.append(strahl)
+    return t
+
+
+def duscharmatur(an: bool):
+    """Duscharmatur (Vorderseite Norden, Wand im Süden): runde Chrom-Rosette mit Skala, goldener Drehgriff.
+    Aus: Griff senkrecht; an: um 45° gedreht."""
+    griff_drehung = gedreht("z", 45, [8, 8, 13]) if an else None
+    return [k([4, 4, 15], [12, 12, 16], "chrom", uv={"north": [0, 0, 16, 16]}, north="armatur"),
+            k([7, 7, 13.5], [9, 9, 15], "gold"),
+            k([7.25, 3.5, 12.5], [8.75, 12.5, 13.5], "gold", drehung=griff_drehung),
+            k([6.5, 6.5, 12], [9.5, 9.5, 13.5], "gold")]
+
+
 # Name: (Teile, Kollisionsform oder None = aus den Teilen, Licht, fest, Klang, Werkzeug, Deutsch, Englisch)
 BLOECKE = {
     "tanzflaeche": ([k([0, 0, 0], [16, 16, 16], "schwarzglas", up="tanz", down="lack_weiss")], None, 12, True, "glas", "pickaxe", "Tanzfläche", "Dance Floor"),
@@ -1291,6 +1361,8 @@ def modell(teile) -> dict:
     for t in teile:
         e = {"from": t["von"], "to": t["bis"], "faces": {}}
         for f in FLAECHEN:
+            if f in t.get("ohne", ()):
+                continue
             mat = t["flaechen"].get(f, t["mat"])
             uv = list(t["uv"][f]) if f in t.get("uv", {}) else uv_fuer(f, t["von"], t["bis"])
             if uv[0] == uv[2] or uv[1] == uv[3]:

@@ -26,6 +26,10 @@ public final class Eigenschaften {
     public static final BooleanProperty AN = BlockStateProperties.POWERED;
     public static final BooleanProperty OFFEN = BlockStateProperties.OPEN;
     public static final BooleanProperty LEUCHTET = BlockStateProperties.LIT;
+    /** Dusche läuft (Duschkopf und Armatur, siehe {@link Dusche}). */
+    public static final BooleanProperty LAEUFT = BooleanProperty.create("an");
+    /** Duschkopf am Wandrohr (true) oder am Deckenrohr (false). */
+    public static final BooleanProperty WANDROHR = BooleanProperty.create("wand");
 
     // ---------- Türflügel: Lage im Ganzen, Ausrichtung, Öffnungsstufe ----------
 

@@ -100,12 +100,7 @@ public class HaiEntity extends Dolphin {
     }
     *///?}
 
-    /** Haie atmen unter Wasser (Delfine müssen auftauchen). */
-    @Override
-    public boolean canBreatheUnderwater() {
-        return true;
-    }
-
+    /** Haie atmen unter Wasser (Delfine müssen auftauchen): die Luft bleibt immer voll. */
     @Override
     protected void handleAirSupply(int luft) {
         setAirSupply(getMaxAirSupply());

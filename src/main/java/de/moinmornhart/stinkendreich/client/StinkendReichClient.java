@@ -61,6 +61,8 @@ public class StinkendReichClient implements ClientModInitializer {
         KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
                 ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER, ModBloecke.PRIVATTUER,
                 ModBloecke.SICHERHEITSTUER, ModBloecke.CLUBTUER, ModBloecke.BANKTUER, ModBloecke.PORTALTUER);
+        // Duschkopf: Wasserstrahl unter der Brause hat durchsichtige Lücken
+        KompatClient.durchsichtig(ModBloecke.DUSCHKOPF, ModBloecke.DUSCHARMATUR);
         KompatClient.durchsichtig(de.moinmornhart.stinkendreich.register.ModDeko.BLOECKE.values().toArray(new net.minecraft.world.level.block.Block[0]));
 
         // Butler: eigenes Modell (Fabric hat die Klasse dafür in 26.x umbenannt) und Renderer
