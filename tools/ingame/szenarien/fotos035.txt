@@ -1,0 +1,50 @@
+# README-Fotos für 0.3.5 (Bildnamen = Dateinamen in docs/bilder): Ballsaal ohne Flügel, Flügel im Wohnzimmer und im
+# Penthouse, Spielfenster am Wohnzimmer-Flügel, Esszimmer, Grillecke mit Gartenbänken, Schublade im Nachttisch.
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos035.txt
+server /gamemode spectator
+server /weather clear
+server /time set 6000
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 51.5 29 66 200 14
+warte 4
+bild ballsaal
+server /villa ort 40.5 27.4 60.5 -40 22
+warte 3
+bild wohnzimmer_fluegel
+server /villa ort 49.5 39.4 45.5 90 22
+warte 3
+bild penthouse_fluegel
+server /villa ort 70.5 29 52 0 38
+warte 3
+bild esszimmer
+server /villa ort 80.5 29 16.5 0 40
+warte 3
+bild grillecke
+# Zu Fuß: Spielfenster am Wohnzimmer-Flügel (Bank bei x 44, z 63) und Schublade im Nachttisch (Schlafzimmer OG)
+server /gamemode survival
+server /villa ort 44.5 26 62.4 0 30
+warte 2
+klick
+warte 1.5
+klick
+warte 1.5
+taste F1
+linksklick 376 292
+warte 1.5
+bild fluegel_spielen
+taste Escape
+warte 1
+druecke shift
+warte 1
+loslassen shift
+server /item replace block -25 94 -1 container.0 with minecraft:diamond 16
+server /item replace block -25 94 -1 container.2 with minecraft:clock 1
+server /item replace block -25 94 -1 container.4 with stinkendreich:zugangskarte 1
+server /item replace block -25 94 -1 container.6 with minecraft:gold_ingot 32
+server /villa ort 33.3 32 55.5 90 45
+warte 2
+klick
+warte 2
+bild schublade

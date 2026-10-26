@@ -2,7 +2,7 @@
 """Schreibt das Drehbuch für den Trailer der Mod (tools/ingame/szenarien/trailer.txt).
 
 Kürzer und schneller als der Rundgang (video_szenario.py): kurze Kamerafahrten mit großen Schlagzeilen,
-dazwischen die besten Vorführungen (Tor, Portaltür, Konzertflügel, Fernseher mit Video und Fernbedienung, Geheimclub,
+dazwischen die besten Vorführungen (Tor, Portaltür, Ballsaal, Konzertflügel im Wohnzimmer, Esszimmer, Fernseher mit Video und Fernbedienung, Geheimclub,
 Butler, Auto, Hubschrauber, Handy mit Navi, Bodyguards, Straße zum Dorf, Agenten-Waffen) und am Ende die Villa bei
 Sonnenuntergang. Der Fernseher spielt ein Video von der Platte (YouTube ist beim Dreh nicht erreichbar), in Zeitlupe.
 
@@ -74,10 +74,15 @@ z("server /gamemode creative", "server /villa ort 55 26.5 76 180 2", "warte 1", 
   "server /gamemode spectator")
 fahrt(3, (55, 27.6, 70, 180, 2), (55.5, 27.6, 65.5, 192, 5))
 
-titel("Ein Ballsaal mit Konzertflügel, der wirklich spielt")
-z("server /villa ort 58.5 26 60.4 0 30", "server /gamemode creative", "warte 1", "klick", "warte 1", "linksklick 376 292",
+titel("Ein Ballsaal mit Kronleuchtern")
+zufahren(4, 51.5, 29, 66, 200, 14, zurueck=0.8, schwenk=18)  # dahinter liegt gleich die Südwand
+# Der Flügel steht seit 0.3.5 im Wohnzimmer, gleich links hinter der Tür aus dem Ballsaal (Bank bei x 44, z 63)
+titel("Ein Konzertflügel, der wirklich spielt")
+z("server /villa ort 44.5 26 62.4 0 30", "server /gamemode creative", "warte 1", "klick", "warte 1", "linksklick 376 292",
   "warte 1", "taste Escape", "server /gamemode spectator")
-zufahren(6, 54.5, 27.8, 58.5, -36, 18, zurueck=2.5, schwenk=-12)
+zufahren(5, 40.5, 27.4, 60.5, -40, 22, zurueck=2.5, schwenk=-12)
+titel("Ein Esszimmer für 18 Gäste")
+zufahren(4, 70.5, 29, 52, 0, 38, zurueck=2, schwenk=10)
 
 titel("Ein Butler, der für dich arbeitet")
 z("server /villa ort 57.5 26 66 180 5", "warte 1",

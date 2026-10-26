@@ -1,3 +1,10 @@
+### Neu in 0.3.5
+
+- **Nachttisch mit Schublade:** Rechtsklick auf einen Nachttisch öffnet seine Schublade mit 9 Plätzen, zum Beispiel für Zugangskarte, Uhr und Gold. Beim Abbauen fällt der Inhalt heraus. Das geht auch mit Nachttischen in bestehenden Welten.
+- **Konzertflügel umgezogen:** Der Flügel steht nicht mehr im Ballsaal, sondern im Wohnzimmer, gleich links, wenn du aus dem Ballsaal hereinkommst. Ein zweiter Flügel steht im Penthouse zwischen Hausbar und Lounge.
+- **Esszimmer und Grillecke:** neue Esszimmerstühle aus weißem Leder mit Goldrahmen (18 an der Marmortafel) und Teak-Gartenbänke an der Grillecke. Auf beiden kann man sich mit Rechtsklick hinsetzen. Die Holztreppen sind weg, auch im Kontrollraum und im Bunker (dort jetzt Gaming-Stühle).
+- **Trailer und README** zeigen die neuen Möbel.
+
 ### Neu in 0.3.4
 
 - **YouTube im Fernseher:** Link einfügen, „Im Fernseher abspielen“ – das Video läuft direkt im Spiel, der Ton kommt aus dem Fernseher, alle in der Nähe sehen dieselbe Stelle. Anhalten, Weiter, Spulen und Stopp im Menü. Beim ersten Video fragt die Mod einmal, ob sie die kostenlosen Hilfsprogramme yt-dlp, FFmpeg und Deno (zusammen etwa 200 MB, von GitHub) laden darf.

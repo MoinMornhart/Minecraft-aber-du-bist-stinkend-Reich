@@ -27,13 +27,13 @@
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
 <a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (3 Minuten, echtes Minecraft)" width="100%"></a>
-<p align="center"><sub>▶️ Trailer ansehen: Villa, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
+<p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
 
 In **jeder neuen Welt** steht am Spawn deine Villa – egal welcher Welttyp. Das Gelände drumherum wird geebnet und weich an die Landschaft angeblendet. Du startest vor dem Tor, mit der Zugangskarte in der Tasche. Bestehende Welten bleiben unberührt.
 
-Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke · Ballsaal · Luxusküche · Nachtclub im Keller mit Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen).
+Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke und Teakbänken · Ballsaal · Wohnzimmer mit Konzertflügel · Esszimmer für 18 Gäste · Luxusküche · Nachtclub im Keller mit Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Waffenkammer und Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen).
 
 <table>
 <tr>
@@ -48,13 +48,17 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td><img src="docs/bilder/haustuer.jpg" alt="Haustür"><br><sub><b>Haustür:</b> weiß-goldene Portaltür, die aufgleitet, wenn du davorstehst</sub></td>
 <td><img src="docs/bilder/garten_lounge.jpg" alt="Garten-Lounge"><br><sub><b>Garten-Lounge</b> im Westgarten mit Sofas, Marmortisch und Kronleuchter</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/strandliegen.jpg" alt="Strandliegen am Pool"><br><sub><b>Strandliegen</b> mit Sonnenschirmen am Pool</sub></td>
+<td><img src="docs/bilder/grillecke.jpg" alt="Grillecke mit Gartenbänken"><br><sub><b>Grillecke</b> mit Teak-Gartenbänken zum Hinsetzen</sub></td>
+</tr>
 </table>
 
 ### 🥂 Drinnen: Party und Luxus
 
 <table>
 <tr>
-<td width="50%"><img src="docs/bilder/ballsaal.jpg" alt="Ballsaal"><br><sub><b>Ballsaal</b> mit Kronleuchtern und Konzertflügel</sub></td>
+<td width="50%"><img src="docs/bilder/ballsaal.jpg" alt="Ballsaal"><br><sub><b>Ballsaal</b> mit Kronleuchtern und Sektturm</sub></td>
 <td width="50%"><img src="docs/bilder/club.jpg" alt="Nachtclub"><br><sub><b>Nachtclub</b> im Keller mit leuchtender Tanzfläche</sub></td>
 </tr>
 <tr>
@@ -62,7 +66,11 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td><img src="docs/bilder/dachparty.jpg" alt="Dachparty"><br><sub><b>Dachparty</b> mit DJ-Pult und Tanzfläche</sub></td>
 </tr>
 <tr>
-<td><img src="docs/bilder/fluegel_spielen.jpg" alt="Konzertflügel spielen"><br><sub><b>Konzertflügel zum Spielen:</b> drei Oktaven mit Maus oder Tastatur, drei Stücke spielt er selbst</sub></td>
+<td><img src="docs/bilder/wohnzimmer_fluegel.jpg" alt="Konzertflügel im Wohnzimmer"><br><sub><b>Konzertflügel im Wohnzimmer:</b> gleich links, wenn du aus dem Ballsaal hereinkommst</sub></td>
+<td><img src="docs/bilder/fluegel_spielen.jpg" alt="Konzertflügel spielen"><br><sub><b>Zum Spielen:</b> drei Oktaven mit Maus oder Tastatur, drei Stücke spielt er selbst</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/esszimmer.jpg" alt="Esszimmer"><br><sub><b>Esszimmer:</b> Marmortafel mit 18 Lederstühlen zum Hinsetzen</sub></td>
 <td><img src="docs/bilder/geheimclub.jpg" alt="Geheimclub"><br><sub><b>Geheimclub</b> hinter dem Bücherregal: Show-Bühne mit Tänzerinnen an den Stangen</sub></td>
 </tr>
 </table>
@@ -76,11 +84,13 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 </tr>
 <tr>
 <td><img src="docs/bilder/fernseher.jpg" alt="XXL-Fernseher"><br><sub><b>XXL-Fernseher:</b> YouTube-Link einfügen, das Video läuft im Fernseher</sub></td>
-<td><img src="docs/bilder/strandliegen.jpg" alt="Strandliegen am Pool"><br><sub><b>Strandliegen</b> mit Sonnenschirmen am Pool</sub></td>
+<td><img src="docs/bilder/penthouse_fluegel.jpg" alt="Flügel im Penthouse"><br><sub><b>Zweiter Flügel</b> im Penthouse, zwischen Hausbar und Lounge</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/schublade.jpg" alt="Schublade im Nachttisch"><br><sub><b>Nachttisch mit Schublade:</b> Rechtsklick öffnet sie</sub></td>
+<td>🪑 Auf Sofas, Liegen, Esszimmerstühlen, Gartenbänken, Gaming-Stühlen und der Bettbank kann man sich mit <b>Rechtsklick</b> hinsetzen, <b>Schleichen</b> steht wieder auf.<br><br>🗄️ In die <b>Schublade</b> jedes Nachttischs passen 9 Stapel, zum Beispiel Zugangskarte, Uhr und Gold. Beim Abbauen fällt der Inhalt heraus.</td>
 </tr>
 </table>
-
-Auf Sofas, Liegen und der Bettbank kann man sich mit **Rechtsklick** hinsetzen, **Schleichen** steht wieder auf.
 
 ### 📺 Fernseher: YouTube im Spiel, mit Fernbedienung
 
@@ -123,7 +133,7 @@ Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link ein
 | 🪪 **Zugang** | Zugangskarte · Kartenleser · Tastenfeld mit eigenem Code · automatische Tore · Portaltür als Haustür · Rollläden · Schiebetüren · Privattür (nur Bewohner) · Sicherheitstüren für Büro und Kontrollraum und Banktür im Bunker (nur mit Zugangskarte, bleiben offen, bis du sie schließt) |
 | 🛗 **Im Haus** | Aufzug zu allen Etagen und in den Bunker · Überwachungsraum mit Kameras · Geheimgang hinter dem Bücherregal · magischer Eingang zum Geheimclub (schleichen) · Panikraum · Fluchttunnel |
 | 💎 **Tresor** | Schmuck-Tresor mit Fallen und versteckten Entschärfknöpfen |
-| 🛁 **Komfort** | Konzertflügel zum Spielen · Poolabdeckung · Wasserrutsche mit Schub · beheizter Whirlpool · Badewanne zum Reinsetzen · Toilette mit Spülung · Kamin · Garagentor |
+| 🛁 **Komfort** | Zwei Konzertflügel zum Spielen · Nachttische mit Schublade · Poolabdeckung · Wasserrutsche mit Schub · beheizter Whirlpool · Badewanne zum Reinsetzen · Toilette mit Spülung · Kamin · Garagentor |
 
 Alles funktioniert für jeden Spieler – auch auf einem Server mit Freunden.
 

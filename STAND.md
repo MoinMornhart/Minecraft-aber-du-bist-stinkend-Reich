@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 08:40 Uhr (Philip ist wach)_
+_Zuletzt aktualisiert: 2026-10-26, 09:15 Uhr (Philip ist wach)_
 
 ## Erledigt
 
@@ -214,7 +214,21 @@ _Zuletzt aktualisiert: 2026-10-26, 08:40 Uhr (Philip ist wach)_
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
 
-## Version 0.3.4 (in Arbeit, Philips Wünsche vom 26.10. morgens)
+## Version 0.3.5 (Philips Wünsche vom 26.10. vormittags)
+
+- Nachttisch mit Schublade: `moebel/NachttischBlock` (DekoBlock + EntityBlock, Rechtsklick öffnet) und
+  `moebel/SchubladeBlockEntity` (9 Plätze, `ChestMenu` GENERIC_9x1; Speichern ab 1.21.6 ValueOutput/ValueInput, davor
+  CompoundTag). In deko.py `SCHUBLADE = {"nachttisch"}` → Eintrag „schublade“ in deko_bloecke.json, `ModDeko` baut den
+  Block. Alte Welten: `Level.getBlockEntity` legt die fehlende Schublade beim ersten Öffnen an.
+- Flügel: Ballsaal leer, `konzertfluegel(x0, y, z0, tasten)` in villa.py; Wohnzimmer (43, EG+1, 64, Tasten Nord, Bank
+  bei 44/63, gleich links hinter der Tür aus dem Ballsaal) und Penthouse (43, DACH+1, 44, Tasten Ost, Bank bei 46/45).
+- Neue Sitzmöbel (VERBUND in deko.py): `esszimmerstuhl` (Sitzhöhe 9) im Esszimmer (x 66–74, z 55 und 59) und
+  `gartenbank` (Sitzhöhe 7) an der Grillecke; Gaming-Stühle im Kontrollraum und Bunker statt Steintreppen.
+- Tests: `moebel035.txt` (alles OK, 26.3), README-Fotos `fotos035.txt`. Alle 17 Versionen übersetzen.
+- README: Bilder Ballsaal (ohne Flügel), Wohnzimmer-Flügel, Spielfenster, Esszimmer, Penthouse-Flügel, Schublade,
+  Grillecke (mit sitzender Figur); Trailer mit Kapiteln „Ballsaal“, „Konzertflügel“ (Wohnzimmer) und „Esszimmer“.
+
+## Version 0.3.4 (veröffentlicht 26.10. morgens: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.4)
 
 - Bodyguards: echter Eisengolem + Überzug. `BodyguardRenderer` legt beim ersten Zeichnen
   `textures/entity/bodyguard_smoking.png` (nur Sakko, Hose, Hemd mit Krawatte, rote Blume, Sonnenbrille; Rest

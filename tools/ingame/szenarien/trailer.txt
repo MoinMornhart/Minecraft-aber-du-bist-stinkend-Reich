@@ -36,8 +36,15 @@ merke
 server fahrt 3 | 55.00 27.60 70.00 180.0 2.0 | 55.50 27.60 65.50 192.0 5.0
 bis 87 Fahrt fertig
 server /time set 6000
-kapitel Ein Ballsaal mit Konzertflügel, der wirklich spielt
-server /villa ort 58.5 26 60.4 0 30
+kapitel Ein Ballsaal mit Kronleuchtern
+server /villa ort 51.23 29.00 66.75 218.0 14.0
+warte 3
+merke
+server fahrt 4 | 51.23 29.00 66.75 218.0 14.0 | 51.50 29.00 66.00 200.0 14.0
+bis 96 Fahrt fertig
+server /time set 6000
+kapitel Ein Konzertflügel, der wirklich spielt
+server /villa ort 44.5 26 62.4 0 30
 server /gamemode creative
 warte 3
 klick
@@ -46,11 +53,18 @@ linksklick 376 292
 warte 3
 taste Escape
 server /gamemode spectator
-server /villa ort 53.03 27.80 56.48 -48.0 18.0
+server /villa ort 38.89 27.40 58.58 -52.0 22.0
 warte 3
 merke
-server fahrt 6 | 53.03 27.80 56.48 -48.0 18.0 | 54.50 27.80 58.50 -36.0 18.0
-bis 114 Fahrt fertig
+server fahrt 5 | 38.89 27.40 58.58 -52.0 22.0 | 40.50 27.40 60.50 -40.0 22.0
+bis 105 Fahrt fertig
+server /time set 6000
+kapitel Ein Esszimmer für 18 Gäste
+server /villa ort 70.50 29.00 50.00 10.0 38.0
+warte 3
+merke
+server fahrt 4 | 70.50 29.00 50.00 10.0 38.0 | 70.50 29.00 52.00 0.0 38.0
+bis 96 Fahrt fertig
 server /time set 6000
 kapitel Ein Butler, der für dich arbeitet
 server /villa ort 57.5 26 66 180 5
