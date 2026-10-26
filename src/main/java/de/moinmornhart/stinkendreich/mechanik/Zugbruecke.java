@@ -237,13 +237,13 @@ public final class Zugbruecke {
      */
     private static String jemandDa(ServerLevel welt, Ort o, VillaZustand zustand) {
         if (!welt.getEntitiesOfClass(Player.class, o.kasten().inflate(ZU_FUSS, 4, ZU_FUSS),
-                p -> !p.isSpectator() && (zustand.istBewohner(p) || Zugang.hatKarte(p))).isEmpty()) {
+                p -> !p.isSpectator() && zustand.istBewohner(p)).isEmpty()) {
             return "spieler";
         }
         String wer = null;
         for (AutoEntity wagen : welt.getEntitiesOfClass(AutoEntity.class, o.kasten().inflate(MIT_AUTO, 24, MIT_AUTO), w -> !w.art.fliegt())) {
             for (Entity e : wagen.getPassengers()) {
-                if (e instanceof Player p && !p.isSpectator() && (zustand.istBewohner(p) || Zugang.hatKarte(p))) {
+                if (e instanceof Player p && !p.isSpectator() && zustand.istBewohner(p)) {
                     return "auto";
                 }
                 if (e instanceof ButlerEntity) {

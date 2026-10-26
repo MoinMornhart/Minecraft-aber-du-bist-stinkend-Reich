@@ -538,6 +538,7 @@
   "stinkendreich.zentrale.alarm_aus": "Turn off alarm",
   "stinkendreich.zentrale.eingetragen": "You are now a resident of the villa.",
   "stinkendreich.zentrale.eintragen": "Register me as resident",
+  "stinkendreich.zentrale.nur_eigentuemer": "Only the owner of the villa can change the alarm level.",
   "stinkendreich.zentrale.status": "Security system: %s · State: %s · Residents: %s",
   "stinkendreich.zugang.code": "Code correct – door open.",
   "stinkendreich.zugang.code_geaendert": "New code saved.",

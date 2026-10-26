@@ -156,8 +156,17 @@ public final class VillaZustand {
 
     // ---------------- Bewohner ----------------
 
+    /**
+     * Darf der Spieler alles, was Bewohner dürfen? Eingetragene Bewohner und jeder mit Zugangskarte im Inventar
+     * (Philip: „jeder, der eine Zugangskarte hat, ist als Bewohner“). Nur die Alarmstufe stellt der Eigentümer ein.
+     */
     public boolean istBewohner(Player spieler) {
-        return bewohner.isEmpty() || bewohner.containsKey(spieler.getUUID());
+        return bewohner.isEmpty() || bewohner.containsKey(spieler.getUUID()) || Zugang.hatKarte(spieler);
+    }
+
+    /** Eigentümer der Villa: der erste Bewohner (der erste Spieler, der die Welt betreten hat). */
+    public boolean istEigentuemer(Player spieler) {
+        return bewohner.isEmpty() || bewohner.keySet().iterator().next().equals(spieler.getUUID());
     }
 
     public void bewohnerHinzufuegen(Player spieler) {
@@ -175,7 +184,7 @@ public final class VillaZustand {
      */
     public boolean istEindringling(Entity e) {
         if (e instanceof Player p) {
-            return !p.isSpectator() && !p.isCreative() && !istBewohner(p) && !Zugang.hatKarte(p);
+            return !p.isSpectator() && !p.isCreative() && !istBewohner(p);
         }
         return e instanceof Enemy;
     }

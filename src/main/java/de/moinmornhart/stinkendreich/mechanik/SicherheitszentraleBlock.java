@@ -72,6 +72,12 @@ public class SicherheitszentraleBlock extends MechanikBlock {
                 Kompat.nachricht(spieler, Component.translatable("stinkendreich.alarm.ende").withStyle(ChatFormatting.GREEN), true);
                 ton(spieler, true);
             } else if (wert.startsWith("stufe:")) {
+                // Die Alarmstufe stellt nur der Eigentümer ein, nicht jeder Bewohner oder Kartenbesitzer
+                if (!z.istEigentuemer(spieler)) {
+                    Kompat.nachricht(spieler, Component.translatable("stinkendreich.zentrale.nur_eigentuemer").withStyle(ChatFormatting.RED), true);
+                    ton(spieler, false);
+                    return;
+                }
                 try {
                     z.setzeStufe(Integer.parseInt(wert.substring(6)));
                     ton(spieler, true);

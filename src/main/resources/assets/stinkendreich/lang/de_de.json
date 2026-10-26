@@ -538,6 +538,7 @@
   "stinkendreich.zentrale.alarm_aus": "Alarm abschalten",
   "stinkendreich.zentrale.eingetragen": "Du bist jetzt Bewohner der Villa.",
   "stinkendreich.zentrale.eintragen": "Mich als Bewohner eintragen",
+  "stinkendreich.zentrale.nur_eigentuemer": "Die Alarmstufe kann nur der Eigentümer der Villa einstellen.",
   "stinkendreich.zentrale.status": "Sicherheitssystem: %s · Zustand: %s · Bewohner: %s",
   "stinkendreich.zugang.code": "Code richtig – Tür offen.",
   "stinkendreich.zugang.code_geaendert": "Neuer Code gespeichert.",
