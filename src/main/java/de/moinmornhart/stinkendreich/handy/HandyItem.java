@@ -13,22 +13,29 @@ public class HandyItem extends Item {
         super(eigenschaften);
     }
 
-    private static void oeffnen(Level welt) {
+    /** Mit Mod öffnet der eigene Handy-Bildschirm; ohne Mod (Server-Version) ein Dialogfenster vom Server. */
+    private static void oeffnen(Level welt, Player spieler) {
         if (welt.isClientSide()) {
             KlientBruecke.handy.run();
         }
+        //? if >=26.3 {
+        else if (spieler instanceof net.minecraft.server.level.ServerPlayer sp
+                && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)) {
+            de.moinmornhart.stinkendreich.server.HandyDialog.oeffnen(sp, "start");
+        }
+        //?}
     }
 
     //? if >=1.21.2 {
     @Override
     public InteractionResult use(Level welt, Player spieler, InteractionHand hand) {
-        oeffnen(welt);
+        oeffnen(welt, spieler);
         return InteractionResult.SUCCESS;
     }
     //?} else {
     /*@Override
     public net.minecraft.world.InteractionResultHolder<net.minecraft.world.item.ItemStack> use(Level welt, Player spieler, InteractionHand hand) {
-        oeffnen(welt);
+        oeffnen(welt, spieler);
         return net.minecraft.world.InteractionResultHolder.sidedSuccess(spieler.getItemInHand(hand), welt.isClientSide());
     }
     *///?}

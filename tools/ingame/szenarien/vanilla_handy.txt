@@ -1,0 +1,32 @@
+# Server-Version: das Handy als Dialogfenster für Spieler ohne Mod (VANILLA=1 tools/ingame/test.sh 26.3 …)
+warte 8
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa ort 55.5 26 90 180 -6
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 4
+taste F1
+warte 1
+bild h00_vor_dem_klick
+klick
+warte 2
+bild h01_rechtsklick
+taste Escape
+warte 1
+server /handy seite|start
+warte 2
+bild h02_handy_start
+server /handy seite|lieferung
+warte 2
+bild h03_lieferung
+server /handy liefer|kuehe
+warte 25
+bild h04_kuehe_geliefert
+server /handy seite|auftrag
+warte 2
+bild h05_auftraege
+server /handy bodyguards|rufen
+warte 4
+bild h06_bodyguards

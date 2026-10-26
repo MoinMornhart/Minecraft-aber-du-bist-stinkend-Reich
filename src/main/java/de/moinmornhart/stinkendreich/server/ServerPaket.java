@@ -23,7 +23,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
+import eu.pb4.polymer.core.api.utils.PolymerUtils;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.Mannequin;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.world.item.component.ResolvableProfile;
+import net.minecraft.world.level.Level;
+
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Server-Version für Spieler ohne Mod (nur aktiv, wenn auf dem Server die Bibliothek Polymer liegt). Polymer
@@ -105,14 +118,14 @@ public final class ServerPaket {
         }
     }
 
-    /** Figuren: vorerst ein passender Minecraft-Typ (Menschen als Schaufensterpuppe, Bodyguards als Golem). */
+    /**
+     * Figuren: James, Mitarbeiter und Tänzerinnen als Schaufensterpuppe (Menschenfigur) mit ihrer eigenen Haut aus
+     * dem Ressourcenpaket, Bodyguards als Eisengolem, alles andere vorerst als Rüstungsständer.
+     */
     private static <T extends Entity> void figurUebersetzen(EntityType<T> typ) {
         String name = BuiltInRegistries.ENTITY_TYPE.getKey(typ).getPath();
-        String ersatzName = switch (name) {
-            case "bodyguard" -> "iron_golem";
-            case "butler", "mitarbeiter", "taenzerin" -> "villager";
-            default -> "armor_stand";
-        };
+        boolean mensch = name.equals("butler") || name.equals("mitarbeiter") || name.equals("taenzerin");
+        String ersatzName = mensch ? "mannequin" : name.equals("bodyguard") ? "iron_golem" : "armor_stand";
         EntityType<?> ersatz = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(ersatzName));
         PolymerEntityUtils.registerOverlay(typ, new PolymerSyncedObject<EntityType<?>>() {
             @Override
@@ -124,7 +137,50 @@ public final class ServerPaket {
             public boolean canSyncRawToClient(PacketContext kontext) {
                 return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION));
             }
-        }, (java.util.function.Function<T, PolymerEntity>) e -> kontext -> ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION)) ? typ : ersatz);
+        }, (java.util.function.Function<T, PolymerEntity>) e -> new PolymerEntity() {
+            @Override
+            public EntityType<?> getPolymerEntityType(PacketContext kontext) {
+                return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION)) ? typ : ersatz;
+            }
+
+            @Override
+            public void modifyRawTrackedData(List<SynchedEntityData.DataValue<?>> daten, ServerPlayer spieler, boolean erstes) {
+                if (mensch && erstes && !ModErkennung.hatMod(spieler)) {
+                    daten.add(SynchedEntityData.DataValue.create(Puppe.PROFIL, haut(e, name)));
+                    if (Puppe.BESCHREIBUNG != null) {
+                        daten.add(SynchedEntityData.DataValue.create(Puppe.BESCHREIBUNG, Optional.empty()));
+                    }
+                }
+            }
+        });
+    }
+
+    /** Die Haut einer Figur (Textur aus dem Ressourcenpaket, Tänzerinnen je nach Kostüm). */
+    private static ResolvableProfile haut(Entity e, String name) {
+        String textur = e instanceof de.moinmornhart.stinkendreich.club.TaenzerinEntity t ? "entity/taenzerin_" + t.variante() : "entity/" + name;
+        return PolymerUtils.createProfileComponent(new PlayerSkin.Patch(Optional.of(new ClientAsset.ResourceTexture(StinkendReich.id(textur))),
+                Optional.empty(), Optional.empty(), Optional.of(PlayerModelType.WIDE)));
+    }
+
+    /** Zugriff auf die Datenfelder der Schaufensterpuppe (Haut und der Schriftzug „NPC“ darunter). */
+    private static final class Puppe extends Mannequin {
+        static final EntityDataAccessor<ResolvableProfile> PROFIL = DATA_PROFILE;
+        static final EntityDataAccessor<Optional<Component>> BESCHREIBUNG = beschreibung();
+
+        private Puppe(Level welt) {
+            super(welt);
+        }
+
+        @SuppressWarnings("unchecked")
+        private static EntityDataAccessor<Optional<Component>> beschreibung() {
+            try {
+                java.lang.reflect.Field f = Mannequin.class.getDeclaredField("DATA_DESCRIPTION");
+                f.setAccessible(true);
+                return (EntityDataAccessor<Optional<Component>>) f.get(null);
+            } catch (ReflectiveOperationException ex) {
+                return null;
+            }
+        }
     }
 }
 //?}

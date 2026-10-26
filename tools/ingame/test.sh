@@ -173,6 +173,13 @@ if [[ -z "$FENSTER" ]]; then
   done
 fi
 melde "Fenster: $FENSTER ($(xdotool getwindowname "$FENSTER" 2>/dev/null))"
+if [[ "${VANILLA:-0}" == 1 ]]; then
+  for w in $(xdotool search --name ".*" 2>/dev/null); do
+    echo "  Fenster $w: '$(xdotool getwindowname "$w" 2>/dev/null)' $(xdotool getwindowgeometry "$w" 2>/dev/null | tr '\n' ' ')" >> "$LOGS/fenster.txt"
+  done
+  # Ein Klick ins Fenster gibt ihm den Fokus (SDL nimmt sonst keine Tasten an); vorher Chat öffnen, damit der Klick nichts abbaut
+  xdotool windowactivate "$FENSTER" 2>/dev/null; xdotool windowraise "$FENSTER" 2>/dev/null
+fi
 xdotool windowfocus "$FENSTER" 2>/dev/null
 xdotool mousemove 640 360
 
@@ -220,7 +227,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
   case "$wort" in
     ""|\#*) ;;
     warte) sleep "$rest" ;;
-    taste) xdotool key $rest; sleep 0.5 ;;
+    taste) if [[ "${VANILLA:-0}" == 1 ]]; then xdotool key --window "$FENSTER" $rest; else xdotool key $rest; fi; sleep 0.5 ;;
     befehl) xdotool key t; sleep "${TIPP_PAUSE:-1}"; xdotool type --delay 30 "$rest"; sleep 0.4; xdotool key Return; sleep 1.5 ;;
     bild) bild "$rest" ;;
     klick) xdotool click 3; sleep 1 ;;                                   # Rechtsklick (Block benutzen)

@@ -37,6 +37,15 @@ public final class Handy {
 
     public static void registrieren() {
         Netz.bearbeiter("handy", 0, (spieler, pos, wert) -> ausfuehren(spieler, wert));
+        // Dasselbe als Befehl, für Spieler ohne Mod (die Knöpfe des Handy-Dialogs, siehe server/HandyDialog)
+        net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback.EVENT.register((befehle, registry, umgebung) -> befehle.register(
+                net.minecraft.commands.Commands.literal("handy").then(net.minecraft.commands.Commands
+                        .argument("aktion", com.mojang.brigadier.arguments.StringArgumentType.greedyString())
+                        .executes(k -> {
+                            ausfuehren(k.getSource().getPlayerOrException(),
+                                    com.mojang.brigadier.arguments.StringArgumentType.getString(k, "aktion"));
+                            return 1;
+                        }))));
     }
 
     private static boolean hatHandy(ServerPlayer p) {
@@ -51,6 +60,11 @@ public final class Handy {
         String was = teile[0], angabe = teile.length > 1 ? teile[1] : "";
         p.level().playSound(null, p.blockPosition(), SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS, 0.6F, 1.6F);
         switch (was) {
+            case "seite" -> {
+                //? if >=26.3
+                de.moinmornhart.stinkendreich.server.HandyDialog.oeffnen(p, angabe);
+                return;
+            }
             case "mitarbeiter" -> {
                 ItemStack kiste = new ItemStack(ModItems.MITARBEITERKISTE);
                 if (!p.getInventory().add(kiste)) {

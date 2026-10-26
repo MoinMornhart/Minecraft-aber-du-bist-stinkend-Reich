@@ -32,3 +32,12 @@ bild v07_items
 server /villa ort 55.5 40 150 180 30
 warte 6
 bild v08_von_oben
+# Figuren aus der Nähe: James, ein Mitarbeiter, Bodyguards, eine Tänzerin
+server /villa ort 55.5 26 90 180 0
+server /butler rufen
+warte 3
+server /summon stinkendreich:taenzerin ~2 ~ ~-3
+server /summon stinkendreich:bodyguard ~-2 ~ ~-4
+server /summon stinkendreich:mitarbeiter ~ ~ ~-5
+warte 4
+bild v09_figuren

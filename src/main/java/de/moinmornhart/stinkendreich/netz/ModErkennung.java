@@ -40,6 +40,11 @@ public final class ModErkennung {
         *///?}
     }
 
+    /** Hat dieser Spieler die Mod? */
+    public static boolean hatMod(net.minecraft.server.level.ServerPlayer spieler) {
+        return spieler.level().getServer().isSingleplayer() || ServerPlayNetworking.canSend(spieler, Hallo.TYP);
+    }
+
     /** Hat der Spieler hinter dieser Verbindung die Mod? (Ohne Verbindung, etwa im Einzelspieler: ja.) */
     public static boolean hatMod(Connection verbindung) {
         if (verbindung == null || verbindung.isMemoryConnection()) {
