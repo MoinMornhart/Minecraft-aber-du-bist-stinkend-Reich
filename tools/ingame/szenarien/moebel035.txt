@@ -13,7 +13,7 @@ bild m01_wohnzimmer_tuer
 server /villa ort 44 27.4 58 38 22
 warte 3
 bild m02_fluegel_wohnzimmer
-server /villa ort 49.5 39.4 45.5 90 22
+server /villa ort 54.5 39.6 45.5 90 22
 warte 4
 bild m03_fluegel_penthouse
 server /villa ort 70.5 29 52 0 38

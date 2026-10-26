@@ -14,7 +14,7 @@ bild ballsaal
 server /villa ort 44 27.4 58 38 22
 warte 3
 bild wohnzimmer_fluegel
-server /villa ort 49.5 39.4 45.5 90 22
+server /villa ort 54.5 39.6 45.5 90 22
 warte 3
 bild penthouse_fluegel
 server /villa ort 70.5 29 52 0 38

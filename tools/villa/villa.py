@@ -669,8 +669,10 @@ def penthouse() -> None:
         deko(b, x, y, z0 + 5, "barhocker")
     deko(b, x0 + 4, y + 1, z0 + 3, "cocktail")
     deko(b, x0 + 8, y + 1, z0 + 3, "champagner")
-    # Konzertflügel zwischen Hausbar und Lounge an der Westwand, die Tasten zum Raum hin (Bank im Osten)
-    konzertfluegel(x0 + 1, y, 44, "east")
+    # Konzertflügel zwischen Hausbar und Lounge, mitten im freien Teil (x 47–49, z 44–46), die Tasten zum Raum hin
+    # (Bank bei x 50): vier Blöcke Luft zur Glaswand, der Weg vom Aufzug zur Terrassentür (x 53–58) bleibt frei
+    # (Philip: „etwas mehr mittig im Raum“)
+    konzertfluegel(x0 + 5, y, 44, "east")
     # XXL-Kingsize-Bett im Nordosten: ein Bett aus einem Stück (4 × 3 Blöcke, Satindecke, weißes Fell), Samt-
     # Kopfteil mit Goldrahmen in der Wand, Nachttische mit Lampen, Bettbank, lila Leuchtband im Boden
     kingsize_bett(b, 61, y, z0 + 1, 4, "north")

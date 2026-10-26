@@ -221,7 +221,7 @@ _Zuletzt aktualisiert: 2026-10-26, 09:15 Uhr (Philip ist wach)_
   CompoundTag). In deko.py `SCHUBLADE = {"nachttisch"}` → Eintrag „schublade“ in deko_bloecke.json, `ModDeko` baut den
   Block. Alte Welten: `Level.getBlockEntity` legt die fehlende Schublade beim ersten Öffnen an.
 - Flügel: Ballsaal leer, `konzertfluegel(x0, y, z0, tasten)` in villa.py; Wohnzimmer (39, EG+1, 61, Tasten Nord, Bank
-  bei 40/60, mitten im freien Teil südlich der Sofas; Philip wollte ihn weg vom Fenster) und Penthouse (43, DACH+1, 44, Tasten Ost, Bank bei 46/45).
+  bei 40/60, mitten im freien Teil südlich der Sofas; Philip wollte ihn weg vom Fenster) und Penthouse (47, DACH+1, 44, Tasten Ost, Bank bei 50/45, vier Blöcke von der Glaswand).
 - Neue Sitzmöbel (VERBUND in deko.py): `esszimmerstuhl` (Sitzhöhe 9) im Esszimmer (x 66–74, z 55 und 59) und
   `gartenbank` (Sitzhöhe 7) an der Grillecke; Gaming-Stühle im Kontrollraum und Bunker statt Steintreppen.
 - Barhocker sind Sitze (`SITZE` in deko.py, Höhe 11); in villa.py schauen sie zur Theke (Poolbar west, Club süd,
