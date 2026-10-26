@@ -1,5 +1,6 @@
 # README-Fotos für 0.3.5 (Bildnamen = Dateinamen in docs/bilder): Ballsaal ohne Flügel, Flügel im Wohnzimmer und im
-# Penthouse, Spielfenster am Wohnzimmer-Flügel, Esszimmer, Grillecke mit Gartenbänken, Schublade im Nachttisch.
+# Penthouse, Spielfenster am Wohnzimmer-Flügel, Esszimmer, Grillecke mit Gartenbänken, Schublade im Nachttisch,
+# Sitzen auf dem Barhocker an der Poolbar.
 # Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos035.txt
 server /gamemode spectator
 server /weather clear
@@ -10,7 +11,7 @@ taste F1
 server /villa ort 51.5 29 66 200 14
 warte 4
 bild ballsaal
-server /villa ort 40.5 27.4 60.5 -40 22
+server /villa ort 44 27.4 58 38 22
 warte 3
 bild wohnzimmer_fluegel
 server /villa ort 49.5 39.4 45.5 90 22
@@ -22,9 +23,9 @@ bild esszimmer
 server /villa ort 80.5 29 16.5 0 40
 warte 3
 bild grillecke
-# Zu Fuß: Spielfenster am Wohnzimmer-Flügel (Bank bei x 44, z 63) und Schublade im Nachttisch (Schlafzimmer OG)
+# Zu Fuß: Spielfenster am Wohnzimmer-Flügel (Bank bei x 40, z 60) und Schublade im Nachttisch (Schlafzimmer OG)
 server /gamemode survival
-server /villa ort 44.5 26 62.4 0 30
+server /villa ort 40.5 26 59.4 0 30
 warte 2
 klick
 warte 1.5
@@ -48,3 +49,19 @@ warte 2
 klick
 warte 2
 bild schublade
+taste Escape
+warte 1
+# Barhocker an der Poolbar (Hocker bei x 38, Blick nach Westen zur Theke)
+server /villa ort 39.7 26 22.5 90 40
+warte 2
+klick
+warte 2
+taste F5
+warte 2
+bild barhocker_poolbar
+taste F5
+taste F5
+warte 1
+druecke shift
+warte 1
+loslassen shift

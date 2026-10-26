@@ -76,11 +76,11 @@ fahrt(3, (55, 27.6, 70, 180, 2), (55.5, 27.6, 65.5, 192, 5))
 
 titel("Ein Ballsaal mit Kronleuchtern")
 zufahren(4, 51.5, 29, 66, 200, 14, zurueck=0.8, schwenk=18)  # dahinter liegt gleich die Südwand
-# Der Flügel steht seit 0.3.5 im Wohnzimmer, gleich links hinter der Tür aus dem Ballsaal (Bank bei x 44, z 63)
+# Der Flügel steht seit 0.3.5 im Wohnzimmer, links hinter der Tür aus dem Ballsaal (Bank bei x 40, z 60)
 titel("Ein Konzertflügel, der wirklich spielt")
-z("server /villa ort 44.5 26 62.4 0 30", "server /gamemode creative", "warte 1", "klick", "warte 1", "linksklick 376 292",
+z("server /villa ort 40.5 26 59.4 0 30", "server /gamemode creative", "warte 1", "klick", "warte 1", "linksklick 376 292",
   "warte 1", "taste Escape", "server /gamemode spectator")
-zufahren(5, 40.5, 27.4, 60.5, -40, 22, zurueck=2.5, schwenk=-12)
+zufahren(5, 44, 27.4, 58, 38, 22, zurueck=2, schwenk=-12)
 titel("Ein Esszimmer für 18 Gäste")
 zufahren(4, 70.5, 29, 52, 0, 38, zurueck=2, schwenk=10)
 

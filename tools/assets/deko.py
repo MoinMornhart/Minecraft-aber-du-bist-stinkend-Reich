@@ -1195,7 +1195,7 @@ BLOECKE = {
 }
 
 # Sitzhöhe in Pixeln für Sitzmöbel (Rechtsklick setzt sich drauf)
-SITZE = {"liege_kopf": 7, "wanne_kopf": 4, "klavierbank": 11}
+SITZE = {"liege_kopf": 7, "wanne_kopf": 4, "klavierbank": 11, "barhocker": 11}
 # Mit Schublade zum Hineinlegen (NachttischBlock, 9 Plätze)
 SCHUBLADE = {"nachttisch"}
 # Liegt auf Möbeln: bis zu so vielen Pixeln tiefer (FernbedienungBlock)

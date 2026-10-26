@@ -422,7 +422,8 @@
     ],
     "licht": 0,
     "fest": true,
-    "klang": "metall"
+    "klang": "metall",
+    "sitz": 11
   },
   {
     "name": "cocktail",

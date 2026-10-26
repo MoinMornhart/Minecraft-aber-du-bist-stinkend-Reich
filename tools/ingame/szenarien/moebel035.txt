@@ -10,7 +10,7 @@ warte 2
 server /villa ort 50.6 26.2 64.5 90 8
 warte 5
 bild m01_wohnzimmer_tuer
-server /villa ort 40.5 27.4 60.5 -40 22
+server /villa ort 44 27.4 58 38 22
 warte 3
 bild m02_fluegel_wohnzimmer
 server /villa ort 49.5 39.4 45.5 90 22

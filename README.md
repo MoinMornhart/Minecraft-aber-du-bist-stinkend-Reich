@@ -48,10 +48,6 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td><img src="docs/bilder/haustuer.jpg" alt="Haustür"><br><sub><b>Haustür:</b> weiß-goldene Portaltür, die aufgleitet, wenn du davorstehst</sub></td>
 <td><img src="docs/bilder/garten_lounge.jpg" alt="Garten-Lounge"><br><sub><b>Garten-Lounge</b> im Westgarten mit Sofas, Marmortisch und Kronleuchter</sub></td>
 </tr>
-<tr>
-<td><img src="docs/bilder/strandliegen.jpg" alt="Strandliegen am Pool"><br><sub><b>Strandliegen</b> mit Sonnenschirmen am Pool</sub></td>
-<td><img src="docs/bilder/grillecke.jpg" alt="Grillecke mit Gartenbänken"><br><sub><b>Grillecke</b> mit Teak-Gartenbänken zum Hinsetzen</sub></td>
-</tr>
 </table>
 
 ### 🥂 Drinnen: Party und Luxus
@@ -66,7 +62,7 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td><img src="docs/bilder/dachparty.jpg" alt="Dachparty"><br><sub><b>Dachparty</b> mit DJ-Pult und Tanzfläche</sub></td>
 </tr>
 <tr>
-<td><img src="docs/bilder/wohnzimmer_fluegel.jpg" alt="Konzertflügel im Wohnzimmer"><br><sub><b>Konzertflügel im Wohnzimmer:</b> gleich links, wenn du aus dem Ballsaal hereinkommst</sub></td>
+<td><img src="docs/bilder/wohnzimmer_fluegel.jpg" alt="Konzertflügel im Wohnzimmer"><br><sub><b>Konzertflügel</b> mitten im Wohnzimmer, links, wenn du aus dem Ballsaal hereinkommst</sub></td>
 <td><img src="docs/bilder/fluegel_spielen.jpg" alt="Konzertflügel spielen"><br><sub><b>Zum Spielen:</b> drei Oktaven mit Maus oder Tastatur, drei Stücke spielt er selbst</sub></td>
 </tr>
 <tr>
@@ -86,11 +82,22 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td><img src="docs/bilder/fernseher.jpg" alt="XXL-Fernseher"><br><sub><b>XXL-Fernseher:</b> YouTube-Link einfügen, das Video läuft im Fernseher</sub></td>
 <td><img src="docs/bilder/penthouse_fluegel.jpg" alt="Flügel im Penthouse"><br><sub><b>Zweiter Flügel</b> im Penthouse, zwischen Hausbar und Lounge</sub></td>
 </tr>
+</table>
+
+### 🪑 Hinsetzen und verstauen
+
+<table>
 <tr>
+<td width="50%"><img src="docs/bilder/barhocker_poolbar.jpg" alt="Auf dem Barhocker an der Poolbar"><br><sub><b>Barhocker</b> an allen Bars: hinsetzen und zur Theke schauen</sub></td>
+<td width="50%"><img src="docs/bilder/grillecke.jpg" alt="Grillecke mit Gartenbänken"><br><sub><b>Grillecke</b> mit Teak-Gartenbänken</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/strandliegen.jpg" alt="Strandliegen am Pool"><br><sub><b>Strandliegen</b> mit Sonnenschirmen am Pool</sub></td>
 <td><img src="docs/bilder/schublade.jpg" alt="Schublade im Nachttisch"><br><sub><b>Nachttisch mit Schublade:</b> Rechtsklick öffnet sie</sub></td>
-<td>🪑 Auf Sofas, Liegen, Esszimmerstühlen, Gartenbänken, Gaming-Stühlen und der Bettbank kann man sich mit <b>Rechtsklick</b> hinsetzen, <b>Schleichen</b> steht wieder auf.<br><br>🗄️ In die <b>Schublade</b> jedes Nachttischs passen 9 Stapel, zum Beispiel Zugangskarte, Uhr und Gold. Beim Abbauen fällt der Inhalt heraus.</td>
 </tr>
 </table>
+
+Auf Sofas, Liegen, Barhockern, Esszimmerstühlen, Gartenbänken, Gaming-Stühlen, der Klavierbank und der Bettbank kann man sich mit **Rechtsklick** hinsetzen, **Schleichen** steht wieder auf. In die **Schublade** jedes Nachttischs passen 9 Stapel, zum Beispiel Zugangskarte, Uhr und Gold; beim Abbauen fällt der Inhalt heraus.
 
 ### 📺 Fernseher: YouTube im Spiel, mit Fernbedienung
 

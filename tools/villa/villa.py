@@ -409,9 +409,10 @@ def erdgeschoss() -> None:
         deko(b, HX0 + 1, y + 1, z, "pokal", "east")
     pflanze(b, HX0 + 1, y, HZ1 - 1, "potted_fern")
     pflanze(b, 46, y, HZ0 + 1, "potted_azalea_bush")
-    # Konzertflügel gleich links hinter der Tür aus dem Ballsaal (Philip: „wenn du reingehst gleich links“); der
-    # Weg ins Zimmer führt nördlich daran vorbei
-    konzertfluegel(43, y, 64, "north")
+    # Konzertflügel links hinter der Tür aus dem Ballsaal (Philip: „wenn du reingehst gleich links“), aber mitten im
+    # freien Teil zwischen Sofas und Südfenster (x 39–41, z 61–63, Bank bei z 60): drei Blöcke Luft zum Fenster, sechs
+    # zum Aquarium und zur Vitrine (Philip: „mehr in die Mitte, nicht so nah am Rand“)
+    konzertfluegel(39, y, 61, "north")
     kronleuchter(b, 37, OG - 1, 50)
     kronleuchter(b, 42, OG - 1, 50)
 
@@ -823,7 +824,7 @@ def poolparty() -> None:
     for z in range(19, 27):
         deko(b, 35, y, z, "flaschenregal", "east")
     for z in range(20, 27, 2):
-        deko(b, 38, y, z, "barhocker")
+        deko(b, 38, y, z, "barhocker", "west")                               # Blick zur Theke
     for z, ding in ((20, "cocktail"), (23, "champagner"), (25, "cocktail")):
         deko(b, 37, y + 1, z, ding)
     b.quader(35, y + 3, 18, 39, y + 3, 27, "white_wool")
@@ -972,7 +973,7 @@ def keller() -> None:
         deko(b, x, y, 65, "flaschenregal", "north")
         deko(b, x, y + 1, 65, "flaschenregal", "north")
     for x in range(34, 47, 2):
-        deko(b, x, y, 60, "barhocker")
+        deko(b, x, y, 60, "barhocker", "south")                              # Blick zur Theke
     for x, ding in ((35, "cocktail"), (38, "champagner"), (41, "cocktail"), (44, "champagner"), (46, "cocktail")):
         deko(b, x, y + 1, 62, ding)
     deko(b, 40, y + 3, 65, "neon_bar", "north")
@@ -1044,8 +1045,8 @@ def keller() -> None:
     for z in (53, 57):
         b.setze(58, y, z, zustand("barrel", facing="up", open="false"))
         b.setze(58, y + 1, z, zustand("red_candle", candles="3", lit="true", waterlogged="false"))
-        for x in (57, 59):
-            deko(b, x, y, z, "barhocker")
+        for x, blick in ((57, "east"), (59, "west")):
+            deko(b, x, y, z, "barhocker", blick)                             # Blick zum Fass
     reihe(b, 56, y, 64, 4, "sofa_samt", "north")            # x 56 … 59
     tisch(b, 57, y, 62, 58, 62, "dark_oak_slab")
     deko(b, 57, y + 1, 62, "champagner")

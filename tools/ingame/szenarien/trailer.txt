@@ -44,7 +44,7 @@ server fahrt 4 | 51.23 29.00 66.75 218.0 14.0 | 51.50 29.00 66.00 200.0 14.0
 bis 96 Fahrt fertig
 server /time set 6000
 kapitel Ein Konzertflügel, der wirklich spielt
-server /villa ort 44.5 26 62.4 0 30
+server /villa ort 40.5 26 59.4 0 30
 server /gamemode creative
 warte 3
 klick
@@ -53,10 +53,10 @@ linksklick 376 292
 warte 3
 taste Escape
 server /gamemode spectator
-server /villa ort 38.89 27.40 58.58 -52.0 22.0
+server /villa ort 45.23 27.40 56.42 26.0 22.0
 warte 3
 merke
-server fahrt 5 | 38.89 27.40 58.58 -52.0 22.0 | 40.50 27.40 60.50 -40.0 22.0
+server fahrt 5 | 45.23 27.40 56.42 26.0 22.0 | 44.00 27.40 58.00 38.0 22.0
 bis 105 Fahrt fertig
 server /time set 6000
 kapitel Ein Esszimmer für 18 Gäste
