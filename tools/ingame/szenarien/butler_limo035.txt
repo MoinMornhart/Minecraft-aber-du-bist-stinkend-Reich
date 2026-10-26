@@ -1,0 +1,91 @@
+# James als Fahrer: Kopf unter dem Limo-Dach? Dazu Hubschrauber (James als Pilot) und Bonzenauto, eine
+# Schaufensterpuppe als Vergleich. James steigt ohne Auftrag aus, wenn kein Spieler mitfährt: deshalb fährt der
+# Testspieler hinten mit (vorher einsteigen, sonst wäre James nicht der Fahrer) und schaut mit F5 von außen. Plattform am Himmel wie in autos_kopf.txt.
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /tp @p 228 156 200 0 20
+warte 6
+server /fill 198 150 202 262 150 218 minecraft:smooth_stone
+warte 2
+server /summon stinkendreich:stretchlimo 207 151 210
+server /summon stinkendreich:hubschrauber 226 151 210
+server /summon stinkendreich:bonzenauto 246 151 210
+warte 2
+server /tp @e[type=stinkendreich:stretchlimo] 207 151 210 -90 0
+server /tp @e[type=stinkendreich:hubschrauber] 226 151 210 -90 0
+server /tp @e[type=stinkendreich:bonzenauto] 246 151 210 -90 0
+warte 1
+taste F1
+warte 2
+server /gamemode creative @p
+server /tp @p 207 151 213
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,limit=1]
+warte 1
+server /summon stinkendreich:butler 207 151 212 {NoAI:1b,Tags:["fahrer"]}
+warte 1
+server /ride @e[type=stinkendreich:butler,tag=fahrer,limit=1,sort=nearest] mount @e[type=stinkendreich:stretchlimo,limit=1]
+warte 2
+server /rotate @p 10 20
+taste F5
+warte 3
+bild j_limo_seite
+server /rotate @p -170 35
+warte 3
+bild j_limo_oben
+taste F5
+taste F5
+druecke shift
+warte 1
+loslassen shift
+server /kill @e[type=stinkendreich:butler,tag=fahrer]
+warte 1
+server /gamemode creative @p
+server /tp @p 226 151 213
+warte 2
+server /ride @p mount @e[type=stinkendreich:hubschrauber,limit=1]
+warte 1
+server /summon stinkendreich:butler 226 151 212 {NoAI:1b,Tags:["fahrer"]}
+warte 1
+server /ride @e[type=stinkendreich:butler,tag=fahrer,limit=1,sort=nearest] mount @e[type=stinkendreich:hubschrauber,limit=1]
+warte 2
+server /rotate @p 10 20
+taste F5
+warte 3
+bild j_heli_seite
+server /rotate @p -170 35
+warte 3
+bild j_heli_oben
+taste F5
+taste F5
+druecke shift
+warte 1
+loslassen shift
+server /kill @e[type=stinkendreich:butler,tag=fahrer]
+warte 1
+server /gamemode creative @p
+server /tp @p 246 151 213
+warte 2
+server /ride @p mount @e[type=stinkendreich:bonzenauto,limit=1]
+warte 1
+server /summon stinkendreich:butler 246 151 212 {NoAI:1b,Tags:["fahrer"]}
+warte 1
+server /ride @e[type=stinkendreich:butler,tag=fahrer,limit=1,sort=nearest] mount @e[type=stinkendreich:bonzenauto,limit=1]
+warte 2
+server /rotate @p 10 20
+taste F5
+warte 3
+bild j_bonzenauto_seite
+server /rotate @p -170 35
+warte 3
+bild j_bonzenauto_oben
+taste F5
+taste F5
+druecke shift
+warte 1
+loslassen shift
+server /kill @e[type=stinkendreich:butler,tag=fahrer]
+warte 1

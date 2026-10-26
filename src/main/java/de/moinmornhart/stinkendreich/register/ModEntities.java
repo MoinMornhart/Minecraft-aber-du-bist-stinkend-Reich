@@ -13,13 +13,20 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.phys.Vec3;
 
 /** Eigene Lebewesen der Mod. */
 public final class ModEntities {
+    /**
+     * Sitzpunkt wie beim Spieler (0,6 Blöcke über den Füßen): Ohne ihn säßen James und die Mitarbeiter in Autos und
+     * im Hubschrauber 0,6 Blöcke höher als ein Spieler, in der Limo kam der Kopf durchs Dach.
+     */
+    private static final Vec3 SITZ_WIE_SPIELER = new Vec3(0.0, 0.6, 0.0);
+
     /** Der Butler: so groß wie ein Spieler, feuerfest, wird bis 10 Chunks weit angezeigt. */
     public static final EntityType<ButlerEntity> BUTLER = registrieren("butler",
             EntityType.Builder.of(ButlerEntity::new, MobCategory.MISC).sized(0.6F, 1.95F).eyeHeight(1.62F)
-                    .clientTrackingRange(10).fireImmune());
+                    .vehicleAttachment(SITZ_WIE_SPIELER).clientTrackingRange(10).fireImmune());
     /** Das Bonzenauto: 2,5 Blöcke breit, 1,2 hoch (das Modell ist länger als die Trefferbox). */
     public static final EntityType<AutoEntity> AUTO = auto(Autotyp.BONZENAUTO, 2.5F, 1.2F);
     /** Luxus-Geländewagen: breit und hoch. */
@@ -61,7 +68,7 @@ public final class ModEntities {
     /** Mitarbeiter aus der Mitarbeiterkiste: so groß wie James. */
     public static final EntityType<de.moinmornhart.stinkendreich.mitarbeiter.MitarbeiterEntity> MITARBEITER = registrieren("mitarbeiter",
             EntityType.Builder.of(de.moinmornhart.stinkendreich.mitarbeiter.MitarbeiterEntity::new, MobCategory.MISC).sized(0.6F, 1.95F)
-                    .eyeHeight(1.62F).clientTrackingRange(10).fireImmune());
+                    .eyeHeight(1.62F).vehicleAttachment(SITZ_WIE_SPIELER).clientTrackingRange(10).fireImmune());
 
     /** Bodyguard: Eisengolem im Smoking (Maße wie der Eisengolem). */
     public static final EntityType<de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity> BODYGUARD = registrieren("bodyguard",
