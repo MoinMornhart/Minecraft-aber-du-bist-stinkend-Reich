@@ -1,0 +1,20 @@
+# Bodyguard mit goldener Pistole in der Hand (Fotos von vorn und von der Seite)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 55 26 100 0 0
+warte 2
+server /summon stinkendreich:bodyguard -1 88 48 {NoAI:1b,Rotation:[180f,0f]}
+warte 2
+server /tp @p -1 89.5 43.5 0 10
+warte 3
+bild bg_pistole_vorn
+server /tp @p 3.5 89.5 48 90 10
+warte 2
+bild bg_pistole_seite
+server /tp @p -4.5 89.5 48 -90 10
+warte 2
+bild bg_pistole_seite2

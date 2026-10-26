@@ -1,0 +1,25 @@
+# Suche 2: Penthouse rund um den Aufzugsschacht (Holzboden, weiße Kante, Bild an schwarzer Wand)
+server /gamemode creative
+server /time set noon
+server /gamerule advance_time false
+warte 30
+taste F1
+server /gamemode spectator
+server /villa ort 54.5 38 42.5 180 20
+warte 2.5
+bild ph_54_5_38_42_5_180_20
+server /villa ort 54.5 38 38.5 180 25
+warte 2.5
+bild ph_54_5_38_38_5_180_25
+server /villa ort 53 38 41 -150 20
+warte 2.5
+bild ph_53_38_41_-150_20
+server /villa ort 61.5 38 42.5 150 20
+warte 2.5
+bild ph_61_5_38_42_5_150_20
+server /villa ort 55 38 35 180 20
+warte 2.5
+bild ph_55_38_35_180_20
+server /villa ort 60 38 35 180 20
+warte 2.5
+bild ph_60_38_35_180_20

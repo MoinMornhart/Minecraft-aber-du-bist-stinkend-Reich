@@ -313,7 +313,10 @@ def treppe_und_aufzug() -> None:
             b.setze(x, EG + 1 + i, 50 - i, zustand("dark_oak_stairs", facing="north", half="bottom", shape="straight", waterlogged="false"))
             for y in range(EG + 1, EG + 1 + i):
                 b.setze(x, y, 50 - i, "dark_oak_planks")
-    b.luft(50, OG, 45, 51, OG, 50)
+    # Über jeder Stufe drei Blöcke Kopffreiheit (Decke des EG und Boden des OG). Vorher wurde nur der OG-Boden über
+    # der ganzen Treppe ausgeschnitten: dabei verschwand die oberste Stufe und die EG-Decke blieb als Wand stehen.
+    for i in range(6):
+        b.luft(50, EG + 2 + i, 50 - i, 51, EG + 4 + i, 50 - i)
     for z in range(45, 51):
         b.setze(52, OG + 1, z, GLAS)
     b.setze(50, OG + 1, 51, GLAS)

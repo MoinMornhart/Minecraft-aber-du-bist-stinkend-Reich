@@ -1,52 +1,52 @@
-# Suche: wo fehlen zwei Stufen (Philips Bild)? Blick an jeder Aufzugshaltestelle nach Westen und Osten
+# Suche: wo fehlen zwei Stufen (Philips Bild)? Blick an jeder Aufzugshaltestelle in drei Richtungen
 server /gamemode creative
 server /time set noon
 server /gamerule advance_time false
 warte 30
 taste F1
 server /gamemode spectator
-server /villa ort 57.5 6 44.5 90 15
+server /villa ort 57.5 6 43.5 90 15
 warte 2.5
 bild such_6_90
-server /villa ort 57.5 6 44.5 -90 15
+server /villa ort 57.5 6 43.5 -90 15
 warte 2.5
 bild such_6_m90
-server /villa ort 57.5 6 44.5 0 15
+server /villa ort 57.5 6 43.5 0 15
 warte 2.5
 bild such_6_0
-server /villa ort 57.5 16 44.5 90 15
+server /villa ort 57.5 16 43.5 90 15
 warte 2.5
 bild such_16_90
-server /villa ort 57.5 16 44.5 -90 15
+server /villa ort 57.5 16 43.5 -90 15
 warte 2.5
 bild such_16_m90
-server /villa ort 57.5 16 44.5 0 15
+server /villa ort 57.5 16 43.5 0 15
 warte 2.5
 bild such_16_0
-server /villa ort 57.5 26 44.5 90 15
+server /villa ort 57.5 26 43.5 90 15
 warte 2.5
 bild such_26_90
-server /villa ort 57.5 26 44.5 -90 15
+server /villa ort 57.5 26 43.5 -90 15
 warte 2.5
 bild such_26_m90
-server /villa ort 57.5 26 44.5 0 15
+server /villa ort 57.5 26 43.5 0 15
 warte 2.5
 bild such_26_0
-server /villa ort 57.5 32 44.5 90 15
+server /villa ort 57.5 32 43.5 90 15
 warte 2.5
 bild such_32_90
-server /villa ort 57.5 32 44.5 -90 15
+server /villa ort 57.5 32 43.5 -90 15
 warte 2.5
 bild such_32_m90
-server /villa ort 57.5 32 44.5 0 15
+server /villa ort 57.5 32 43.5 0 15
 warte 2.5
 bild such_32_0
-server /villa ort 57.5 38 44.5 90 15
+server /villa ort 57.5 38 43.5 90 15
 warte 2.5
 bild such_38_90
-server /villa ort 57.5 38 44.5 -90 15
+server /villa ort 57.5 38 43.5 -90 15
 warte 2.5
 bild such_38_m90
-server /villa ort 57.5 38 44.5 0 15
+server /villa ort 57.5 38 43.5 0 15
 warte 2.5
 bild such_38_0

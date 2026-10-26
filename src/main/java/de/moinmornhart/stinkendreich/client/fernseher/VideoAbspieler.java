@@ -73,6 +73,9 @@ final class VideoAbspieler implements AutoCloseable {
     // Uhr in Nanosekunden: t0 = erster Tonabruf durch Minecraft
     private volatile long t0 = -1;
     private long laeuftSeit = -1;
+    /** Wann dieser Abspieler angelegt wurde und wie lange das Laden gedauert hat (Sekunden). */
+    private final long angelegt = System.nanoTime();
+    private volatile double ladeSekunden;
     private volatile long pauseSeit = -1;
     private volatile long pausiert;
 
@@ -309,6 +312,7 @@ final class VideoAbspieler implements AutoCloseable {
                 }
                 zustand = Zustand.LAEUFT;
                 laeuftSeit = jetzt;
+                ladeSekunden = (System.nanoTime() - angelegt) / 1e9;
                 pausiert = 0;
                 if (ton.menge() > 0) {
                     klang = new VideoTon(this, x, y, z);
@@ -363,7 +367,10 @@ final class VideoAbspieler implements AutoCloseable {
     boolean mussNeuStarten(double soll) {
         VideoQuelle q = quelle;
         return switch (zustand) {
-            case LAEUFT -> q != null && !q.live() && Math.abs(position() - soll) > 6;
+            // Nach dem Laden liegt der Fernseher um die Ladezeit hinter dem Server: das ist kein Grund für einen
+            // Neustart (sonst lädt er neu, liegt wieder zurück, lädt neu … und zeigt nur „Video wird geladen“).
+            // Neu gestartet wird nur beim Spulen oder wenn das Bild weit vorausläuft.
+            case LAEUFT -> q != null && !q.live() && (soll - position() > 8 + Math.min(60, ladeSekunden) || position() - soll > 8);
             case ENDE -> q != null && q.dauer() > 0 && soll < q.dauer() - 3;
             case ANGEHALTEN -> true;
             default -> false;

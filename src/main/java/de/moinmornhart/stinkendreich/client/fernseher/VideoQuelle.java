@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,14 +29,14 @@ import java.util.concurrent.TimeUnit;
  * @param live       Livestream (dann wird nicht gespult)
  */
 record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, String agent, double dauer, boolean live,
-                   String seite, String bildFormat, String tonFormat) {
+                   String seite, String bildFormat, String tonFormat, String infoDatei) {
     /** Bild bis 480p (H.264 bevorzugt) und die beste Tonspur, notfalls eine Datei mit beidem. */
     private static final String FORMAT = "bv*[height<=480][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=480]+ba/b[height<=480]/b";
 
     static VideoQuelle holen(String kennung) throws IOException, InterruptedException {
         String test = VideoWerkzeuge.testvideo();
         if (!test.isEmpty()) {
-            return new VideoQuelle(test, test, Map.of(), "", 0, false, "", "", "");
+            return new VideoQuelle(test, test, Map.of(), "", 0, false, "", "", "", "");
         }
         VideoWerkzeuge.ytdlpAktualisieren();
         Path ytdlp = VideoWerkzeuge.finden(VideoWerkzeuge.Programm.YTDLP);
@@ -67,6 +68,17 @@ record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, Stri
             throw new IOException(kurz(fehlerText.toString(StandardCharsets.UTF_8)));
         }
         JsonObject j = JsonParser.parseString(new String(json, StandardCharsets.UTF_8)).getAsJsonObject();
+        // Die Beschreibung aufheben: Die beiden yt-dlp-Läufe für Bild und Ton lesen sie (--load-info-json), statt YouTube
+        // noch einmal zu fragen. Das spart beim Start mehrere Sekunden.
+        String info = "";
+        try {
+            Path datei = Files.createTempFile("stinkendreich-video-", ".json");
+            Files.write(datei, json);
+            datei.toFile().deleteOnExit();
+            info = datei.toString();
+        } catch (IOException e) {
+            // ohne Datei fragt yt-dlp eben noch einmal nach
+        }
         double dauer = zahl(j, "duration");
         boolean live = j.has("is_live") && j.get("is_live").isJsonPrimitive() && j.get("is_live").getAsBoolean();
         JsonObject bildFormat = j;
@@ -99,7 +111,7 @@ record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, Stri
             }
         }
         return new VideoQuelle(bild, ton.isEmpty() ? bild : ton, kopf, agent, dauer, live,
-                "https://www.youtube.com/watch?v=" + kennung, text(bildFormat, "format_id"), text(tonFormat, "format_id"));
+                "https://www.youtube.com/watch?v=" + kennung, text(bildFormat, "format_id"), text(tonFormat, "format_id"), info);
     }
 
     /**
@@ -118,7 +130,12 @@ record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, Stri
             befehl.add("--js-runtimes");
             befehl.add("deno:" + deno);
         }
-        befehl.add(seite);
+        if (!infoDatei.isEmpty() && Files.exists(Path.of(infoDatei))) {
+            befehl.add("--load-info-json");
+            befehl.add(infoDatei);
+        } else {
+            befehl.add(seite);
+        }
         return new ProcessBuilder(befehl);
     }
 

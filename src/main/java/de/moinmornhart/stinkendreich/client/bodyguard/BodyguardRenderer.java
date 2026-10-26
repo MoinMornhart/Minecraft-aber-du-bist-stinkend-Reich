@@ -29,6 +29,7 @@ public class BodyguardRenderer extends IronGolemRenderer {
 
     public BodyguardRenderer(EntityRendererProvider.Context kontext) {
         super(kontext);
+        addLayer(new PistolenLayer(this));       // die goldene Pistole in der rechten Hand
     }
 
     //? if >=1.21.2 {

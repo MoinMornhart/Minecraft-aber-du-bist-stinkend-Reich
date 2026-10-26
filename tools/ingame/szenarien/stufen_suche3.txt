@@ -1,0 +1,16 @@
+# Suche 3: Haupttreppe EG -> OG (x 50-51, z 45-50)
+server /gamemode creative
+server /time set noon
+server /gamerule advance_time false
+warte 30
+taste F1
+server /gamemode spectator
+server /villa ort 51 30 49.5 180 15
+warte 3
+bild tr_1
+server /villa ort 51 27 53 180 10
+warte 3
+bild tr_2
+server /villa ort 54 33 44 120 35
+warte 3
+bild tr_3
