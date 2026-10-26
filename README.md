@@ -26,7 +26,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (3 Minuten, echtes Minecraft)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (3½ Minuten, echtes Minecraft)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
@@ -80,7 +80,7 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 </tr>
 <tr>
 <td><img src="docs/bilder/fernseher.jpg" alt="XXL-Fernseher"><br><sub><b>XXL-Fernseher:</b> YouTube-Link einfügen, das Video läuft im Fernseher</sub></td>
-<td><img src="docs/bilder/penthouse_fluegel.jpg" alt="Flügel im Penthouse"><br><sub><b>Zweiter Flügel</b> im Penthouse, zwischen Hausbar und Lounge</sub></td>
+<td><img src="docs/bilder/penthouse_fluegel.jpg" alt="Flügel im Penthouse"><br><sub><b>Zweiter Flügel</b> mitten im Penthouse, zwischen Hausbar und Lounge</sub></td>
 </tr>
 </table>
 

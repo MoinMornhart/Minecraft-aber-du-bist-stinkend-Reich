@@ -214,7 +214,7 @@ _Zuletzt aktualisiert: 2026-10-26, 09:15 Uhr (Philip ist wach)_
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
 
-## Version 0.3.5 (Philips Wünsche vom 26.10. vormittags)
+## Version 0.3.5 (Philips Wünsche vom 26.10. vormittags, Release angestoßen 26.10. ~09:55)
 
 - Nachttisch mit Schublade: `moebel/NachttischBlock` (DekoBlock + EntityBlock, Rechtsklick öffnet) und
   `moebel/SchubladeBlockEntity` (9 Plätze, `ChestMenu` GENERIC_9x1; Speichern ab 1.21.6 ValueOutput/ValueInput, davor
@@ -226,7 +226,8 @@ _Zuletzt aktualisiert: 2026-10-26, 09:15 Uhr (Philip ist wach)_
   `gartenbank` (Sitzhöhe 7) an der Grillecke; Gaming-Stühle im Kontrollraum und Bunker statt Steintreppen.
 - Barhocker sind Sitze (`SITZE` in deko.py, Höhe 11); in villa.py schauen sie zur Theke (Poolbar west, Club süd,
   Weinkeller zum Fass). `SitzEntity` lässt den Blick nur ±100° um die Blockrichtung drehen.
-- Tests: `moebel035.txt` (alles OK, 26.3), README-Fotos `fotos035.txt`. Alle 17 Versionen übersetzen.
+- Tests: `moebel035.txt` (alles OK, 26.3), README-Fotos `fotos035.txt` (Flügel, Barhocker sitzen). Alle 17 Versionen
+  übersetzen. Trailer neu (3:31, `docs/trailer.mp4`).
 - README: Bilder Ballsaal (ohne Flügel), Wohnzimmer-Flügel, Spielfenster, Esszimmer, Penthouse-Flügel, Schublade,
   Grillecke (mit sitzender Figur); Trailer mit Kapiteln „Ballsaal“, „Konzertflügel“ (Wohnzimmer) und „Esszimmer“.
 
