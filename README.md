@@ -356,6 +356,17 @@ Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modr
 
 Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos und Hubschrauber. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik, Spotify und der Fernseher gehen nur mit der Mod. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).
 
+<table>
+<tr>
+<td><img src="docs/bilder/server_villa.jpg" alt="Villa in normalem Minecraft"><br><sub>Die Villa in ganz normalem Minecraft</sub></td>
+<td><img src="docs/bilder/server_autos.jpg" alt="Autos ohne Mod"><br><sub>Autos als echte Modelle, fahrbar mit W/A/S/D</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/server_zentrale.jpg" alt="Sicherheitszentrale als Fenster"><br><sub>Sicherheitszentrale als Fenster</sub></td>
+<td><img src="docs/bilder/server_bodyguard.jpg" alt="Bodyguard ohne Mod"><br><sub>Bodyguard als Türsteher im Smoking</sub></td>
+</tr>
+</table>
+
 <br>
 
 ## ⚙️ Einstellungen
