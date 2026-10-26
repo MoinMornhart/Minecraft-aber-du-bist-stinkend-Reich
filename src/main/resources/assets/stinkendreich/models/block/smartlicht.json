@@ -1,0 +1,139 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "stinkendreich:block/smartlicht_warm",
+    "glas": "stinkendreich:block/smartlicht_warm",
+    "kette": "minecraft:block/black_concrete",
+    "gold": "minecraft:block/gold_block"
+  },
+  "elements": [
+    {
+      "from": [
+        7.5,
+        10,
+        7.5
+      ],
+      "to": [
+        8.5,
+        16,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#kette"
+        },
+        "south": {
+          "texture": "#kette"
+        },
+        "east": {
+          "texture": "#kette"
+        },
+        "west": {
+          "texture": "#kette"
+        },
+        "up": {
+          "texture": "#kette"
+        },
+        "down": {
+          "texture": "#kette"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        9,
+        6
+      ],
+      "to": [
+        10,
+        10,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#gold"
+        },
+        "south": {
+          "texture": "#gold"
+        },
+        "east": {
+          "texture": "#gold"
+        },
+        "west": {
+          "texture": "#gold"
+        },
+        "up": {
+          "texture": "#gold"
+        },
+        "down": {
+          "texture": "#gold"
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        2,
+        4.5
+      ],
+      "to": [
+        11.5,
+        9,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glas"
+        },
+        "south": {
+          "texture": "#glas"
+        },
+        "east": {
+          "texture": "#glas"
+        },
+        "west": {
+          "texture": "#glas"
+        },
+        "up": {
+          "texture": "#glas"
+        },
+        "down": {
+          "texture": "#glas"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        1,
+        6
+      ],
+      "to": [
+        10,
+        2,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#glas"
+        },
+        "south": {
+          "texture": "#glas"
+        },
+        "east": {
+          "texture": "#glas"
+        },
+        "west": {
+          "texture": "#glas"
+        },
+        "up": {
+          "texture": "#glas"
+        },
+        "down": {
+          "texture": "#glas"
+        }
+      }
+    }
+  ]
+}

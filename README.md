@@ -342,13 +342,39 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 | **Aufträge** | wie im Chat: Eisen, Diamanten, Holz, Essen, Truhen sortieren – oder ein eigener Satz |
 | **Mitarbeiter bestellen** | eine Mitarbeiterkiste kommt ins Inventar |
 | **Bodyguards rufen / heim** | zwei Leibwächter kommen oder gehen nach Hause |
-| **Zugbrücke ein/aus** | sichert die Brücke oder fährt sie wieder aus (nur Bewohner) |
+| **Smart Home** | Rollläden, Zugbrücke, Licht, Lichtfarbe, Disco und Automatik – siehe unten (nur Bewohner) |
 
 **Mitarbeiter:** Stell die Mitarbeiterkiste auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Sie graben sich selbst zum Erz und bringen jede Ladung in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis und Holz), Schleichen + Rechtsklick zeigt, was er gerade dabeihat.
 
 **Bodyguards:** Echte Eisengolems mit Sakko, weißem Hemd, Krawatte, roter Blume und Sonnenbrille. Sie können nicht sterben, folgen dir und beschützen dich – auf Abstand mit der Pistole, aus der Nähe mit Golem-Fäusten. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
 
 **Straßennetz:** Bevor James zum ersten Mal irgendwohin fährt, baut er eine echte Straße: zuerst einen Kreisel mit Insel vor der Villa, dann eine Straße mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein ganzes Netz – und du kannst es auch selbst befahren. Abgerissen wird nichts, weder an der Villa noch an deinen Bauten. `/butler strassen` zeigt alle Straßen, `Butler, bau eine Straße zum Dorf` baut eine schon vorher.
+
+### 🏠 Smart Home
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/smarthome_app.jpg" alt="Smart-Home-App im Handy"><br><sub><b>Smart-Home-App:</b> alles mit einem Tipp</sub></td>
+<td width="50%"><img src="docs/bilder/smarthome_disco.jpg" alt="Disco-Licht"><br><sub><b>Disco:</b> die Lampen wechseln im Takt die Farbe</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/smarthome_lila.jpg" alt="Licht in Lila"><br><sub><b>Lichtfarbe:</b> acht Farben für alle Lampen</sub></td>
+<td><img src="docs/bilder/smarthome_abend.jpg" alt="Abends fährt alles herunter"><br><sub><b>Automatik:</b> abends Rollläden zu, Licht an, Brücke ein</sub></td>
+</tr>
+</table>
+
+Unter allen Decken der Villa hängen **Smart-Lampen**. Im Handy steuerst du das ganze Haus:
+
+| Knopf | Was passiert |
+|---|---|
+| **Rollläden ▼ / ▲** | alle Rollläden fahren runter oder hoch |
+| **Brücke ein / aus** | die Zugbrücke fährt ein oder aus |
+| **Licht an / aus** | alle Lampen der Villa auf einmal |
+| **■ Farben** | Weiß, Warmweiß, Rot, Grün, Blau, Lila, Pink, Gold |
+| **Disco an / aus** | die Lampen wechseln reihum die Farbe |
+| **Automatik an / aus** | abends: Rollläden runter, Licht an, Brücke ein · morgens: alles wieder auf |
+
+Ohne Handy geht es auch: Rechtsklick auf eine Lampe schaltet nur diese eine.
 
 <br>
 

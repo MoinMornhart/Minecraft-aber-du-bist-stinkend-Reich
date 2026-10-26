@@ -1,0 +1,70 @@
+# 0.3.6: Monitore zum Stuhl (Büro, Bunker) und Smart Home (Handy-App, Rollläden, Licht, Farben, Disco, Automatik).
+# Startseite des Handys: Smart Home ist der 9. Knopf (y 188 + 8 × 42 = 524). Smart-Seite: Zeilen ab y 188, je 42.
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 69.5 33.3 57.4 0 28
+warte 3
+bild s01_buero_monitore
+server /villa ort 45.5 9.3 40.4 180 28
+warte 3
+bild s02_bunker_monitore
+taste F1
+server /villa ort 44 27.4 58 38 22
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 2
+klick
+warte 1.5
+bild s03_handy_start
+linksklick 640 524
+warte 1.5
+bild s04_handy_smart
+linksklick 590 314
+warte 2
+bild s05_licht_aus_knopf
+taste Escape
+warte 1
+taste F1
+bild s06_wohnzimmer_dunkel
+server /handy smart|licht|an
+server /handy smart|farbe|lila
+warte 2
+bild s07_licht_lila
+server /handy smart|farbe|rot
+warte 2
+bild s08_licht_rot
+server /handy smart|disco|an
+warte 1
+bild s09_disco1
+warte 1
+bild s10_disco2
+warte 1
+bild s11_disco3
+server /handy smart|disco|aus
+server /handy smart|farbe|warm
+server /villa ort 56 30 112 180 6
+warte 3
+bild s12_haus_rollo_auf
+server /handy smart|rollo|zu
+warte 4
+bild s13_haus_rollo_zu
+server /handy smart|rollo|auf
+warte 4
+server /handy smart|automatik|an
+server /time set 12000
+warte 3
+server /time set 13000
+warte 6
+bild s14_abend_automatik
+server /villa ort 56 30 150 180 10
+warte 4
+bild s15_abend_bruecke
+server /time set 23000
+warte 2
+server /time set 0
+warte 6
+bild s16_morgen
+taste F1

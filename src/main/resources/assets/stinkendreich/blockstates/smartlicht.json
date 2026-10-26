@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "farbe=weiss,lit=true": {
+      "model": "stinkendreich:block/smartlicht_weiss"
+    },
+    "farbe=weiss,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    },
+    "farbe=warm,lit=true": {
+      "model": "stinkendreich:block/smartlicht"
+    },
+    "farbe=warm,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    },
+    "farbe=rot,lit=true": {
+      "model": "stinkendreich:block/smartlicht_rot"
+    },
+    "farbe=rot,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    },
+    "farbe=gruen,lit=true": {
+      "model": "stinkendreich:block/smartlicht_gruen"
+    },
+    "farbe=gruen,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    },
+    "farbe=blau,lit=true": {
+      "model": "stinkendreich:block/smartlicht_blau"
+    },
+    "farbe=blau,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    },
+    "farbe=lila,lit=true": {
+      "model": "stinkendreich:block/smartlicht_lila"
+    },
+    "farbe=lila,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    },
+    "farbe=pink,lit=true": {
+      "model": "stinkendreich:block/smartlicht_pink"
+    },
+    "farbe=pink,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    },
+    "farbe=gold,lit=true": {
+      "model": "stinkendreich:block/smartlicht_gold"
+    },
+    "farbe=gold,lit=false": {
+      "model": "stinkendreich:block/smartlicht_aus"
+    }
+  }
+}

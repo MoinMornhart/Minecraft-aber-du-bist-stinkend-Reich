@@ -1,0 +1,78 @@
+# 0.3.6 Nachtest: Monitore von schräg oben (Zuschauer-Modus, damit die Kamera nicht fällt), Handy-App, Lampen an der
+# Decke im Wohnzimmer (Smart-Lampen bei x 41/45, y 30, z 59/63), Rollläden von außen, Zugbrücke abends.
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 69.5 35.2 56.6 0 40
+warte 3
+bild s01_buero_monitore
+server /villa ort 45.5 11.2 39.4 180 40
+warte 3
+bild s02_bunker_monitore
+server /villa ort 43 27 57 0 -28
+warte 3
+bild s06_lampen_warm
+server /gamemode creative
+server /villa ort 43 26 57 0 -28
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+taste F1
+warte 2
+klick
+warte 1.5
+bild s03_handy_start
+linksklick 640 524
+warte 1.5
+bild s04_handy_smart
+linksklick 590 272
+warte 2
+bild s05_licht_aus
+taste Escape
+warte 1
+taste F1
+warte 1
+bild s06b_lampen_aus
+server /handy smart|licht|an
+server /handy smart|farbe|lila
+warte 2
+bild s07_licht_lila
+server /handy smart|farbe|blau
+warte 2
+bild s08_licht_blau
+server /handy smart|disco|an
+warte 1
+bild s09_disco1
+warte 1.5
+bild s10_disco2
+warte 1.5
+bild s11_disco3
+server /handy smart|disco|aus
+server /handy smart|farbe|warm
+server /gamemode spectator
+server /villa ort 56 33 90 180 6
+warte 3
+bild s12_rollo_auf
+server /gamemode creative
+server /handy smart|rollo|zu
+server /gamemode spectator
+warte 5
+bild s13_rollo_zu
+server /gamemode creative
+server /handy smart|rollo|auf
+server /handy smart|automatik|an
+server /gamemode spectator
+server /villa ort 55 33 120 180 28
+warte 4
+bild s14_tag_bruecke
+server /time set 13000
+warte 8
+bild s15_abend_bruecke
+server /villa ort 56 33 90 180 6
+warte 4
+bild s16_abend_haus
+server /time set 0
+warte 8
+bild s17_morgen_haus
+taste F1

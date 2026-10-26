@@ -631,7 +631,7 @@ def obergeschoss() -> None:
     b.quader(66, y, 60, 66, y, 61, "gold_block")
     b.quader(72, y, 60, 72, y, 61, "gold_block")
     # Drei flache Monitore, die äußeren schräg zum Platz; davor Tastatur und Maus
-    for x, winkel in ((68, "rechts"), (69, "gerade"), (70, "links")):     # äußere nach innen zum Stuhl (Philips Bild)
+    for x, winkel in ((68, "links"), (69, "gerade"), (70, "rechts")):     # äußere zum Stuhl hin (im Spiel geprüft)
         mech(x, y + 1, 61, "monitor", "north", {"winkel": winkel})
     deko(b, 69, y + 1, 60, "tastatur", "north")
     reihe(b, 69, y, 59, 1, "gamingstuhl", "south")
@@ -1325,7 +1325,7 @@ def kommandozentrale(y: int, y0: int, y1: int) -> None:
     b.quader(42, y, 36, 48, y, 37, "polished_blackstone")
     b.quader(42, y, 36, 42, y, 37, "gold_block")
     b.quader(48, y, 36, 48, y, 37, "gold_block")
-    for x, winkel in ((44, "links"), (45, "gerade"), (46, "rechts")):     # äußere nach innen zum Stuhl
+    for x, winkel in ((44, "rechts"), (45, "gerade"), (46, "links")):     # äußere zum Stuhl hin (im Spiel geprüft)
         mech(x, y + 1, 36, "monitor", "south", {"winkel": winkel})
     deko(b, 45, y + 1, 37, "tastatur", "south")
     reihe(b, 45, y, 38, 1, "gamingstuhl", "north")
@@ -1669,12 +1669,13 @@ def licht_im_garten() -> None:
 
 
 def lichter() -> None:
-    """Hängeleuchten unter allen Decken, nur wo der Raum frei ist (zuletzt ausführen)."""
+    """Smart-Home-Hängelampen unter allen Decken, nur wo der Raum frei ist (zuletzt ausführen)."""
     def haengen(x0, x1, z0, z1, y, abstand=4):
         for x in range(x0, x1 + 1, abstand):
             for z in range(z0, z1 + 1, abstand):
                 if b.hole(x, y, z) == "minecraft:air" and b.hole(x, y + 1, z) not in (None, "minecraft:air"):
-                    b.setze(x, y, z, zustand("lantern", hanging="true", waterlogged="false"))
+                    b.setze(x, y, z, zustand("stinkendreich:smartlicht", farbe="warm", lit="true"))     # Smart-Home-Lampe
+                    b.marke("smartlicht", x, y, z)
     haengen(HX0 + 3, HX1 - 2, HZ0 + 3, HZ1 - 2, OG - 1)          # Erdgeschoss
     haengen(HX0 + 3, HX1 - 2, HZ0 + 3, HZ1 - 2, DACH - 1)        # Obergeschoss
     haengen(44, 65, 40, 56, PH_DACH - 1)                         # Penthouse

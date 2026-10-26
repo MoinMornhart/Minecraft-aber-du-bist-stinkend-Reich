@@ -48,6 +48,8 @@ public final class VillaZustand {
     private long alarmBis;
     /** Spielzeit, zu der die Festung eingeschaltet wurde (für die Animation; nicht gespeichert, 0 = schon lange an). */
     private long festungSeit;
+    /** Einstellungen der Smart-Home-App (Rollläden, Licht, Farbe, Disco, Automatik), siehe {@link SmartHome}. */
+    private JsonObject smartHome = new JsonObject();
     private long tresorEntschaerftBis;
     /** Wann welcher Entschärfknopf zuletzt gedrückt wurde (nicht gespeichert). */
     private final Map<BlockPos, Long> entschaerfDruecke = new HashMap<>();
@@ -103,6 +105,9 @@ public final class VillaZustand {
                 z.stufe = j.has("stufe") ? j.get("stufe").getAsInt() : 1;
                 z.brueckeGesichert = j.has("bruecke_gesichert") && j.get("bruecke_gesichert").getAsBoolean();
                 z.brueckeEingefahren = j.has("bruecke_eingefahren") && j.get("bruecke_eingefahren").getAsBoolean();
+                if (j.has("smarthome")) {
+                    z.smartHome = j.getAsJsonObject("smarthome");
+                }
                 if (j.has("bruecke_bloecke")) {
                     j.getAsJsonArray("bruecke_bloecke").forEach(e -> z.brueckeBloecke.add(e.getAsString()));
                 }
@@ -136,6 +141,7 @@ public final class VillaZustand {
             JsonArray bloecke = new JsonArray();
             brueckeBloecke.forEach(bloecke::add);
             j.add("bruecke_bloecke", bloecke);
+            j.add("smarthome", smartHome);
             Files.writeString(pfad, GSON.toJson(j), StandardCharsets.UTF_8);
         } catch (Exception e) {
             StinkendReich.LOGGER.error("Sicherheitszustand konnte nicht gespeichert werden", e);
@@ -171,6 +177,25 @@ public final class VillaZustand {
         }
         anBewohner(Component.translatable("stinkendreich.stufe.gesetzt",
                 Component.translatable("stinkendreich.stufe." + stufe)).withStyle(ChatFormatting.AQUA), true);
+    }
+
+    /** Ein Schalter der Smart-Home-App (Standard, wenn noch nie gesetzt). */
+    public boolean smart(String name, boolean standard) {
+        return smartHome.has(name) ? smartHome.get(name).getAsBoolean() : standard;
+    }
+
+    public String smartText(String name, String standard) {
+        return smartHome.has(name) ? smartHome.get(name).getAsString() : standard;
+    }
+
+    public void setzeSmart(String name, boolean wert) {
+        smartHome.addProperty(name, wert);
+        speichern();
+    }
+
+    public void setzeSmart(String name, String wert) {
+        smartHome.addProperty(name, wert);
+        speichern();
     }
 
     /** Ticks seit dem Einschalten der Festung (groß, wenn sie schon vor dem Laden der Welt an war). */

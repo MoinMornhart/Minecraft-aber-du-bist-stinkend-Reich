@@ -82,6 +82,10 @@ public final class Handy {
                 de.moinmornhart.stinkendreich.mechanik.Zugbruecke.umschalten(p);
                 return;
             }
+            case "smart" -> {
+                de.moinmornhart.stinkendreich.mechanik.SmartHome.befehl(p, angabe);
+                return;
+            }
             case "bodyguards" -> {
                 if (angabe.equals("heim")) {
                     de.moinmornhart.stinkendreich.bodyguard.Bodyguards.entlassen(p);

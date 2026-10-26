@@ -105,6 +105,10 @@ public final class ModBloecke {
     /** Landmine im Rasen, nur in der Festung (Stufe 4) scharf (siehe {@link de.moinmornhart.stinkendreich.mechanik.LandmineBlock}). */
     public static final Block LANDMINE = block("landmine", de.moinmornhart.stinkendreich.mechanik.LandmineBlock::new,
             technik().noCollision().noOcclusion());
+    /** Smart-Home-Hängelampe: an/aus und acht Farben über die Handy-App (siehe {@link de.moinmornhart.stinkendreich.mechanik.SmartHome}). */
+    public static final Block SMARTLICHT = block("smartlicht", de.moinmornhart.stinkendreich.mechanik.SmartlichtBlock::new,
+            BlockBehaviour.Properties.of().strength(0.5F).sound(SoundType.GLASS).noOcclusion()
+                    .lightLevel(s -> s.getValue(Eigenschaften.LEUCHTET) ? 15 : 0));
     /** Versteckte Falltür am Ende des Notausgangs: sieht aus wie Rasen, nur mit Zugangskarte zu öffnen. */
     public static final Block GEHEIMLUKE = block("geheimluke", p -> new de.moinmornhart.stinkendreich.mechanik.GeheimlukeBlock(BlockSetType.IRON, p),
             BlockBehaviour.Properties.of().strength(50.0F, 3600000.0F).sound(SoundType.GRASS).noOcclusion()

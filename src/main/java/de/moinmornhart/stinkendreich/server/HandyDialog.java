@@ -65,6 +65,18 @@ public final class HandyDialog {
                                 new JsonPrimitive("handy ort|merken|$(name)")).getOrThrow()))));
                 zurueck(knoepfe);
             }
+            case "smarthome" -> {
+                titel = "smarthome";
+                for (String[] zeile : new String[][]{{"rollo", "zu", "auf"}, {"bruecke", "zu", "auf"}, {"licht", "an", "aus"},
+                        {"disco", "an", "aus"}, {"automatik", "an", "aus"}}) {
+                    knopf(knoepfe, "smart." + zeile[0] + "." + zeile[1], "smart|" + zeile[0] + "|" + zeile[1]);
+                    knopf(knoepfe, "smart." + zeile[0] + "." + zeile[2], "smart|" + zeile[0] + "|" + zeile[2]);
+                }
+                for (var f : de.moinmornhart.stinkendreich.mechanik.Eigenschaften.Lichtfarbe.values()) {
+                    knopf(knoepfe, "smart.farbe." + f.getSerializedName(), "smart|farbe|" + f.getSerializedName());
+                }
+                zurueck(knoepfe);
+            }
             case "lieferung" -> {
                 titel = "lieferung";
                 for (String was : Lieferservice.ANGEBOT) {
@@ -94,7 +106,7 @@ public final class HandyDialog {
                 knopf(knoepfe, "mitarbeiter", "mitarbeiter");
                 knopf(knoepfe, "bodyguards", "bodyguards|rufen");
                 knopf(knoepfe, "bodyguards_heim", "bodyguards|heim");
-                knopf(knoepfe, "bruecke", "bruecke");
+                knopf(knoepfe, "smarthome", "seite|smarthome");
             }
         }
         CommonDialogData daten = new CommonDialogData(Component.translatable("stinkendreich.handy.titel." + titel),

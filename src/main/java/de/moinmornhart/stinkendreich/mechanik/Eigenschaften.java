@@ -59,6 +59,27 @@ public final class Eigenschaften {
         }
     }
 
+    /** Farbe der Smart-Home-Lampen (siehe {@link SmartHome}). */
+    public enum Lichtfarbe implements StringRepresentable {
+        WEISS, WARM, ROT, GRUEN, BLAU, LILA, PINK, GOLD;
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(java.util.Locale.ROOT);
+        }
+
+        /** Farbe zu einem Namen ("rot" …), sonst null. */
+        public static Lichtfarbe von(String name) {
+            for (Lichtfarbe f : values()) {
+                if (f.getSerializedName().equals(name)) {
+                    return f;
+                }
+            }
+            return null;
+        }
+    }
+
+    public static final EnumProperty<Lichtfarbe> LICHTFARBE = EnumProperty.create("farbe", Lichtfarbe.class);
     public static final EnumProperty<Winkel> WINKEL = EnumProperty.create("winkel", Winkel.class);
     public static final EnumProperty<Spalte> SPALTE = EnumProperty.create("spalte", Spalte.class);
     public static final EnumProperty<Zeile> ZEILE = EnumProperty.create("zeile", Zeile.class);

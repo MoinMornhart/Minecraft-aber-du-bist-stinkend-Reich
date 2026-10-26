@@ -24,7 +24,7 @@ public class HandyBildschirm extends Screen {
     private static final int BREITE = 160, HOEHE = 270;
     private static final int KNOPF_B = 136, KNOPF_H = 18, ABSTAND = 3;
 
-    private enum Seite { START, NAVI, ORTE, LIEFERUNG, AUFTRAG }
+    private enum Seite { START, NAVI, ORTE, LIEFERUNG, AUFTRAG, SMART }
 
     /** Höchstens so viele eigene Orte passen auf eine Seite. */
     private static final int ORTE_MAX = 7;
@@ -65,7 +65,7 @@ public class HandyBildschirm extends Screen {
                 y = knopf(x, y, "mitarbeiter", () -> senden("mitarbeiter"));
                 y = knopf(x, y, "bodyguards", () -> senden("bodyguards|rufen"));
                 y = knopf(x, y, "bodyguards_heim", () -> senden("bodyguards|heim"));
-                knopf(x, y, "bruecke", () -> senden("bruecke"));
+                knopf(x, y, "smarthome", () -> wechseln(Seite.SMART));
             }
             case NAVI -> {
                 for (String ziel : List.of("villa", "dorf", "endportal", "netherportal", "mine")) {
@@ -108,6 +108,29 @@ public class HandyBildschirm extends Screen {
                 }
                 knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
             }
+            case SMART -> {
+                // Smart Home: je Zeile zwei Knöpfe (an/aus), dazu acht Lichtfarben
+                int halb = (KNOPF_B - 4) / 2;
+                for (String[] zeile : new String[][]{{"rollo", "zu", "auf"}, {"bruecke", "zu", "auf"}, {"licht", "an", "aus"},
+                        {"disco", "an", "aus"}, {"automatik", "an", "aus"}}) {
+                    addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[1]),
+                            b -> senden("smart|" + zeile[0] + "|" + zeile[1])).bounds(x, y, halb, KNOPF_H).build());
+                    addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[2]),
+                            b -> senden("smart|" + zeile[0] + "|" + zeile[2])).bounds(x + halb + 4, y, halb, KNOPF_H).build());
+                    y += KNOPF_H + ABSTAND;
+                }
+                int fx = x, fb = (KNOPF_B - 7 * 2) / 8;
+                for (var f : de.moinmornhart.stinkendreich.mechanik.Eigenschaften.Lichtfarbe.values()) {
+                    String name = f.getSerializedName();
+                    Button knopf = Button.builder(Component.literal("■").withStyle(s -> s.withColor(FARBEN.get(name))),
+                            b -> senden("smart|farbe|" + name)).bounds(fx, y, fb, KNOPF_H).build();
+                    knopf.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
+                            Component.translatable("stinkendreich.smarthome.farbe." + name)));
+                    addRenderableWidget(knopf);
+                    fx += fb + 2;
+                }
+                knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
+            }
             case AUFTRAG -> {
                 for (String a : List.of("eisen", "diamanten", "holz", "essen", "sortieren", "heim")) {
                     String text = Component.translatable("stinkendreich.handy.auftrag." + a + ".text").getString();
@@ -127,6 +150,10 @@ public class HandyBildschirm extends Screen {
             }
         }
     }
+
+    /** Farben der Farbknöpfe in der Smart-Home-App (wie die Glasschirme der Lampen). */
+    private static final java.util.Map<String, Integer> FARBEN = java.util.Map.of("weiss", 0xF4F4F4, "warm", 0xFFD58A,
+            "rot", 0xFF3B30, "gruen", 0x3BE36A, "blau", 0x3B82FF, "lila", 0xA45BFF, "pink", 0xFF5BC8, "gold", 0xF2C230);
 
     private int knopf(int x, int y, String name, Runnable aktion) {
         return knopf(x, y, name, aktion, KNOPF_H);

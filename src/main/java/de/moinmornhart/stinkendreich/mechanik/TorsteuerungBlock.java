@@ -20,7 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * Steuert alle Torflügel eines Typs im Umkreis. Modi (in der Block-Entity, vom Bauplan gesetzt):
  * <ul>
  *   <li>{@code tor} – öffnet für Bewohner und Kartenträger in der Nähe; bei Stufe 0 immer offen</li>
- *   <li>{@code rollladen} – ab Stufe 2 geschlossen (Lockdown)</li>
+ *   <li>{@code rollladen} – ab Stufe 2 geschlossen (Lockdown), sonst wie in der Smart-Home-App eingestellt</li>
  *   <li>{@code schiebetuer} – öffnet, wenn jemand davorsteht (ab Stufe 2 nur für Berechtigte)</li>
  *   <li>{@code schalter} – wechselt bei Rechtsklick oder Redstone-Signal</li>
  *   <li>{@code redstone} – offen, solange ein Redstone-Signal anliegt (z. B. vom Tastenfeld)</li>
@@ -61,7 +61,7 @@ public class TorsteuerungBlock extends MechanikBlock {
         boolean offen;
         switch (modus) {
             case "tor" -> offen = z.stufe() == 0 || berechtigteInDerNaehe(welt, pos, radius + 4, z);
-            case "rollladen" -> offen = z.stufe() < 2;
+            case "rollladen" -> offen = z.stufe() < 2 && !SmartHome.rolllaedenZu(z);       // Lockdown oder Smart Home
             case "redstone" -> offen = welt.hasNeighborSignal(pos);
             case "redstone_invers" -> offen = !welt.hasNeighborSignal(pos);
             case "schiebetuer" -> {

@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 12:40 Uhr (Philip ist wach)_
+_Zuletzt aktualisiert: 2026-10-26, 13:05 Uhr (Philip ist wach)_
 
 ## Erledigt
 
@@ -231,6 +231,20 @@ _Zuletzt aktualisiert: 2026-10-26, 12:40 Uhr (Philip ist wach)_
   Notausgang (Tunnel unter Graben und Lava hindurch bis x 2, Leiter, Luke, Privattür im Außenzaun, grüne Schilder
   `notausgang_links/_rechts` aus deko.py), Kommandozentrale wie das Büro (`kommandozentrale()`), Tür zur Suite.
   Test: `festung038.txt`, Testhilfe `klient zentrale <wert>` und `klient zentralemenue`.
+- Festung fertig und im Video geprüft (`festung_video.txt` → `festung.mp4`): Minen im Ring 40 Blöcke ums Grundstück
+  (`villa/Festungsbau.minenfeld`, Raster 8), Mauer höher (`MAUER_OBEN`), auf der Mauerkrone abwechselnd Abwehrgeschütz
+  und Himmelslaser, Animation als Welle (`Festung.verzoegerung`), Sirenen, nichts im Chat (nur Leiste), Notausgang
+  mit versteckter Falltür (`GeheimlukeBlock`, nur mit Karte) 50 Blöcke westlich. Testbefehle `/villa minentest`, `/villa luke`.
+- Monitore am Schreibtisch: Element-Drehung +22,5° (`links`) dreht im Spiel nach außen. Richtig zum Stuhl: Büro
+  (Bildschirm nach Norden) x 68 `links`, x 70 `rechts`; Bunker (nach Süden) x 44 `rechts`, x 46 `links`. Am Foto prüfen.
+- **Smart Home** (`mechanik/SmartHome`, `SmartlichtBlock` mit `lit` + `farbe`, Marken „smartlicht“ statt Laternen in
+  `lichter()`, Speicher `VillaZustand.smartHome`): Handy-Seite SMART (Rollläden, Brücke, Licht, 8 Farben, Disco,
+  Automatik), ohne Mod im `HandyDialog`, Befehl `/handy smart|<was>|<wert>`. Automatik: ab 12500 abends, ab 23500
+  morgens (Uhr ab 26.1 `getDefaultClockTime`, davor `getDayTime`). Test `smart038.txt`, `smart038b.txt`.
+- Fortschrittsseite neu aufgebaut (`scratchpad/seite_neu.py` + `seite_daten.py`): Läuft/Offen mit Uhrzeit, große Updates
+  (0.3.6 Festung & Smart Home, 0.4.0 Server-Plugin & Nachbarschaft, 0.4.1 Server für alle Versionen), Archiv.
+- Philips Zeitplan (26.10.): Mod-Features bis 17 Uhr, README/Trailer/Release 0.3.6 bis 18 Uhr, danach Server-Plugin
+  ohne Zeitlimit.
 - Danach: README komplett neu mit allen Bildern geprüft (Philip: Drohnenbild veraltet), Trailer, Release 0.3.6.
 - Ganz am Schluss (Philip: „Rest des Tages dafür“): **Paper-Plugin** und **mehrere Villen auf dem Server** mit
   Abstand, Straßen zwischen den Villen, Villen im Handy-Navi, Besitzer über dem Butler, auf der Zugangskarte und

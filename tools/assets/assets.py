@@ -306,6 +306,22 @@ def tex_geschuetz_lauf():
     return img
 
 
+SMART_FARBEN = {"weiss": (244, 244, 244), "warm": (255, 213, 138), "rot": (255, 59, 48), "gruen": (59, 227, 106),
+                "blau": (59, 130, 255), "lila": (164, 91, 255), "pink": (255, 91, 200), "gold": (242, 194, 48)}
+
+
+def tex_smartlicht(farbe):
+    """Glasschirm der Smart-Home-Lampe: leuchtende Farbe mit hellem Glanzpunkt (aus = graues Glas)."""
+    basis = SMART_FARBEN.get(farbe, (70, 72, 78))
+    img = Image.new("RGBA", (16, 16), basis + (255,))
+    d = ImageDraw.Draw(img)
+    dunkel = tuple(int(c * 0.78) for c in basis)
+    d.rectangle([0, 0, 15, 15], outline=dunkel)
+    hell = tuple(min(255, c + 70) for c in basis)
+    d.rectangle([3, 3, 5, 5], fill=hell)
+    return img
+
+
 def tex_geheimluke():
     """Versteckte Falltür: Rasen wie auf einer Wiese (Ebenen-Grün), kaum sichtbare Fuge am Rand."""
     rnd = random.Random(31)
@@ -323,6 +339,7 @@ def tex_geheimluke():
 TEXTUREN = {
     "technik_seite": tex_technik_seite,
     "geheimluke": tex_geheimluke,
+    **{f"smartlicht_{f}": (lambda f=f: tex_smartlicht(f)) for f in list(SMART_FARBEN) + ["aus"]},
     "landmine": tex_landmine,
     "landmine_licht": lambda: tex_landmine_licht(False),
     "landmine_licht_an": lambda: tex_landmine_licht(True),
@@ -504,6 +521,17 @@ def bs_alle(modell: str) -> dict:
     return {"variants": v}
 
 
+def m_smartlicht(farbe: str) -> dict:
+    """Hängelampe: Kette aus Metall, goldene Fassung, Glasschirm in der Lampenfarbe."""
+    glas, kette, gold = B(f"smartlicht_{farbe}"), "minecraft:block/black_concrete", "minecraft:block/gold_block"
+    alle = ("north", "south", "east", "west", "up", "down")
+    def teil(von, bis, tex):
+        return {"from": von, "to": bis, "faces": {f: {"texture": tex} for f in alle}}
+    return {"parent": "minecraft:block/block", "textures": {"particle": glas, "glas": glas, "kette": kette, "gold": gold},
+            "elements": [teil([7.5, 10, 7.5], [8.5, 16, 8.5], "#kette"), teil([6, 9, 6], [10, 10, 10], "#gold"),
+                         teil([4.5, 2, 4.5], [11.5, 9, 11.5], "#glas"), teil([6, 1, 6], [10, 2, 10], "#glas")]}
+
+
 def bs_falltuer(name: str) -> dict:
     """Blockzustände einer Falltür wie im Spiel (Richtung × Hälfte × offen)."""
     v = {}
@@ -602,6 +630,11 @@ BLOECKE: dict[str, dict] = {
     "landmine": dict(modelle={"landmine": m_landmine("landmine_licht"), "landmine_an": m_landmine("landmine_licht_an")},
                      zustand={"variants": {"lit=false": {"model": B("landmine")}, "lit=true": {"model": B("landmine_an")}}},
                      de="Landmine (scharf in Stufe 4)", en="Land Mine (armed at level 4)"),
+    "smartlicht": dict(modelle={"smartlicht" if f == "warm" else f"smartlicht_{f}": m_smartlicht(f) for f in list(SMART_FARBEN) + ["aus"]},
+                       zustand={"variants": {f"farbe={f},lit={'true' if an else 'false'}":
+                                             {"model": B("smartlicht" if (an and f == "warm") else (f"smartlicht_{f}" if an else "smartlicht_aus"))}
+                                             for f in SMART_FARBEN for an in (True, False)}},
+                       de="Smart-Home-Lampe", en="Smart Home Lamp"),
     "geheimluke": dict(modelle={"geheimluke": {"parent": "minecraft:block/template_trapdoor_bottom", "textures": {"texture": B("geheimluke")}},
                                 "geheimluke_top": {"parent": "minecraft:block/template_trapdoor_top", "textures": {"texture": B("geheimluke")}},
                                 "geheimluke_open": {"parent": "minecraft:block/template_trapdoor_open", "textures": {"texture": B("geheimluke")}}},
