@@ -6,6 +6,8 @@
 # Aufruf:   tools/ingame/test.sh <minecraft-version> [szenario-datei]
 # Ausgabe:  build/ingame/<version>/*.png und build/ingame/<version>/logs/
 # Umgebung: PORT, SEED, SICHTWEITE, WELT_BEHALTEN=1, LAUTSTAERKE (Gesamtlautstärke 0.0–1.0, sonst stumm)
+#           VANILLA=1: Server-Version prüfen – ein Server mit der Mod (und Polymer aus tools/ingame/server-mods/),
+#                      dazu ein ganz normales Minecraft ohne Mods als Spieler (tools/ingame/vanilla_klient.py)
 #
 # Szenario-Zeilen:  warte <sek> | taste <xdotool-taste> | befehl </befehl …> | bild <name>
 #                   klick (Rechtsklick) | linksklick <x> <y> | maus <x> <y>   (Bildschirmpixel bei 1280x720)
@@ -58,11 +60,15 @@ fi
 fi
 
 # ---------- 2. Welt als Einzelspieler-Spielstand vorbereiten ----------
-rm -rf "$RUN/saves/testwelt" "$RUN/screenshots"
+# (bei VANILLA=1 spielt der normale Client in einem eigenen Ordner auf dem Server)
+KLIENT_ORDNER="$RUN"
+[[ "${VANILLA:-0}" == 1 ]] && KLIENT_ORDNER="$RUN/vanilla"
+mkdir -p "$KLIENT_ORDNER"
+rm -rf "$RUN/saves/testwelt" "$KLIENT_ORDNER/screenshots"
 mkdir -p "$RUN/saves"
 cp -r "$RUN/testwelt" "$RUN/saves/testwelt"
 python3 "$ROOT/tools/ingame/welt_vorbereiten.py" "$RUN/saves/testwelt/level.dat"
-cat > "$RUN/options.txt" <<EOF
+cat > "$KLIENT_ORDNER/options.txt" <<EOF
 onboardAccessibility:false
 pauseOnLostFocus:false
 renderDistance:${SICHTWEITE:-8}
@@ -78,6 +84,24 @@ joinedFirstServer:true
 narrator:0
 lang:de_de
 EOF
+if [[ "${VANILLA:-0}" == 1 ]]; then
+  # Philip darf auf dem Server Befehle ausführen (Offline-Kennung wie bei online-mode=false)
+  python3 - "$RUN/ops.json" <<'PY'
+import hashlib, json, sys, uuid
+h = bytearray(hashlib.md5(b"OfflinePlayer:Philip").digest()); h[6] = (h[6] & 0x0f) | 0x30; h[8] = (h[8] & 0x3f) | 0x80
+json.dump([{"uuid": str(uuid.UUID(bytes=bytes(h))), "name": "Philip", "level": 4, "bypassesPlayerLimit": False}], open(sys.argv[1], "w"))
+PY
+  # Serverliste mit „Ressourcenpaket annehmen“, damit keine Rückfrage kommt (servers.dat ist unkomprimiertes NBT)
+  python3 - "$KLIENT_ORDNER/servers.dat" "localhost:${PORT:-25565}" <<'PY'
+import struct, sys
+def s(t): b = t.encode(); return struct.pack(">H", len(b)) + b
+eintrag = b"\x08" + s("ip") + s(sys.argv[2]) + b"\x08" + s("name") + s("Test") + b"\x01" + s("acceptTextures") + b"\x01" + b"\x00"
+open(sys.argv[1], "wb").write(b"\x0a" + s("") + b"\x09" + s("servers") + b"\x0a" + struct.pack(">i", 1) + eintrag + b"\x00")
+PY
+  # Server-Mods (Polymer) nur für diesen Lauf in den Mods-Ordner legen
+  rm -rf "$RUN/mods"; mkdir -p "$RUN/mods"
+  cp "$ROOT/tools/ingame/server-mods/$V/"*.jar "$RUN/mods/" 2>/dev/null
+fi
 
 # ---------- 3. Client auf einem virtuellen Bildschirm starten ----------
 NR=99
@@ -98,46 +122,76 @@ eigene_beenden() {
 }
 aufraeumen() {
   eigene_beenden
-  kill "$CLIENT" "$XVFB" 2>/dev/null
+  kill "$CLIENT" "$XVFB" ${SERVER:-} 2>/dev/null
+  [[ "${VANILLA:-0}" == 1 ]] && rm -rf "$RUN/mods"
 }
 trap aufraeumen EXIT
 
-melde "Client startet …"
 rm -f "$RUN/stinkendreich-befehle.txt" "$RUN/stinkendreich-klient.txt"
+if [[ "${VANILLA:-0}" == 1 ]]; then
+  melde "Server startet (mit Mod) …"
+  STINKENDREICH_AUTOTEST=befehle ./gradlew ":$V:runServer" --console=plain > "$LOGS/server_spiel.log" 2>&1 </dev/null &
+  SERVER=$!
+  for _ in $(seq 1 600); do
+    grep -q "Done (" "$LOGS/server_spiel.log" && break
+    kill -0 "$SERVER" 2>/dev/null || { melde "FEHLER: Server ist abgestürzt"; tail -60 "$LOGS/server_spiel.log"; exit 1; }
+    sleep 1
+  done
+  melde "Normales Minecraft (ohne Mod) startet …"
+  python3 "$ROOT/tools/ingame/vanilla_klient.py" "$V" "$KLIENT_ORDNER" "localhost:${PORT:-25565}" Philip \
+    > "$LOGS/client.log" 2>&1 </dev/null &
+  CLIENT=$!
+else
+melde "Client startet …"
 STINKENDREICH_AUTOTEST=befehle ./gradlew ":$V:runClient" --console=plain \
   --args="--quickPlaySingleplayer testwelt --width 1280 --height 720 --username Philip" \
   > "$LOGS/client.log" 2>&1 </dev/null &
 CLIENT=$!
+fi
 
+# Protokoll mit den Chatzeilen: der Entwicklungs-Client schreibt sie mit, ein normales Minecraft nicht (dann der Server)
+CHATLOG="$LOGS/client.log"
+[[ "${VANILLA:-0}" == 1 ]] && CHATLOG="$LOGS/server_spiel.log"
 for _ in $(seq 1 900); do
-  grep -qE "joined the game|hat das Spiel betreten" "$LOGS/client.log" && break
+  grep -qE "joined the game|hat das Spiel betreten" "$CHATLOG" && break
   if ! kill -0 "$CLIENT" 2>/dev/null; then
     melde "FEHLER: Client ist abgestürzt"; tail -60 "$LOGS/client.log"; exit 1
   fi
   sleep 1
 done
-grep -qE "joined the game|hat das Spiel betreten" "$LOGS/client.log" || { melde "FEHLER: Welt nicht betreten"; tail -60 "$LOGS/client.log"; exit 1; }
+grep -qE "joined the game|hat das Spiel betreten" "$CHATLOG" || { melde "FEHLER: Welt nicht betreten"; tail -60 "$LOGS/client.log"; exit 1; }
 melde "In der Welt, warte auf die Darstellung …"
 sleep "${RENDERZEIT:-25}"
 
-FENSTER="$(xdotool search --name "Minecraft" | head -1)"
+FENSTER="$(xdotool search --onlyvisible --name "Minecraft" | head -1)"
+[[ -n "$FENSTER" ]] || FENSTER="$(xdotool search --name "Minecraft" | head -1)"
+# Ein normales Minecraft (SDL ohne Fensterverwaltung) hat manchmal keinen Fensternamen: dann das größte sichtbare Fenster
+if [[ -z "$FENSTER" ]]; then
+  for w in $(xdotool search --onlyvisible --name ".*" 2>/dev/null); do
+    breite="$(xdotool getwindowgeometry "$w" 2>/dev/null | sed -n 's/.*Geometry: \([0-9]*\)x.*/\1/p')"
+    [[ "${breite:-0}" -ge 1000 ]] && FENSTER="$w"
+  done
+fi
+melde "Fenster: $FENSTER ($(xdotool getwindowname "$FENSTER" 2>/dev/null))"
 xdotool windowfocus "$FENSTER" 2>/dev/null
 xdotool mousemove 640 360
 
 # ---------- 4. Szenario abarbeiten ----------
 bild() {
   local name="$1" vorher
-  vorher="$(ls "$RUN/screenshots" 2>/dev/null | wc -l)"
+  vorher="$(ls "$KLIENT_ORDNER/screenshots" 2>/dev/null | wc -l)"
   xdotool key F2
   for _ in $(seq 1 60); do
-    [[ "$(ls "$RUN/screenshots" 2>/dev/null | wc -l)" -gt "$vorher" ]] && break
+    [[ "$(ls "$KLIENT_ORDNER/screenshots" 2>/dev/null | wc -l)" -gt "$vorher" ]] && break
     sleep 0.5
   done
   sleep 1
   local neu
-  neu="$(ls -t "$RUN/screenshots"/*.png 2>/dev/null | head -1)"
+  neu="$(ls -t "$KLIENT_ORDNER/screenshots"/*.png 2>/dev/null | head -1)"
   if [[ -n "$neu" ]]; then
     mv "$neu" "$AUS/$name.png"; melde "Bild: $AUS/$name.png"
+  elif ffmpeg -y -loglevel error -f x11grab -video_size 1280x720 -i "$DISPLAY" -frames:v 1 "$AUS/$name.png" </dev/null; then
+    melde "Bild (vom Bildschirm): $AUS/$name.png"
   else
     melde "WARNUNG: kein Screenshot für $name"
   fi
@@ -175,9 +229,9 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;   # Befehl ohne Tippen (Autotest-Modus)
     klient) printf '%s\n' "$rest" >> "$RUN/stinkendreich-klient.txt"; sleep 1 ;;   # schliessen | butlermenue
-    merke) MARKE=$(wc -l < "$LOGS/client.log") ;;
-    bis) set -- $rest; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$LOGS/client.log")}"; MARKE=""; ende=$((SECONDS + frist))
-         until tail -n +"$((ab + 1))" "$LOGS/client.log" | grep -qaE "$muster"; do
+    merke) MARKE=$(wc -l < "$CHATLOG") ;;
+    bis) set -- $rest; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$CHATLOG")}"; MARKE=""; ende=$((SECONDS + frist))
+         until tail -n +"$((ab + 1))" "$CHATLOG" | grep -qaE "$muster"; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi
            sleep 2
          done ;;

@@ -7,6 +7,7 @@ server /villa stufe 0
 server /butler strasse dorf
 server /villa ort 160 80 175 139 22
 warte 30
+server /clear @p
 taste F1
 server /tick rate 6.667
 warte 5

@@ -20,6 +20,8 @@ repositories {
         filter { groups.forEach(::includeGroup) }
     }
     strictMaven("https://api.modrinth.com/maven", "Modrinth", "maven.modrinth")
+    // Polymer (Server-Version für Spieler ohne Mod)
+    strictMaven("https://maven.nucleoid.xyz", "Nucleoid", "eu.pb4", "xyz.nucleoid")
 }
 
 // Offizielle Anthropic-Bibliothek für den optionalen Claude-Butler. Sie kommt samt ihren
@@ -47,6 +49,14 @@ dependencies {
     // mod…-Konfigurationen funktionieren dank loom-back-compat auch ab 26.1
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+
+    // Server-Version: Polymer nur zum Übersetzen. Die Mod läuft auch ohne; liegt Polymer auf dem Server,
+    // sehen Spieler ohne Mod alles über ein Ressourcenpaket (siehe server/ServerPaket).
+    (findProperty("deps.polymer") as String?)?.let { polymer ->
+        for (modul in listOf("polymer-core", "polymer-blocks", "polymer-virtual-entity", "polymer-resource-pack", "polymer-autohost")) {
+            modCompileOnly("eu.pb4:$modul:$polymer")
+        }
+    }
 }
 
 loom {

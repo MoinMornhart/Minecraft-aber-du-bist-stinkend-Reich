@@ -65,3 +65,6 @@ versions/*/.gradle/
 
 # Arbeitsordner von Claude-Helfern
 .claude/worktrees/
+
+# Fremde Server-Mods für den Test der Server-Version (holt tools/ingame/server_mods_holen.sh)
+/tools/ingame/server-mods/

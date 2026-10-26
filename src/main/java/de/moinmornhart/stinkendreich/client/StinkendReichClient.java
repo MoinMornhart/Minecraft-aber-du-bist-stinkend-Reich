@@ -103,6 +103,11 @@ public class StinkendReichClient implements ClientModInitializer {
         KlientBruecke.handy = () -> KompatClient.zeige(new de.moinmornhart.stinkendreich.client.handy.HandyBildschirm());
         AutoKlient.registrieren();
         UpdateKlient.registrieren();
+        // Dem Server zeigen, dass dieser Client die Mod hat (für die Server-Version, siehe ModErkennung)
+        net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking.registerGlobalReceiver(
+                de.moinmornhart.stinkendreich.netz.ModErkennung.Hallo.TYP, (paket, kontext) -> { });
+        net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.registerGlobalReceiver(
+                de.moinmornhart.stinkendreich.netz.ModErkennung.Hallo.TYP, (paket, kontext) -> { });
         // Musikanlage: eigene Dateien abspielen, Spotify-Fernbedienung
         MusikKlient.registrieren();
         AutotestKlient.registrieren();

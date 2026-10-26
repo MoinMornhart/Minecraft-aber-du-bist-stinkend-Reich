@@ -59,7 +59,8 @@ def titel(text: str, tag: bool = True) -> None:
 z("# Trailer (erzeugt von tools/ingame/trailer_szenario.py)",
   "server /gamemode spectator", "server /time set 6000", "server /weather clear", "server /difficulty peaceful",
   "server /villa stufe 0", "server /butler strasse dorf", "server /villa ort 160 80 175 139 22")
-zeilen += ["warte 30", "taste F1", f"server /tick rate {20 / ZEITLUPE:.3f}", "warte 5", "video start trailer"]
+# Leere Hände (das geschenkte Handy läge sonst in der Hand und öffnete sich bei jedem Rechtsklick)
+zeilen += ["warte 30", "server /clear @p", "taste F1", f"server /tick rate {20 / ZEITLUPE:.3f}", "warte 5", "video start trailer"]
 
 titel("Jede neue Welt startet hier")
 fahrt(9, (160, 80, 175, 139, 22), (118, 58, 128, 139, 19), (80, 48, 138, 165, 16), (56, 36, 118, 180, 10))

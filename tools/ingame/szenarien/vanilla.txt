@@ -1,0 +1,34 @@
+# Server-Version: Spieler ohne Mod auf einem Server mit Mod und Polymer (VANILLA=1 tools/ingame/test.sh 26.3 …)
+# Prüft: Betreten klappt, Ressourcenpaket, Villa von außen und innen, Butler, Items in der Hand.
+warte 10
+taste F1
+bild v00_nach_dem_betreten
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 3
+bild v01_spawn
+server /villa ort 55.5 28.5 86 180 4
+warte 8
+bild v02_villa_vorn
+server /villa ort 55 27 73.5 180 2
+warte 3
+bild v03_haustuer
+server /villa ort 51.5 29 66 200 14
+warte 3
+bild v04_ballsaal
+server /villa ort 42 17.6 58 180 8
+warte 3
+bild v05_club
+server /villa ort 57.5 26 66 180 5
+warte 2
+bild v06_butler
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /item replace entity @p hotbar.1 with stinkendreich:geldkanone
+server /item replace entity @p hotbar.2 with stinkendreich:zugangskarte
+warte 2
+bild v07_items
+server /villa ort 55.5 40 150 180 30
+warte 6
+bild v08_von_oben
