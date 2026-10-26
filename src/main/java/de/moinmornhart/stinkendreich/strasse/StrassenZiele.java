@@ -59,7 +59,10 @@ public final class StrassenZiele {
         if (p == null) {
             return null;
         }
-        // An die Oberfläche (die Fundstelle kann tief im Boden liegen, z. B. bei Mine und Festung)
+        // An die Oberfläche (die Fundstelle kann tief im Boden liegen, z. B. bei Mine und Festung). Den Chunk erst
+        // laden: Ein noch nicht erzeugter Chunk meldet als Höhe die Unterkante der Welt (−64), dann führte die Straße
+        // in den Boden hinein.
+        welt.getChunk(p.getX() >> 4, p.getZ() >> 4);
         int y = welt.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p.getX(), p.getZ());
         if (fester.equals("netherportal") && p.getY() > y - 3) {
             y = p.getY();

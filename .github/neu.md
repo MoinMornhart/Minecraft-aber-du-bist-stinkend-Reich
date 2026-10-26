@@ -1,3 +1,7 @@
+### Neu in 0.3.8
+
+- **Straßen:** Die automatischen Straßen führen jetzt an die Oberfläche der Ziele (in 0.3.7 konnte eine Straße zu einem weit entfernten Ziel in den Boden hinein gebaut werden). Bitte 0.3.7 nicht mehr verwenden.
+
 ### Neu in 0.3.7
 
 - **Läuft jetzt auch mit dem NoRisk Client** und anderen Launchern mit älterem Fabric Loader (die Mod verlangt keine bestimmte Loader-Version mehr).

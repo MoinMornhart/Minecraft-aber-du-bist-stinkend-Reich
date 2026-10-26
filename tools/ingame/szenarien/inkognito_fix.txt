@@ -6,9 +6,6 @@ server /gamerule advance_time false
 warte 25
 taste F1
 server /execute as @e[type=!player,type=!stinkendreich:sitz,x=-56,y=40,z=-56,dx=112,dy=80,dz=112] at @s unless block ~ ~0.3 ~ #minecraft:replaceable run say VORHER_STECKT
-server /villa ort 91.5 17 45.2 180 30
-warte 3
-bild fix_garage_vorher
 server /villa inkognito an
 warte 40
 server /villa inkognito aus

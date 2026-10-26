@@ -1,0 +1,11 @@
+# Straßen entstehen gleich nach dem Betreten von selbst (Ziele an der Oberfläche, nicht bei y −64)
+server /gamemode spectator
+server /time set 6000
+server /gamerule advance_time false
+warte 25
+taste F1
+warte 120
+server /villa ort 56 140 160 180 55
+warte 4
+bild strassen_auto
+server /butler strassen
