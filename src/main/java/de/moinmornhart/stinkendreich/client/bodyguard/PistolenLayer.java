@@ -80,7 +80,7 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
         bild.submit(pose, sammler, licht, OverlayTexture.NO_OVERLAY, 0);
         pose.popPose();
     }
-    //?} elif >=1.21.4 {
+    //?} elif >=1.21.5 {
     /*@Override
     public void render(PoseStack pose, net.minecraft.client.renderer.MultiBufferSource puffer, int licht, IronGolemRenderState zustand,
                        float gier, float neigung) {
@@ -90,6 +90,22 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
         pose.pushPose();
         anDieHand(pose);
         net.minecraft.client.renderer.item.ItemStackRenderState bild = new net.minecraft.client.renderer.item.ItemStackRenderState();
+        Minecraft.getInstance().getItemModelResolver().updateForTopItem(bild, pistole(), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
+                Minecraft.getInstance().level, null, 0);
+        bild.render(pose, puffer, licht, OverlayTexture.NO_OVERLAY);
+        pose.popPose();
+    }
+    *///?} elif >=1.21.4 {
+    /*@Override
+    public void render(PoseStack pose, net.minecraft.client.renderer.MultiBufferSource puffer, int licht, IronGolemRenderState zustand,
+                       float gier, float neigung) {
+        if (zustand.isInvisible) {
+            return;
+        }
+        pose.pushPose();
+        anDieHand(pose);
+        net.minecraft.client.renderer.item.ItemStackRenderState bild = new net.minecraft.client.renderer.item.ItemStackRenderState();
+        // In 1.21.4 noch mit der Angabe „linke Hand“
         Minecraft.getInstance().getItemModelResolver().updateForTopItem(bild, pistole(), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
                 false, Minecraft.getInstance().level, null, 0);
         bild.render(pose, puffer, licht, OverlayTexture.NO_OVERLAY);

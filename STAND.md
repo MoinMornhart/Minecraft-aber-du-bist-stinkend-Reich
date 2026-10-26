@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 16:56 Uhr (Release 0.3.6 online, Trailer wird aufgenommen)_
+_Zuletzt aktualisiert: 2026-10-26, 22:35 Uhr (Release 0.3.9 läuft, Trailer wird aufgenommen)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -218,6 +218,48 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
 
+## Version 0.3.9 (Release angestoßen 26.10. 22:26, „Fehler-Runde vor dem Plugin“)
+
+- **Inkognito neu** (`mechanik/Inkognito`): Phasen `LADEN_RUNTER, RUNTER, DECKEL_ZU, BAEUME_HOCH | BAEUME_WEG,
+  DECKEL_AUF, LADEN_HOCH, HOCH`. Vor der Fahrt werden alle Chunks der Villa erzwungen geladen (`laden`, 40 Ticks),
+  Figuren (Bilder, Rahmen, Ständer, Autos ohne Spieler, Fische …) werden wie in einer Strukturdatei eingepackt
+  (`StructureTemplate.fillFromWorld` + `mixin/StrukturZugriff`), entfernt und nach der Fahrt um dy verschoben neu
+  angelegt (`StructureEntityInfo.pos` ist relativ, deshalb die eigene Position verschieben). Nach jeder Spalte
+  `ruhe()` (Block- und Flüssigkeits-Ticks löschen), damit nichts fließt oder abfällt. Spieler über dem versenkten
+  Dach werden beim Hochfahren nicht mitgehoben, sondern danach oben abgesetzt.
+- Testhilfe `/villa vergleich merken|pruefen [dy]` (`villa/VillaVergleich`): jeder Block und jede feste Figur;
+  natürliche Änderungen (Gras unter Blöcken → Erde, Seetang, Torflügel, Fledermäuse) zählen nicht.
+  Ergebnis Hin- und Rückfahrt: „VERGLEICH alles gleich“ (Szenario `inkognito_vergleich.txt`, Tiefe 33).
+- **Straßen immer an der Luft** (`StrassenBau`, `Strassennetz`): Chunk vor der Höhenabfrage laden, offener
+  Einschnitt statt Tunnel, keine Unterführung unter einer anderen Straße, Brücken über Wasser, Stufen ohne
+  Erdreihe. Seit 26.1 zählen Gras/Podsol/Myzel nicht mehr zu `BlockTags.DIRT` → `Schutz.istNatuerlich` kennt sie
+  jetzt einzeln (auch Blumen, Setzlinge, Eis, Korallen …). Befehle `/butler strassen neu`, `/butler strassen pruefen`.
+  Geprüft in neuer Welt: Dorf 695, Mine 102, Netherportal 280, Endportal 1407 Punkte, 0 unter der Erde
+  (eine Bordsteinkante an der Kreuzung Endportal/Netherportal ist noch ein Hindernis).
+- **Tor, Garage, Zugbrücke** (`TorsteuerungBlock.amTor`: zu Fuß 6 Blöcke, im Auto 14, James nur wenn er fährt bzw.
+  hinläuft; Smart Home „Tor bleibt zu“/„Garage bleibt zu“ = `tor_zu`/`garage_zu`). Zugbrücke: geparkte Autos
+  zählen nur in 12 Blöcken Umkreis, James nur beim Fahren. Test `tore039.txt`, `bruecke039.txt` (alles OK).
+- **Gästeliste** (`VillaZustand.gaeste`, `darfRein` = Bewohner oder Gast): Kartenleser, Privattür, Tor, Geheimgang,
+  Zugbrücke. Handy-Seite GÄSTE, ohne Mod im `HandyDialog`, `/butler gast <name>`, `/butler gast weg <name>`,
+  `/butler gaeste`, Chat „Butler, lass Max rein“, Werkzeug „gast“ für Claude.
+- **Haie** (`hai/HaiEntity`): greifen jeden Spieler im Wasser an (außer Kreativ), auch auf Friedlich (eigenes Ziel
+  `Jagd`, Schadensart `stinkendreich:hai` mit `"scaling":"never"`), eigenes Modell `client/hai/HaiModell` und Textur
+  aus `tools/assets/hai.py`.
+- Aufzug ruckelt nicht mehr (`AufzugKabine`: Client holt Abweichungen weich auf statt zurückzuspringen).
+- Autos werden an Leitplanken/Bordsteinen nicht mehr ausgebremst (Streifen = kaum Tempoverlust, nur echter
+  Aufprall bremst). Handy im Hubschrauber geht (Rechtsklick auf das eigene Fahrzeug = PASS).
+- Kamera-Monitor stürzt mit NoRisk Client nicht mehr ab (Hilfsfigur bekommt eine Kennnummer).
+- Bodyguards halten die goldene Pistole (`client/bodyguard/PistolenLayer`, vier Zeichen-Varianten je Version).
+- Villa: zwei fehlende Stufen der Haupttreppe (Kopffreiheit), Sektturm im EG und Kaktus/Bambus im Bunker weg.
+- YouTube: kein endloser Neustart nach dem Laden mehr, yt-dlp liest die Videobeschreibung aus einer Datei
+  (in der Cloud nicht mit YouTube testbar).
+- Alle 17 Versionen übersetzen. README: Gästeliste, Straßen mit Brücken, Haie, Bodyguard mit Pistole.
+
+## Version 0.3.7 und 0.3.8 (veröffentlicht 26.10. abends)
+
+- 0.3.7: läuft mit NoRisk Client (`fabricloader` „*“), Inkognito-Fixes, YouTube über yt-dlp, Straßen beim ersten
+  Betreten automatisch. 0.3.8: automatische Straßen enden an der Oberfläche (Chunk vor der Höhenabfrage laden).
+
 ## Version 0.3.6 (in Arbeit, Philips Wünsche vom 26.10. mittags)
 
 - Erledigt (26.3 geprüft): Haustür öffnet alle drei Reihen (`TorsteuerungBlock.spalteSchalten`), Teppich unter der Tür,
@@ -370,5 +412,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-0.3 fertig machen (Fahrt bis ins Dorf, README-Fotos, alle 17 Versionen), veröffentlichen, dann Trailer und die
-Server-Version.
+Trailer 0.3.9 fertig machen und schicken, Release 0.3.9 prüfen. Danach (Philip: „Rest des Tages“): mehrere Villen
+auf dem Server (mit Abstand, Straßen dazwischen, im Handy-Navi, Besitzername über dem Butler, auf Zugangskarte und
+Nummernschild), dann das Paper-Plugin.

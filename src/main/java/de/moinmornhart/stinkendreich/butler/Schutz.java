@@ -64,7 +64,7 @@ public final class Schutz {
                 || s.is(Blocks.MOSS_BLOCK) || s.is(Blocks.MUDDY_MANGROVE_ROOTS) || s.is(Blocks.COARSE_DIRT) || s.is(Blocks.ROOTED_DIRT)
                 || net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(s.getBlock()).getPath().startsWith("pale_")
                 // Wilde Pflanzen, Eis und Gestein der Tafelberge (Felder im Dorf bleiben geschützt: Getreide fehlt hier bewusst)
-                || s.is(BlockTags.FLOWERS) || s.is(BlockTags.SAPLINGS) || s.is(BlockTags.ICE) || s.is(BlockTags.TERRACOTTA)
+                || s.is(BlockTags.FLOWERS) || s.getBlock() instanceof net.minecraft.world.level.block.SaplingBlock || s.is(BlockTags.ICE) || s.is(BlockTags.TERRACOTTA)
                 || s.is(BlockTags.CORAL_BLOCKS) || s.is(BlockTags.CORALS) || s.is(BlockTags.WALL_CORALS)
                 || s.is(Blocks.CACTUS) || s.is(Blocks.SUGAR_CANE) || s.is(Blocks.PUMPKIN) || s.is(Blocks.MELON) || s.is(Blocks.BAMBOO)
                 || s.is(Blocks.SWEET_BERRY_BUSH) || s.is(Blocks.BROWN_MUSHROOM) || s.is(Blocks.RED_MUSHROOM)

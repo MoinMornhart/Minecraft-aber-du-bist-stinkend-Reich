@@ -151,6 +151,10 @@ merke
 server fahrt 4 | 44.00 23.50 60.50 190.0 10.0 | 44.00 23.50 59.00 180.0 10.0
 bis 96 Fahrt fertig
 server /time set 6000
+kapitel … mit echten Haien
+server /villa ort 47.5 22.8 46 90 0
+warte 10.5
+server /time set 6000
 kapitel … für freche Gäste
 server /difficulty normal
 server /summon zombie -10 88 -6 {PersistenceRequired:1b}
@@ -261,6 +265,11 @@ server Butler, fahr mich zum Dorf
 warte 27
 server /gamemode spectator
 server /time set 6000
+kapitel Straßen mit Brücken übers Meer
+server /butler strassenpunkt 3 700
+server /tp @p ~ ~7 ~ 0 32
+warte 12
+server /time set 6000
 kapitel … oder fliegt dich
 server /villa ort 66 47.5 60 135 18
 warte 4.5
@@ -297,7 +306,17 @@ warte 1.5
 klick
 warte 4.5
 server /time set 6000
-kapitel Bodyguards: Eisengolems im Sakko
+kapitel Gästeliste: Freunde kommen ohne Karte rein
+server /execute as @p run handy gast|rein|Aircrafter
+server /execute as @p run handy gast|rein|Steve
+linksklick 640 566
+warte 9
+taste Escape
+warte 1.5
+klick
+warte 4.5
+server /time set 6000
+kapitel Bodyguards im Sakko, mit goldener Pistole
 merke
 linksklick 640 440
 bis 30 Bodyguards sind da

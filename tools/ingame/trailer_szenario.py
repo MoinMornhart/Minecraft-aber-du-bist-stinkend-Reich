@@ -3,7 +3,7 @@
 
 Kürzer und schneller als der Rundgang (video_szenario.py): kurze Kamerafahrten mit großen Schlagzeilen,
 dazwischen die besten Vorführungen (Tor, Portaltür, Ballsaal, Konzertflügel im Wohnzimmer, Esszimmer, Fernseher mit Video und Fernbedienung, Geheimclub,
-Butler, Auto, Hubschrauber, Handy mit Navi, Bodyguards, Straße zum Dorf, Agenten-Waffen) und am Ende die Villa bei
+echte Haie, Butler, Auto, Straßen mit Brücken, Hubschrauber, Handy mit Navi und Gästeliste, Bodyguards mit Pistole, Agenten-Waffen) und am Ende die Villa bei
 Sonnenuntergang. Der Fernseher spielt ein Video von der Platte (YouTube ist beim Dreh nicht erreichbar), in Zeitlupe.
 
 Aufruf: python3 tools/ingame/trailer_szenario.py
@@ -115,6 +115,8 @@ titel("VIP-Restaurant unter einer Glaskuppel im Meeresaquarium")
 zufahren(5, 46.5, 16.6, 79.8, 0, 8, zurueck=2.5, schwenk=12)
 titel("Ein Haifischbecken im Wohnzimmer")
 zufahren(4, 44, 23.5, 59, 180, 10, zurueck=1.5, schwenk=10)
+titel("… mit echten Haien")
+z("server /villa ort 47.5 22.8 46 90 0", "warte 3.5")
 titel("… für freche Gäste")
 z("server /difficulty normal", "server /summon zombie -10 88 -6 {PersistenceRequired:1b}", "server /villa ort 48 30 50 90 55",
   "warte 1.5", "server /execute as @p run handy smart|haie|auf", "warte 4", "server /kill @e[type=zombie]",
@@ -158,6 +160,8 @@ titel("James fährt dich – auf Straßen, die er selbst baut")
 z("server /gamemode creative", "server /villa ort 55.5 26 86 0 15", "warte 1.5", "merke", "server Butler, hol den Wagen",
   "bis 40 vorgefahren", "warte 1", "server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]",
   "warte 1", "server Butler, fahr mich zum Dorf", "warte 9", "server /gamemode spectator")
+titel("Straßen mit Brücken übers Meer")
+z("server /butler strassenpunkt 3 700", "server /tp @p ~ ~7 ~ 0 32", "warte 4")
 titel("… oder fliegt dich")
 z("server /villa ort 66 47.5 60 135 18", "warte 1.5", "server /gamemode creative", "server /villa ort 58 43 50.5 90 0", "warte 1",
   "server /ride @p mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]", "warte 4",
@@ -170,7 +174,10 @@ z("server /gamemode creative", "server /villa ort 55.5 26 90 180 -6", "warte 1.5
   "klick", "warte 2.5")
 titel("… mit Navi zu deinen Lieblingsorten")
 z("linksklick 640 272", "warte 1.2", "linksklick 640 406", "warte 2.5", "taste Escape", "warte 0.5", "klick", "warte 1.5")
-titel("Bodyguards: Eisengolems im Sakko")
+titel("Gästeliste: Freunde kommen ohne Karte rein")
+z("server /execute as @p run handy gast|rein|Aircrafter", "server /execute as @p run handy gast|rein|Steve",
+  "linksklick 640 566", "warte 3", "taste Escape", "warte 0.5", "klick", "warte 1.5")
+titel("Bodyguards im Sakko, mit goldener Pistole")
 z("merke", "linksklick 640 440", "bis 10 Bodyguards sind da", "warte 1", "server /gamemode spectator",
   "server /execute at @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] run tp @p ^ ^1.6 ^5 facing entity "
   "@e[type=stinkendreich:bodyguard,limit=1,sort=nearest] eyes", "warte 3")
