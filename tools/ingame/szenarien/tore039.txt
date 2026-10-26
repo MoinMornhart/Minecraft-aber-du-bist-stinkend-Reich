@@ -1,0 +1,47 @@
+# Tor, Garage, Smart Home „bleibt zu“, Zugbrücke (Welt = Villa + (-56, 62, -56))
+server /gamemode creative
+server /time set 6000
+server /gamerule advance_time false
+warte 40
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+# 1) Vor dem Tor (innen, 4 Blöcke): Tor auf
+server /villa ort 54.5 26 95 180 10
+warte 4
+server /execute if block -2 88 43 stinkendreich:tor[open=true] run say T1_TOR_OFFEN_OK
+server /execute if block -2 88 43 stinkendreich:tor[open=false] run say T1_TOR_ZU_FEHLER
+# 2) Weit weg im Haus: Tor zu
+server /villa ort 54.5 26 75 180 10
+warte 5
+server /execute if block -2 88 43 stinkendreich:tor[open=false] run say T2_TOR_ZU_OK
+server /execute if block -2 88 43 stinkendreich:tor[open=true] run say T2_TOR_OFFEN_FEHLER
+# 3) In der Garage hinten: Garagentor zu
+server /villa ort 87 26 57 0 10
+warte 5
+server /execute if block 31 88 11 stinkendreich:garagentor[open=false] run say T3_GARAGE_ZU_OK
+server /execute if block 31 88 11 stinkendreich:garagentor[open=true] run say T3_GARAGE_OFFEN_FEHLER
+# 4) Direkt am Garagentor: auf
+server /villa ort 87 26 64 0 10
+warte 4
+server /execute if block 31 88 11 stinkendreich:garagentor[open=true] run say T4_GARAGE_OFFEN_OK
+server /execute if block 31 88 11 stinkendreich:garagentor[open=false] run say T4_GARAGE_ZU_FEHLER
+# 5) Smart Home: Tor bleibt zu, auch direkt davor
+server /execute as @p run handy smart|tor|zu
+server /villa ort 54.5 26 95 180 10
+warte 4
+server /execute if block -2 88 43 stinkendreich:tor[open=false] run say T5_TOR_BLEIBT_ZU_OK
+server /execute if block -2 88 43 stinkendreich:tor[open=true] run say T5_TOR_OFFEN_FEHLER
+server /execute as @p run handy smart|tor|auf
+# 6) Zugbrücke sichern, weggehen: fährt ein (Zeit messen)
+server /execute as @p run handy smart|bruecke|zu
+server /villa ort 54.5 26 60 180 10
+warte 10
+server /execute if block -2 87 48 minecraft:air run say T6_BRUECKE_NACH_10S_DRIN
+warte 5
+server /execute if block -2 87 48 minecraft:air run say T6_BRUECKE_NACH_15S_DRIN
+warte 5
+server /execute if block -2 87 48 minecraft:air run say T6_BRUECKE_NACH_20S_DRIN
+server /execute unless block -2 87 48 minecraft:air run say T6_BRUECKE_NACH_20S_NOCH_DRAUSSEN
+taste F1
+server /villa ort 54.5 35 125 0 25
+warte 3
+bild t6_bruecke

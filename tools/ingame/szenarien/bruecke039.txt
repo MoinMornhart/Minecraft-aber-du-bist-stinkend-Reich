@@ -1,0 +1,21 @@
+# Zugbrücke: sichern, weggehen, Zeit bis eingefahren (Brückenmitte Villa 54 25 104 = Welt -2 87 48)
+server /gamemode creative
+server /time set 6000
+server /gamerule advance_time false
+warte 40
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /villa ort 54.5 26 112 180 10
+warte 3
+server /execute unless block -2 87 48 minecraft:air run say B0_BRUECKE_DRAUSSEN
+server /execute as @p run handy smart|bruecke|zu
+server /villa ort 54.5 26 60 180 10
+warte 6
+server /execute if block -2 87 48 minecraft:air run say B1_NACH_6S_DRIN
+warte 4
+server /execute if block -2 87 48 minecraft:air run say B2_NACH_10S_DRIN
+warte 4
+server /execute if block -2 87 48 minecraft:air run say B3_NACH_14S_DRIN
+taste F1
+server /villa ort 54.5 34 122 180 25
+warte 3
+bild b_bruecke_drin

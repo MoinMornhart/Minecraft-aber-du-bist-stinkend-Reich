@@ -264,12 +264,19 @@ public final class Zugbruecke {
             return "spieler";
         }
         String wer = null;
+        AABB vorDemTor = o.kasten().inflate(12, 6, 12);
         for (AutoEntity wagen : welt.getEntitiesOfClass(AutoEntity.class, o.kasten().inflate(MIT_AUTO, 24, MIT_AUTO), w -> !w.art.fliegt())) {
+            // Nur Autos, die fahren oder direkt vor dem Tor warten: Ein geparkter Wagen in der Garage (mit James darin)
+            // hielt die Brücke sonst für immer draußen
+            boolean faehrt = wagen.getDeltaMovement().horizontalDistanceSqr() > 0.01 || wagen.getX() != wagen.xo || wagen.getZ() != wagen.zo;
+            if (!faehrt && !vorDemTor.intersects(wagen.getBoundingBox())) {
+                continue;
+            }
             for (Entity e : wagen.getPassengers()) {
                 if (e instanceof Player p && !p.isSpectator() && zustand.darfRein(p)) {
                     return "auto";
                 }
-                if (e instanceof ButlerEntity) {
+                if (e instanceof ButlerEntity butler && butler.faehrtGerade()) {
                     wer = "james";
                 }
             }
