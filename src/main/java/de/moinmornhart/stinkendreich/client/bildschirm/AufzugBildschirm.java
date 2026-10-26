@@ -2,6 +2,7 @@ package de.moinmornhart.stinkendreich.client.bildschirm;
 
 import de.moinmornhart.stinkendreich.client.KompatClient;
 import de.moinmornhart.stinkendreich.mechanik.AufzugstafelBlock;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -27,7 +28,12 @@ public class AufzugBildschirm extends MenueBildschirm {
             if (ziel.equals(pos)) {
                 knopf(Component.literal("● " + name), () -> { }).active = false;
             } else {
-                knopf(Component.literal(name), () -> {
+                // Haltestellen nur mit Zugangskarte (Bunker) tragen einen Hinweis; geprüft wird auf dem Server
+                Component text = AufzugstafelBlock.nurMitKarte(welt, ziel)
+                        ? Component.literal(name + " ").append(Component.translatable("stinkendreich.aufzug.mit_karte")
+                                .withStyle(ChatFormatting.GOLD))
+                        : Component.literal(name);
+                knopf(text, () -> {
                     KompatClient.sende("aufzug", pos, String.valueOf(ziel.asLong()));
                     schliessen();
                 });

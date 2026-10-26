@@ -1,0 +1,47 @@
+# 0.3.6: Bunker nur mit Zugangskarte (Aufzug), neue Bunker-Suite mit Fernseher, Bad, Bett, Küche, Gang im Bunker-Look
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /gamemode survival @p
+server /clear @p
+# Ohne Karte: im Erdgeschoss vor dem Aufzug, Untergrundbasis wählen -> Meldung, Kabine kommt nicht
+server /villa ort 58 26 42.5 180 8
+warte 3
+klient aufzug Untergrundbasis
+warte 1.5
+bild k01_ohne_karte
+warte 6
+bild k02_ohne_karte_danach
+# Mit Karte: dieselbe Haltestelle -> Kabine kommt und fährt in den Bunker
+server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+klient aufzug Untergrundbasis
+warte 14
+bild k03_mit_karte_bunker
+# Fotos vom Bunker
+server /gamemode spectator @p
+taste F1
+server /villa ort 57.5 8.2 42.5 0 12
+warte 3
+bild b01_gang_sued
+server /villa ort 57.5 8.6 66.5 180 10
+warte 3
+bild b02_gang_nord
+server /villa ort 44.5 9.2 60.5 180 14
+warte 3
+bild b03_lounge_tv
+server /villa ort 47.5 8.4 53.5 90 8
+warte 3
+bild b04_kueche
+server /villa ort 49.5 8.0 63.3 0 18
+warte 3
+bild b05_bad
+server /villa ort 52.3 8.0 63.6 60 14
+warte 3
+bild b06_bad_toilette
+server /villa ort 45.5 9.0 59.5 25 18
+warte 3
+bild b07_bett
+server /villa ort 51.5 10.4 58.5 115 24
+warte 3
+bild b08_suite

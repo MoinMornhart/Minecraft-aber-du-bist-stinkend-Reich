@@ -1213,6 +1213,7 @@ def bunker() -> None:
     b.setze(54, y, z0 + 4, zustand("anvil", facing="east"))
     b.setze(61, y, z0 + 3, zustand("brewing_stand", has_bottle_0="false", has_bottle_1="false", has_bottle_2="false"))
     b.setze(61, y, z0 + 4, zustand("water_cauldron", level="3"))
+    bunker_gang(y, y0, y1)
     # Trennwände
     b.quader(53, y, z0 + 1, 53, y1 - 1, z1 - 1, "deepslate_tiles")
     b.quader(62, y, z0 + 1, 62, y1 - 1, z1 - 1, "deepslate_tiles")
@@ -1257,11 +1258,7 @@ def bunker() -> None:
     # Vier Truhen; der Platz direkt neben dem ersten Ständer bleibt frei (verdeckte sonst den Agenten-Anzug)
     for x, inhalt in zip(range(63, x1 - 2, 2), vorraete):
         truhe(b, x, y, z0 + 1, "south", inhalt)
-    # Panikraum (Südwest): Betten, Vorräte
-    for z in range(53, 66, 3):
-        bett(b, x0 + 1, y, z, "west", "gray")
-    for x in range(x0 + 4, 51, 2):
-        truhe(b, x, y, z1 - 1, "north", [("bread", 32), ("cooked_beef", 32), ("golden_carrot", 16)])
+    bunker_suite(y, y0, y1)
     # Haupttresor (Südost) als Geldspeicher: Goldwand, ein Berg aus Goldmünzen, in den man hineinspringen kann
     # (eigener Block ohne feste Oberfläche, man sinkt weich ein, siehe Goldbad.java), Sprungbrett mit Leiter
     b.quader(63, y, 51, x1 - 1, y1 - 1, 51, "iron_block")
@@ -1307,6 +1304,111 @@ def bunker() -> None:
         b.setze(18, yy, 59 if yy > y + 2 else 58, "polished_deepslate")
     b.setze(17, G, 60, zustand("dark_oak_trapdoor", facing="east", half="top", open="false", powered="false", waterlogged="false"))
     b.marke("fluchtluke", 17, G, 60)
+
+
+def warnstreifen(x0: int, z0: int, x1: int, z1: int, y: int) -> None:
+    """Gelb-schwarze Warnstreifen (schräg) im Boden."""
+    for x in range(x0, x1 + 1):
+        for z in range(z0, z1 + 1):
+            b.setze(x, y, z, "yellow_concrete" if (x + z) % 4 < 2 else "black_concrete")
+
+
+def bunker_gang(y: int, y0: int, y1: int) -> None:
+    """Bunker-Look im Hauptgang: Stahlrippen, Rohre und Kabel unter der Decke, Lüftungsgitter, Warnstreifen vor
+    Aufzug und Türen, roter Läufer in der Mitte (als Bodeneinlage, damit die Laser im Gang frei bleiben)."""
+    # Rohre (Kupfer) und Kabelstränge (Ketten) an beiden Seiten unter der Decke
+    for x, rohr in ((54, "chain"), (55, "lightning_rod"), (60, "lightning_rod"), (61, "chain")):
+        teil = (zustand("chain", axis="z", waterlogged="false") if rohr == "chain"
+                else zustand("lightning_rod", facing="south", powered="false", waterlogged="false"))
+        b.quader(x, y1 - 1, 31, x, y1 - 1, 68, teil)
+    # Stahlrippen: Säulen in beiden Wänden und ein Träger unter der Decke (nicht unter den Deckenlampen)
+    for z in (35, 47, 55, 63):
+        b.quader(53, y, z, 53, y1 - 1, z, "iron_block")
+        b.quader(62, y, z, 62, y1 - 1, z, "iron_block")
+        b.quader(54, y1 - 1, z, 61, y1 - 1, z, "iron_block")
+    # Lüftungsgitter in der Decke
+    for z in (45, 59):
+        b.quader(57, y1, z, 58, y1, z, "waxed_copper_grate")
+    # Roter Läufer vom Aufzug bis zur Kamera am Südende
+    b.quader(57, y0, 43, 58, y0, 67, "red_wool")
+    # Warnstreifen: vor der Aufzugstür, vor Banktür, Panzertür, Waffenkammer und Geldspeicher
+    warnstreifen(55, 41, 60, 42, y0)
+    warnstreifen(54, 43, 55, 45, y0)
+    warnstreifen(54, 57, 55, 60, y0)
+    warnstreifen(60, 43, 61, 45, y0)
+    warnstreifen(60, 57, 61, 60, y0)
+
+
+def bunker_suite(y: int, y0: int, y1: int) -> None:
+    """Panikraum als luxuriöse Bunker-Suite (x 37–52, z 51–68): Lounge mit XXL-Fernseher und Samtsofas,
+    Küchenzeile, Bad mit goldener Toilette, Regendusche und Badewanne, Kingsize-Bett. Der Weg von der Panzertür
+    (x 53, z 58–59) zum Geheimregal vor dem Fluchttunnel (x 36, z 60–61) bleibt frei."""
+    b.quader(37, y0, 51, 52, y0, 68, HOLZBODEN)
+    warnstreifen(51, 57, 52, 60, y0)                                        # innen vor der Panzertür
+    # Goldleiste oben an allen Wänden
+    b.quader(37, y1 - 1, 50, 52, y1 - 1, 50, "gold_block")
+    b.quader(36, y1 - 1, 51, 36, y1 - 1, 68, "gold_block")
+    b.quader(37, y1 - 1, 69, 52, y1 - 1, 69, "gold_block")
+    b.quader(53, y1 - 1, 51, 53, y1 - 1, 54, "gold_block")
+    b.quader(53, y1 - 1, 56, 53, y1 - 1, 62, "gold_block")
+    b.quader(53, y1 - 1, 64, 53, y1 - 1, 68, "gold_block")
+
+    # Lounge: Medienwand mit Goldrahmen an der Nordwand, XXL-Fernseher, Samtsofas als U, Teppich
+    b.quader(40, y, 50, 49, y1 - 2, 50, "gold_block")
+    b.quader(41, y + 1, 50, 48, y1 - 2, 50, SCHWARZ)
+    b.marke("fernseher", 44.5, y + 0.4, 51.15, 0.0)                         # Bild nach Süden zu den Sofas
+    b.quader(41, y0, 52, 48, y0, 55, "red_wool")
+    reihe(b, 41, y, 56, 8, "sofa_samt", "north")                            # hinten: x 41 … 48
+    reihe(b, 40, y, 53, 3, "sofa_samt", "east")                             # links: z 53 … 55
+    reihe(b, 49, y, 55, 3, "sofa_samt", "west")                             # rechts: z 55 … 53
+    deko(b, 44, y, 54, "loungetisch", "north")
+    deko(b, 45, y, 54, "kinotisch", "north")
+    fernbedienung(b, 44, y + 1, 54, "north", 6)                             # auf dem Loungetisch
+    # Küchenzeile an der Westwand: Kühlschrank, Weinkühlschrank, Spüle, Herd, Kaffeemaschine
+    for teil, z in (("kuehlschrank", 51), ("weinkuehlschrank", 52)):
+        deko(b, 37, y, z, teil, "east")
+        deko(b, 37, y + 1, z, teil, "east")
+    deko(b, 37, y, 53, "spuele", "east")
+    deko(b, 37, y, 54, "herd", "east")
+    b.setze(37, y, 55, "polished_blackstone")
+    deko(b, 37, y + 1, 55, "kaffeemaschine", "east")
+    fass(b, 37, y, 56, "east", [("golden_carrot", 64), ("cooked_beef", 64), ("bread", 64)])
+    fass(b, 37, y + 1, 56, "east", [("cake", 4), ("honey_bottle", 16), ("cookie", 64)])
+
+    # Bad im Südosten: Wände aus Quarz mit Goldleiste, Prunktür, Regendusche, Badewanne, goldene Toilette
+    b.quader(45, y, 62, 52, y1 - 1, 62, "quartz_bricks")
+    b.quader(45, y, 63, 45, y1 - 1, 68, "quartz_bricks")
+    b.quader(45, y + 3, 62, 52, y + 3, 62, "gold_block")
+    b.quader(45, y + 3, 63, 45, y + 3, 68, "gold_block")
+    tuer(b, 49, y, 62, "north", "stinkendreich:prunktuer")
+    b.quader(46, y0, 63, 52, y0, 68, QUARZ)
+    b.quader(46, y, 66, 48, y + 3, 68, "glass")
+    b.luft(47, y, 67, 47, y + 2, 67)
+    b.setze(47, y + 3, 67, zustand("water", level="0"))
+    b.gewollter_fluss.add((47, y + 3, 67))                                  # Regendusche im Glaskasten
+    badewanne(b, 49, y, 68, "east")
+    deko(b, 52, y, 66, "goldtoilette", "west")
+    deko(b, 51, y, 63, "spuele", "south")
+    deko(b, 52, y, 63, "spuele", "south")
+    pflanze(b, 46, y, 63, "potted_bamboo")
+
+    # Schlafbereich im Südwesten: Kingsize-Bett mit Samt-Kopfteil und Goldrahmen, Nachttische, Kronleuchter
+    kingsize_bett(b, 42, y, 68, 4, "south")                                 # x 42 … 39, z 66 … 68
+    for x in range(39, 43):
+        b.quader(x, y, 69, x, y + 2, 69, zustand("stinkendreich:kopfteil", facing="north", waterlogged="false"))
+    b.quader(38, y, 69, 38, y + 3, 69, "gold_block")
+    b.quader(43, y, 69, 43, y + 3, 69, "gold_block")
+    b.quader(38, y + 3, 69, 43, y + 3, 69, "gold_block")
+    deko(b, 38, y, 68, "nachttisch", "north")
+    deko(b, 38, y + 1, 68, "tischlampe", "north")
+    deko(b, 43, y, 68, "nachttisch", "north")
+    fernbedienung(b, 43, y + 1, 68, "north", 2)
+    kronleuchter(b, 40, y1 - 1, 66)
+    pflanze(b, 37, y, 68, "potted_bamboo")
+    pflanze(b, 44, y, 68, "potted_bamboo")
+    # Notvorrat und Ausrüstung an der Wand neben dem Bett
+    truhe(b, 37, y, 65, "east", [("enchanted_golden_apple", 4), ("golden_apple", 16), ("totem_of_undying", 1)])
+    truhe(b, 37, y, 64, "east", [("torch", 64), ("lantern", 16), ("water_bucket", 2), ("milk_bucket", 2)])
 
 
 # Mod-Blöcke mit eigener Block-Entity (für gespeicherte Werte wie Modus, Name, Code)
@@ -1410,7 +1512,8 @@ def mechanismen() -> None:
     mech(57, BUNKER + 4, 31, "alarmsirene", "south")
     for x in (50, 59):
         mech(x, G + 7, n - 13, "warnleuchte")
-    mech(57, BUNKER + 7, 50, "warnleuchte")
+    for z in (36, 50, 62):
+        mech(57, BUNKER + 7, z, "warnleuchte")                              # Bunkergang: rotes Licht bei Alarm
     mech(64, DACH - 1, 42, "warnleuchte")
 
     # Laser (ab Stufe 3): die Sender sitzen bündig in Hecke bzw. Wand, nur der dünne Strahl ist zu sehen
@@ -1447,8 +1550,9 @@ def mechanismen() -> None:
     namen = {"bunker": "Untergrundbasis", "keller": "Club & Tiefgarage", "eg": "Erdgeschoss", "og": "Obergeschoss",
              "dach": "Penthouse", "heli": "Hubschrauber"}
     for name, y in AUFZUG_HALTE.items():
+        karte = {"karte": "ja"} if name == "bunker" else {}                 # Bunker nur mit Zugangskarte
         mech(AX1, y + 2, AZ1 + 1, "aufzugstafel", "south", name=namen[name],
-             kabine_dx="-1.5", kabine_dz="-2.5", kabine_dy="-1")
+             kabine_dx="-1.5", kabine_dz="-2.5", kabine_dy="-1", **karte)
 
     # Geheimgang: Bücherwand im Panikraum vor dem Fluchttunnel
     b.luft(35, BUNKER + 1, 60, 35, BUNKER + 3, 61)

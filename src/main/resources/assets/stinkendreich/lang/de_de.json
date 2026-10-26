@@ -169,6 +169,8 @@
   "stinkendreich.alarm.grund.tresor": "%s hat die Tresorfalle ausgelöst",
   "stinkendreich.alarm.grund.zentrale": "%s hat die Zentrale ohne Berechtigung benutzt",
   "stinkendreich.alarm.start": "ALARM! %s (bei %s %s %s)",
+  "stinkendreich.aufzug.mit_karte": "(Zugangskarte)",
+  "stinkendreich.aufzug.nur_karte": "%s nur mit Zugangskarte!",
   "stinkendreich.auto.hinweis": "W/S Gas und Bremse · A/D lenken · Leertaste Handbremse (Driften) · H Hupe · G Licht · V Kamera · Schleichen: aussteigen",
   "stinkendreich.bodyguard.da": "Ihre Bodyguards sind da, Chef.",
   "stinkendreich.bodyguard.name": "Bodyguard",

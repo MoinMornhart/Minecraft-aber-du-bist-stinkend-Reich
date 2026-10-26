@@ -51,6 +51,15 @@ public class AufzugstafelBlock extends MechanikBlock {
         return liste;
     }
 
+    /**
+     * Fährt der Aufzug diese Haltestelle nur für Spieler mit Zugangskarte an? Der Bauplan setzt dafür den Wert
+     * {@code karte=ja}; Villen aus älteren Fassungen erkennt man am Namen der Bunker-Haltestelle.
+     */
+    public static boolean nurMitKarte(BlockGetter welt, BlockPos tafel) {
+        MechanikBlockEntity d = daten(welt, tafel);
+        return d != null && ("ja".equals(d.text("karte", "")) || "Untergrundbasis".equals(d.text("name", "")));
+    }
+
     /** Anzeigename der Haltestelle (vom Bauplan gesetzt, sonst Höhe). */
     public static String name(BlockGetter welt, BlockPos tafel) {
         MechanikBlockEntity d = daten(welt, tafel);

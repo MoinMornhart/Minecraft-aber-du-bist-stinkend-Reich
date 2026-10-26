@@ -5,17 +5,19 @@ warte 30
 server /time set 6000
 server /weather clear
 server /gamerule advance_time false
-server /villa stufe 0
+# Stufe 1: Das Tor ist zu und geht nur für Bewohner und Kartenbesitzer auf (bei Stufe 0 steht es immer offen)
+server /villa stufe 1
 server /gamemode spectator @p
 taste F1
 server /villa ort 55 27.4 105 180 -4
-warte 4
+warte 5
 bild tor_bruecke
 server /gamemode survival @p
 server /villa ort 55 26 106.5 180 -2
 warte 4
 bild tor_offen
 server /gamemode spectator @p
+server /villa stufe 0
 server /villa bruecke ein
 server /villa ort 55 33 120 180 28
 warte 8
@@ -24,14 +26,16 @@ server /villa ort 66 32 112 135 32
 warte 2
 bild bruecke_schraeg
 server /gamemode survival @p
-server /villa ort 60.5 26 113.6 180 12
+server /villa ort 60.5 26 114.3 180 9
 warte 3
 bild brueckenschalter
 # Zugangskarte: mit der Karte in der Hand vor dem Kartenleser der Bürotür, dann geht die Tür auf
 server /villa bruecke aus
 server /item replace entity @p weapon.mainhand with stinkendreich:zugangskarte
+server /effect give @p minecraft:night_vision 120 0 true
 server /villa ort 63.2 32 57.5 90 4
-warte 3
+# warten, bis die Chatzeilen verschwunden sind (sonst stehen sie im Bild)
+warte 12
 taste F1
 warte 1
 bild zugangskarte

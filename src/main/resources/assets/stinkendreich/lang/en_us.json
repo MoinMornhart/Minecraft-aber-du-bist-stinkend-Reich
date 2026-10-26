@@ -169,6 +169,8 @@
   "stinkendreich.alarm.grund.tresor": "%s triggered the vault trap",
   "stinkendreich.alarm.grund.zentrale": "%s used the console without permission",
   "stinkendreich.alarm.start": "ALARM! %s (at %s %s %s)",
+  "stinkendreich.aufzug.mit_karte": "(access card)",
+  "stinkendreich.aufzug.nur_karte": "%s only with an access card!",
   "stinkendreich.auto.hinweis": "W/S throttle and brake · A/D steer · Space handbrake (drift) · H horn · G lights · V camera · Sneak: get out",
   "stinkendreich.bodyguard.da": "Your bodyguards are here, boss.",
   "stinkendreich.bodyguard.name": "Bodyguard",

@@ -10,6 +10,7 @@ import de.moinmornhart.stinkendreich.mechanik.AufzugstafelBlock;
 import de.moinmornhart.stinkendreich.netz.Netz;
 import de.moinmornhart.stinkendreich.netz.OhneMod;
 import de.moinmornhart.stinkendreich.mechanik.VillaZustand;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -106,7 +107,10 @@ final class Bedienfelder {
             String name = AufzugstafelBlock.name(welt, ziel);
             knoepfe.add(ziel.equals(pos)
                     ? new ActionButton(new CommonButtonData(Component.literal("● " + name), BREITE), Optional.empty())
-                    : knopf(Component.literal(name), BREITE, aktion("aufzug", pos, String.valueOf(ziel.asLong()))));
+                    : knopf(AufzugstafelBlock.nurMitKarte(welt, ziel)
+                            ? Component.literal(name + " ").append(Component.translatable("stinkendreich.aufzug.mit_karte")
+                                    .withStyle(ChatFormatting.GOLD))
+                            : Component.literal(name), BREITE, aktion("aufzug", pos, String.valueOf(ziel.asLong()))));
         }
         zeigen(spieler, Component.translatable("block.stinkendreich.aufzugstafel"), List.of(), List.of(), knoepfe, 1, DialogAction.CLOSE);
     }
