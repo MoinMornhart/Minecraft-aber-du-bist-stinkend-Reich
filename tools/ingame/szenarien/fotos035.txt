@@ -7,6 +7,7 @@ server /weather clear
 server /time set 6000
 server /gamerule advance_time false
 warte 30
+server /clear @p
 taste F1
 server /villa ort 51.5 29 66 200 14
 warte 4

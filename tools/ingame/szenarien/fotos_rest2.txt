@@ -1,0 +1,61 @@
+# README-Fotos 0.3.6, Teil 2: Bilder mit offenem Menü, eingeschalteten Lasern oder laufendem Video
+# Aufruf mit STINKENDREICH_TESTVIDEO=<datei> (Video im Fernseher ohne YouTube)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa ort 57.5 26 39.6 180 37
+warte 2
+klick
+warte 1.5
+bild aufzug
+klient schliessen
+server /villa ort 71.5 32 59.3 0 22
+warte 2
+klick
+warte 1.5
+bild zentrale
+klient schliessen
+server /villa ort 69.5 32 39.5 180 -30
+warte 2
+klick
+warte 2
+linksklick 820 684
+warte 2
+bild ueberwachung
+klient schliessen
+server /gamemode spectator
+server /villa stufe 3
+warte 3
+server /villa ort 57.5 7 52 180 8
+warte 3
+bild laser
+server /villa ort 64.5 33.5 46.3 180 30
+warte 3
+bild tresor
+server /villa stufe 0
+warte 2
+server /villa ort 63.5 39.6 41.6 0 10
+klient fernseher !abspielen|aqz-KE-bpKQ
+warte 6
+server /villa ort 63.5 39.6 41.0 0 12
+warte 2
+bild fernseher
+klient fernseher !stopp
+# Agent im Anzug (Ansicht von vorn), ohne Handy in der zweiten Hand
+server /gamemode survival
+server /clear @p
+server /item replace entity @p armor.head with stinkendreich:bond_sonnenbrille
+server /item replace entity @p armor.chest with stinkendreich:smoking
+server /item replace entity @p armor.legs with stinkendreich:anzughose
+server /item replace entity @p armor.feet with stinkendreich:lackschuhe
+server /item replace entity @p weapon.mainhand with stinkendreich:goldene_pistole
+server /villa ort 55.5 26 93.5 0 0
+warte 4
+taste F5
+taste F5
+warte 2
+bild agent_roh
+taste F5

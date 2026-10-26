@@ -38,9 +38,6 @@ bild fernseher
 server /villa ort 54 32 36 165 18
 warte 3
 bild strandliegen
-server /villa ort 76 17.3 58 200 8
-warte 3
-bild auto_garage
 server /villa ort 66 47.5 60 135 18
 warte 3
 bild hubschrauber
