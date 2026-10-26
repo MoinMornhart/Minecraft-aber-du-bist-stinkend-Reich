@@ -1,0 +1,70 @@
+# Passen sitzende Spieler mit dem Kopf unter das Dach? Schaufensterpuppen (so groß wie ein Spieler) auf allen
+# Sitzen, Autos auf einer Plattform hoch am Himmel, Blick von der Seite. Mit Mod (26.3, Schaufensterpuppen ab 1.21.9).
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /tp @p 228 156 200 0 20
+warte 6
+server /fill 198 150 202 262 150 218 minecraft:smooth_stone
+warte 2
+server /summon stinkendreich:stretchlimo 207 151 210
+server /summon stinkendreich:supersportwagen 224 151 210
+server /summon stinkendreich:bonzenauto 238 151 210
+server /summon stinkendreich:gelaendewagen 252 151 210
+warte 2
+server /tp @e[type=stinkendreich:stretchlimo] 207 151 210 -90 0
+server /tp @e[type=stinkendreich:supersportwagen] 224 151 210 -90 0
+server /tp @e[type=stinkendreich:bonzenauto] 238 151 210 -90 0
+server /tp @e[type=stinkendreich:gelaendewagen] 252 151 210 -90 0
+warte 1
+server /summon minecraft:mannequin 207 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 207 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 207 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 207 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 224 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 224 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 238 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 238 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 252 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 252 151 210 {Tags:["puppe"]}
+warte 1
+server /execute as @e[type=minecraft:mannequin,tag=puppe] at @s run ride @s mount @e[type=!minecraft:mannequin,type=!minecraft:player,distance=..2,limit=1,sort=nearest]
+warte 3
+taste F1
+warte 2
+server /tp @p 207 152.3 217.5 180 0
+warte 4
+bild k03_limo_seite
+server /tp @p 224 152.3 216 180 0
+warte 3
+bild k04_flitzer_seite
+server /tp @p 238 152.3 216 180 0
+warte 3
+bild k05_bonzenauto_seite
+server /tp @p 252 152.3 216 180 0
+warte 3
+bild k06_gelaendewagen_seite
+server /tp @p 228 160 225 180 25
+warte 3
+bild k07_alle
+# Selbst einsteigen: Fahrersitz der Limo, Ich-Sicht und von außen
+server /execute as @e[type=minecraft:mannequin,tag=puppe] at @s if entity @e[type=stinkendreich:stretchlimo,distance=..6] run kill @s
+server /gamemode creative @p
+server /tp @p 207 151 212
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,limit=1]
+warte 3
+bild k08_limo_ich_sicht
+taste F5
+warte 2
+bild k09_limo_von_hinten
+taste F5
+warte 1
+server /ride @p dismount
+server /tp @p 224 151 212
+warte 2
+server /ride @p mount @e[type=stinkendreich:supersportwagen,limit=1]
+warte 3
+bild k10_flitzer_ich_sicht

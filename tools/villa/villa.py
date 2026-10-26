@@ -127,13 +127,35 @@ def tor_und_bruecke() -> None:
             b.setze(x, G + 1, z, zustand("quartz_slab", type="bottom", waterlogged="false"))
             b.setze(x, G + 2, z, GLAS)
     b.quader(x0 + 3, G, n - 12, x1 - 3, G, n - 1, "red_concrete")
-    # Teppich vom Tor bis zur Haustür
-    b.quader(x0 + 3, G, 70, x1 - 3, G, n - 14, "red_concrete")
-    b.quader(x0 + 1, G, 70, x0 + 2, G, n - 14, QUARZ)
-    b.quader(x1 - 2, G, 70, x1 - 1, G, n - 14, QUARZ)
+    # Teppich vom Tor (auch unter dem Torflügel, kein Gras) bis direkt an die Haustür
+    b.quader(x0 + 3, G, HZ1 + 1, x1 - 3, G, n - 13, "red_concrete")
+    b.quader(x0 + 1, G, HZ1 + 1, x0 + 2, G, n - 13, QUARZ)
+    b.quader(x1 - 2, G, HZ1 + 1, x1 - 1, G, n - 13, QUARZ)
     for z in range(74, n - 14, 6):
         laterne(b, x0, G + 1, z)
-        laterne(b, x1, G + 1, z)
+        if z < 90:      # an der Abzweigung zur Garage steht keine Laterne im Weg
+            laterne(b, x1, G + 1, z)
+
+
+def kurve_innen(ex: int, ez: int, rx: int, rz: int, r: int) -> None:
+    """Füllt die Innenecke zweier Fahrbahnen zu einem Viertelkreis aus. (ex, ez) ist der Eckpunkt zwischen den
+    Blöcken, (rx, rz) zeigt von dort in die Ecke hinein (weg von beiden Fahrbahnen)."""
+    mx, mz = ex + rx * r, ez + rz * r
+    for i in range(r):
+        for k in range(r):
+            x = ex + (i if rx > 0 else -1 - i)
+            z = ez + (k if rz > 0 else -1 - k)
+            if (x + 0.5 - mx) ** 2 + (z + 0.5 - mz) ** 2 > r * r:
+                b.setze(x, G, z, "polished_andesite")
+
+
+def kurve_aussen(x: int, z: int, r: int) -> None:
+    """Rundet die Außenecke einer Fahrbahn ab: (x, z) ist der Eckblock, die Fahrbahn liegt nordwestlich davon."""
+    mx, mz = x + 1 - r, z + 1 - r
+    for i in range(r):
+        for k in range(r):
+            if (x - i + 0.5 - mx) ** 2 + (z - k + 0.5 - mz) ** 2 > r * r:
+                b.setze(x - i, G, z - k, "grass_block")
 
 
 def vorplatz() -> None:
@@ -142,10 +164,20 @@ def vorplatz() -> None:
     brunnen_kuppel(b, 70, G, 84)
     blumenbeet(b, 35, G + 1, 72, 44, 76)
     blumenbeet(b, 65, G + 1, 72, 74, 76)
-    # Zufahrt: vom Tor nach Osten und hinauf zur Garage
-    b.quader(60, G, 92, 91, G, 97, "polished_andesite")
+    # Zufahrt: vom Tor nach Osten und hinauf zur Garage, beide Kurven gerundet, Mittellinie bis zum Garagentor
+    b.quader(59, G, 92, 91, G, 97, "polished_andesite")
     b.quader(82, G, 68, 91, G, 97, "polished_andesite")
-    b.quader(60, G, 94, 91, G, 95, "gray_concrete")
+    kurve_innen(59, 92, 1, -1, 5)       # Abzweigung vom Teppich: Ecke nördlich der Fahrbahn
+    kurve_innen(82, 92, -1, -1, 5)      # Kurve nach Norden: Ecke nordwestlich
+    kurve_aussen(91, 97, 4)             # Außenkurve im Südosten: Ecke abrunden, dort Rasen
+    # Mittellinie: gerade nach Osten, im Bogen nach Norden, gerade bis zum Garagentor
+    mx, mz, r = 80, 88, 7                       # Bogenmitte und Halbmesser; die Linie ist 2 Blöcke breit
+    b.quader(60, G, 94, mx - 1, G, 95, "gray_concrete")
+    b.quader(86, G, 68, 87, G, mz - 1, "gray_concrete")
+    for x in range(mx, 88):
+        for z in range(mz, 96):
+            if r - 1 <= ((x + 0.5 - mx) ** 2 + (z + 0.5 - mz) ** 2) ** 0.5 < r + 1:
+                b.setze(x, G, z, "gray_concrete")
     for z in (72, 80, 88):
         laterne(b, 92, G + 1, z)
     # Hecken entlang der Innenmauer

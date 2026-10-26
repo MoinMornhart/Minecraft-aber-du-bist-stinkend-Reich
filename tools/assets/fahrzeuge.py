@@ -563,11 +563,15 @@ def supersportwagen() -> Modell:
     k.kasten((-13, -11, 35.6), (9, 2, 1), "rot").kasten((4, -11, 35.6), (9, 2, 1), "rot")
     k.kasten((-4, -6, 36.2), (8, 2, 1), "kennzeichen")
     k.kasten((-13, -8, -13), (26, 1, 19), "innen")
-    k.kasten((-11, -18, -6), (22, 1, 12), "lack_dunkel")                               # Dach
+    k.kasten((-11, -22, -6), (22, 1, 12), "lack_dunkel")                               # Dach (Kopffreiheit)
+    k.kasten((-13, -21, 5), (26, 9, 1), "glas")                                        # Heckscheibe
     k.kasten((-14, -17, 30), (28, 1, 5), "carbon")                                     # Heckflügel
     k.kasten((-9, -16, 32), (2, 4, 2), "schwarz").kasten((7, -16, 32), (2, 4, 2), "schwarz")
-    m.teil("scheibe", (0, -12, -14), (-0.9, 0, 0), eltern="karosserie").kasten((-12, -10, 0), (24, 10, 1), "glas")
-    m.teil("seitenscheiben").kasten((-15, -17, -8), (1, 5, 13), "glas").kasten((14, -17, -8), (1, 5, 13), "glas")
+    k.kasten((-15, -21, 4), (2, 9, 2), "lack_dunkel").kasten((13, -21, 4), (2, 9, 2), "lack_dunkel")   # hintere Säulen
+    # Frontscheibe mit zwei schmalen Säulen links und rechts (sonst schwebt das Dach)
+    m.teil("scheibe", (0, -12, -14), (-0.9, 0, 0), eltern="karosserie").kasten((-12, -15, 0), (24, 15, 1), "glas") \
+        .kasten((-14, -15, -0.5), (2, 15, 2), "lack_dunkel").kasten((12, -15, -0.5), (2, 15, 2), "lack_dunkel")
+    m.teil("seitenscheiben").kasten((-15, -21, -8), (1, 9, 13), "glas").kasten((14, -21, -8), (1, 9, 13), "glas")
     s = m.teil("sitze")
     for x in (-11, 2):
         sitz(s, x, -9, -6, lehne_hoehe=6, mat="leder_knoepfe")
@@ -581,22 +585,26 @@ def stretchlimo() -> Modell:
     m = Modell("stretchlimo")
     k = m.teil("karosserie")
     k.kasten((-15, -8, -64), (30, 6, 128), "lack", unten="schwarz", seite="seite")
-    k.kasten((-15, -11, -64), (30, 3, 22), "lack")                                   # Haube
+    k.kasten((-15, -11, -64), (30, 3, 12), "lack")                                   # Haube
     k.kasten((-15, -11, 54), (30, 3, 10), "lack")                                    # Kofferraum
-    k.kasten((-15, -12, -42), (2, 4, 96), "lack").kasten((13, -12, -42), (2, 4, 96), "lack")
+    k.kasten((-15, -12, -52), (2, 4, 106), "lack").kasten((13, -12, -52), (2, 4, 106), "lack")
     k.kasten((-8, -10, -64.6), (16, 5, 1), "grill")
     k.kasten((-1, -13, -61), (2, 2, 3), "gold")                                      # Kühlerfigur
     k.kasten((-14, -10, -64.7), (5, 2, 1), "chrom", vorne="licht").kasten((9, -10, -64.7), (5, 2, 1), "chrom", vorne="licht")
     k.kasten((-14, -10, 63.6), (6, 2, 1), "rot").kasten((8, -10, 63.6), (6, 2, 1), "rot")
     k.kasten((-4, -6, -64.8), (8, 2, 1), "kennzeichen").kasten((-4, -6, 64), (8, 2, 1), "kennzeichen")
-    k.kasten((-13, -9, -42), (26, 1, 96), "innen")
+    k.kasten((-13, -9, -52), (26, 1, 106), "innen")
+    k.kasten((-13, -14, -51), (26, 3, 7), "schwarz", oben="innen")                    # Armaturenbrett
     # Säulen und Dach
+    # (Dach so hoch, dass ein sitzender Spieler mit dem Kopf darunter passt; die Frontscheibe steht weit vorn
+    # und schräg, damit vorn niemand eingequetscht sitzt)
     for x in (-15, 13):
-        for z in (-42, -20, 4, 28, 52):
-            k.kasten((x, -22, z), (2, 10, 2), "lack")
-    k.kasten((-15, -24, -42), (30, 2, 96), "lack", oben="lack_dunkel")
-    m.teil("scheibe", (0, -12, -42), (-0.35, 0, 0), eltern="karosserie").kasten((-13, -11, 0), (26, 11, 1), "glas")
-    k.kasten((-13, -22, 53), (26, 10, 1), "glas")
+        for z in (-20, 4, 28, 52):
+            k.kasten((x, -29, z), (2, 17, 2), "lack")
+    k.kasten((-15, -31, -45), (30, 2, 99), "lack", oben="lack_dunkel")
+    m.teil("scheibe", (0, -12, -52), (-0.5, 0, 0), eltern="karosserie").kasten((-13, -18, 0), (26, 18, 1), "glas") \
+        .kasten((-15, -18, -0.5), (2, 18, 2), "lack").kasten((13, -18, -0.5), (2, 18, 2), "lack")
+    k.kasten((-13, -29, 53), (26, 17, 1), "glas")
     # Fahrgastraum: zwei Ledersofas längs, Bar mit Champagner in der Mitte
     s = m.teil("sitze")
     sitz(s, -11, -10, -38, mat="leder")                                               # Fahrer

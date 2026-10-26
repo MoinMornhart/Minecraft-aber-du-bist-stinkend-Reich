@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 07:45 Uhr (Philip ist wach)_
+_Zuletzt aktualisiert: 2026-10-26, 08:20 Uhr (Philip ist wach)_
 
 ## Erledigt
 
@@ -213,6 +213,21 @@ _Zuletzt aktualisiert: 2026-10-26, 07:45 Uhr (Philip ist wach)_
   Haut, Überzüge mit `dehnen`) mit Klickfeld. Übersetzt in 1.21.5–1.21.10 und 26.3, noch nicht im Spiel geprüft
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
+
+## Version 0.3.4 (in Arbeit, Philips Wünsche vom 26.10. morgens)
+
+- Bodyguards: echter Eisengolem + Überzug. `BodyguardRenderer` legt beim ersten Zeichnen
+  `textures/entity/bodyguard_smoking.png` (nur Sakko, Hose, Hemd mit Krawatte, rote Blume, Sonnenbrille; Rest
+  durchsichtig, aus `handy.py` `bodyguard_smoking()`) über die Golem-Textur aus Minecraft (auch aus Ressourcenpaketen)
+  und merkt sich das Ergebnis als `DynamicTexture`. Keine Golem-Textur im Repo.
+- Autos: Limo-Dach in Kopfhöhe + Luft, Frontscheibe weit vorn und schräg (Säulen im Teil „scheibe“), Supersportwagen
+  und Cabrio Maßstab 1,5, Supersportwagen mit Säulen am Dach. Prüfen mit `autos_kopf.txt` (Schaufensterpuppen auf den
+  Sitzen, Plattform am Himmel bei 198–262 / 150 / 196–218).
+- Eingang (villa.py): Teppich und Quarzrand von `HZ1 + 1` bis unter das Tor (`n - 13`), keine Laterne an der
+  Abzweigung, `kurve_innen`/`kurve_aussen` runden die Zufahrt zur Garage, Mittellinie im Bogen (Mitte 80/88, r 7).
+- Mitarbeiter: neuer Skin (`handy.py` `mitarbeiter()`: Helm als Hut-Schicht mit Stirnlampe, Warnweste, Ausweis, $).
+- Tests: `eingang_mitarbeiter.txt`, `eingang_mitarbeiter2.txt` (26.3, alles OK).
+- Als Nächstes: YouTube im Fernseher (eigene Lösung mit yt-dlp, FFmpeg und Deno).
 
 ## Version 0.3.3 (veröffentlicht 26.10. morgens, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.3)
 

@@ -1,0 +1,33 @@
+# Nachtest: gebogene Mittellinie der Zufahrt, Mitarbeiter-Skin auf Augenhöhe. Mit Mod (26.3).
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+taste F1
+warte 2
+server /villa ort 64 52 92 180 90
+warte 5
+bild f01_abzweigung_oben
+server /villa ort 84 50 86 180 90
+warte 3
+bild f02_kurve_garage_oben
+server /villa ort 66 30 106 160 22
+warte 3
+bild f03_zufahrt_schraeg
+server /tp @p 240 156 200 0 20
+warte 6
+server /fill 230 150 196 250 150 214 minecraft:smooth_stone
+warte 2
+server /summon stinkendreich:mitarbeiter 240 151 204 {NoAI:1b}
+warte 2
+server /tp @e[type=stinkendreich:mitarbeiter] 240 151 204 0 0
+server /tp @p 240 151.2 207.6 180 0
+warte 3
+bild f04_mitarbeiter_vorn
+server /tp @p 240 151.2 200.4 0 0
+warte 3
+bild f05_mitarbeiter_hinten
+server /tp @p 242.6 151.8 206.4 135 10
+warte 3
+bild f06_mitarbeiter_schraeg

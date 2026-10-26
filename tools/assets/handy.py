@@ -261,76 +261,157 @@ def kiste() -> Image.Image:
 # ---------------------------------------------------------------------------
 
 def mitarbeiter() -> Image.Image:
+    """Bergmann der Firma „Stinkend Reich“: gelber Schutzhelm mit Stirnlampe, Warnweste mit Reflexstreifen und
+    goldenem $ auf dem Rücken, Firmenausweis, dunkles Arbeitshemd, Lederhandschuhe, Arbeitshose mit Knieschonern
+    und Stiefel. Jede Fläche leicht schattiert (oben heller, unten dunkler, etwas Körnung) wie bei guten Skins."""
     zufall = random.Random(7)
     img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-    haut, haar = (214, 168, 128), (96, 64, 40)
-    latz, latz_dunkel = (40, 88, 160), (30, 66, 122)
-    hemd = (232, 120, 40)
-    helm, helm_dunkel = (250, 206, 40), (196, 156, 20)
+    haut, haar = (222, 172, 134), (88, 58, 36)
+    weste, weste_dunkel = (255, 128, 24), (226, 98, 12)
+    reflex, reflex_hell = (196, 202, 210), (236, 240, 246)
+    hemd, hemd_dunkel = (52, 62, 82), (40, 48, 66)
+    hose, hose_dunkel = (44, 56, 86), (34, 44, 70)
+    helm, helm_hell, helm_dunkel = (252, 204, 30), (255, 230, 110), (208, 160, 12)
+    leder, leder_dunkel = (176, 124, 68), (138, 94, 50)
+    stiefel, sohle = (74, 50, 32), (32, 28, 26)
+    seite_licht = {"oben": 1.08, "vorn": 1.0, "rechts": 0.9, "links": 0.9, "hinten": 0.86, "unten": 0.74}
+
+    def ton(c, s, y=0, h=1, koernung=0.035):
+        """Farbe mit Seitenlicht, sanftem Verlauf nach unten und Körnung."""
+        f = seite_licht.get(s, 1.0) * (1.0 - 0.06 * (y / max(h - 1, 1)))
+        f *= 1.0 + zufall.uniform(-koernung, koernung)
+        return tuple(max(0, min(255, int(v * f))) for v in c[:3])
+
+    # --- Kopf: Gesicht mit Augenbrauen, Augen, Nase, Bartstoppeln; Haar an den Seiten und hinten ---
+    stoppel = dunkler(haut, 0.84)
 
     def kopf(s, x, y, w, h):
         if s == "oben":
-            return haar
+            return ton(haar, s)
         if s == "unten":
-            return dunkler(haut)
+            return ton(haut, s)
         if s == "hinten":
-            return haar if y < 6 else haut
+            return ton(haar, s, y, h) if y < 6 else ton(haut, s)
         if s in ("rechts", "links"):
-            return haar if y < 3 else haut
-        if y < 2:
-            return haar
-        if y == 3 and x in (1, 2, 5, 6):
-            return (250, 250, 250) if x in (1, 6) else (60, 90, 140)
-        if y == 5 and 2 <= x <= 5:
-            return (110, 70, 50) if x in (3, 4) else dunkler(haut, 0.9)     # Schnurrbart
-        if y == 6 and x in (3, 4):
-            return (170, 90, 80)
-        return haut if zufall.random() > 0.05 else dunkler(haut, 0.95)
+            hinten = x < 4 if s == "rechts" else x > 3
+            ohr = (x == 4 if s == "rechts" else x == 3) and y in (4, 5)
+            if y < 4 or (hinten and y < 6):
+                return ton(haar, s, y, h)
+            if ohr:
+                return ton(dunkler(haut, 0.88), s)
+            return ton(stoppel if y >= 6 else haut, s)
+        # vorn
+        if y < 3:
+            return ton(haar, s)
+        if y == 3:
+            return ton((70, 46, 28), s, koernung=0) if x in (1, 2, 5, 6) else ton(haut, s)     # Augenbrauen
+        if y == 4:
+            if x in (1, 6):
+                return (244, 244, 244)                                                       # Augenweiß
+            if x in (2, 5):
+                return (58, 96, 150)                                                         # Iris
+            return ton(haut, s)
+        if y == 5:
+            if x in (3, 4):
+                return ton(dunkler(haut, 0.9), s, koernung=0)                                # Nase
+            return ton(haut, s)
+        if y == 6:
+            if x in (3, 4):
+                return (150, 82, 72)                                                         # Mund
+            return ton(stoppel if x in (1, 2, 5, 6) else haut, s)
+        return ton(stoppel, s)                                                               # Kinn mit Stoppeln
     wuerfel(img, 0, 0, 8, 8, 8, kopf)
 
-    # Bauhelm als Hut-Schicht: oben und Seiten gelb, vorn Schirm
-    def hut(s, x, y, w, h):
-        if s == "unten":
-            return None
+    # --- Hut-Schicht: Schutzhelm mit Krempe, Gummiband und Stirnlampe ---
+    def helmfarbe(s, x, y):
         if s == "oben":
-            return helm if (x + y) % 5 else helm_dunkel
-        if y < 3:
-            return helm
+            if x in (3, 4):
+                return helm_hell                                                             # Mittelrippe
+            return ton(helm, s, koernung=0.02) if 0 < x < 7 and 0 < y < 7 else ton(helm_dunkel, s, koernung=0.02)
         if y == 3:
-            return helm_dunkel
-        return None
+            return ton(helm_dunkel, s, koernung=0.02)                                        # Krempe
+        if y == 2:
+            return (34, 34, 38)                                                              # Band der Lampe
+        return ton(helm_hell if y == 0 else helm, s, koernung=0.02)
+
+    def hut(s, x, y, w, h):
+        if s == "unten" or (s != "oben" and y > 3):
+            return None
+        if s == "vorn" and 2 <= x <= 5 and 1 <= y <= 2:
+            if y == 2 and x in (3, 4):
+                return (255, 250, 214)                                                       # Lampenglas
+            if y == 1 and x in (3, 4):
+                return (236, 236, 220)
+            return (70, 72, 78)                                                              # Lampengehäuse
+        return helmfarbe(s, x, y)
     wuerfel(img, 32, 0, 8, 8, 8, hut)
+
+    # --- Körper: Warnweste über dem Arbeitshemd, zwei Reflexstreifen, Gürtel, Ausweis, $ auf dem Rücken ---
+    dollar = {(4, 0), (3, 1), (4, 1), (5, 1), (3, 2), (4, 3), (5, 4), (3, 5), (4, 5), (5, 5), (4, 6)}
 
     def koerper(s, x, y, w, h):
         if s == "oben":
-            return hemd
+            return ton(hemd, s) if s == "oben" and 2 <= x <= 5 and y in (1, 2) else ton(weste, s)
         if s == "unten":
-            return latz
-        if y < 3:
-            if s in ("vorn", "hinten") and x in (1, 6):
-                return latz_dunkel                               # Träger
-            return hemd
-        if s == "vorn" and y == 4 and x in (2, 5):
-            return GOLD                                          # Knöpfe
-        if s == "vorn" and 5 <= y <= 6 and 3 <= x <= 4:
-            return (200, 200, 205)                               # Brusttasche mit Stift
-        return latz if (x + y) % 4 else latz_dunkel
+            return ton(hose, s)
+        if y == 11:
+            return ton(hose, s)
+        if y == 10:
+            if s == "vorn" and x in (3, 4):
+                return (196, 196, 204) if x == 3 else (150, 150, 160)                       # Gürtelschnalle
+            return ton((66, 44, 28), s, koernung=0.02)                                       # Gürtel
+        if y in (6, 8):
+            return reflex_hell if (x + y) % 3 == 0 else reflex                               # Reflexstreifen
+        if s == "vorn":
+            if y < 3 and 3 <= x <= 4:
+                return ton(hemd if y > 0 else hemd_dunkel, s)                                # Ausschnitt
+            if y < 2 and x in (2, 5):
+                return ton(hemd_dunkel, s)                                                   # Kragen
+            if (x, y) == (5, 3) or (x, y) == (6, 3):
+                return (240, 240, 236) if y == 3 and x == 6 else (230, 232, 236)             # Ausweis
+            if (x, y) == (5, 4) or (x, y) == (6, 4):
+                return GOLD if x == 5 else (60, 100, 170)
+            if x == 4 and y >= 3:
+                return ton(weste_dunkel, s, koernung=0.01)                                   # Reißverschluss
+        if s == "hinten" and (x - 0, y) in dollar:
+            return GOLD_HELL if (x + y) % 2 else GOLD
+        return ton(weste, s, y, h)
     wuerfel(img, 16, 16, 8, 12, 4, koerper)
 
+    # --- Arme: Hemdsärmel mit Falten, Lederhandschuhe mit Stulpe ---
     def arm(s, x, y, w, h):
         if s == "oben":
-            return hemd
-        if y >= 10:
-            return (120, 90, 60)                                 # Arbeitshandschuh
-        return hemd if y < 5 else haut
+            return ton(hemd, s)
+        if s == "unten":
+            return ton(leder_dunkel, s)
+        if y >= 9:
+            if y == 9:
+                return ton(leder_dunkel, s, koernung=0.02)                                   # Stulpe
+            return ton(leder, s, y - 9, 3)
+        if y in (3, 7) and (x + y) % 2 == 0:
+            return ton(hemd_dunkel, s)                                                       # Falten
+        return ton(hemd, s, y, 9)
     wuerfel(img, 40, 16, 4, 12, 4, arm)
 
+    # --- Beine: Arbeitshose mit Knieschonern und Reflexband, Stiefel mit Sohle ---
     def bein(s, x, y, w, h):
+        if s == "oben":
+            return ton(hose, s)
         if s == "unten":
-            return (40, 34, 30)
-        if y >= 10:
-            return (70, 50, 34) if y < 11 else (50, 36, 26)      # Arbeitsstiefel
-        return latz if (x + y) % 5 else latz_dunkel
+            return sohle
+        if y == 11:
+            return sohle if s != "vorn" or x in (0, 3) else (58, 58, 62)                     # Sohle, vorn Stahlkappe
+        if y == 10:
+            return ton(stiefel, s, koernung=0.02)
+        if y == 9:
+            return ton(dunkler(stiefel, 1.15), s, koernung=0.02) if s != "vorn" or x in (0, 3) else (196, 180, 150)   # Schnürung
+        if y == 7:
+            return reflex_hell if (x + y) % 3 == 0 else reflex                               # Reflexband
+        if s == "vorn" and y in (4, 5):
+            return ton((58, 60, 66), s, koernung=0.02) if y == 4 or 0 < x < 3 else ton((44, 46, 50), s)   # Knieschoner
+        if s == "vorn" and y < 3 and x == 3:
+            return ton(hose_dunkel, s)                                                       # Naht
+        return ton(hose, s, y, 9)
     wuerfel(img, 0, 16, 4, 12, 4, bein)
     return img
 
@@ -407,77 +488,59 @@ def bodyguard_mensch() -> Image.Image:
 # Bodyguard (128×128, Eisengolem-Modell)
 # ---------------------------------------------------------------------------
 
-def bodyguard() -> Image.Image:
-    zufall = random.Random(11)
+def bodyguard_smoking() -> Image.Image:
+    """Überzug für den Eisengolem (Layout 128 × 128 wie seine Textur): nur Sakko und Sonnenbrille, alles andere
+    bleibt durchsichtig. Die Mod legt das Bild beim Start über die echte Golem-Textur aus Minecraft (Nase, Gesicht,
+    Hände und Füße bleiben so, wie Minecraft sie zeichnet)."""
     img = Image.new("RGBA", (128, 128), (0, 0, 0, 0))
-    eisen, eisen_dunkel = (196, 192, 186), (150, 146, 140)
-    jacke, jacke_hell = (24, 24, 30), (40, 40, 50)
+    jacke, jacke_hell = (18, 18, 22), (30, 30, 38)
     hemd = (240, 240, 236)
-
-    def metall(f=1.0):
-        c = eisen if zufall.random() > 0.15 else eisen_dunkel
-        return dunkler(c, f)
+    glas, glanz = (12, 12, 14), (70, 74, 86)
 
     def kopf(s, x, y, w, h):
-        if s == "vorn":
-            if y in (3, 4) and 0 <= x <= 7:
-                return (12, 12, 14) if x not in (3, 4) else (40, 40, 44)   # Sonnenbrille
-            if y == 2 and x in (1, 2, 5, 6):
-                return (90, 90, 92)                                       # Brauen
-            if y == 8 and 2 <= x <= 5:
-                return dunkler(eisen, 0.6)                                # Mund
-        if s == "hinten" and y in (3, 4):
-            return (12, 12, 14)                                           # Bügel
-        if s in ("rechts", "links") and y == 3:
-            return (12, 12, 14)
-        return metall()
+        # Sonnenbrille genau über den Augen (Zeilen 5 und 6 des Gesichts), Bügel an den Seiten
+        if s == "vorn" and y in (5, 6):
+            if x in (3, 4):
+                return glas if y == 5 else None                            # Steg über der Nase
+            return glanz if (y == 5 and x in (1, 5)) else glas
+        if s == "rechts" and y == 5 and x >= 3:
+            return glas
+        if s == "links" and y == 5 and x <= 4:
+            return glas
+        return None
     wuerfel(img, 0, 0, 8, 10, 8, kopf)
-    wuerfel(img, 24, 0, 2, 4, 2, lambda s, x, y, w, h: metall(0.95))     # Nase
 
     def koerper(s, x, y, w, h):
+        # Sakko wie auf Philips Bild: schwarz, weißes Hemd als schmales V mit Krawatte, rote Blume am Revers
         if s == "vorn":
-            mitte = w // 2
-            # Hemd als V unter dem Kragen, Fliege, weiße Knopfleiste
-            if y < 7 and abs(x - mitte + 0.5) < 3.5 - y * 0.45:
-                if y == 1 and abs(x - mitte + 0.5) < 2:
-                    return (14, 14, 16)                                   # Fliege
+            mitte = (w - 1) / 2
+            if y <= 9 and abs(x - mitte) < 0.6:
+                return (8, 8, 10)                                         # Krawatte
+            if y < 6 and abs(x - mitte) < 2.6 - y * 0.4:
                 return hemd
-            if abs(x - mitte + 0.5) < 0.6 and y >= 7:
-                return (10, 10, 12)
-            if x in (3, 14) and y == 3:
-                return (200, 30, 40)                                      # Einstecktuch
-            if y >= 7 and abs(x - mitte + 0.5) < 1.6 and y % 2 == 0:
-                return GOLD                                               # Knöpfe
-        if s == "oben":
-            return jacke_hell if (x + y) % 6 else jacke
-        return jacke if (x + y) % 7 else jacke_hell
+            if (x, y) in ((13, 2), (14, 2), (13, 3), (14, 3)):
+                return (205, 25, 35) if (x, y) != (13, 2) else (235, 60, 60)   # Blüte
+            if (x, y) in ((14, 4), (14, 5)):
+                return (40, 130, 40)                                      # Stiel
+            if (x, y) == (13, 5):
+                return (60, 160, 50)                                      # Blatt
+        return jacke if (x + y) % 9 else jacke_hell
     wuerfel(img, 0, 40, 18, 12, 11, koerper)
-    wuerfel(img, 0, 70, 9, 5, 6, lambda s, x, y, w, h: (16, 16, 20) if y else GOLD)   # Hüfte mit Goldgürtel
+    wuerfel(img, 0, 70, 9, 5, 6, lambda s, x, y, w, h: jacke)               # Hosenbund
 
-    def arm(s, x, y, w, h, pistole=False):
-        if s == "unten":
-            return metall()
-        if y >= 24:
-            # Hand aus Eisen; rechts hält sie die goldene Pistole
-            if pistole and s == "vorn" and 25 <= y <= 28 and 1 <= x <= 4:
-                return GOLD if y != 26 else GOLD_DUNKEL
-            if pistole and s in ("rechts", "links") and y == 26 and 1 <= x <= 4:
-                return GOLD
-            return metall()
-        if y >= 21:
-            return hemd if y == 21 else (12, 12, 14)                     # Manschette und Ärmelende
-        return jacke if (x + y) % 6 else jacke_hell
-    wuerfel(img, 60, 21, 4, 30, 6, lambda s, x, y, w, h: arm(s, x, y, w, h, True))
+    def arm(s, x, y, w, h):
+        # Ärmel bis kurz vor die Hand, die eiserne Hand bleibt frei
+        if s == "unten" or y >= 25:
+            return None
+        return jacke if (x + y) % 9 else jacke_hell
+    wuerfel(img, 60, 21, 4, 30, 6, arm)
     wuerfel(img, 60, 58, 4, 30, 6, arm)
 
     def bein(s, x, y, w, h):
-        if s == "unten":
-            return (6, 6, 8)
-        if y >= 13:
-            return (8, 8, 10) if (x + y) % 3 else (60, 60, 66)            # Lackschuhe
-        if s in ("rechts", "links") and x == w // 2:
-            return (44, 44, 54)                                           # Seitenstreifen
-        return (20, 20, 26)
+        # Anzughose bis kurz über die eisernen Füße
+        if s == "unten" or y >= 13:
+            return None
+        return jacke if (x + y) % 9 else jacke_hell
     wuerfel(img, 37, 0, 6, 16, 5, bein)
     wuerfel(img, 60, 0, 6, 16, 5, bein)
     return img
@@ -497,7 +560,7 @@ def main() -> dict:
                       {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/{name}"}})
         schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
     mitarbeiter().save(ASSETS / "textures/entity/mitarbeiter.png")
-    bodyguard().save(ASSETS / "textures/entity/bodyguard.png")
+    bodyguard_smoking().save(ASSETS / "textures/entity/bodyguard_smoking.png")
     bodyguard_mensch().save(ASSETS / "textures/entity/bodyguard_mensch.png")
     return {"de": TEXTE_DE, "en": TEXTE_EN}
 

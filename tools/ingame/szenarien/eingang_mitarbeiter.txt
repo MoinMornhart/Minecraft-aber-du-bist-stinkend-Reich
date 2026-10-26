@@ -1,0 +1,64 @@
+# Eingang (Weg bis zur Haustür, Beton unter dem Tor, gerundete Abzweigung zur Garage), neuer Mitarbeiter-Skin,
+# Limo mit Frontscheibe weiter vorn und Supersportwagen mit Säulen. Mit Mod (26.3).
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+taste F1
+warte 2
+server /villa ort 55.0 27.8 76 180 12
+warte 5
+bild e01_haustuer
+server /villa ort 55.0 29 90 0 25
+warte 3
+bild e02_tor
+server /villa ort 64 52 92 180 90
+warte 4
+bild e03_abzweigung_oben
+server /villa ort 84 50 86 180 90
+warte 3
+bild e04_kurve_garage_oben
+server /villa ort 44 33 104 -125 25
+warte 3
+bild e05_abzweigung_schraeg
+# Plattform am Himmel für Autos und Mitarbeiter
+server /tp @p 228 156 200 0 20
+warte 6
+server /fill 198 150 196 262 150 218 minecraft:smooth_stone
+warte 2
+server /summon stinkendreich:stretchlimo 207 151 210
+server /summon stinkendreich:supersportwagen 224 151 210
+server /summon stinkendreich:mitarbeiter 240 151 204 {NoAI:1b}
+warte 2
+server /tp @e[type=stinkendreich:stretchlimo] 207 151 210 -90 0
+server /tp @e[type=stinkendreich:supersportwagen] 224 151 210 -90 0
+server /tp @e[type=stinkendreich:mitarbeiter] 240 151 204 0 0
+server /summon minecraft:mannequin 207 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 207 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 224 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 224 151 210 {Tags:["puppe"]}
+warte 1
+server /execute as @e[type=minecraft:mannequin,tag=puppe] at @s run ride @s mount @e[type=!minecraft:mannequin,type=!minecraft:player,distance=..2,limit=1,sort=nearest]
+warte 3
+server /tp @p 207 152.3 217.5 180 0
+warte 4
+bild e06_limo_seite
+server /tp @p 211 153.5 215 150 15
+warte 3
+bild e07_limo_schraeg
+server /tp @p 224 152.3 216 180 0
+warte 3
+bild e08_flitzer_seite
+server /tp @p 228 153.5 205 120 15
+warte 3
+bild e09_flitzer_schraeg
+server /tp @p 240 152.7 207.2 180 0
+warte 3
+bild e10_mitarbeiter_vorn
+server /tp @p 240 152.7 200.8 0 0
+warte 3
+bild e11_mitarbeiter_hinten
+server /tp @p 242.4 152.9 205.8 135 12
+warte 3
+bild e12_mitarbeiter_schraeg
