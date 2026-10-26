@@ -86,7 +86,8 @@ final class FahrzeugAnzeige {
 
     /** Wie das Fahrzeug für Spieler ohne Mod gesendet wird: als Anzeige-Figur mit seinem Modell. */
     static PolymerEntity uebersetzung(AutoEntity auto, EntityType<?> echt) {
-        return uebersetzung(echt, auto.art.massstab, () -> {
+        // Polymer fragt schon im Konstruktor nach (da ist auto.art noch leer): alles erst beim Senden lesen
+        return uebersetzung(echt, () -> auto.art.massstab, () -> {
             ItemStack modell = new ItemStack(Items.PAPER);
             modell.set(DataComponents.ITEM_MODEL, itemModell(auto.art, AutoEntity.FARBEN[auto.farbe()]));
             return modell;
@@ -97,11 +98,12 @@ final class FahrzeugAnzeige {
     static PolymerEntity uebersetzung(AufzugKabine kabine, EntityType<?> echt) {
         ItemStack modell = new ItemStack(Items.PAPER);
         modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/aufzugkabine"));
-        return uebersetzung(echt, 1.0F, () -> modell);
+        return uebersetzung(echt, () -> 1.0F, () -> modell);
     }
 
     /** Anzeige-Figur mit einem Modell im Entity-Modellraum (y nach unten, Boden bei y = 24 Pixel). */
-    private static PolymerEntity uebersetzung(EntityType<?> echt, float massstab, java.util.function.Supplier<ItemStack> modell) {
+    private static PolymerEntity uebersetzung(EntityType<?> echt, java.util.function.Supplier<Float> massstab,
+                                              java.util.function.Supplier<ItemStack> modell) {
         return new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
@@ -113,7 +115,7 @@ final class FahrzeugAnzeige {
                 if (ModErkennung.hatMod(spieler)) {
                     return;
                 }
-                float m = massstab * (1 / VERKLEINERT);
+                float m = massstab.get() * (1 / VERKLEINERT);
                 daten.add(SynchedEntityData.DataValue.create(ITEM, modell.get()));
                 if (erstes) {
                     daten.add(SynchedEntityData.DataValue.create(ITEM_ART, (byte) ItemDisplayContext.NONE.ordinal()));
@@ -121,7 +123,7 @@ final class FahrzeugAnzeige {
                     // Modellraum (y nach unten, vorn = -Z) um die x-Achse auf den Kopf drehen, Boden auf Höhe 0
                     daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.LEFT_ROTATION, new Quaternionf().rotateX((float) Math.PI)));
                     daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.TRANSLATION,
-                            new Vector3f(0, 1.5F * massstab, 0)));
+                            new Vector3f(0, 1.5F * massstab.get(), 0)));
                     daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.TELEPORTATION_DURATION, 3));
                     daten.add(SynchedEntityData.DataValue.create(DisplayEntityData.VIEW_RANGE, 2.0F));
                 }
