@@ -4,6 +4,7 @@ server /time set 6000
 server /weather clear
 server /gamerule advance_time false
 warte 30
+server /clear @p
 taste F1
 server /villa ort 40.5 18 57 0 8
 warte 4
@@ -27,6 +28,7 @@ server /villa ort 44 17 49 0 -70
 warte 3
 bild a07_haibecken_club
 server /difficulty normal
+server /clear @p
 server /gamemode survival @p
 server /villa ort 46.5 26 46.5 270 8
 server /summon minecraft:zombie 40.5 26 45.5 {NoAI:1b}

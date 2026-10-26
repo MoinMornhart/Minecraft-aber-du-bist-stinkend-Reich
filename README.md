@@ -162,7 +162,7 @@ Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link ein
 </tr>
 <tr>
 <td><img src="docs/bilder/bunker_bett.jpg" alt="Kingsize-Bett im Bunker"><br><sub><b>Schlafen</b> im Kingsize-Bett, rechts das Geheimregal</sub></td>
-<td><img src="docs/bilder/notausgang.jpg" alt="Notausgang"><br><sub><b>Notausgang:</b> versteckte Falltür 50 Blöcke neben der Villa</sub></td>
+<td><img src="docs/bilder/notausgang.jpg" alt="Notausgang"><br><sub><b>Notausgang:</b> Siehst du die Falltür? Sie liegt hier im Rasen, 50 Blöcke neben der Villa</sub></td>
 </tr>
 </table>
 

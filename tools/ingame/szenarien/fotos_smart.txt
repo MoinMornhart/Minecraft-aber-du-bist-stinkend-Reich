@@ -1,0 +1,34 @@
+# README-Fotos Smart Home: App im Handy, Lichtfarbe Lila, Disco, Abend-Automatik (Rollläden zu, Licht an, Brücke ein)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /clear @p
+server /villa ort 43 26 57 0 -28
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 2
+klick
+warte 1.5
+linksklick 640 524
+warte 1.5
+bild smarthome_app
+klient schliessen
+taste F1
+server /gamemode spectator
+server /villa ort 43 27 57 0 -28
+server /execute as @p run handy smart|farbe|lila
+warte 3
+bild smarthome_lila
+server /execute as @p run handy smart|disco|an
+warte 2
+bild smarthome_disco
+server /execute as @p run handy smart|disco|aus
+server /execute as @p run handy smart|farbe|warm
+server /execute as @p run handy smart|automatik|an
+server /villa ort 56 33 112 180 12
+warte 3
+server /time set 13000
+warte 10
+bild smarthome_abend
+server /time set 6000
