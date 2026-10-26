@@ -75,7 +75,15 @@ public final class ButlerBefehle {
                                             StringArgumentType.getString(k, "befehl"));
                                     return 1;
                                 }))))
-                        .then(Commands.literal("strassen").executes(k -> {
+                        .then(Commands.literal("strassen").then(Commands.literal("pruefen").requires(de.moinmornhart.stinkendreich.Kompat.istOperator()).executes(k -> {
+                            var zeilen = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer()).pruefen();
+                            k.getSource().sendSuccess(() -> Component.literal("STRASSEN " + String.join(" | ", zeilen)), false);
+                            return 1;
+                        })).then(Commands.literal("neu").requires(de.moinmornhart.stinkendreich.Kompat.istOperator()).executes(k -> {
+                            de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer()).neuBauen();
+                            k.getSource().sendSuccess(() -> Component.translatable("stinkendreich.strasse.neu"), false);
+                            return 1;
+                        })).executes(k -> {
                             var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer());
                             StringBuilder t = new StringBuilder();
                             netz.uebersicht().forEach((name, laenge) -> t.append(t.length() > 0 ? ", " : "").append(name)

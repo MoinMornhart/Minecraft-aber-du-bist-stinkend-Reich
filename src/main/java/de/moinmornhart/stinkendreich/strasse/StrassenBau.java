@@ -85,6 +85,8 @@ public final class StrassenBau {
     private final List<int[]> laternen = new ArrayList<>();
     private final Map<Long, int[]> bodenCache = new HashMap<>();
     private final double startAbstand;
+    /** Was zuletzt den Weg versperrt hat (für die Fehlersuche im Log). */
+    private String letzteSperre = "";
 
     StrassenBau(ServerLevel welt, String name, Vec3 ziel, Vec3 start, float richtung, int eltern, int abzweig) {
         this.welt = welt;
@@ -143,7 +145,7 @@ public final class StrassenBau {
     private void schritt() {
         double rest = Math.hypot(ziel.x - x, ziel.z - z);
         if (rest < 5 || schritte > maxSchritte) {
-            abschliessen();
+            ende(rest < 5 ? "am Ziel" : "zu viele Schritte");
             return;
         }
         // Richtung: sanft zum Ziel einlenken, Hindernissen (Villa, Häuser, Spielerbauten) ausweichen
@@ -173,7 +175,7 @@ public final class StrassenBau {
         }
         if (frei == null) {
             // Kurz vor dem Ziel (etwa am Dorfrand) endet die Straße hier, sonst bricht der Bau ab
-            abschliessen();
+            ende("kein freier Weg (Rest " + (int) rest + ", Sperre " + letzteSperre + ")");
             return;
         }
         // Große Ausweichschwenks nur schrittweise fahren (weite Kurven, die der Wagen sauber schafft)
@@ -226,7 +228,16 @@ public final class StrassenBau {
             for (int o = -HALB; o <= HALB; o += HALB) {
                 int bx = (int) Math.floor(x + rx * d + rz * o), bz = (int) Math.floor(z + rz * d - rx * o);
                 for (int h = 0; h <= 4; h++) {
+                    // Eine andere Straße höher als diese: nicht darunter hindurch (sonst entsteht eine Unterführung)
+                    if (h >= 1 && o == 0 && unterbauOderFahrbahn(welt.getBlockState(new BlockPos(bx, y + h, bz)))) {
+                        letzteSperre = "andere Straße darüber bei " + bx + " " + (y + h) + " " + bz;
+                        return false;
+                    }
                     if (geschuetzt(new BlockPos(bx, y + h, bz))) {
+                        BlockPos q = new BlockPos(bx, y + h, bz);
+                        letzteSperre = welt.getBlockState(q) + " bei " + bx + " " + (y + h) + " " + bz
+                                + " villa=" + VillaPlatzierung.villa().map(v -> v.enthaelt(q)).orElse(false)
+                                + " gesetzt=" + SpielerBloecke.istGesetzt(welt, q) + " be=" + welt.getBlockEntity(q);
                         return false;
                     }
                 }
@@ -297,6 +308,12 @@ public final class StrassenBau {
         }
     }
 
+    private void ende(String grund) {
+        de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Straße {}: Ende nach {} Schritten bei {} {} {}: {}", name, schritte,
+                (int) x, y, (int) z, grund);
+        abschliessen();
+    }
+
     /** Ende: alles Offene bauen. */
     private void abschliessen() {
         fertig = true;
@@ -349,7 +366,12 @@ public final class StrassenBau {
             }
             if (gelaender) {
                 setzen(oben.above(), GELAENDER);
-            } else if (stufe && (welt.getBlockState(oben.above()).isAir() || welt.getBlockState(oben.above()).canBeReplaced())) {
+            } else if (stufe) {
+                // Erst Hang-Erde über der Stufe wegräumen: Sonst blieb hier eine Reihe Erde quer über der Fahrbahn stehen
+                // (eine ganze Blockstufe statt einer halben, das Auto knallte dagegen)
+                abtragen(oben.above());
+            }
+            if (!gelaender && stufe && (welt.getBlockState(oben.above()).isAir() || welt.getBlockState(oben.above()).canBeReplaced())) {
                 setzen(oben.above(), (bord ? BORD_STUFE : ASPHALT_STUFE).setValue(SlabBlock.TYPE, SlabType.BOTTOM));
             }
         } else if (seite && !bruecke && !andereFahrbahn && !istStrasse(vorher)) {
@@ -366,13 +388,15 @@ public final class StrassenBau {
                 setzen(oben, Blocks.GRASS_BLOCK.defaultBlockState());
             }
         }
-        // Darüber freiräumen (Bäume über der Fahrbahn ganz)
+        // Darüber freiräumen (Bäume über der Fahrbahn ganz). Durch Hügel geht es als offener Einschnitt bis zum Himmel,
+        // nie als Tunnel: alles Natürliche über der Straße bis zur Oberfläche kommt weg (höchstens 48 Blöcke)
         boolean besetzt = gelaender || (stufe && !seite);
-        for (int h = y + (besetzt ? 2 : 1); h <= y + 6; h++) {
+        int himmel = Math.min(y + 48, Math.max(y + 6, welt.getHeight(Heightmap.Types.WORLD_SURFACE, bx, bz) - 1));
+        for (int h = y + (besetzt ? 2 : 1); h <= himmel; h++) {
             abtragen(new BlockPos(bx, h, bz));
         }
         if (!bruecke) {
-            wasserAbdichten(bx, bz, y, seite);
+            wasserAbdichten(bx, bz, y, seite, himmel);
         }
         if (!seite) {
             for (int h = y + 7; h <= y + 20; h++) {
@@ -429,6 +453,9 @@ public final class StrassenBau {
      */
     private int[] boden(int bx, int bz) {
         return bodenCache.computeIfAbsent(BlockPos.asLong(bx, 0, bz), k -> {
+            // Erst laden: Für ungeladene Stücke der Welt meldet Minecraft die tiefste Höhe (−64). Die Straße tauchte
+            // dann Block für Block in die Erde ab, und Meer davor wurde nicht erkannt (keine Brücke).
+            welt.getChunk(bx >> 4, bz >> 4);
             int top = welt.getHeight(Heightmap.Types.WORLD_SURFACE, bx, bz) - 1;
             BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos(bx, top, bz);
             for (int h = top; h > top - 48; h--) {
@@ -448,12 +475,21 @@ public final class StrassenBau {
 
     /** Darf hier nichts verändert werden? Villa, Blöcke mit Inhalt, Gesetztes und alles Gebaute. */
     private boolean geschuetzt(BlockPos p) {
+        // Landminen im Rasen der Festung: Die Straße darf über sie hinweg (die Mine unter der Fahrbahn fällt weg)
+        if (welt.getBlockState(p).is(de.moinmornhart.stinkendreich.register.ModBloecke.LANDMINE)) {
+            return false;
+        }
         if (VillaPlatzierung.villa().map(v -> v.enthaelt(p)).orElse(false) || SpielerBloecke.istGesetzt(welt, p)
                 || welt.getBlockEntity(p) != null) {
             return true;
         }
         BlockState s = welt.getBlockState(p);
         return !s.isAir() && s.getFluidState().isEmpty() && !Schutz.istNatuerlich(s) && !istStrasse(s);
+    }
+
+    /** Fahrbahn, Bordstein oder Unterbau einer Straße (nicht Stufen, Geländer, Laternen). */
+    private static boolean unterbauOderFahrbahn(BlockState s) {
+        return s.is(ASPHALT.getBlock()) || s.is(LINIE.getBlock()) || s.is(BORD.getBlock()) || s.is(UNTERBAU.getBlock());
     }
 
     /** Teil einer (anderen) Straße: darf überbaut werden (Abzweigungen, Kreuzungen). */
@@ -477,8 +513,8 @@ public final class StrassenBau {
      * werden zu einer Stützmauer, der Seitenstreifen auch; auf Fahrbahn und Bordstein wird die Flüssigkeit entfernt.
      * Sonst läuft sie beim nächsten Block-Update auf die Fahrbahn und der Wagen bleibt stecken.
      */
-    private void wasserAbdichten(int bx, int bz, int y, boolean seite) {
-        for (int h = y; h <= y + 6; h++) {
+    private void wasserAbdichten(int bx, int bz, int y, boolean seite, int bis) {
+        for (int h = y; h <= Math.max(y + 6, bis); h++) {
             BlockPos p = new BlockPos(bx, h, bz);
             for (net.minecraft.core.Direction r : net.minecraft.core.Direction.Plane.HORIZONTAL) {
                 BlockPos n = p.relative(r);

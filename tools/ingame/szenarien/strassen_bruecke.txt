@@ -1,0 +1,33 @@
+# Brücke übers Meer: Straße zu einem Ort jenseits des Wassers, prüfen, Fotos
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 200
+server /tp @p -30 100 330
+warte 5
+server /butler ort merken insel
+warte 1
+server /butler strasse insel
+warte 60
+server /butler strassen
+server /butler strassen pruefen
+taste F1
+server /gamemode spectator
+server /tp @p -30 140 200 0 90
+warte 8
+bild sb01_von_oben
+server /tp @p -60 80 220 -60 15
+warte 6
+bild sb02_seite
+server /tp @p -20 90 120 180 25
+warte 6
+bild sb03_auffahrt
+server /butler strassenpunkt 0 300
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild sb04_dorf_300
+server /butler strassenpunkt 3 700
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild sb05_end_700

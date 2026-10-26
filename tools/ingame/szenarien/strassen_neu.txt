@@ -1,0 +1,30 @@
+# Straßen in einer frischen Welt: automatisch bauen lassen, prüfen (unter der Erde? Brücken?), Fotos von oben
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 240
+server /butler strassen
+server /butler strassen pruefen
+taste F1
+server /gamemode spectator
+server /butler strassenpunkt 0 100
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild sn01_dorf_100
+server /butler strassenpunkt 0 250
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild sn02_dorf_250
+server /butler strassenpunkt 1 100
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild sn03_mine_100
+server /butler strassenpunkt 2 150
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild sn04_nether_150
+server /butler strassenpunkt 3 200
+server /tp @p ~ ~30 ~ 0 90
+warte 6
+bild sn05_end_200

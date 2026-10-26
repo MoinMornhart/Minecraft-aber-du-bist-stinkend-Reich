@@ -109,6 +109,79 @@ public final class Strassennetz {
         StinkendReich.LOGGER.info("Straßennetz: baue Straße nach {} ({})", name, b == null ? "ging nicht" : ziel.pos());
     }
 
+    /**
+     * Alle Straßen neu bauen (Befehl /butler strassen neu): Das Netz vergisst seine Straßen und baut die zu Dorf, Mine,
+     * Netherportal und Endportal mit dem aktuellen Straßenbau neu. Alte Straßenblöcke bleiben liegen; die neuen
+     * Straßen führen darüber bzw. daneben.
+     */
+    /**
+     * Prüfhilfe (/butler strassen pruefen): je Straße, wie viele Punkte unter der Erde liegen (über der Fahrbahn steht
+     * bis zum Himmel noch ein fester Block) und wie viele als Brücke über Wasser führen.
+     */
+    public List<String> pruefen() {
+        ServerLevel welt = server.overworld();
+        List<String> zeilen = new ArrayList<>();
+        for (Strasse s : strassen) {
+            int unter = 0, bruecke = 0, keinBelag = 0, hindernis = 0;
+            for (BlockPos p : s.punkte()) {
+                welt.getChunk(p.getX() >> 4, p.getZ() >> 4);
+                int oben = welt.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, p.getX(), p.getZ()) - 1;
+                if (oben > p.getY() + 1) {
+                    unter++;
+                    if (unter <= 3) {
+                        StringBuilder drueber = new StringBuilder();
+                        for (int h = 1; h <= oben - p.getY(); h++) {
+                            drueber.append(net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(welt.getBlockState(p.above(h)).getBlock()).getPath()).append(' ');
+                        }
+                        StinkendReich.LOGGER.info("STRASSE {} unter der Erde bei {} (Oberfläche {}, darüber {})", s.name(), p.toShortString(), oben, drueber);
+                    }
+                }
+                // Ein ganzer fester Block direkt auf der Fahrbahn (halbe Stufen sind in Ordnung)
+                for (int quer = -2; quer <= 2; quer++) {
+                    BlockPos q = p.offset(quer, 1, 0);
+                    net.minecraft.world.level.block.state.BlockState drauf = welt.getBlockState(q);
+                    if (net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(welt.getBlockState(q.below()).getBlock()).getPath().equals("gray_concrete")
+                            && drauf.isCollisionShapeFullBlock(welt, q)) {
+                        hindernis++;
+                        if (hindernis <= 3) {
+                            StinkendReich.LOGGER.info("STRASSE {} Hindernis {} bei {}", s.name(),
+                                    net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(drauf.getBlock()).getPath(), q.toShortString());
+                        }
+                        break;
+                    }
+                }
+                net.minecraft.world.level.block.state.BlockState belag = welt.getBlockState(p);
+                if (belag.isAir() || !belag.getFluidState().isEmpty()) {
+                    keinBelag++;
+                }
+                for (int h = 1; h <= 12; h++) {
+                    if (!welt.getFluidState(p.below(h)).isEmpty()) {
+                        bruecke++;
+                        break;
+                    }
+                    if (!welt.getBlockState(p.below(h)).isAir()) {
+                        break;
+                    }
+                }
+            }
+            String z = s.name() + ": " + s.punkte().size() + " Punkte, " + unter + " unter der Erde, " + bruecke + " Brücke über Wasser, "
+                    + keinBelag + " ohne Fahrbahn, " + hindernis + " Hindernisse";
+            StinkendReich.LOGGER.info("STRASSE {}", z);
+            zeilen.add(z);
+        }
+        return zeilen;
+    }
+
+    public void neuBauen() {
+        strassen.clear();
+        bau = null;
+        warteschlange.clear();
+        warteschlange.addAll(AUTOMATISCH);
+        automatikGestartet = true;
+        speichern();
+        StinkendReich.LOGGER.info("Straßennetz: alle Straßen werden neu gebaut");
+    }
+
     public static Strassennetz get(MinecraftServer server) {
         if (aktuell == null || aktuell.server != server) {
             aktuell = laden(server);

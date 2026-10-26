@@ -1,12 +1,11 @@
-# Fahrt auf der Straße: wo wird der Wagen ausgebremst? (AUTO-STOSS im Log)
+# Fahrt mit James über die neue Straße ins Dorf (Zeit messen)
 server /gamemode creative
 server /time set 6000
 server /weather clear
 server /gamerule advance_time false
-warte 150
-server /butler strassen
+warte 200
 server /villa ort 55.5 26 86 0 15
-warte 2
+warte 3
 merke
 server Butler, hol den Wagen
 bis 60 vorgefahren
@@ -15,7 +14,7 @@ server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
 warte 2
 merke
 server Butler, fahr mich zum Dorf
-warte 30
-bild f01_unterwegs
-bis 360 Wir sind da|nicht weiter|fast da
-bild f02_angekommen
+warte 40
+bild sf01_unterwegs
+bis 300 Wir sind da|nicht weiter|fast da
+bild sf02_angekommen

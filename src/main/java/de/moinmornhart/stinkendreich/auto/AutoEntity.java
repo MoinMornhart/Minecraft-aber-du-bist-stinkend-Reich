@@ -451,16 +451,18 @@ public class AutoEntity extends Mob {
         double y = getDeltaMovement().y;
         y = onGround() ? -0.04 : (y - 0.08) * 0.98;
 
+        double vorherX = getX(), vorherZ = getZ();
         move(MoverType.SELF, new Vec3(schub.x, y, schub.z));
-
-        // DEBUG Straße
-        if (horizontalCollision && betrag > 0.15) {
-            BlockPos vorn = BlockPos.containing(position().add(richtung.scale(getBbWidth() / 2 + 0.6)));
-            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("AUTO-STOSS {} client={} tempo={} y={} boden={} vorn0={} vorn1={} vorn-1={}", blockPosition(), level().isClientSide(),
-                    String.format("%.2f", tempo), String.format("%.2f", getY()), onGround(), level().getBlockState(vorn), level().getBlockState(vorn.above()), level().getBlockState(vorn.below()));
+        // Nur ein echter Aufprall bremst: Kommt der Wagen trotz Berührung noch gut voran (Bordstein oder Geländer nur
+        // gestreift, über eine Stufe gerutscht), fährt er fast ungebremst weiter
+        double gewollt = Math.hypot(schub.x, schub.z), geschafft = Math.hypot(getX() - vorherX, getZ() - vorherZ);
+        boolean gestreift = horizontalCollision && gewollt > 1.0E-3 && geschafft >= 0.6 * gewollt;
+        if (gestreift) {
+            tempo *= 0.985;
         }
+
         // Aufprall
-        if (horizontalCollision) {
+        if (horizontalCollision && !gestreift) {
             if (betrag > 0.5 && crashSperre <= 0) {
                 playSound(ModSounds.CRASH, 1.0F, 1.0F);
                 crashSperre = 20;

@@ -1,0 +1,26 @@
+# Straßen in einer frischen Welt bauen lassen, prüfen und Nahaufnahmen
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 220
+server /butler strassen
+server /butler strassen pruefen
+taste F1
+server /gamemode spectator
+server /butler strassenpunkt 0 292
+server /tp @p ~ ~6 ~ -90 35
+warte 6
+bild sp_nah1
+server /butler strassenpunkt 0 300
+server /tp @p ~ ~12 ~ 0 89
+warte 4
+bild sp_nah2
+server /butler strassenpunkt 3 300
+server /tp @p ~ ~6 ~ 0 35
+warte 6
+bild sp_nah3
+server /butler strassenpunkt 2 150
+server /tp @p ~ ~6 ~ 0 35
+warte 6
+bild sp_nah4
