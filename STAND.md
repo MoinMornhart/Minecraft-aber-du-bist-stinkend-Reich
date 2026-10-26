@@ -214,7 +214,7 @@ _Zuletzt aktualisiert: 2026-10-26, 09:15 Uhr (Philip ist wach)_
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
 
-## Version 0.3.5 (Philips Wünsche vom 26.10. vormittags, Release angestoßen 26.10. ~09:55)
+## Version 0.3.5 (veröffentlicht 26.10. vormittags, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.5)
 
 - Nachttisch mit Schublade: `moebel/NachttischBlock` (DekoBlock + EntityBlock, Rechtsklick öffnet) und
   `moebel/SchubladeBlockEntity` (9 Plätze, `ChestMenu` GENERIC_9x1; Speichern ab 1.21.6 ValueOutput/ValueInput, davor
