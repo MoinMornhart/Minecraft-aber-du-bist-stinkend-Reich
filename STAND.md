@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 00:30 Uhr (Nachtschicht, Philip schläft)_
+_Zuletzt aktualisiert: 2026-10-26, 01:40 Uhr (Nachtschicht, Philip schläft)_
 
 ## Erledigt
 
@@ -141,6 +141,42 @@ _Zuletzt aktualisiert: 2026-10-26, 00:30 Uhr (Nachtschicht, Philip schläft)_
   Ausschnitt aus dem Mitarbeiter-Test). Alle 17 Versionen lassen sich bauen.
 - **Release 0.3.0 angestoßen** (26.10. nachts). Kurztest für alle Versionen: `kurz03.txt` (Handy-Geschenk,
   Lieferung, Mitarbeiter, Bodyguards gegen Zombie, Kreisel, Fahrt ins Dorf).
+
+## Server-Version (Spieler ohne Mod, in Arbeit seit 26.10. nachts)
+
+- Weg: Fabric-Server mit unserer Mod **und Polymer** (Bibliothek von Patbox, gibt es für 1.21–26.3). Ist Polymer
+  installiert, übersetzt `server/ServerPaket` (nur 26.3, Dateien mit `//? if >=26.3`) alles für Spieler ohne Mod;
+  Spieler mit Mod erkennt der Server am Paket „hallo“ (`netz/ModErkennung`, Client meldet einen Empfänger an).
+  Polymer nur als `modCompileOnly` (`deps.polymer` in stonecutter.properties.toml), Betreiber installieren es selbst.
+- Erledigt (26.3): Blöcke (`BlockUebersetzung`: volle Würfel als Polymer-Texturblock, Rest als Barriere bzw.
+  Strukturleere + Anzeige-Figur mit dem echten Modell, Modelle aus den Blockzuständen via `Blockmodelle`), Items
+  (Papier mit unserem Item-Modell), Töne, Ressourcenpaket (Polymer baut und schickt es), James/Mitarbeiter/
+  Tänzerinnen als Schaufensterpuppe mit eigener Haut, Bodyguards als Eisengolem, Sitze unsichtbar, Handy als
+  Dialogfenster (`HandyDialog`, Befehl `/handy …`), Autos und Hubschrauber als Item-Modelle aus den Fahrzeugdaten
+  (`FahrzeugAnzeige`, Modellraum mit y nach unten, Anzeige um x gedreht, Maßstab 4 × massstab), Fahren mit W/A/S/D
+  auf dem Server (`AutoEntity.fahrerOhneMod`, Hubschrauber: Leertaste hoch, Strg runter).
+- Test: `VANILLA=1 PORT=25571 tools/ingame/test.sh 26.3 tools/ingame/szenarien/vanilla*.txt` (Server mit Mod und
+  Polymer aus `tools/ingame/server-mods/`, holen mit `tools/ingame/server_mods_holen.sh 26.3`, dazu ein normales
+  Minecraft über `tools/ingame/vanilla_klient.py`). Tasten gehen dort per `xdotool --window`, Bilder vom Bildschirm.
+- Bedienfelder ohne Mod (`netz/OhneMod`: Blöcke rufen auf dem Server `OhneMod.zeigen`, die Server-Version meldet
+  Dialoge an; Knöpfe schicken `/stinkendreich knopf <art> <x y z> <wert>` = dieselbe Netz-Aktion wie die Bildschirme
+  der Mod, `Netz.ausfuehren` prüft die Reichweite): Butler-Menü (`ButlerDialog`, `/butler knopf <nr> <befehl>`),
+  Zentrale, Tastenfeld (Code + neuer Code), Aufzug, Flügel mit Klaviatur (Fenster bleibt offen), Musikanlage
+  (ohne Mod: Schallplatten von Minecraft), Monitor (`KameraBlick`: Kamera des Clients auf eine Hilfsfigur,
+  Springen = nächste Kamera, Schleichen = Ende). Aufzugskabine als Modell (`FahrzeugAnzeige.kabine`).
+  Blöcke ohne Kollision bekommen ein Klickfeld; `mixin/BlockBenutzenMixin` verhindert, dass nach einem Blockklick
+  zusätzlich das Handy aufgeht. Getestet (26.3, `vanilla_bedien.txt`): Tastenfeld, Aufzug, Klaviatur, Kameras.
+- Tasten im Test ohne Mod: das Spielfenster ist ein Kindfenster der Wurzel (`xwininfo -root -tree`), Fahren mit
+  W/A und Hubschrauber mit Leertaste geprüft (`vanilla_auto.txt`).
+- Offen: zweiter Bedienfeld-Test (Zentrale, Musik, Butler, Kabine), Fernseher, Drehteller, Spieler mit Mod auf
+  einem Polymer-Server prüfen, übrige 16 Versionen, danach Paper-Plugin.
+
+## Version 0.3.1 (in Arbeit)
+
+- Versionstest 0.3.0 (`kurz03.txt`, alle 17): Handy, Lieferung, Mitarbeiter, Bodyguards, Kreisel überall OK.
+  Fahrt ins Dorf scheitert in 1.21.2/1.21.3 (Zeit zu knapp) und 26.1/26.1.2/26.2 (Kreuzung über einem Fluss voller
+  Geländer). Fix in `StrassenBau`: Spalte neu bauen, wenn die Straße näher vorbeikommt, Geländer/Bordstein/Mast auf
+  der Fahrbahn entfernen, Wasser neben der Straße abdichten (`wasserAbdichten`). Noch zu prüfen mit kurz03 in 26.2.
 
 ## Release
 

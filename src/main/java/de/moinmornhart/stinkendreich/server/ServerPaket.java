@@ -73,8 +73,12 @@ public final class ServerPaket {
             PolymerSoundEvent.registerOverlay(ton);
             toene++;
         }
-        // Item-Modelle für die Anzeige-Figuren der Blöcke ins Ressourcenpaket
+        FahrzeugAnzeige.registrieren();
+        Bedienfelder.registrieren();
+        KameraBlick.registrieren();
+        // Item-Modelle für die Anzeige-Figuren der Blöcke und die Fahrzeuge ins Ressourcenpaket
         PolymerResourcePackUtils.RESOURCE_PACK_CREATION_EVENT.register(paket -> {
+            FahrzeugAnzeige.ressourcen(paket);
             for (Identifier modell : BlockUebersetzung.ANZEIGE_MODELLE) {
                 Identifier item = BlockUebersetzung.itemModellId(modell);
                 paket.addStringData("assets/" + item.getNamespace() + "/items/" + item.getPath() + ".json",
@@ -120,12 +124,15 @@ public final class ServerPaket {
 
     /**
      * Figuren: James, Mitarbeiter und Tänzerinnen als Schaufensterpuppe (Menschenfigur) mit ihrer eigenen Haut aus
-     * dem Ressourcenpaket, Bodyguards als Eisengolem, alles andere vorerst als Rüstungsständer.
+     * dem Ressourcenpaket, Bodyguards als Eisengolem, Fahrzeuge und Aufzugskabine als Anzeige-Figur mit Modell,
+     * alles andere vorerst als Rüstungsständer.
      */
     private static <T extends Entity> void figurUebersetzen(EntityType<T> typ) {
         String name = BuiltInRegistries.ENTITY_TYPE.getKey(typ).getPath();
         boolean mensch = name.equals("butler") || name.equals("mitarbeiter") || name.equals("taenzerin");
-        String ersatzName = mensch ? "mannequin" : name.equals("bodyguard") ? "iron_golem" : "armor_stand";
+        // Sitze sind unsichtbar (leere Anzeige-Figur), Fahrzeuge zeigen ihr Modell (FahrzeugAnzeige)
+        String ersatzName = mensch ? "mannequin" : name.equals("bodyguard") ? "iron_golem"
+                : name.equals("sitz") || name.equals("aufzugkabine") || typIstFahrzeug(typ) ? "item_display" : "armor_stand";
         EntityType<?> ersatz = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.withDefaultNamespace(ersatzName));
         PolymerEntityUtils.registerOverlay(typ, new PolymerSyncedObject<EntityType<?>>() {
             @Override
@@ -137,7 +144,10 @@ public final class ServerPaket {
             public boolean canSyncRawToClient(PacketContext kontext) {
                 return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION));
             }
-        }, (java.util.function.Function<T, PolymerEntity>) e -> new PolymerEntity() {
+        }, (java.util.function.Function<T, PolymerEntity>) e -> e instanceof de.moinmornhart.stinkendreich.auto.AutoEntity auto
+                ? FahrzeugAnzeige.uebersetzung(auto, typ)
+                : e instanceof de.moinmornhart.stinkendreich.mechanik.AufzugKabine kabine ? FahrzeugAnzeige.uebersetzung(kabine, typ)
+                : new PolymerEntity() {
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
                 return ModErkennung.hatMod(kontext.get(PacketContext.CONNECTION)) ? typ : ersatz;
@@ -153,6 +163,15 @@ public final class ServerPaket {
                 }
             }
         });
+    }
+
+    private static boolean typIstFahrzeug(EntityType<?> typ) {
+        for (var art : de.moinmornhart.stinkendreich.auto.Autotyp.values()) {
+            if (de.moinmornhart.stinkendreich.register.ModEntities.auto(art) == typ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Die Haut einer Figur (Textur aus dem Ressourcenpaket, Tänzerinnen je nach Kostüm). */

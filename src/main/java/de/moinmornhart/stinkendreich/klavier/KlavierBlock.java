@@ -24,6 +24,8 @@ public class KlavierBlock extends DekoBlock {
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (welt.isClientSide()) {
             KlientBruecke.klavier.accept(Klavier.mitte(welt, pos));
+        } else {
+            de.moinmornhart.stinkendreich.netz.OhneMod.zeigen(spieler, "klavier", Klavier.mitte(welt, pos));
         }
         return InteractionResult.SUCCESS;
     }

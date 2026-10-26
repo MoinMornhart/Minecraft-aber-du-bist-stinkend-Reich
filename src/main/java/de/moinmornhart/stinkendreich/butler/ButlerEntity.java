@@ -221,6 +221,10 @@ public class ButlerEntity extends PathfinderMob {
             Kompat.nachricht(sp, Component.translatable("stinkendreich.butler.fremd", getName(), entityData.get(BESITZER_NAME)), true);
         } else if (spieler.isShiftKeyDown()) {
             inventarZeigen(sp);
+        } else if (!de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)) {
+            // Spieler ohne Mod (Server-Version): das Menü als Dialogfenster von Minecraft
+            //? if >=26.3
+            de.moinmornhart.stinkendreich.server.ButlerDialog.oeffnen(sp, this);
         }
         return InteractionResult.SUCCESS;
     }

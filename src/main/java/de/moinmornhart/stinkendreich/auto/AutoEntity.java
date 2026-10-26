@@ -177,7 +177,24 @@ public class AutoEntity extends Mob {
         if (butler != null) {
             return butler;
         }
+        if (fahrerOhneMod() != null) {
+            return null;    // Spieler ohne Mod: der Server fährt mit seinen Tasten (siehe travel)
+        }
         return getFirstPassenger() instanceof Player p ? p : null;
+    }
+
+    /**
+     * Server-Version: Sitzt am Steuer ein Spieler ohne Mod, kann sein Minecraft den Wagen nicht selbst bewegen. Dann
+     * fährt der Server ihn mit den Tasten, die der Spieler drückt (W/S/A/D, Leertaste = Handbremse).
+     */
+    public net.minecraft.server.level.ServerPlayer fahrerOhneMod() {
+        //? if >=26.3 {
+        if (!level().isClientSide() && chauffeur() == null && getFirstPassenger() instanceof net.minecraft.server.level.ServerPlayer sp
+                && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)) {
+            return sp;
+        }
+        //?}
+        return null;
     }
 
     /** Der Butler, falls er im Wagen sitzt (dann am Steuer). */
@@ -362,7 +379,17 @@ public class AutoEntity extends Mob {
             handbremse = level().isClientSide() && KlientBruecke.handbremse.getAsBoolean();
             // Der Fahrer schaut nach vorn, kann sich aber umsehen
             setYHeadRot(getYRot());
-        } else if (fahrer instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity butler) {
+        }
+        //? if >=26.3 {
+        else if (fahrerOhneMod() instanceof net.minecraft.server.level.ServerPlayer sp) {
+            net.minecraft.world.entity.player.Input tasten = sp.getLastClientInput();
+            gas = (tasten.forward() ? 1 : 0) - (tasten.backward() ? 1 : 0);
+            lenk = (tasten.left() ? 1 : 0) - (tasten.right() ? 1 : 0);
+            handbremse = tasten.jump();
+            setYHeadRot(getYRot());
+        }
+        //?}
+        else if (fahrer instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity butler) {
             // Der Butler fährt (nur auf dem Server, er ist dann der steuernde Rechner); ohne Fahrauftrag bremst er
             if (butler.faehrtGerade()) {
                 gas = chauffeurGas;

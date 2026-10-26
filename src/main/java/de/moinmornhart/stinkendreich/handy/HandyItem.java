@@ -20,7 +20,8 @@ public class HandyItem extends Item {
         }
         //? if >=26.3 {
         else if (spieler instanceof net.minecraft.server.level.ServerPlayer sp
-                && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)) {
+                && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)
+                && !de.moinmornhart.stinkendreich.netz.OhneMod.geradeGezeigt(sp)) {
             de.moinmornhart.stinkendreich.server.HandyDialog.oeffnen(sp, "start");
         }
         //?}

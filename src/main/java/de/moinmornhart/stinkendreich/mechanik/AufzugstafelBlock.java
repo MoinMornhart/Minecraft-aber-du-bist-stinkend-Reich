@@ -33,6 +33,8 @@ public class AufzugstafelBlock extends MechanikBlock {
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (welt.isClientSide()) {
             KlientBruecke.aufzug.accept(pos);
+        } else {
+            de.moinmornhart.stinkendreich.netz.OhneMod.zeigen(spieler, "aufzug", pos);
         }
         return InteractionResult.SUCCESS;
     }

@@ -1,0 +1,48 @@
+# Server-Version: Autos und Hubschrauber für Spieler ohne Mod (VANILLA=1 tools/ingame/test.sh 26.3 …).
+# Dasselbe Szenario läuft auch mit Mod (ohne VANILLA) zum Vergleich der Modelle.
+warte 8
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /villa ort 55.5 26 80 0 0
+warte 3
+server /execute as @p at @s run summon stinkendreich:bonzenauto ^-4 ^ ^7 {Rotation:[90f,0f],stinkendreich:"{\"farbe\":2}"}
+server /execute as @p at @s run summon stinkendreich:supersportwagen ^4 ^ ^7 {Rotation:[90f,0f],stinkendreich:"{\"farbe\":3}"}
+server /execute as @p at @s run summon stinkendreich:gelaendewagen ^-4 ^ ^14 {Rotation:[0f,0f]}
+server /execute as @p at @s run summon stinkendreich:stretchlimo ^5 ^ ^15 {Rotation:[0f,0f]}
+warte 4
+server /villa ort 55.5 30 76 0 22
+warte 3
+bild a01_autos
+server /villa ort 47 27.5 90 -60 8
+warte 3
+bild a02_seite
+server /villa ort 59.5 26 83 0 25
+warte 2
+klick
+warte 3
+bild a03_eingestiegen
+# Echte Tasten am normalen Minecraft: W gedrückt halten, dann W+A
+halte 3 w
+bild a04_gefahren
+halte 1.5 w a
+bild a05_kurve
+# Aussteigen (Schleichen) und von oben schauen
+halte 1 shift
+warte 1
+server /villa ort 55.5 40 75 0 50
+warte 3
+bild a06_von_oben
+# Hubschrauber: einsteigen, mit Leertaste steigen
+server /villa ort 55.5 26 70 0 0
+warte 2
+server /execute as @p at @s run summon stinkendreich:hubschrauber ^ ^ ^6 {Rotation:[180f,0f]}
+warte 2
+server /execute as @p at @s run ride @s mount @e[type=stinkendreich:hubschrauber,sort=nearest,limit=1]
+warte 3
+bild a07_heli_drin
+halte 3 space
+bild a08_heli_hoch
+halte 2 w
+bild a09_heli_vor

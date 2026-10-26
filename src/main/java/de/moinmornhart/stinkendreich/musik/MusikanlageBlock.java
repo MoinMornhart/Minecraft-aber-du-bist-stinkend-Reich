@@ -50,6 +50,8 @@ public class MusikanlageBlock extends MechanikBlock {
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (welt.isClientSide()) {
             KlientBruecke.musikanlage.accept(pos);
+        } else {
+            de.moinmornhart.stinkendreich.netz.OhneMod.zeigen(spieler, "musikanlage", pos);
         }
         return InteractionResult.SUCCESS;
     }

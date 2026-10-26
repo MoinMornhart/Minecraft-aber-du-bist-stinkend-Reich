@@ -55,6 +55,14 @@ public final class ButlerBefehle {
                             return 1;
                         }))
                         .then(Commands.literal("truhe").executes(ButlerBefehle::truheFestlegen))
+                        // Knöpfe des Butler-Dialogs für Spieler ohne Mod (siehe server/ButlerDialog)
+                        .then(Commands.literal("knopf").then(Commands.argument("nummer", com.mojang.brigadier.arguments.IntegerArgumentType.integer())
+                                .then(Commands.argument("befehl", StringArgumentType.greedyString()).executes(k -> {
+                                    menueKnopf(k.getSource().getPlayerOrException(),
+                                            com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(k, "nummer"),
+                                            StringArgumentType.getString(k, "befehl"));
+                                    return 1;
+                                }))))
                         .then(Commands.literal("strassen").executes(k -> {
                             var netz = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer());
                             StringBuilder t = new StringBuilder();
@@ -124,28 +132,34 @@ public final class ButlerBefehle {
         // Butler-Menü: „<Entity-Nummer>|<!Schnellbefehl oder freier Text>“
         Netz.bearbeiter("butler", 12, (spieler, pos, wert) -> {
             int trenner = wert.indexOf('|');
-            if (trenner < 0) {
-                return;
-            }
-            Entity e = spieler.level().getEntity(parseInt(wert.substring(0, trenner)));
-            if (!(e instanceof ButlerEntity b)) {
-                return;
-            }
-            if (b.besitzer() == null) {
-                ButlerVerwaltung.besitzerSetzen(b, spieler);
-            }
-            if (!b.istBesitzer(spieler)) {
-                return;
-            }
-            String befehl = wert.substring(trenner + 1);
-            if (befehl.equals("!inventar")) {
-                b.inventarZeigen(spieler);
-            } else if (befehl.startsWith("!")) {
-                ausfuehren(b, spieler, Sprache.verstehen(befehl.substring(1)));
-            } else if (!befehl.isBlank()) {
-                verarbeiten(spieler, befehl, true);
+            if (trenner >= 0) {
+                menueKnopf(spieler, parseInt(wert.substring(0, trenner)), wert.substring(trenner + 1));
             }
         });
+    }
+
+    /**
+     * Ein Knopf aus dem Butler-Menü (Bildschirm der Mod oder Dialog für Spieler ohne Mod, dort über den Befehl
+     * {@code /butler knopf <Nummer> <Befehl>}): „!…“ ist ein Schnellbefehl, alles andere ein freier Auftrag.
+     */
+    static void menueKnopf(ServerPlayer spieler, int butlerId, String befehl) {
+        Entity e = spieler.level().getEntity(butlerId);
+        if (!(e instanceof ButlerEntity b)) {
+            return;
+        }
+        if (b.besitzer() == null) {
+            ButlerVerwaltung.besitzerSetzen(b, spieler);
+        }
+        if (!b.istBesitzer(spieler)) {
+            return;
+        }
+        if (befehl.equals("!inventar")) {
+            b.inventarZeigen(spieler);
+        } else if (befehl.startsWith("!")) {
+            ausfuehren(b, spieler, Sprache.verstehen(befehl.substring(1)));
+        } else if (!befehl.isBlank()) {
+            verarbeiten(spieler, befehl, true);
+        }
     }
 
     private static int parseInt(String s) {

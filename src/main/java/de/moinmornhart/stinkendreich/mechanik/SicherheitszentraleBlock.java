@@ -39,6 +39,7 @@ public class SicherheitszentraleBlock extends MechanikBlock {
                     Component.translatable("stinkendreich.stufe." + z.stufe()),
                     Component.translatable(z.alarmAktiv() ? "stinkendreich.alarm.an" : "stinkendreich.alarm.aus"),
                     String.join(", ", z.bewohner().values())).withStyle(ChatFormatting.AQUA), false);
+            de.moinmornhart.stinkendreich.netz.OhneMod.zeigen(spieler, "zentrale", pos);
         }
         return InteractionResult.SUCCESS;
     }

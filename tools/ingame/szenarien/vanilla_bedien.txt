@@ -1,0 +1,89 @@
+# Server-Version: Bedienfelder für Spieler ohne Mod als Dialogfenster (VANILLA=1 tools/ingame/test.sh 26.3 …).
+# Rechtsklick auf die Blöcke öffnet das Fenster; Knöpfe testet der Server mit demselben Befehl, den sie schicken.
+# Weltkoordinaten = Villa + (-56, 62, -56)
+warte 8
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+# Sicherheitszentrale im Büro
+server /villa ort 71.5 32 59.3 0 22
+warte 3
+klick
+warte 2
+bild d01_zentrale
+taste Escape
+server /execute as @p run stinkendreich knopf zentrale 15 95 5 eintragen
+server /execute as @p run stinkendreich knopf zentrale 15 95 5 stufe:2
+warte 1
+klick
+warte 2
+bild d02_zentrale_stufe2
+taste Escape
+server /execute as @p run stinkendreich knopf zentrale 15 95 5 stufe:0
+# Tastenfeld am Schmuck-Tresor
+server /villa ort 62.5 32 49.8 180 4
+warte 3
+klick
+warte 2
+bild d03_tastenfeld
+taste Escape
+# Aufzug: Etagenwahl, dann die Kabine aus dem Keller holen und mitfahren
+server /villa ort 59.5 26 42.6 180 25
+warte 3
+klick
+warte 2
+bild d04_aufzug
+taste Escape
+server /execute as @p run stinkendreich knopf aufzug 3 89 -15 1099511566405
+warte 12
+bild d04b_kabine
+# Konzertflügel: Liste, dann Klaviatur, ein Stück spielen
+server /villa ort 58.5 26 60.4 0 30
+warte 3
+klick
+warte 2
+bild d05_fluegel
+taste Escape
+server /execute as @p run stinkendreich knopf fenster_klaviatur 2 88 7
+warte 2
+bild d06_klaviatur
+taste Escape
+server /execute as @p run stinkendreich knopf klavier 2 88 7 l|ode
+warte 3
+server /execute as @p run stinkendreich knopf klavier 2 88 7 s
+# Musikanlage im Erdgeschoss
+server /villa ort 54.5 25 18.3 180 25
+warte 3
+klick
+warte 2
+bild d07_musik
+taste Escape
+server /execute as @p run stinkendreich knopf musik_platte -2 88 -40 pigstep
+warte 3
+server /execute as @p run stinkendreich knopf musik_platte -2 88 -40 stopp
+# Überwachung: Monitor im Büro, Kamera 1, nächste Kamera (Springen), Ende (Schleichen)
+server /villa ort 69.5 32 59.3 0 22
+warte 3
+klick
+warte 2
+bild d08_monitor
+taste Escape
+server /execute as @p run stinkendreich knopf kamera 13 95 5 0
+warte 3
+bild d09_kamera1
+halte 0.3 space
+warte 3
+bild d10_kamera2
+halte 0.5 shift
+warte 2
+bild d11_zurueck
+# Butler-Menü: James vor den Spieler holen, Rechtsklick
+server /villa ort 55.5 26 80 0 0
+warte 2
+server /execute as @p at @s run tp @e[type=stinkendreich:butler,limit=1,sort=nearest] ^ ^ ^2.5 facing entity @s
+warte 1
+klick
+warte 2
+bild d12_butler
+taste Escape

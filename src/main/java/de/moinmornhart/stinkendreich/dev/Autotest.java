@@ -73,7 +73,17 @@ public final class Autotest {
                 StinkendReich.LOGGER.info("Autotest-Befehl: {}", zeile);
                 if (zeile.startsWith("fahrt ")) {
                     fahrtStarten(zeile.substring(6));
-                } else if (zeile.startsWith("/")) {
+                }
+                //? if >=1.21.2 {
+                else if (zeile.startsWith("eingabe")) {
+                    // Tasten des Spielers so setzen, als hätte sein Minecraft sie geschickt (Test der Server-Version,
+                    // z. B. „eingabe w a“; ohne Buchstaben alle los)
+                    String t = " " + zeile.substring(7).trim() + " ";
+                    spieler.setLastClientInput(new net.minecraft.world.entity.player.Input(t.contains(" w "), t.contains(" s "),
+                            t.contains(" a "), t.contains(" d "), t.contains(" leer "), t.contains(" schleich "), t.contains(" strg ")));
+                }
+                //?}
+                else if (zeile.startsWith("/")) {
                     server.getCommands().performPrefixedCommand(spieler.createCommandSourceStack(), zeile.substring(1));
                 } else {
                     server.getPlayerList().broadcastSystemMessage(Component.literal("<" + spieler.getScoreboardName() + "> " + zeile), false);

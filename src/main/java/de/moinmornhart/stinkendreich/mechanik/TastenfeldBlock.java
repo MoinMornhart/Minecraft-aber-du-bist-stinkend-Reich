@@ -34,6 +34,8 @@ public class TastenfeldBlock extends MechanikBlock {
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (welt.isClientSide()) {
             KlientBruecke.tastenfeld.accept(pos);
+        } else {
+            de.moinmornhart.stinkendreich.netz.OhneMod.zeigen(spieler, "tastenfeld", pos);
         }
         return InteractionResult.SUCCESS;
     }

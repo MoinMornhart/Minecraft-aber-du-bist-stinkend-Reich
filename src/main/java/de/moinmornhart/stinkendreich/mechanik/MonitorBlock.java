@@ -53,6 +53,8 @@ public class MonitorBlock extends MechanikBlock {
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (welt.isClientSide()) {
             KlientBruecke.monitor.accept(pos);
+        } else {
+            de.moinmornhart.stinkendreich.netz.OhneMod.zeigen(spieler, "monitor", pos);
         }
         return InteractionResult.SUCCESS;
     }

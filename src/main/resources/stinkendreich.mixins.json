@@ -3,6 +3,7 @@
   "package": "de.moinmornhart.stinkendreich.mixin",
   "compatibilityLevel": "${java}",
   "mixins": [
+    "BlockBenutzenMixin",
     "BlockItemMixin"
   ],
   "client": [

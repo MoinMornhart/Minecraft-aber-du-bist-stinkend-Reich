@@ -163,7 +163,11 @@ grep -qE "joined the game|hat das Spiel betreten" "$CHATLOG" || { melde "FEHLER:
 melde "In der Welt, warte auf die Darstellung …"
 sleep "${RENDERZEIT:-25}"
 
-FENSTER="$(xdotool search --onlyvisible --name "Minecraft" | head -1)"
+# Das Spielfenster ist das große Kindfenster der Wurzel mit „Minecraft“ im Namen (xdotool search liefert bei einem
+# normalen Minecraft manchmal die Wurzel selbst, dann kommen keine Tasten an)
+FENSTER="$(xwininfo -root -tree 2>/dev/null | grep -E '"Minecraft [0-9]' | grep -v 'Hidden' | head -1 | awk '{print $1}')"
+[[ -n "$FENSTER" ]] && FENSTER="$((FENSTER))"
+[[ -n "$FENSTER" ]] || FENSTER="$(xdotool search --onlyvisible --name "Minecraft" | head -1)"
 [[ -n "$FENSTER" ]] || FENSTER="$(xdotool search --name "Minecraft" | head -1)"
 # Ein normales Minecraft (SDL ohne Fensterverwaltung) hat manchmal keinen Fensternamen: dann das größte sichtbare Fenster
 if [[ -z "$FENSTER" ]]; then
@@ -177,6 +181,7 @@ if [[ "${VANILLA:-0}" == 1 ]]; then
   for w in $(xdotool search --name ".*" 2>/dev/null); do
     echo "  Fenster $w: '$(xdotool getwindowname "$w" 2>/dev/null)' $(xdotool getwindowgeometry "$w" 2>/dev/null | tr '\n' ' ')" >> "$LOGS/fenster.txt"
   done
+  xwininfo -root -tree >> "$LOGS/fenster.txt" 2>&1
   # Ein Klick ins Fenster gibt ihm den Fokus (SDL nimmt sonst keine Tasten an); vorher Chat öffnen, damit der Klick nichts abbaut
   xdotool windowactivate "$FENSTER" 2>/dev/null; xdotool windowraise "$FENSTER" 2>/dev/null
 fi
@@ -221,6 +226,10 @@ kapitel() {
   [[ -n "$VIDEO_PID" ]] && printf '%.1f|%s\n' "$(echo "$(date +%s.%N) - $VIDEO_START" | bc)" "$1" >> "$AUS/${VIDEO_NAME}_kapitel.txt"
 }
 
+# Tasten bei einem normalen Minecraft direkt ans Fenster schicken (es bekommt ohne Fensterverwaltung keinen Fokus)
+FENSTER_ARG=""
+[[ "${VANILLA:-0}" == 1 && -n "$FENSTER" ]] && FENSTER_ARG="--window $FENSTER"
+
 # Kopie lesen: so darf das Szenario während eines Laufs bearbeitet werden
 cp "$SZENARIO" "$RUN/szenario.txt"
 while read -r wort rest || [[ -n "$wort" ]]; do
@@ -242,9 +251,9 @@ while read -r wort rest || [[ -n "$wort" ]]; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi
            sleep 2
          done ;;
-    druecke) xdotool keydown $rest ;;
-    loslassen) xdotool keyup $rest; sleep 0.3 ;;
-    halte) set -- $rest; dauer="$1"; shift; xdotool keydown "$@"; sleep "$dauer"; xdotool keyup "$@"; sleep 0.3 ;;   # Tasten gedrückt halten
+    druecke) xdotool keydown $FENSTER_ARG $rest ;;
+    loslassen) xdotool keyup $FENSTER_ARG $rest; sleep 0.3 ;;
+    halte) set -- $rest; dauer="$1"; shift; xdotool keydown $FENSTER_ARG "$@"; sleep "$dauer"; xdotool keyup $FENSTER_ARG "$@"; sleep 0.3 ;;   # Tasten gedrückt halten
     video) video $rest ;;
     kapitel) kapitel "$rest" ;;
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;

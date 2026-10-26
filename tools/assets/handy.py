@@ -95,6 +95,17 @@ TEXTE_DE = {
     "stinkendreich.handy.lieferung.gold": "Gold (in Ihrem Inventar)",
     "stinkendreich.handy.status.unterwegs": "Ist unterwegs zu dir",
     "stinkendreich.handy.status.faehrtvor": "Fährt vor",
+    # Server-Version: Dialogfenster für Spieler ohne Mod
+    "stinkendreich.ohnemod.oeffnen": "Öffnen",
+    "stinkendreich.ohnemod.code_neu": "Neuer Code (nur zum Ändern)",
+    "stinkendreich.ohnemod.code_hinweis": "Code eingeben und öffnen. Zum Ändern: alten Code oben, neuen Code darunter.",
+    "stinkendreich.ohnemod.musik_hinweis": "Eigene Musik und Spotify gehen nur mit der Mod auf dem Rechner. Hier laufen die Schallplatten von Minecraft:",
+    "stinkendreich.ohnemod.klavier_hinweis": "Tasten anklicken, das Fenster bleibt offen. Esc schließt es.",
+    "stinkendreich.ohnemod.kamera_hinweis": "Kamera wählen. Schleichen (Shift) beendet den Kamerablick.",
+    "stinkendreich.ohnemod.kamera": "Kamera %s",
+    "stinkendreich.ohnemod.kamera_ende": "Schleichen (Shift) zum Beenden",
+    "stinkendreich.ohnemod.keine_kamera": "Keine Kamera in der Nähe.",
+    "stinkendreich.ohnemod.klaviatur": "Selbst spielen (Klaviatur)",
 }
 TEXTE_EN = {
     "item.stinkendreich.handy": "Golden Phone",
@@ -169,6 +180,16 @@ TEXTE_EN = {
     "stinkendreich.handy.lieferung.gold": "gold (in your inventory)",
     "stinkendreich.handy.status.unterwegs": "On the way to you",
     "stinkendreich.handy.status.faehrtvor": "Pulling up",
+    "stinkendreich.ohnemod.oeffnen": "Open",
+    "stinkendreich.ohnemod.code_neu": "New code (only to change it)",
+    "stinkendreich.ohnemod.code_hinweis": "Enter the code and open. To change it: old code on top, new code below.",
+    "stinkendreich.ohnemod.musik_hinweis": "Your own music and Spotify need the mod on your computer. Here you can play Minecraft's records:",
+    "stinkendreich.ohnemod.klavier_hinweis": "Click the keys, the window stays open. Esc closes it.",
+    "stinkendreich.ohnemod.kamera_hinweis": "Pick a camera. Sneak (Shift) ends the camera view.",
+    "stinkendreich.ohnemod.kamera": "Camera %s",
+    "stinkendreich.ohnemod.kamera_ende": "Sneak (Shift) to leave",
+    "stinkendreich.ohnemod.keine_kamera": "No camera nearby.",
+    "stinkendreich.ohnemod.klaviatur": "Play yourself (keyboard)",
 }
 
 

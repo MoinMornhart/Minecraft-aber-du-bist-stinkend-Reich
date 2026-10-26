@@ -58,7 +58,18 @@ public class HubschrauberEntity extends AutoEntity {
                 hoch = (KlientBruecke.handbremse.getAsBoolean() ? 1 : 0) - (KlientBruecke.sinken.getAsBoolean() ? 1 : 0);
             }
             setYHeadRot(getYRot());
-        } else if (pilot instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity butler) {
+        }
+        //? if >=26.3 {
+        else if (fahrerOhneMod() instanceof net.minecraft.server.level.ServerPlayer sp) {
+            // Spieler ohne Mod: Leertaste steigt, Sprinttaste (Strg) sinkt (Schleichen heißt bei ihm aussteigen)
+            net.minecraft.world.entity.player.Input tasten = sp.getLastClientInput();
+            gas = (tasten.forward() ? 1 : 0) - (tasten.backward() ? 1 : 0);
+            drehen = (tasten.left() ? 1 : 0) - (tasten.right() ? 1 : 0);
+            hoch = (tasten.jump() ? 1 : 0) - (tasten.sprint() ? 1 : 0);
+            setYHeadRot(getYRot());
+        }
+        //?}
+        else if (pilot instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity butler) {
             // Der Butler fliegt (Server); ohne Flugauftrag landet er
             if (butler.faehrtGerade()) {
                 gas = chauffeurGas;
@@ -108,7 +119,7 @@ public class HubschrauberEntity extends AutoEntity {
     public void tick() {
         super.tick();
         // Rotor läuft mit Pilot hoch und ohne aus (auf jedem Rechner gleich, die Insassen sind abgeglichen)
-        rotor = getControllingPassenger() != null ? Math.min(1.0F, rotor + 0.012F) : Math.max(0.0F, rotor - 0.006F);
+        rotor = getControllingPassenger() != null || fahrerOhneMod() != null ? Math.min(1.0F, rotor + 0.012F) : Math.max(0.0F, rotor - 0.006F);
         rotorWinkelAlt = rotorWinkel;
         rotorWinkel += rotor * 0.9F;
         if (rotorWinkel > Mth.TWO_PI * 100) {

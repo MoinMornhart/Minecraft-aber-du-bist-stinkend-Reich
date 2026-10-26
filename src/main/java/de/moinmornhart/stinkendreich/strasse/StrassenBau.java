@@ -246,9 +246,6 @@ public final class StrassenBau {
             for (int bx = (int) Math.floor(Math.min(a[0], b[0])) - r; bx <= (int) Math.floor(Math.max(a[0], b[0])) + r; bx++) {
                 for (int bz = (int) Math.floor(Math.min(a[1], b[1])) - r; bz <= (int) Math.floor(Math.max(a[1], b[1])) + r; bz++) {
                     long k = BlockPos.asLong(bx, 0, bz);
-                    if (gebaut.containsKey(k)) {
-                        continue;
-                    }
                     // Abstand der Blockmitte zum Stück a–b; hinter dem Anfang der Straße nichts bauen
                     double vx = b[0] - a[0], vz = b[1] - a[1], wx = bx + 0.5 - a[0], wz = bz + 0.5 - a[1];
                     double t = (wx * vx + wz * vz) / Math.max(1e-6, vx * vx + vz * vz);
@@ -257,7 +254,10 @@ public final class StrassenBau {
                     }
                     t = Math.max(0, Math.min(1, t));
                     double d = Math.hypot(wx - vx * t, wz - vz * t);
-                    if (d > HALB + 1.5) {
+                    // Schon gebaut? Nur neu, wenn die Straße hier jetzt näher vorbeiführt (etwa in einer Kehre: dann wird
+                    // aus Bordstein und Geländer der ersten Spur Fahrbahn)
+                    Double schon = gebaut.get(k);
+                    if (d > HALB + 1.5 || (schon != null && schon <= d + 0.01)) {
                         continue;
                     }
                     int naechster = t < 0.5 ? i - 1 : i;
@@ -321,6 +321,15 @@ public final class StrassenBau {
         // Halbe Stufe auf der tieferen Seite eines Höhenwechsels
         boolean stufe = (i + 1 < punkte.size() && punkte.get(i + 1).getY() > y) || (i > 0 && punkte.get(i - 1).getY() > y);
         boolean gelaender = bord && bruecke;
+        if (fahrbahn) {
+            // Geländer, Bordstein-Stufe oder Laternenmast einer anderen Spur stehen hier im Weg
+            BlockState ueber = welt.getBlockState(oben.above());
+            if (ueber.is(GELAENDER.getBlock()) || ueber.is(BORD_STUFE.getBlock()) || ueber.is(MAST.getBlock())) {
+                for (int h = 1; h <= 4 && istStrasse(welt.getBlockState(oben.above(h))); h++) {
+                    welt.setBlock(oben.above(h), Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+                }
+            }
+        }
         if (fahrbahn || (bord && !andereFahrbahn)) {
             boolean strich = d < 0.5 && (i / STRICH) % 2 == 0;
             setzen(oben, bord ? BORD : (strich && !stufe ? LINIE : ASPHALT));
@@ -361,6 +370,9 @@ public final class StrassenBau {
         boolean besetzt = gelaender || (stufe && !seite);
         for (int h = y + (besetzt ? 2 : 1); h <= y + 6; h++) {
             abtragen(new BlockPos(bx, h, bz));
+        }
+        if (!bruecke) {
+            wasserAbdichten(bx, bz, y, seite);
         }
         if (!seite) {
             for (int h = y + 7; h <= y + 20; h++) {
@@ -458,6 +470,27 @@ public final class StrassenBau {
         }
         welt.setBlock(p, s, Block.UPDATE_CLIENTS);
         return true;
+    }
+
+    /**
+     * Wasser und Lava an einer Straße im Einschnitt (Höhlen, Grundwasser im Hang): Nachbarn außerhalb der Straße
+     * werden zu einer Stützmauer, der Seitenstreifen auch; auf Fahrbahn und Bordstein wird die Flüssigkeit entfernt.
+     * Sonst läuft sie beim nächsten Block-Update auf die Fahrbahn und der Wagen bleibt stecken.
+     */
+    private void wasserAbdichten(int bx, int bz, int y, boolean seite) {
+        for (int h = y; h <= y + 6; h++) {
+            BlockPos p = new BlockPos(bx, h, bz);
+            for (net.minecraft.core.Direction r : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+                BlockPos n = p.relative(r);
+                long spalte = BlockPos.asLong(n.getX(), 0, n.getZ());
+                if (!welt.getFluidState(n).isEmpty() && !gebaut.containsKey(spalte) && !offen.containsKey(spalte)) {
+                    setzen(n, UNTERBAU);
+                }
+            }
+            if (h > y && !welt.getFluidState(p).isEmpty() && !geschuetzt(p)) {
+                setzen(p, seite ? UNTERBAU : Blocks.AIR.defaultBlockState());
+            }
+        }
     }
 
     /** Räumt einen natürlichen Block weg (Wasser bleibt, die Straße führt dann als Brücke darüber). */
