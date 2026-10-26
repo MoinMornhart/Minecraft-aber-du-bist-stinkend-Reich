@@ -20,7 +20,7 @@
   "mixins": ["stinkendreich.mixins.json"],
   "accessWidener": "stinkendreich.ct",
   "depends": {
-    "fabricloader": ">=${loader}",
+    "fabricloader": "*",
     "minecraft": "${minecraft}",
     "fabric-api": "*"
   }

@@ -1,0 +1,32 @@
+# Inkognito zweimal runter und hoch: Autos, Hubschrauber, Rüstungsständer und Bilder bleiben an ihrem Platz.
+# Dazu: Straßen entstehen gleich nach dem Betreten von selbst.
+server /gamemode spectator
+server /time set 6000
+server /gamerule advance_time false
+warte 25
+taste F1
+server /execute as @e[type=!player,type=!stinkendreich:sitz,x=-56,y=40,z=-56,dx=112,dy=80,dz=112] at @s unless block ~ ~0.3 ~ #minecraft:replaceable run say VORHER_STECKT
+server /villa ort 91.5 17 45.2 180 30
+warte 3
+bild fix_garage_vorher
+server /villa inkognito an
+warte 40
+server /villa inkognito aus
+warte 40
+server /villa inkognito an
+warte 40
+server /villa inkognito aus
+warte 40
+server /execute as @e[type=!player,type=!stinkendreich:sitz,x=-56,y=40,z=-56,dx=112,dy=80,dz=112] at @s unless block ~ ~0.3 ~ #minecraft:replaceable run say NACHHER_STECKT
+server /villa ort 91.5 17 45.2 180 30
+warte 3
+bild fix_garage
+server /villa ort 66 47.5 60 135 18
+warte 3
+bild fix_landeplatz
+server /villa ort 64.2 7.5 40 270 10
+warte 3
+bild fix_waffenkammer
+server /villa ort 56 120 120 180 50
+warte 3
+bild fix_strassen

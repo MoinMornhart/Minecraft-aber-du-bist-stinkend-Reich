@@ -1,3 +1,10 @@
+### Neu in 0.3.7
+
+- **Läuft jetzt auch mit dem NoRisk Client** und anderen Launchern mit älterem Fabric Loader (die Mod verlangt keine bestimmte Loader-Version mehr).
+- **Inkognito-Modus repariert:** Bilder, Rüstungsständer, Autos und Hubschrauber bleiben nach dem Runter- und Hochfahren an ihrem Platz (vorher wanderten Bilder zur Seite und Fahrzeuge sanken in den Boden). Schon verrutschte Sachen in alten Welten bleiben, wie sie sind.
+- **YouTube im Fernseher:** Videos holt jetzt yt-dlp selbst; der Fehler „403 Forbidden“ von FFmpeg sollte damit weg sein.
+- **Straßen sofort:** Sobald du die Welt betrittst, baut die Mod nacheinander Straßen zum Dorf, zur Mine, zum Netherportal und zum Endportal.
+
 ### Neu in 0.3.6
 
 - **Modus FESTUNG (Stufe 4):** nur in der neuen Kommandozentrale im Bunker einschaltbar. Die Villa macht komplett dicht: Sirenen, Zugbrücke ein, Lava im Graben, auf der höheren Mauer abwechselnd Abwehrgeschütze und Laser in den Himmel, ein Minengürtel rund ums Grundstück. Alles fährt mit Animation hoch, nichts kommt in den Chat. Bewohner und Kartenbesitzer bleiben verschont.

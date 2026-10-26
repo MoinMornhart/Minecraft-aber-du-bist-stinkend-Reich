@@ -27,14 +27,15 @@ import java.util.concurrent.TimeUnit;
  * @param dauer      Länge in Sekunden (0 = unbekannt)
  * @param live       Livestream (dann wird nicht gespult)
  */
-record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, String agent, double dauer, boolean live) {
+record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, String agent, double dauer, boolean live,
+                   String seite, String bildFormat, String tonFormat) {
     /** Bild bis 480p (H.264 bevorzugt) und die beste Tonspur, notfalls eine Datei mit beidem. */
     private static final String FORMAT = "bv*[height<=480][vcodec^=avc1]+ba[acodec^=mp4a]/bv*[height<=480]+ba/b[height<=480]/b";
 
     static VideoQuelle holen(String kennung) throws IOException, InterruptedException {
         String test = VideoWerkzeuge.testvideo();
         if (!test.isEmpty()) {
-            return new VideoQuelle(test, test, Map.of(), "", 0, false);
+            return new VideoQuelle(test, test, Map.of(), "", 0, false, "", "", "");
         }
         VideoWerkzeuge.ytdlpAktualisieren();
         Path ytdlp = VideoWerkzeuge.finden(VideoWerkzeuge.Programm.YTDLP);
@@ -97,7 +98,33 @@ record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, Stri
                 kopf.put(e.getKey(), wert);
             }
         }
-        return new VideoQuelle(bild, ton.isEmpty() ? bild : ton, kopf, agent, dauer, live);
+        return new VideoQuelle(bild, ton.isEmpty() ? bild : ton, kopf, agent, dauer, live,
+                "https://www.youtube.com/watch?v=" + kennung, text(bildFormat, "format_id"), text(tonFormat, "format_id"));
+    }
+
+    /**
+     * yt-dlp lädt eine Spur selbst und gibt sie auf stdout aus (für FFmpeg). Seit 2026 lehnt YouTube viele Abrufe mit
+     * 403 ab, wenn FFmpeg die Adresse direkt öffnet; yt-dlp kennt die nötigen Kopfzeilen und Tricks.
+     */
+    ProcessBuilder ytdlpSpur(boolean bildSpur) throws IOException {
+        Path ytdlp = VideoWerkzeuge.finden(VideoWerkzeuge.Programm.YTDLP);
+        if (ytdlp == null) {
+            throw new IOException("yt-dlp fehlt");
+        }
+        List<String> befehl = new ArrayList<>(List.of(ytdlp.toString(), "--no-playlist", "--no-warnings", "--ignore-config",
+                "--quiet", "--no-part", "-f", bildSpur ? bildFormat : tonFormat, "-o", "-"));
+        Path deno = VideoWerkzeuge.finden(VideoWerkzeuge.Programm.DENO);
+        if (deno != null) {
+            befehl.add("--js-runtimes");
+            befehl.add("deno:" + deno);
+        }
+        befehl.add(seite);
+        return new ProcessBuilder(befehl);
+    }
+
+    /** Spur über yt-dlp holen? (nur bei YouTube mit bekannter Format-Nummer, nicht bei Testvideos) */
+    boolean ueberYtdlp(boolean bildSpur) {
+        return !seite.isEmpty() && !(bildSpur ? bildFormat : tonFormat).isEmpty();
     }
 
     /** Liest einen Datenstrom im Hintergrund mit (sonst blockiert das Programm, wenn sein Puffer voll ist). */

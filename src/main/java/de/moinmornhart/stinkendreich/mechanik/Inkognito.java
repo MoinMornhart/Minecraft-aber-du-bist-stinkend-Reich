@@ -185,7 +185,12 @@ public final class Inkognito {
                 if (sofort || ++teil == TICKS_JE_SCHRITT) {
                     // Jede Figur landet genau einen Block unter ihrer Höhe vom Schrittanfang (auch wer kurz fiel)
                     for (var e : startHoehen.entrySet()) {
-                        verschieben(e.getKey(), e.getValue() - 1 - e.getKey().getY(), -1);
+                        if (e.getKey() instanceof net.minecraft.world.entity.decoration.HangingEntity) {
+                            verschieben(e.getKey(), -1, -1);
+                        } else {
+                            verschieben(e.getKey(), e.getValue() - 1 - e.getKey().getY(), -1);
+                            e.getKey().setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                        }
                     }
                     startHoehen.clear();
                     teil = 0;
@@ -236,15 +241,24 @@ public final class Inkognito {
             }
             case HOCH -> {
                 if (teil == 0) {
-                    // Erst die Figuren anheben, dann rückt der Boden unter ihnen nach
-                    figurenSchieben(welt, villa, schritt - tiefe, 1);
+                    // Erst die Figuren anheben, dann rückt der Boden unter ihnen nach; ihre Zielhöhe merken, damit
+                    // niemand in den Schritt-Ticks zurückfällt und vom nachrückenden Boden eingeklemmt wird
+                    startHoehen.clear();
+                    for (Entity e : figuren(welt, villa, schritt - tiefe)) {
+                        startHoehen.put(e, e.getY() + 1);
+                        verschieben(e, 1, 1);
+                    }
                     effekte(welt, villa, villa.plan().bodenY - tiefe + schritt, false, sofort);
+                } else {
+                    halten();
                 }
                 for (int t = teil; t <= (sofort ? TICKS_JE_SCHRITT - 1 : teil); t++) {
                     spaltenSchieben(welt, villa, schritt - tiefe, 1, t);
                 }
                 if (sofort || ++teil == TICKS_JE_SCHRITT) {
                     teil = 0;
+                    halten();
+                    startHoehen.clear();
                     if (++schritt == tiefe) {
                         einsetzen(welt, villa, 0);
                         phase = null;
@@ -314,13 +328,29 @@ public final class Inkognito {
         }
     }
 
+    /** Beim Hochfahren: alle Figuren genau auf ihrer Zielhöhe des Schritts halten (ohne Fallen). */
+    private static void halten() {
+        for (var e : startHoehen.entrySet()) {
+            Entity f = e.getKey();
+            if (f.isAlive() && !(f instanceof net.minecraft.world.entity.decoration.HangingEntity)
+                    && Math.abs(f.getY() - e.getValue()) > 1.0E-3) {
+                f.teleportTo(f.getX(), e.getValue(), f.getZ());
+            }
+            f.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            f.resetFallDistance();
+        }
+    }
+
     /** Eine Figur um dy versetzen; Bilder hängen an ihrem Block, James merkt sich seine Plätze mit. */
     private static void verschieben(Entity e, double dy, int richtung) {
         if (!e.isAlive()) {
             return;
         }
-        if (e instanceof net.minecraft.world.entity.decoration.HangingEntity) {
-            e.setPos(e.getX(), e.getY() + dy, e.getZ());
+        if (e instanceof net.minecraft.world.entity.decoration.HangingEntity bild) {
+            // Bilder hängen an einem Block: genau diesen Block verschieben. Über die Mitte (getX/getY) gerechnet
+            // wanderten zwei Blöcke breite Bilder bei jedem Schritt einen Block zur Seite.
+            BlockPos haken = bild.getPos().above((int) Math.round(dy));
+            bild.setPos(haken.getX() + 0.5, haken.getY() + 0.5, haken.getZ() + 0.5);
             // Bilder schicken von sich aus keine Bewegungen an die Spieler: einmal neu anmelden
             if (e.level() instanceof ServerLevel sl) {
                 sl.getChunkSource().removeEntity(e);

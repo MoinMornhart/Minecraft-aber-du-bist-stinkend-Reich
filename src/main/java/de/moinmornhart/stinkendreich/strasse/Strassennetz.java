@@ -63,10 +63,50 @@ public final class Strassennetz {
     public static void registrieren() {
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> aktuell = null);
         ServerTickEvents.END_SERVER_TICK.register(s -> {
-            if (aktuell != null && aktuell.server == s && aktuell.bau != null) {
-                aktuell.bauTick();
+            if (aktuell != null && aktuell.server == s) {
+                if (aktuell.bau != null) {
+                    aktuell.bauTick();
+                } else if (!aktuell.warteschlange.isEmpty() && s.getTickCount() % 20 == 0) {
+                    aktuell.naechsteAutomatisch();
+                }
             }
         });
+        // Sobald jemand die Welt betritt, entstehen die Straßen zu Dorf, Mine, Netherportal und Endportal von selbst
+        net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+            Strassennetz netz = get(server);
+            if (!netz.automatikGestartet && VillaPlatzierung.villa().isPresent()) {
+                netz.automatikGestartet = true;
+                netz.warteschlange.addAll(AUTOMATISCH);
+            }
+        });
+    }
+
+    /** Ziele, zu denen gleich beim Betreten Straßen gebaut werden (in dieser Reihenfolge). */
+    private static final List<String> AUTOMATISCH = List.of("dorf", "mine", "netherportal", "endportal");
+    /** Noch zu bauende Ziele der Automatik (nicht gespeichert: beim nächsten Start wird erneut geprüft). */
+    private final java.util.ArrayDeque<String> warteschlange = new java.util.ArrayDeque<>();
+    private boolean automatikGestartet;
+
+    /** Nächstes Ziel der Automatik suchen und bauen; gibt es keins oder schon eine Straße, das übernächste. */
+    private void naechsteAutomatisch() {
+        var villa = VillaPlatzierung.villa().orElse(null);
+        String fest = warteschlange.poll();
+        if (villa == null || fest == null) {
+            return;
+        }
+        ServerLevel welt = server.overworld();
+        StrassenZiele.Ziel ziel = StrassenZiele.finden(welt, fest, villa.spawn());
+        if (ziel == null) {
+            StinkendReich.LOGGER.info("Straßennetz: kein Ziel „{}“ in Reichweite", fest);
+            return;
+        }
+        Vec3 punkt = Vec3.atBottomCenterOf(ziel.pos());
+        String name = net.minecraft.network.chat.Component.translatable("stinkendreich.strasse.ziel." + fest).getString();
+        if (strasseZu(name, punkt) >= 0) {
+            return;
+        }
+        StrassenBau b = bauen(welt, punkt, name);
+        StinkendReich.LOGGER.info("Straßennetz: baue Straße nach {} ({})", name, b == null ? "ging nicht" : ziel.pos());
     }
 
     public static Strassennetz get(MinecraftServer server) {

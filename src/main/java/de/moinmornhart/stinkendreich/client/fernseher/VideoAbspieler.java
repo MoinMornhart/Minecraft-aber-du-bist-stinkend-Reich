@@ -55,6 +55,8 @@ final class VideoAbspieler implements AutoCloseable {
     private volatile String fehler = "";
     private volatile VideoQuelle quelle;
     private volatile Process bildProzess, tonProzess;
+    /** yt-dlp-Prozesse, die FFmpeg die Daten liefern (werden mit beendet). */
+    private final List<Process> nebenProzesse = new java.util.concurrent.CopyOnWriteArrayList<>();
     private final ByteArrayOutputStream ffmpegFehler = new ByteArrayOutputStream();
     private final BlockingQueue<Bild> frei = new ArrayBlockingQueue<>(4);
     private final BlockingQueue<Bild> fertig = new ArrayBlockingQueue<>(4);
@@ -125,8 +127,8 @@ final class VideoAbspieler implements AutoCloseable {
                 return;
             }
             double ab = q.live() ? 0 : start;
-            bildProzess = ffmpeg(q, q.bild(), ab, true).start();
-            tonProzess = ffmpeg(q, q.ton(), ab, false).start();
+            bildProzess = starten(q, q.bild(), ab, true);
+            tonProzess = starten(q, q.ton(), ab, false);
             VideoQuelle.mitlesen(bildProzess.getErrorStream(), ffmpegFehler);
             VideoQuelle.mitlesen(tonProzess.getErrorStream(), ffmpegFehler);
             if (geschlossen) {
@@ -142,6 +144,22 @@ final class VideoAbspieler implements AutoCloseable {
                 StinkendReich.LOGGER.warn("Fernseher: Video {} nicht abspielbar ({})", kennung, fehler);
             }
         }
+    }
+
+    /**
+     * Startet FFmpeg für eine Spur. Bei YouTube holt yt-dlp die Daten und reicht sie über eine Röhre an FFmpeg weiter
+     * (FFmpeg allein bekommt von YouTube oft „403 Forbidden“); zurück kommt der FFmpeg-Prozess.
+     */
+    private Process starten(VideoQuelle q, String eingabe, double ab, boolean bild) throws IOException {
+        if (!q.ueberYtdlp(bild)) {
+            return ffmpeg(q, eingabe, ab, bild).start();
+        }
+        ProcessBuilder laden = q.ytdlpSpur(bild);
+        ProcessBuilder umwandeln = ffmpeg(q, "pipe:0", ab, bild);
+        laden.redirectError(ProcessBuilder.Redirect.DISCARD);
+        List<Process> kette = ProcessBuilder.startPipeline(List.of(laden, umwandeln));
+        nebenProzesse.add(kette.get(0));
+        return kette.get(1);
     }
 
     /** FFmpeg-Aufruf für die Bild- oder Tonspur ab einer Stelle. */
@@ -443,6 +461,8 @@ final class VideoAbspieler implements AutoCloseable {
                 p.destroyForcibly();
             }
         }
+        nebenProzesse.forEach(Process::destroyForcibly);
+        nebenProzesse.clear();
         for (Thread t : faeden) {
             if (t != Thread.currentThread()) {
                 t.interrupt();
