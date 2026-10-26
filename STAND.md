@@ -247,7 +247,10 @@ _Zuletzt aktualisiert: 2026-10-26, 08:40 Uhr (Philip ist wach)_
   `netz/Rueckmeldung` („orte“) zurück. Ohne Mod im `HandyDialog` (Textfeld + Speichern). `ButlerEntity.ort` findet
   auch „meine Mine“; Mine-Synonyme: minen, erzmine, zeche, schacht. Szenario `navi_orte.txt` (OK).
 - Philips Regel: am Ende jeder Runde README und Trailer (`trailer_szenario.py`, jetzt mit Fernseher, Fernbedienung,
-  Navi) neu.
+  Navi) neu. Trailer-Dreh: `SICHTWEITE=12 STINKENDREICH_TESTVIDEO=<alter Trailer> STINKENDREICH_VIDEOTEMPO=0.333
+  tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer.txt`, dann `ZEITLUPE=3 python3 tools/ingame/video.py …`.
+- Geprüft vor 0.3.4: alle 17 Versionen übersetzen; im Spiel 26.3 (Golems, Autos, Eingang, Mitarbeiter, Fernseher-
+  Video, Fernbedienung, Navi) und 1.21 (Fernbedienung, Video im Fernseher).
 
 ## Version 0.3.3 (veröffentlicht 26.10. morgens, 17 Dateien: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.3.3)
 

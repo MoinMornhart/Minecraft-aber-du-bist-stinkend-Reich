@@ -1,3 +1,13 @@
+### Neu in 0.3.4
+
+- **YouTube im Fernseher:** Link einfügen, „Im Fernseher abspielen“ – das Video läuft direkt im Spiel, der Ton kommt aus dem Fernseher, alle in der Nähe sehen dieselbe Stelle. Anhalten, Weiter, Spulen und Stopp im Menü. Beim ersten Video fragt die Mod einmal, ob sie die kostenlosen Hilfsprogramme yt-dlp, FFmpeg und Deno (zusammen etwa 200 MB, von GitHub) laden darf.
+- **Fernbedienung:** in der Hand oder abgelegt auf Nachttisch und Tisch (Schleichen + Rechtsklick), öffnet das Menü des nächsten Fernsehers. In der Villa liegt je eine im Schlafzimmer und im Penthouse-Kino.
+- **Handy-Navi „Meine Orte“:** eigene Orte unter einem Namen speichern und hinfahren lassen; James kennt sie auch im Chat („James, bring mich zu meiner Mine“). „Bergwerk“, „Zeche“ und „Schacht“ versteht er jetzt als Mine.
+- **Bodyguards:** echte Eisengolems mit Sakko, Krawatte, roter Blume und Sonnenbrille (Nase, Hände und Füße bleiben wie beim Golem).
+- **Autos:** In der Limo passt man mit dem Kopf unter das Dach, die Frontscheibe sitzt weiter vorn; Supersportwagen und Bonzenauto sind 1,5-mal so groß.
+- **Mitarbeiter:** neuer Skin mit Schutzhelm, Stirnlampe, Warnweste und Firmenausweis.
+- **Villa (neue Welten):** Teppich bis direkt an die Haustür und unter das Tor, runde Kurven an der Zufahrt zur Garage.
+
 ### Neu in 0.3.3
 
 - **Server-Version (Vorschau) jetzt für Minecraft 1.21.9 bis 26.3** und deutlich schöner für Spieler ohne Mod: Böden, Teppiche und andere Mod-Blöcke sehen richtig aus (vorher teils wie Notenblöcke), Autos haben ihre Lackfarbe und fahren mit der Front voraus, Drehteller und Fernseher sind zu sehen. Ein Rechtsklick auf den Fernseher öffnet ein Fenster: YouTube-Link eingeben, Video im Browser ansehen oder ausschalten.

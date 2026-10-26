@@ -15,6 +15,7 @@
 [Butler](#-butler-james) &nbsp;·&nbsp;
 [Fuhrpark](#️-fuhrpark) &nbsp;·&nbsp;
 [Hubschrauber](#-hubschrauber) &nbsp;·&nbsp;
+[Fernseher](#-fernseher-youtube-im-spiel-mit-fernbedienung) &nbsp;·&nbsp;
 [Handy](#-goldenes-handy) &nbsp;·&nbsp;
 [Agent](#️-agenten-ausrüstung) &nbsp;·&nbsp;
 [Einstellungen](#️-einstellungen)
@@ -26,7 +27,7 @@
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
 <a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (3 Minuten, echtes Minecraft)" width="100%"></a>
-<p align="center"><sub>▶️ Trailer ansehen: Villa, Butler, Straßen, Hubschrauber, Handy, Bodyguards und Agenten-Ausrüstung in 3 Minuten</sub></p>
+<p align="center"><sub>▶️ Trailer ansehen: Villa, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
 
@@ -74,12 +75,27 @@ Wassergraben mit Brücke (wird bei Alarm zum Lava-Graben) · zwei Glaskuppel-Bru
 <td width="50%"><img src="docs/bilder/kinosofa.jpg" alt="Kino vor dem Fernseher"><br><sub><b>Kino:</b> drei Samtsofas vor dem XXL-Fernseher</sub></td>
 </tr>
 <tr>
-<td><img src="docs/bilder/fernseher.jpg" alt="XXL-Fernseher"><br><sub><b>XXL-Fernseher:</b> YouTube-Link einfügen, Video startet im Browser</sub></td>
+<td><img src="docs/bilder/fernseher.jpg" alt="XXL-Fernseher"><br><sub><b>XXL-Fernseher:</b> YouTube-Link einfügen, das Video läuft im Fernseher</sub></td>
 <td><img src="docs/bilder/strandliegen.jpg" alt="Strandliegen am Pool"><br><sub><b>Strandliegen</b> mit Sonnenschirmen am Pool</sub></td>
 </tr>
 </table>
 
 Auf Sofas, Liegen und der Bettbank kann man sich mit **Rechtsklick** hinsetzen, **Schleichen** steht wieder auf.
+
+### 📺 Fernseher: YouTube im Spiel, mit Fernbedienung
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/fernseher_video.jpg" alt="Video im Fernseher"><br><sub><b>Video im Fernseher:</b> Bild und Ton direkt im Spiel</sub></td>
+<td width="50%"><img src="docs/bilder/fernbedienung.jpg" alt="Fernbedienung auf dem Nachttisch"><br><sub><b>Fernbedienung</b> auf dem Nachttisch</sub></td>
+</tr>
+</table>
+
+Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link einfügen (Strg + V) und **Im Fernseher abspielen**. Das Video läuft direkt auf dem Bildschirm, der Ton kommt aus dem Fernseher und wird leiser, je weiter du weggehst. Alle in der Nähe sehen dieselbe Stelle. Im Menü: **Anhalten / Weiter**, **« 10 s** und **30 s »**, **Stopp**, im Browser öffnen, Ausschalten.
+
+**Beim ersten Video** fragt die Mod einmal, ob sie drei kostenlose Hilfsprogramme laden darf: **yt-dlp** (findet das Video), **FFmpeg** (macht daraus Bild und Ton) und **Deno** (hilft yt-dlp bei YouTube). Zusammen etwa 200 MB, direkt von den offiziellen GitHub-Seiten nach `.minecraft/stinkendreich/werkzeuge`. Sind sie schon auf dem PC installiert, nimmt die Mod diese (auf dem Mac FFmpeg mit `brew install ffmpeg`). yt-dlp hält sich selbst aktuell, denn YouTube ändert öfter etwas. Die Lautstärke regelt der Regler **Jukebox/Notenblöcke** und `fernseherLautstaerke` in der Config; `fernseherVideos: false` schaltet Videos im Spiel ab (dann nur Vorschaubild und Browser).
+
+**Fernbedienung:** Rechtsklick mit der Fernbedienung in der Hand öffnet das Menü des nächsten Fernsehers (bis 32 Blöcke). **Schleichen + Rechtsklick** auf einen Block legt sie ab, sie liegt dann flach auf Nachttisch oder Tisch. Rechtsklick auf die abgelegte Fernbedienung steuert den Fernseher ebenfalls. In der Villa liegt je eine im Schlafzimmer und im Penthouse-Kino.
 
 ### 🔐 29 Mechanismen – alles eigene Blöcke
 
@@ -157,7 +173,7 @@ Außerdem: `/butler rufen` holt ihn herbei (oder stellt dir einen eigenen ein), 
 
 <img src="docs/bilder/auto_held.jpg" alt="Das goldene Bonzenauto vor der Villa" width="100%">
 
-In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit vier Sitzen), ein **Luxus-Geländewagen**, ein **Supersportwagen** und die **Stretch-Limo**. Alle mit Goldfelgen. Über die Rampe geht es nach draußen, und der **Drehteller** am Fuß der Rampe wendet dich samt Auto um 180 Grad. Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
+In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit vier Sitzen), ein **Luxus-Geländewagen**, ein **Supersportwagen** und die **Stretch-Limo**. Alle mit Goldfelgen, in allen passt man mit dem Kopf unter das Dach. Über die Rampe geht es nach draußen, und der **Drehteller** am Fuß der Rampe wendet dich samt Auto um 180 Grad. Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
 
 <table>
 <tr>
@@ -214,12 +230,17 @@ Schwarz-goldener Luxus-Hubschrauber mit getönten Scheiben und Rotorgeräusch. E
 <tr>
 <td width="33%"><img src="docs/bilder/handy.jpg" alt="Das goldene Handy"><br><sub><b>Rechtsklick:</b> das Luxus-Handy</sub></td>
 <td width="33%"><img src="docs/bilder/lieferservice.jpg" alt="Lieferservice"><br><sub><b>Lieferservice:</b> James bringt Tiere und Waren</sub></td>
-<td width="33%"><img src="docs/bilder/bodyguards.jpg" alt="Bodyguards"><br><sub><b>Bodyguards</b> im Smoking</sub></td>
+<td width="33%"><img src="docs/bilder/bodyguards.jpg" alt="Bodyguards"><br><sub><b>Bodyguards:</b> Eisengolems im Sakko</sub></td>
 </tr>
 <tr>
-<td><img src="docs/bilder/mitarbeiter.jpg" alt="Mitarbeiter"><br><sub><b>Mitarbeiterkiste:</b> drei Mitarbeiter steigen aus</sub></td>
+<td><img src="docs/bilder/mitarbeiter.jpg" alt="Mitarbeiter"><br><sub><b>Mitarbeiter</b> mit Helm, Stirnlampe und Warnweste</sub></td>
 <td><img src="docs/bilder/mitarbeiter_kiste.jpg" alt="Beute in der Kiste"><br><sub><b>Beute</b> landet in der Kiste</sub></td>
 <td><img src="docs/bilder/kreisel.jpg" alt="Kreisel vor der Villa"><br><sub><b>Straßennetz:</b> Kreisel vor der Villa</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/handy_navi.jpg" alt="Navigation im Handy"><br><sub><b>Navigation:</b> feste Ziele und „Meine Orte“</sub></td>
+<td><img src="docs/bilder/handy_orte.jpg" alt="Meine Orte"><br><sub><b>Meine Orte:</b> Ort hier speichern, ✕ löscht</sub></td>
+<td><img src="docs/bilder/handy_chat.jpg" alt="James kennt die Orte"><br><sub><b>James kennt sie:</b> „bring mich zu meiner Mine“</sub></td>
 </tr>
 </table>
 
@@ -228,7 +249,7 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 | App | Was passiert |
 |---|---|
 | **Limo rufen** · **Hubschrauber rufen** | James kommt wirklich: Er fährt mit der Stretch-Limo vor oder landet mit dem Hubschrauber neben dir |
-| **Navigation** | James holt dich ab und fährt dich zur Villa, ins nächste Dorf, zur Mine, zum Endportal, zum Netherportal oder zu einem gemerkten Ort |
+| **Navigation** | James holt dich ab und fährt dich zur Villa, ins nächste Dorf, zur Mine, zum Endportal, zum Netherportal – oder zu **deinen eigenen Orten**: unter „Meine Orte“ einen Namen eintippen und **Ort hier speichern**. James kennt sie dann auch im Chat („James, bring mich zu meiner Mine“) |
 | **Lieferservice** | Kühe, Schweine, Schafe, Hühner, ein zahmer Hund, eine Katze oder ein Papagei, ein Festessen, 64 Raketen oder ein Sack Gold – James bringt es mit der Limo |
 | **Aufträge** | wie im Chat: Eisen, Diamanten, Holz, Essen, Truhen sortieren – oder ein eigener Satz |
 | **Mitarbeiter bestellen** | eine Mitarbeiterkiste kommt ins Inventar |
@@ -236,7 +257,7 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 
 **Mitarbeiter:** Stell die Mitarbeiterkiste auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Sie graben sich selbst zum Erz und bringen jede Ladung in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis und Holz), Schleichen + Rechtsklick zeigt, was er gerade dabeihat.
 
-**Bodyguards:** Eisengolems im Smoking mit Sonnenbrille. Sie können nicht sterben, folgen dir und beschützen dich – auf Abstand mit der Pistole, aus der Nähe mit Golem-Fäusten. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
+**Bodyguards:** Echte Eisengolems mit Sakko, weißem Hemd, Krawatte, roter Blume und Sonnenbrille. Sie können nicht sterben, folgen dir und beschützen dich – auf Abstand mit der Pistole, aus der Nähe mit Golem-Fäusten. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
 
 **Straßennetz:** Bevor James zum ersten Mal irgendwohin fährt, baut er eine echte Straße: zuerst einen Kreisel mit Insel vor der Villa, dann eine Straße mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein ganzes Netz – und du kannst es auch selbst befahren. Abgerissen wird nichts, weder an der Villa noch an deinen Bauten. `/butler strassen` zeigt alle Straßen, `Butler, bau eine Straße zum Dorf` baut eine schon vorher.
 
@@ -354,7 +375,7 @@ Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modr
 2. `polymer-bundled` für dieselbe Minecraft-Version ebenfalls in `mods` legen (für 26.3 z. B. `polymer-bundled-0.18.5+26.3.jar`, für 1.21.11 `0.15.2+1.21.11`, für 1.21.9 `0.14.2+1.21.9`).
 3. Server starten. Wer ohne Mod beitritt, bekommt automatisch ein Ressourcenpaket (annehmen).
 
-Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos, Hubschrauber, Drehteller und Fernseher. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage, Fernseher und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik und Spotify gehen nur mit der Mod; der Fernseher zeigt ohne Mod kein Vorschaubild, das Video öffnet sich dann im Browser. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).
+Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos, Hubschrauber, Drehteller und Fernseher. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage, Fernseher und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Die Fernbedienung öffnet ohne Mod das Fenster des Fernsehers, und im Handy-Navi lassen sich auch ohne Mod eigene Orte speichern. Eigene Musik, Spotify und Videos im Fernseher gehen nur mit der Mod; ohne Mod zeigt der Fernseher kein Vorschaubild, das Video öffnet sich dann im Browser. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).
 
 <table>
 <tr>
