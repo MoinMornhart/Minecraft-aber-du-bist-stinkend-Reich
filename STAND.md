@@ -171,12 +171,16 @@ _Zuletzt aktualisiert: 2026-10-26, 02:50 Uhr (Nachtschicht, Philip schläft)_
 - Offen: zweiter Bedienfeld-Test (Zentrale, Musik, Butler, Kabine), Fernseher, Drehteller, Spieler mit Mod auf
   einem Polymer-Server prüfen, übrige 16 Versionen, danach Paper-Plugin.
 
-## Version 0.3.1 (in Arbeit)
+## Version 0.3.1 (veröffentlicht 26.10. nachts)
 
 - Versionstest 0.3.0 (`kurz03.txt`, alle 17): Handy, Lieferung, Mitarbeiter, Bodyguards, Kreisel überall OK.
   Fahrt ins Dorf scheitert in 1.21.2/1.21.3 (Zeit zu knapp) und 26.1/26.1.2/26.2 (Kreuzung über einem Fluss voller
   Geländer). Fix in `StrassenBau`: Spalte neu bauen, wenn die Straße näher vorbeikommt, Geländer/Bordstein/Mast auf
-  der Fahrbahn entfernen, Wasser neben der Straße abdichten (`wasserAbdichten`). Noch zu prüfen mit kurz03 in 26.2.
+  der Fahrbahn entfernen, Wasser neben der Straße abdichten (`wasserAbdichten`). Geprüft mit kurz03 (Wartezeit für die
+  Fahrt jetzt 360 s): 26.1, 26.2 und 1.21.2 kommen im Dorf an, alle anderen Prüfungen OK.
+- Dazu als Vorschau die Server-Version für 26.3 (README: „Server: Freunde spielen ohne Mod mit“). Klicks ohne Mod:
+  `BlockBenutzenMixin` rechnet mit den echten Formen nach, worauf der Spieler zeigt (kleine Möbel sind für ihn ganze
+  Barriere-Blöcke), `FigurBenutzenMixin` merkt sich Klicks auf Figuren, damit das Handy nicht zusätzlich aufgeht.
 
 ## Release
 

@@ -342,6 +342,16 @@ Gut zu wissen:
 
 Die Zahl hinter `+mc` muss **genau** deiner Version entsprechen. 1.21 bis 1.21.11 brauchen Java 21, 26.x braucht Java 25 (der offizielle Launcher bringt das passende Java mit).
 
+### 🖥️ Server: Freunde spielen ohne Mod mit (Vorschau, nur 26.3)
+
+Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modrinth.com/mod/polymer) können Freunde mit ganz normalem Minecraft 26.3 mitspielen, ohne etwas zu installieren:
+
+1. Fabric-Server für 26.3 aufsetzen, [Fabric API](https://modrinth.com/mod/fabric-api) und diese Mod (`+mc26.3.jar`) in `mods` legen.
+2. Polymer für 26.3 (`polymer-bundled-0.18.5+26.3.jar` oder neuer) ebenfalls in `mods` legen.
+3. Server starten. Wer ohne Mod beitritt, bekommt automatisch ein Ressourcenpaket (annehmen).
+
+Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als Eisengolem), Autos und Hubschrauber. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik, Spotify und der Fernseher gehen nur mit der Mod. Wer die Mod hat, sieht alles wie gewohnt.
+
 <br>
 
 ## ⚙️ Einstellungen

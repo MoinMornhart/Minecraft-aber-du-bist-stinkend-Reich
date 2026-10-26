@@ -1,3 +1,8 @@
+### Neu in 0.3.1
+
+- **Straßen:** Wo eine Straße sich selbst nahe kommt (Kurven an Flüssen, Brücken), stehen keine Geländer und Bordsteine mehr mitten auf der Fahrbahn. Wasser aus Höhlen und Hängen läuft nicht mehr auf die Straße. James kommt so auch in Welten bis ins Dorf, in denen er vorher an einer Flusskreuzung hängen blieb.
+- **Vorschau – Server ohne Mod beim Spieler (nur 26.3):** Liegen auf einem Fabric-Server diese Mod und die Bibliothek Polymer, können Freunde mit ganz normalem Minecraft mitspielen. Sie bekommen beim Betreten automatisch ein Ressourcenpaket und sehen Villa, Möbel, James, Tänzerinnen, Autos und Hubschrauber. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage (mit den Schallplatten von Minecraft) und Überwachungskameras gehen über Fenster, die Minecraft selbst mitbringt; Autos fahren sie mit W/A/S/D. Anleitung im README unter „Installation“.
+
 ### Neu in 0.3.0 – das XXL-Update
 
 - **Goldenes Handy:** Rechtsklick öffnet ein Luxus-Handy mit Uhr und Akku. Damit rufst du James an – er kommt wirklich mit der Stretch-Limo vorgefahren oder landet mit dem Hubschrauber neben dir. Dazu Navigation (Villa, Dorf, Mine, Endportal, Netherportal und alle gemerkten Orte), Aufträge per Knopfdruck, Mitarbeiter und Bodyguards.
