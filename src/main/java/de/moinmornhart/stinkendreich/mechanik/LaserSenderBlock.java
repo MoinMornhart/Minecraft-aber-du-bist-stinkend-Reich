@@ -41,7 +41,7 @@ public class LaserSenderBlock extends MechanikBlock {
 
     @Override
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity daten) {
-        VillaZustand z = VillaZustand.get(welt.getServer());
+        VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
         // Himmelslaser (nach oben) fahren in der Festung als Welle rund um die Villa hoch
         boolean an = z.stufe() >= 3 && (zustand.getValue(Eigenschaften.RICHTUNG_ALLE) != Direction.UP || !z.festung()
                 || Festung.bereit(z, pos, true));

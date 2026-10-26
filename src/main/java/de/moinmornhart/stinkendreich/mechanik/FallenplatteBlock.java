@@ -40,7 +40,7 @@ public class FallenplatteBlock extends MechanikBlock {
             return;
         }
         ServerLevel server = (ServerLevel) welt;
-        VillaZustand z = VillaZustand.get(server.getServer());
+        VillaZustand z = VillaZustand.fuer(server.getServer(), pos);
         MechanikBlockEntity daten = daten(welt, pos);
         long jetzt = welt.getGameTime();
         if (z.stufe() < 1 || !z.istEindringling(spieler) || z.tresorEntschaerft() || daten == null

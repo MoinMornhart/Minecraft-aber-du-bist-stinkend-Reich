@@ -1,0 +1,38 @@
+# 0.4.0: James zurücksetzen (Handy-Knöpfe), Nachbarvilla bauen, Inkognito nur für eine Villa
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /clear @p
+server /villa ort 55.5 26 86 180 -6
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 2
+klick
+warte 1.5
+linksklick 640 356
+warte 1.5
+bild handy_auftraege
+klient schliessen
+server /execute as @e[type=stinkendreich:butler] run say JAMES_VORHER
+server /butler zuruecksetzen
+warte 3
+server /execute as @e[type=stinkendreich:butler] run say JAMES_NACHHER
+taste F1
+server /gamemode spectator
+server /villa ort 57.5 27 62 0 10
+warte 3
+bild james_neu
+server /villa nachbar
+warte 20
+server /execute as @p at @s run tp @s ~ ~70 ~40 180 55
+warte 8
+bild nachbarvilla
+server /execute as @p at @s run tp @s ~ ~200 ~-200 180 50
+warte 8
+bild nachbarn_beide
+server /villa inkognito an
+warte 40
+bild nachbarn_inkognito
+server /villa inkognito aus
+warte 40

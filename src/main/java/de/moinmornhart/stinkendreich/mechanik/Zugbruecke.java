@@ -66,7 +66,9 @@ public final class Zugbruecke {
 
     private static Lauf lauf;
     /** Spielzeit, zu der zuletzt jemand vor der Brücke war (für das Wiedereinfahren). */
-    private static long zuletztJemandDa = Long.MIN_VALUE / 2;
+    private static final java.util.Map<Integer, Long> ZULETZT_JEMAND_DA = new java.util.concurrent.ConcurrentHashMap<>();
+    /** Villa, um deren Brücke es gerade geht (die Methoden unten arbeiten immer für diese eine). */
+    private static int nr;
 
     private Zugbruecke() {
     }
@@ -121,6 +123,8 @@ public final class Zugbruecke {
         final List<Teil> teile;
         final Ort ort;
         final int stufen;
+        /** Villa, deren Brücke fährt. */
+        final int villa = nr;
         int tick;
 
         Lauf(boolean einfahren, List<Teil> teile, Ort ort) {
@@ -136,12 +140,13 @@ public final class Zugbruecke {
         // Beim Beenden mitten in der Fahrt: sofort fertig machen, damit keine Blöcke fehlen und keine Anzeigen bleiben
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             if (lauf != null) {
+                nr = lauf.villa;
                 abschliessen(server.overworld());
             }
         });
         ServerLifecycleEvents.SERVER_STOPPED.register(server -> {
             lauf = null;
-            zuletztJemandDa = Long.MIN_VALUE / 2;
+            ZULETZT_JEMAND_DA.clear();
         });
         ServerLifecycleEvents.SERVER_STARTED.register(server -> Kompat.befehl(server, "kill @e[type=minecraft:block_display,tag=" + TAG + "]"));
     }
@@ -157,12 +162,13 @@ public final class Zugbruecke {
     /** Schalter und Handy: Sicherung umschalten (nur Bewohner). */
     public static void umschalten(ServerPlayer spieler) {
         MinecraftServer server = spieler.level().getServer();
-        VillaZustand zustand = VillaZustand.get(server);
+        VillaZustand zustand = VillaZustand.vonSpieler(server, spieler);
+        nr = zustand.nr();
         if (!zustand.istBewohner(spieler)) {
             Kompat.nachricht(spieler, Component.translatable("stinkendreich.bruecke.nur_bewohner").withStyle(ChatFormatting.RED), true);
             return;
         }
-        String fehler = sichern(server, !zustand.brueckeGesichert());
+        String fehler = sichern(server, nr, !zustand.brueckeGesichert());
         Kompat.nachricht(spieler, fehler != null ? Component.translatable(fehler).withStyle(ChatFormatting.RED)
                 : Component.translatable(zustand.brueckeGesichert() ? "stinkendreich.bruecke.gesichert" : "stinkendreich.bruecke.offen")
                         .withStyle(ChatFormatting.GOLD), false);
@@ -172,25 +178,31 @@ public final class Zugbruecke {
      * Sicherung an (die Brücke fährt ein, sobald niemand mehr davor steht) oder aus (sie fährt aus und bleibt draußen).
      * Liefert den Text-Schlüssel eines Fehlers oder null.
      */
-    public static String sichern(MinecraftServer server, boolean an) {
+    public static String sichern(MinecraftServer server, int villa, boolean an) {
+        nr = villa;
         if (ort().isEmpty()) {
             return "stinkendreich.bruecke.keine";
         }
-        VillaZustand.get(server).setzeBrueckeGesichert(an);
+        VillaZustand.get(server, nr).setzeBrueckeGesichert(an);
         if (an) {
-            zuletztJemandDa = Long.MIN_VALUE / 2;        // gleich prüfen, nicht erst acht Sekunden warten
+            ZULETZT_JEMAND_DA.remove(nr);                 // gleich prüfen, nicht erst acht Sekunden warten
         }
         pruefen(server);
         return null;
     }
 
+    /** Sicherung der Brücke an der Spawn-Villa. */
+    public static String sichern(MinecraftServer server, boolean an) {
+        return sichern(server, 0, an);
+    }
+
     /** Ist die Sicherung an? */
-    public static boolean gesichert(MinecraftServer server) {
-        return VillaZustand.get(server).brueckeGesichert();
+    public static boolean gesichert(MinecraftServer server, int villa) {
+        return VillaZustand.get(server, villa).brueckeGesichert();
     }
 
     private static Optional<Ort> ort() {
-        VillaPlatzierung.VillaInfo villa = VillaPlatzierung.villa().orElse(null);
+        VillaPlatzierung.VillaInfo villa = VillaPlatzierung.nr(nr);
         if (villa == null || villa.plan().marke("bruecke").isEmpty()) {
             return Optional.empty();
         }
@@ -202,13 +214,19 @@ public final class Zugbruecke {
     // ---------------- Automatik ----------------
 
     private static void tick(MinecraftServer server) {
-        if (Inkognito.aktiv(server)) {
-            return;                                     // Villa versteckt: keine Brücke
-        }
         if (lauf != null) {
+            nr = lauf.villa;
             fahren(server);
         } else if (server.getTickCount() % 10 == 0) {
-            pruefen(server);
+            for (VillaPlatzierung.VillaInfo v : VillaPlatzierung.alle()) {
+                if (!Inkognito.aktiv(server, v.nr())) {     // Villa versteckt: keine Brücke
+                    nr = v.nr();
+                    pruefen(server);
+                    if (lauf != null) {
+                        return;                           // es fährt immer nur eine Brücke zur Zeit
+                    }
+                }
+            }
         }
     }
 
@@ -222,14 +240,15 @@ public final class Zugbruecke {
         if (o == null || !welt.isLoaded(o.a()) || !welt.isLoaded(o.b())) {
             return;
         }
-        VillaZustand zustand = VillaZustand.get(server);
+        VillaZustand zustand = VillaZustand.get(server, nr);
         String wer = jemandDa(welt, o, zustand);
         long jetzt = welt.getGameTime();
         if (wer != null) {
-            zuletztJemandDa = jetzt;
+            ZULETZT_JEMAND_DA.put(nr, jetzt);
         }
         // In der Festung (Stufe 4) ist die Brücke immer gesichert: nur für Bewohner fährt sie heraus
-        boolean sollDrin = (zustand.brueckeGesichert() || zustand.festung()) && wer == null && jetzt - zuletztJemandDa >= WARTEN_TICKS;
+        boolean sollDrin = (zustand.brueckeGesichert() || zustand.festung()) && wer == null
+                && jetzt - ZULETZT_JEMAND_DA.getOrDefault(nr, Long.MIN_VALUE / 2) >= WARTEN_TICKS;
         if (sollDrin != zustand.brueckeEingefahren()) {
             starten(welt, o, sollDrin, wer);
         }
@@ -263,7 +282,7 @@ public final class Zugbruecke {
     /** Beginnt das Ein- oder Ausfahren: Anzeigen setzen, echte Blöcke wegnehmen bzw. merken. */
     private static void starten(ServerLevel welt, Ort o, boolean einfahren, String wer) {
         MinecraftServer server = welt.getServer();
-        VillaZustand zustand = VillaZustand.get(server);
+        VillaZustand zustand = VillaZustand.get(server, nr);
         Kompat.befehl(server, "kill @e[type=minecraft:block_display,tag=" + TAG + "]");
         List<Teil> teile = new ArrayList<>();
         if (einfahren) {
@@ -394,7 +413,7 @@ public final class Zugbruecke {
         Lauf l = lauf;
         lauf = null;
         MinecraftServer server = welt.getServer();
-        VillaZustand zustand = VillaZustand.get(server);
+        VillaZustand zustand = VillaZustand.get(server, nr);
         Ort o = l.ort;
         if (l.einfahren) {
             for (Teil m : o.mauer()) {
@@ -517,7 +536,7 @@ public final class Zugbruecke {
 
     /** Nachricht über der Leiste an Bewohner in der Nähe der Brücke (nicht an alle im Haus). */
     private static void melden(ServerLevel welt, Ort o, Component text) {
-        VillaZustand zustand = VillaZustand.get(welt.getServer());
+        VillaZustand zustand = VillaZustand.get(welt.getServer(), nr);
         for (ServerPlayer p : welt.players()) {
             if (zustand.istBewohner(p) && p.distanceToSqr(o.mitteX(), o.a().getY(), o.mitteZ()) < 80 * 80) {
                 Kompat.nachricht(p, text, true);

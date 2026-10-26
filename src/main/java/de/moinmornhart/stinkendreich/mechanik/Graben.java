@@ -28,64 +28,63 @@ public final class Graben {
     /** So oft wird nachgesehen, ob jemand zu Hause ist (Ticks). */
     private static final int PRUEFEN_ALLE = 40;
 
-    /** Alle Felder des Grabens in Weltkoordinaten (beim ersten Gebrauch berechnet). */
-    private static List<BlockPos> felder;
-    /** Was gerade im Graben ist: true = Lava, false = Wasser, null = noch nicht nachgesehen. */
-    private static Boolean istLava;
-    /** Leeren ist erledigt, im nächsten Tick wird hiermit gefüllt (null = kein Tausch unterwegs). */
-    private static Boolean fuellenMitLava;
+    /** Graben je Villa: Felder des Rings, ob gerade Lava drin ist, und ob er im nächsten Tick neu gefüllt wird. */
+    private static final class Ring {
+        List<BlockPos> felder;
+        Boolean istLava;
+        Boolean fuellenMitLava;
+    }
+
+    private static final java.util.Map<Integer, Ring> RINGE = new java.util.concurrent.ConcurrentHashMap<>();
 
     private Graben() {
     }
 
     public static void registrieren() {
         ServerTickEvents.END_SERVER_TICK.register(Graben::tick);
-        ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
-            felder = null;
-            istLava = null;
-            fuellenMitLava = null;
-        });
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> RINGE.clear());
     }
 
     private static void tick(MinecraftServer server) {
-        if (Inkognito.aktiv(server)) {
-            return;                                     // Villa versteckt: kein Graben
+        for (VillaPlatzierung.VillaInfo villa : VillaPlatzierung.alle()) {
+            if (!Inkognito.aktiv(server, villa.nr())) {                // Villa versteckt: kein Graben
+                tick(server, villa, RINGE.computeIfAbsent(villa.nr(), n -> new Ring()));
+            }
         }
+    }
+
+    private static void tick(MinecraftServer server, VillaPlatzierung.VillaInfo villa, Ring r) {
         ServerLevel welt = server.overworld();
-        if (fuellenMitLava != null) {
-            fuellen(welt, fuellenMitLava);
+        if (r.fuellenMitLava != null) {
+            fuellen(welt, r, r.fuellenMitLava);
             return;
         }
-        if (server.getTickCount() % PRUEFEN_ALLE != 0) {
+        if (server.getTickCount() % PRUEFEN_ALLE != 0 || villa.plan().marke("graben").isEmpty()) {
             return;
         }
-        var villa = VillaPlatzierung.villa().orElse(null);
-        if (villa == null || villa.plan().marke("graben").isEmpty()) {
+        if (r.felder == null) {
+            r.felder = felderBerechnen(villa);
+        }
+        if (r.felder.isEmpty() || !welt.isLoaded(r.felder.get(0)) || !welt.isLoaded(r.felder.get(r.felder.size() - 1))) {
             return;
         }
-        if (felder == null) {
-            felder = felderBerechnen(villa);
-        }
-        if (felder.isEmpty() || !welt.isLoaded(felder.get(0)) || !welt.isLoaded(felder.get(felder.size() - 1))) {
-            return;
-        }
-        VillaZustand zustand = VillaZustand.get(server);
+        VillaZustand zustand = VillaZustand.get(server, villa.nr());
         boolean soll = Konfig.get().lavaGraben
                 && zustand.stufe() >= 2;                 // nur im Lockdown und in der Festung (Philip, 26.10.)
-        if (istLava == null) {
-            istLava = welt.getBlockState(felder.get(felder.size() / 2)).is(Blocks.LAVA);
+        if (r.istLava == null) {
+            r.istLava = welt.getBlockState(r.felder.get(r.felder.size() / 2)).is(Blocks.LAVA);
         }
-        if (soll != istLava) {
-            leeren(welt);
-            fuellenMitLava = soll;
+        if (soll != r.istLava) {
+            leeren(welt, r);
+            r.fuellenMitLava = soll;
             zustand.anBewohner(Component.translatable(soll ? "stinkendreich.graben.lava" : "stinkendreich.graben.wasser")
                     .withStyle(soll ? ChatFormatting.GOLD : ChatFormatting.AQUA), true);
         }
     }
 
     /** Schritt 1: Wasser und Lava aus dem Graben nehmen. */
-    private static void leeren(ServerLevel welt) {
-        for (BlockPos p : felder) {
+    private static void leeren(ServerLevel welt, Ring r) {
+        for (BlockPos p : r.felder) {
             BlockState b = welt.getBlockState(p);
             if (b.is(Blocks.WATER) || b.is(Blocks.LAVA)) {
                 welt.setBlock(p, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
@@ -94,15 +93,15 @@ public final class Graben {
     }
 
     /** Schritt 2: leere Felder mit Lava oder Wasser füllen. */
-    private static void fuellen(ServerLevel welt, boolean lava) {
+    private static void fuellen(ServerLevel welt, Ring r, boolean lava) {
         BlockState fluessig = (lava ? Blocks.LAVA : Blocks.WATER).defaultBlockState();
-        for (BlockPos p : felder) {
+        for (BlockPos p : r.felder) {
             if (welt.getBlockState(p).isAir()) {
                 welt.setBlock(p, fluessig, Block.UPDATE_CLIENTS);
             }
         }
-        istLava = lava;
-        fuellenMitLava = null;
+        r.istLava = lava;
+        r.fuellenMitLava = null;
     }
 
     /** Ring aus der Marke „graben“: Kasten (x0 y0 z0 x1 y1 z1) und Breite des Rings nach innen. */

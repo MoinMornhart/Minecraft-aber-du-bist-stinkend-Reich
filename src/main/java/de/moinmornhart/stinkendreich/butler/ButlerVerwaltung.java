@@ -88,11 +88,11 @@ public final class ButlerVerwaltung {
     // Erzeugen
     // ------------------------------------------------------------------
 
-    /** Stellt den Butler der Villa an seinen Platz (noch ohne Besitzer). */
-    public static void villaButlerErzeugen(ServerLevel welt, BlockPos platz) {
-        ButlerEntity b = erzeugen(welt, platz, null);
+    /** Stellt den Butler der Villa an seinen Platz (bei der Spawn-Villa noch ohne Besitzer). */
+    public static void villaButlerErzeugen(ServerLevel welt, BlockPos platz, ServerPlayer besitzer) {
+        ButlerEntity b = erzeugen(welt, platz, besitzer);
         if (b != null) {
-            EINTRAEGE.put(VILLA, eintrag(b));
+            EINTRAEGE.put(besitzer == null ? VILLA : besitzer.getUUID().toString(), eintrag(b));
             speichern();
         }
     }
@@ -113,6 +113,57 @@ public final class ButlerVerwaltung {
         }
         welt.addFreshEntity(b);
         return b;
+    }
+
+    /**
+     * James zurücksetzen: alle Aufträge abbrechen, jeden James des Spielers (und jeden herrenlosen in seiner Villa)
+     * entfernen und genau einen frischen James an seinen Platz in der Halle der Villa stellen. Was die alten in den
+     * Taschen hatten, fällt dort heraus, wo sie standen. James in gerade nicht geladenen Gebieten gehen von selbst,
+     * sobald man in ihre Nähe kommt (sie gehören dann nicht mehr dem Spieler).
+     */
+    public static void zuruecksetzen(ServerPlayer p) {
+        MinecraftServer server = p.level().getServer();
+        var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.vonBesitzer(p.getUUID());
+        if (villa == null) {
+            villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.nr(
+                    de.moinmornhart.stinkendreich.mechanik.VillaZustand.vonSpieler(server, p).nr());
+        }
+        int weg = 0;
+        for (ServerLevel l : server.getAllLevels()) {
+            List<ButlerEntity> alte = new ArrayList<>();
+            for (Entity e : l.getAllEntities()) {
+                if (e instanceof ButlerEntity b && b.istButler() && (p.getUUID().equals(b.besitzer())
+                        || (b.besitzer() == null && villa != null && villa.inDerNaehe(b.blockPosition(), 0)))) {
+                    alte.add(b);
+                }
+            }
+            for (ButlerEntity b : alte) {
+                b.stopp();
+                for (int i = 0; i < b.taschen().getContainerSize(); i++) {
+                    if (!b.taschen().getItem(i).isEmpty()) {
+                        net.minecraft.world.level.block.Block.popResource(l, b.blockPosition(), b.taschen().removeItemNoUpdate(i));
+                    }
+                }
+                b.discard();
+                weg++;
+            }
+        }
+        EINTRAEGE.remove(p.getUUID().toString());
+        BlockPos platz = p.blockPosition();
+        ServerLevel welt = server.overworld();
+        if (villa != null) {
+            com.google.gson.JsonArray m = villa.plan().ersteMarke("butler");
+            platz = villa.weltPos(m.get(0).getAsDouble(), m.get(1).getAsDouble(), m.get(2).getAsDouble());
+        } else if (p.level() instanceof ServerLevel eigene) {
+            welt = eigene;
+        }
+        ButlerEntity neu = erzeugen(welt, platz, p);
+        if (neu != null) {
+            EINTRAEGE.put(p.getUUID().toString(), eintrag(neu));
+            neu.sagen(Component.translatable("stinkendreich.butler.hallo", p.getDisplayName()));
+        }
+        speichern();
+        Kompat.nachricht(p, Component.translatable("stinkendreich.butler.zurueckgesetzt", weg).withStyle(ChatFormatting.GOLD), false);
     }
 
     // ------------------------------------------------------------------

@@ -33,7 +33,7 @@ public class KartenleserBlock extends MechanikBlock {
         if (welt.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        VillaZustand z = VillaZustand.get(welt.getServer());
+        VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
         if (z.stufe() == 0 || Zugang.hatKarte(spieler)) {
             Zugang.erfolg(spieler);
             // Sicherheits- und Banktüren gehen direkt auf und bleiben offen; alle anderen Türen öffnet ein Impuls

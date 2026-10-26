@@ -52,14 +52,149 @@ public final class Inkognito {
 
     private enum Phase { RUNTER, DECKEL_ZU, BAEUME_HOCH, BAEUME_WEG, DECKEL_AUF, HOCH }
 
-    /** Laufende Animation oder null. */
-    private static Phase phase;
-    /** Fortschritt: Schritte (RUNTER/HOCH) bzw. Ringe (Deckel). */
-    private static int schritt;
-    /** Höhe jeder Figur am Anfang des laufenden Schritts nach unten. */
-    private static final java.util.Map<Entity, Double> startHoehen = new java.util.HashMap<>();
-    /** Teil der Spalten innerhalb eines Schritts (0 bis TICKS_JE_SCHRITT - 1). */
-    private static int teil;
+    /** Laufende Fahrten je Villa (Nummer → Fahrt). */
+    private static final java.util.Map<Integer, Fahrt> FAHRTEN = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** Eine laufende Fahrt einer Villa: Phase, Fortschritt und die Figuren, die gerade mitfahren. */
+    private static final class Fahrt {
+        final int nr;
+        /** Laufende Animation oder null (fertig). */
+        Phase phase;
+        /** Fortschritt: Schritte (RUNTER/HOCH) bzw. Ringe (Deckel) bzw. Bäume. */
+        int schritt;
+        /** Teil der Spalten innerhalb eines Schritts (0 bis TICKS_JE_SCHRITT - 1). */
+        int teil;
+        /** Höhe jeder Figur am Anfang des laufenden Schritts. */
+        final java.util.Map<Entity, Double> startHoehen = new java.util.HashMap<>();
+
+        Fahrt(int nr, Phase phase) {
+            this.nr = nr;
+            this.phase = phase;
+        }
+
+        /** Ein Tick der Animation (sofort = alle Spalten eines Schritts auf einmal, ohne Effekte). */
+        void weiter(MinecraftServer server, boolean sofort) {
+            var villa = VillaPlatzierung.nr(nr);
+            if (villa == null) {
+                phase = null;
+                return;
+            }
+            ServerLevel welt = server.overworld();
+            int tiefe = tiefe(villa);
+            int ringe = (Math.min(villa.plan().breiteX, villa.plan().breiteZ) + 1) / 2;
+            switch (phase) {
+                case RUNTER -> {
+                    if (teil == 0) {
+                        effekte(welt, villa, villa.plan().bodenY - schritt, true, sofort);
+                        startHoehen.clear();
+                        for (Entity e : figuren(welt, villa, -schritt)) {
+                            startHoehen.put(e, e.getY());
+                        }
+                    }
+                    for (int t = teil; t <= (sofort ? TICKS_JE_SCHRITT - 1 : teil); t++) {
+                        spaltenSchieben(welt, villa, -schritt, -1, t);
+                    }
+                    if (sofort || ++teil == TICKS_JE_SCHRITT) {
+                        // Jede Figur landet genau einen Block unter ihrer Höhe vom Schrittanfang (auch wer kurz fiel)
+                        for (var e : startHoehen.entrySet()) {
+                            if (e.getKey() instanceof net.minecraft.world.entity.decoration.HangingEntity) {
+                                verschieben(e.getKey(), -1, -1);
+                            } else {
+                                verschieben(e.getKey(), e.getValue() - 1 - e.getKey().getY(), -1);
+                                e.getKey().setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                            }
+                        }
+                        startHoehen.clear();
+                        teil = 0;
+                        if (++schritt == tiefe) {
+                            einsetzen(welt, villa, -tiefe);
+                            phase = Phase.DECKEL_ZU;
+                            schritt = 0;
+                        }
+                    }
+                }
+                case DECKEL_ZU -> {
+                    for (int i = 0; i < (sofort ? ringe : RINGE_JE_TICK) && schritt < ringe; i++, schritt++) {
+                        deckelRing(welt, villa, schritt, true, sofort);
+                    }
+                    if (schritt >= ringe) {
+                        phase = Phase.BAEUME_HOCH;
+                        schritt = 0;
+                        welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS,
+                                4.0F, 0.8F);
+                    }
+                }
+                case BAEUME_HOCH -> {
+                    // Ein Baum nach dem anderen wächst auf der Wiese, damit niemand das Versteck vermutet
+                    if (sofort || server.getTickCount() % TICKS_JE_BAUM == 0) {
+                        tarnung(welt, villa, schritt, true, sofort);
+                        schritt++;
+                    }
+                    if (schritt >= BAEUME) {
+                        phase = null;
+                    }
+                }
+                case BAEUME_WEG -> {
+                    // Vor dem Auftauchen verschwinden die Bäume wieder, schnell nacheinander
+                    tarnung(welt, villa, schritt, false, sofort);
+                    if (++schritt >= BAEUME) {
+                        phase = Phase.DECKEL_AUF;
+                        schritt = 0;
+                    }
+                }
+                case DECKEL_AUF -> {
+                    for (int i = 0; i < (sofort ? ringe : RINGE_JE_TICK) && schritt < ringe; i++, schritt++) {
+                        deckelRing(welt, villa, ringe - 1 - schritt, false, sofort);
+                    }
+                    if (schritt >= ringe) {
+                        phase = Phase.HOCH;
+                        schritt = 0;
+                    }
+                }
+                case HOCH -> {
+                    if (teil == 0) {
+                        // Erst die Figuren anheben, dann rückt der Boden unter ihnen nach; ihre Zielhöhe merken, damit
+                        // niemand in den Schritt-Ticks zurückfällt und vom nachrückenden Boden eingeklemmt wird
+                        startHoehen.clear();
+                        for (Entity e : figuren(welt, villa, schritt - tiefe)) {
+                            startHoehen.put(e, e.getY() + 1);
+                            verschieben(e, 1, 1);
+                        }
+                        effekte(welt, villa, villa.plan().bodenY - tiefe + schritt, false, sofort);
+                    } else {
+                        halten();
+                    }
+                    for (int t = teil; t <= (sofort ? TICKS_JE_SCHRITT - 1 : teil); t++) {
+                        spaltenSchieben(welt, villa, schritt - tiefe, 1, t);
+                    }
+                    if (sofort || ++teil == TICKS_JE_SCHRITT) {
+                        teil = 0;
+                        halten();
+                        startHoehen.clear();
+                        if (++schritt == tiefe) {
+                            einsetzen(welt, villa, 0);
+                            phase = null;
+                            welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_ACTIVATE,
+                                    SoundSource.BLOCKS, 4.0F, 1.0F);
+                        }
+                    }
+                }
+            }
+        }
+
+        /** Beim Hochfahren: alle Figuren genau auf ihrer Zielhöhe des Schritts halten (ohne Fallen). */
+        void halten() {
+            for (var e : startHoehen.entrySet()) {
+                Entity f = e.getKey();
+                if (f.isAlive() && !(f instanceof net.minecraft.world.entity.decoration.HangingEntity)
+                        && Math.abs(f.getY() - e.getValue()) > 1.0E-3) {
+                    f.teleportTo(f.getX(), e.getValue(), f.getZ());
+                }
+                f.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                f.resetFallDistance();
+            }
+        }
+    }
 
     private Inkognito() {
     }
@@ -67,17 +202,22 @@ public final class Inkognito {
     public static void registrieren() {
         ServerTickEvents.END_SERVER_TICK.register(Inkognito::tick);
         ServerLifecycleEvents.SERVER_STOPPING.register(Inkognito::zuEndeBringen);
-        ServerLifecycleEvents.SERVER_STOPPED.register(s -> phase = null);
+        ServerLifecycleEvents.SERVER_STOPPED.register(s -> FAHRTEN.clear());
         // Wer während der Fahrt drinnen steht, fährt mit: kein Schaden durch Wände oder Fallen solange
         net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents.ALLOW_DAMAGE.register((wer, quelle, menge) ->
-                !(phase == Phase.RUNTER || phase == Phase.HOCH)
+                FAHRTEN.values().stream().noneMatch(f -> f.phase == Phase.RUNTER || f.phase == Phase.HOCH)
                         || !(quelle.is(net.minecraft.world.damagesource.DamageTypes.IN_WALL)
                         || quelle.is(net.minecraft.world.damagesource.DamageTypes.FALL)));
     }
 
-    /** Ist die Villa versteckt oder fährt sie gerade? Dann ruhen Graben, Zugbrücke, Rutsche und Smart Home. */
+    /** Ist die Spawn-Villa versteckt oder fährt sie gerade? */
     public static boolean aktiv(MinecraftServer server) {
-        return phase != null || VillaZustand.get(server).smart("inkognito", false);
+        return aktiv(server, 0);
+    }
+
+    /** Ist die Villa mit dieser Nummer versteckt oder fährt sie gerade? Dann ruhen Graben, Zugbrücke, Rutsche usw. */
+    public static boolean aktiv(MinecraftServer server, int nr) {
+        return FAHRTEN.containsKey(nr) || VillaZustand.get(server, nr).smart("inkognito", false);
     }
 
     /** So tief fährt die Villa: ihre Höhe über dem Gras plus die Erdschichten darüber. */
@@ -85,16 +225,21 @@ public final class Inkognito {
         return villa.plan().hoehe - villa.plan().bodenY + DECKE - 1;
     }
 
-    /** Befehl aus der Smart-Home-App oder von /villa inkognito: an = versenken, aus = auftauchen. */
+    /** Befehl für die Spawn-Villa (z. B. /villa inkognito). */
     public static String schalten(MinecraftServer server, boolean an) {
-        var villa = VillaPlatzierung.villa().orElse(null);
+        return schalten(server, 0, an);
+    }
+
+    /** Befehl aus der Smart-Home-App oder von /villa inkognito: an = versenken, aus = auftauchen. */
+    public static String schalten(MinecraftServer server, int nr, boolean an) {
+        var villa = VillaPlatzierung.nr(nr);
         if (villa == null) {
             return "stinkendreich.villa.keine";
         }
-        if (phase != null) {
+        if (FAHRTEN.containsKey(nr)) {
             return "stinkendreich.inkognito.laeuft";
         }
-        VillaZustand z = VillaZustand.get(server);
+        VillaZustand z = VillaZustand.get(server, nr);
         if (an == z.smart("inkognito", false)) {
             return null;                                         // ist schon so
         }
@@ -105,21 +250,20 @@ public final class Inkognito {
         if (an) {
             z.setzeStufe(0);                                     // keine Laser, Minen oder Lava im Versteck
             speichern(welt, villa, 0);
-            phase = Phase.RUNTER;
+            FAHRTEN.put(nr, new Fahrt(nr, Phase.RUNTER));
         } else {
             speichern(welt, villa, -tiefe(villa));               // samt allem, was unten verändert wurde
-            phase = Phase.BAEUME_WEG;
+            FAHRTEN.put(nr, new Fahrt(nr, Phase.BAEUME_WEG));
         }
-        schritt = 0;
-        teil = 0;
         z.setzeSmart("inkognito", an);
         welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 4.0F,
                 an ? 0.6F : 1.2F);
         return null;
     }
 
-    private static Identifier datei() {
-        return StinkendReich.id("inkognito/villa");
+    /** Strukturdatei der Villa (Nummer 0 heißt wie früher, damit eine versteckte Villa aus 0.3.6 wieder auftaucht). */
+    private static Identifier datei(VillaPlatzierung.VillaInfo villa) {
+        return StinkendReich.id(villa.nr() == 0 ? "inkognito/villa" : "inkognito/villa_" + villa.nr());
     }
 
     private static BlockPos mitte(VillaPlatzierung.VillaInfo villa, double y) {
@@ -129,145 +273,41 @@ public final class Inkognito {
     /** Speichert die ganze Villa (ohne Figuren, die fahren selbst mit), um versatz Blöcke nach oben/unten verschoben. */
     private static void speichern(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz) {
         var dateien = Kompat.strukturen(welt.getServer());
-        StructureTemplate vorlage = dateien.getOrCreate(datei());
+        StructureTemplate vorlage = dateien.getOrCreate(datei(villa));
         BlockPos ecke = villa.ursprung().above(versatz);
         Vec3i groesse = new Vec3i(villa.plan().breiteX, villa.plan().hoehe, villa.plan().breiteZ);
         //? if >=1.21.6 {
         vorlage.fillFromWorld(welt, ecke, groesse, false, java.util.List.of(Blocks.STRUCTURE_VOID));
         //?} else
         /*vorlage.fillFromWorld(welt, ecke, groesse, false, Blocks.STRUCTURE_VOID);*/
-        dateien.save(datei());
+        dateien.save(datei(villa));
     }
 
     /** Legt die gespeicherte Villa (mit Truhen-Inhalten) um versatz verschoben in die Welt. */
     private static void einsetzen(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz) {
         BlockPos ecke = villa.ursprung().above(versatz);
         StructurePlaceSettings ohneFiguren = new StructurePlaceSettings().setIgnoreEntities(true);
-        Kompat.strukturen(welt.getServer()).get(datei())
+        Kompat.strukturen(welt.getServer()).get(datei(villa))
                 .ifPresent(v -> v.placeInWorld(welt, ecke, ecke, ohneFiguren, welt.getRandom(), 2 | 16));
     }
 
     private static void tick(MinecraftServer server) {
-        if (phase != null) {
-            weiter(server, false);
+        for (Fahrt f : FAHRTEN.values()) {
+            f.weiter(server, false);
+            if (f.phase == null) {
+                FAHRTEN.remove(f.nr);
+            }
         }
     }
 
-    /** Server fährt herunter: die Fahrt ohne Animation fertig machen, damit nichts halb verschoben gespeichert wird. */
+    /** Server fährt herunter: die Fahrten ohne Animation fertig machen, damit nichts halb verschoben gespeichert wird. */
     private static void zuEndeBringen(MinecraftServer server) {
-        while (phase != null) {
-            weiter(server, true);
-        }
-    }
-
-    /** Ein Tick der Animation (sofort = alle Spalten eines Schritts auf einmal, ohne Effekte). */
-    private static void weiter(MinecraftServer server, boolean sofort) {
-        var villa = VillaPlatzierung.villa().orElse(null);
-        if (villa == null) {
-            phase = null;
-            return;
-        }
-        ServerLevel welt = server.overworld();
-        int tiefe = tiefe(villa);
-        int ringe = (Math.min(villa.plan().breiteX, villa.plan().breiteZ) + 1) / 2;
-        switch (phase) {
-            case RUNTER -> {
-                if (teil == 0) {
-                    effekte(welt, villa, villa.plan().bodenY - schritt, true, sofort);
-                    startHoehen.clear();
-                    for (Entity e : figuren(welt, villa, -schritt)) {
-                        startHoehen.put(e, e.getY());
-                    }
-                }
-                for (int t = teil; t <= (sofort ? TICKS_JE_SCHRITT - 1 : teil); t++) {
-                    spaltenSchieben(welt, villa, -schritt, -1, t);
-                }
-                if (sofort || ++teil == TICKS_JE_SCHRITT) {
-                    // Jede Figur landet genau einen Block unter ihrer Höhe vom Schrittanfang (auch wer kurz fiel)
-                    for (var e : startHoehen.entrySet()) {
-                        if (e.getKey() instanceof net.minecraft.world.entity.decoration.HangingEntity) {
-                            verschieben(e.getKey(), -1, -1);
-                        } else {
-                            verschieben(e.getKey(), e.getValue() - 1 - e.getKey().getY(), -1);
-                            e.getKey().setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
-                        }
-                    }
-                    startHoehen.clear();
-                    teil = 0;
-                    if (++schritt == tiefe) {
-                        einsetzen(welt, villa, -tiefe);
-                        phase = Phase.DECKEL_ZU;
-                        schritt = 0;
-                    }
-                }
-            }
-            case DECKEL_ZU -> {
-                for (int i = 0; i < (sofort ? ringe : RINGE_JE_TICK) && schritt < ringe; i++, schritt++) {
-                    deckelRing(welt, villa, schritt, true, sofort);
-                }
-                if (schritt >= ringe) {
-                    phase = Phase.BAEUME_HOCH;
-                    schritt = 0;
-                    welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS,
-                            4.0F, 0.8F);
-                }
-            }
-            case BAEUME_HOCH -> {
-                // Ein Baum nach dem anderen wächst auf der Wiese, damit niemand das Versteck vermutet
-                if (sofort || server.getTickCount() % TICKS_JE_BAUM == 0) {
-                    tarnung(welt, villa, schritt, true, sofort);
-                    schritt++;
-                }
-                if (schritt >= BAEUME) {
-                    phase = null;
-                }
-            }
-            case BAEUME_WEG -> {
-                // Vor dem Auftauchen verschwinden die Bäume wieder, schnell nacheinander
-                tarnung(welt, villa, schritt, false, sofort);
-                if (++schritt >= BAEUME) {
-                    phase = Phase.DECKEL_AUF;
-                    schritt = 0;
-                }
-            }
-            case DECKEL_AUF -> {
-                for (int i = 0; i < (sofort ? ringe : RINGE_JE_TICK) && schritt < ringe; i++, schritt++) {
-                    deckelRing(welt, villa, ringe - 1 - schritt, false, sofort);
-                }
-                if (schritt >= ringe) {
-                    phase = Phase.HOCH;
-                    schritt = 0;
-                }
-            }
-            case HOCH -> {
-                if (teil == 0) {
-                    // Erst die Figuren anheben, dann rückt der Boden unter ihnen nach; ihre Zielhöhe merken, damit
-                    // niemand in den Schritt-Ticks zurückfällt und vom nachrückenden Boden eingeklemmt wird
-                    startHoehen.clear();
-                    for (Entity e : figuren(welt, villa, schritt - tiefe)) {
-                        startHoehen.put(e, e.getY() + 1);
-                        verschieben(e, 1, 1);
-                    }
-                    effekte(welt, villa, villa.plan().bodenY - tiefe + schritt, false, sofort);
-                } else {
-                    halten();
-                }
-                for (int t = teil; t <= (sofort ? TICKS_JE_SCHRITT - 1 : teil); t++) {
-                    spaltenSchieben(welt, villa, schritt - tiefe, 1, t);
-                }
-                if (sofort || ++teil == TICKS_JE_SCHRITT) {
-                    teil = 0;
-                    halten();
-                    startHoehen.clear();
-                    if (++schritt == tiefe) {
-                        einsetzen(welt, villa, 0);
-                        phase = null;
-                        welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_ACTIVATE,
-                                SoundSource.BLOCKS, 4.0F, 1.0F);
-                    }
-                }
+        for (Fahrt f : FAHRTEN.values()) {
+            while (f.phase != null) {
+                f.weiter(server, true);
             }
         }
+        FAHRTEN.clear();
     }
 
     /**
@@ -325,19 +365,6 @@ public final class Inkognito {
     private static void figurenSchieben(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz, int richtung) {
         for (Entity e : figuren(welt, villa, versatz)) {
             verschieben(e, richtung, richtung);
-        }
-    }
-
-    /** Beim Hochfahren: alle Figuren genau auf ihrer Zielhöhe des Schritts halten (ohne Fallen). */
-    private static void halten() {
-        for (var e : startHoehen.entrySet()) {
-            Entity f = e.getKey();
-            if (f.isAlive() && !(f instanceof net.minecraft.world.entity.decoration.HangingEntity)
-                    && Math.abs(f.getY() - e.getValue()) > 1.0E-3) {
-                f.teleportTo(f.getX(), e.getValue(), f.getZ());
-            }
-            f.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
-            f.resetFallDistance();
         }
     }
 

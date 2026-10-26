@@ -250,6 +250,11 @@ public class ButlerEntity extends PathfinderMob {
     public void besitzerEintragen(UUID uuid, String name) {
         besitzer = uuid;
         entityData.set(BESITZER_NAME, name == null ? "" : name);
+        // Über dem Kopf steht, wem er gehört: „James · Philip“ (in der Nachbarschaft sieht man so, wessen Butler es ist)
+        if (istButler() && name != null && !name.isEmpty()) {
+            setCustomName(Component.literal(Konfig.get().butlerName)
+                    .append(Component.literal(" · " + name).withStyle(net.minecraft.ChatFormatting.GRAY)));
+        }
     }
 
     public boolean istBesitzer(Player p) {

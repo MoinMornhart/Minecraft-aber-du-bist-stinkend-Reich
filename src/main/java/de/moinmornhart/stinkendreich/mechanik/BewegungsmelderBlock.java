@@ -42,7 +42,7 @@ public class BewegungsmelderBlock extends MechanikBlock {
             Kompat.nachbarnAktualisieren(welt, pos, this);
             Kompat.nachbarnAktualisieren(welt, pos.relative(vorne.getOpposite()), this);
         }
-        VillaZustand z = VillaZustand.get(welt.getServer());
+        VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
         if (z.stufe() >= 1) {
             for (LivingEntity e : gesehen) {
                 if (z.istEindringling(e)) {

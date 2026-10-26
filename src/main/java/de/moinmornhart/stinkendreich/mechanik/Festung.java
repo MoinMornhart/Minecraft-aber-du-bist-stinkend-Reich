@@ -36,12 +36,12 @@ public final class Festung {
      * einmal rund um die Villa (Geschütze, Himmelslaser), sonst von innen nach außen (Minen).
      */
     public static long verzoegerung(BlockPos pos, boolean umlauf) {
-        var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.villa();
-        if (villa.isEmpty()) {
+        var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.bei(pos);
+        if (villa == null) {
             return 0;
         }
-        BlockPos u = villa.get().ursprung();
-        double mx = u.getX() + villa.get().plan().breiteX / 2.0, mz = u.getZ() + villa.get().plan().breiteZ / 2.0;
+        BlockPos u = villa.ursprung();
+        double mx = u.getX() + villa.plan().breiteX / 2.0, mz = u.getZ() + villa.plan().breiteZ / 2.0;
         double dx = pos.getX() + 0.5 - mx, dz = pos.getZ() + 0.5 - mz;
         if (umlauf) {
             return (long) ((Math.atan2(dz, dx) + Math.PI) / (2 * Math.PI) * 60);       // 3 Sekunden rundherum

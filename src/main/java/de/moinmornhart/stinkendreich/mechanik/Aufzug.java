@@ -38,7 +38,7 @@ public final class Aufzug {
                     return;
                 }
                 // Krisenbunker (Smart Home): Der Aufzug ist ganz gesperrt, das Haus ist tot, nur der Bunker lebt
-                if (VillaZustand.get(spieler.level().getServer()).smart("krisenbunker", false)) {
+                if (VillaZustand.fuer(spieler.level().getServer(), start).smart("krisenbunker", false)) {
                     spieler.level().playSound(null, start, ModSounds.PIEP_FEHLER, SoundSource.BLOCKS, 1.0F, 0.6F);
                     Kompat.nachricht(spieler, Component.translatable("stinkendreich.aufzug.gesperrt").withStyle(ChatFormatting.RED), true);
                     return;

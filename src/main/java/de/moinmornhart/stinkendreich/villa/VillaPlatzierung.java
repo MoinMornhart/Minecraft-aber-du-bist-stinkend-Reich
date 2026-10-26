@@ -54,8 +54,10 @@ public final class VillaPlatzierung {
     private static final String TAG_HANDY = StinkendReich.MOD_ID + ".handy";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    /** Lage der Villa in der aktuell geladenen Welt, oder null. */
-    private static VillaInfo aktuelleVilla;
+    /** Alle Villen der geladenen Welt; Nummer 0 ist die Villa am Spawn, dahinter die Nachbarn (je Spieler eine). */
+    private static final List<VillaInfo> VILLEN = new java.util.concurrent.CopyOnWriteArrayList<>();
+    /** Merkdatei der laufenden Welt. */
+    private static Path merkdatei;
     /** In den ersten 10 Spielminuten einer Villa-Welt werden Reste zerfallender Blätter weggeräumt. */
     private static final long AUFRAEUMEN_BIS = 20L * 60 * 10;
 
@@ -64,21 +66,68 @@ public final class VillaPlatzierung {
 
     public static void registrieren() {
         ServerLifecycleEvents.SERVER_STARTED.register(VillaPlatzierung::beimStart);
-        ServerLifecycleEvents.SERVER_STOPPED.register(server -> aktuelleVilla = null);
+        ServerLifecycleEvents.SERVER_STOPPED.register(server -> VILLEN.clear());
         ServerTickEvents.END_SERVER_TICK.register(VillaPlatzierung::aufraeumen);
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> beimBetreten(handler.getPlayer(), server));
     }
 
-    /** Die Villa der laufenden Welt (für Butler, Mechanismen usw.), falls vorhanden. */
+    /** Die Villa am Spawn (Nummer 0), falls vorhanden. */
     public static Optional<VillaInfo> villa() {
-        return Optional.ofNullable(aktuelleVilla);
+        return VILLEN.isEmpty() ? Optional.empty() : Optional.of(VILLEN.get(0));
+    }
+
+    /** Alle Villen der Welt (Nummer 0 zuerst). */
+    public static List<VillaInfo> alle() {
+        return VILLEN;
+    }
+
+    /** Die Villa mit dieser Nummer oder null. */
+    public static VillaInfo nr(int nr) {
+        return nr >= 0 && nr < VILLEN.size() ? VILLEN.get(nr) : null;
+    }
+
+    /**
+     * Die Villa, zu deren Gelände diese Stelle gehört (Grundstück samt Minengürtel und Notausgang, waagerecht), oder
+     * null. Die Villen liegen weit genug auseinander, dass es immer höchstens eine ist.
+     */
+    public static VillaInfo bei(BlockPos pos) {
+        for (VillaInfo v : VILLEN) {
+            if (v.inDerNaehe(pos, 72)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
+    /** Die Villa, die diesem Spieler gehört, oder null. */
+    public static VillaInfo vonBesitzer(java.util.UUID spieler) {
+        for (VillaInfo v : VILLEN) {
+            if (spieler.equals(v.besitzer())) {
+                return v;
+            }
+        }
+        return null;
     }
 
     private static void beimStart(MinecraftServer server) {
         Path datei = server.getWorldPath(LevelResource.ROOT).resolve(DATEI);
+        merkdatei = datei;
+        VILLEN.clear();
         try {
             if (Files.exists(datei)) {
-                aktuelleVilla = VillaInfo.ausJson(GSON.fromJson(Files.readString(datei, StandardCharsets.UTF_8), JsonObject.class));
+                JsonObject j = GSON.fromJson(Files.readString(datei, StandardCharsets.UTF_8), JsonObject.class);
+                VillaInfo haupt = VillaInfo.ausJson(j, 0);
+                if (haupt != null) {
+                    VILLEN.add(haupt);
+                    if (j.has("nachbarn")) {
+                        for (var e : j.getAsJsonArray("nachbarn")) {
+                            VillaInfo n = VillaInfo.ausJson(e.getAsJsonObject(), VILLEN.size());
+                            if (n != null) {
+                                VILLEN.add(n);
+                            }
+                        }
+                    }
+                }
                 return;
             }
             ServerLevel welt = server.overworld();
@@ -90,9 +139,10 @@ public final class VillaPlatzierung {
                 StinkendReich.LOGGER.info("Villa wird nicht gebaut ({})", info.get("grund").getAsString());
             } else {
                 long start = System.currentTimeMillis();
-                aktuelleVilla = bauen(server, welt);
-                info = aktuelleVilla.alsJson();
-                StinkendReich.LOGGER.info("Villa gebaut bei {} in {} ms", aktuelleVilla.ursprung(), System.currentTimeMillis() - start);
+                VillaInfo haupt = bauen(server, welt);
+                VILLEN.add(haupt);
+                info = haupt.alsJson();
+                StinkendReich.LOGGER.info("Villa gebaut bei {} in {} ms", haupt.ursprung(), System.currentTimeMillis() - start);
             }
             Files.writeString(datei, GSON.toJson(info), StandardCharsets.UTF_8);
         } catch (Exception e) {
@@ -102,9 +152,11 @@ public final class VillaPlatzierung {
 
     /** Beim allerersten Betreten einer Welt mit Villa: Spieler vor den Eingang stellen. */
     private static void beimBetreten(ServerPlayer spieler, MinecraftServer server) {
-        if (aktuelleVilla == null) {
+        if (VILLEN.isEmpty()) {
             return;
         }
+        // Nachbarschaft: Wer neu dazukommt, während die Spawn-Villa schon jemand anderem gehört, bekommt seine eigene
+        VillaInfo eigene = nachbarvillaFuer(spieler, server);
         // Das goldene Handy bekommt jeder Bewohner einmal, auch wer schon vor 0.3 hier wohnte
         if (!Kompat.tags(spieler).contains(TAG_HANDY)) {
             spieler.addTag(TAG_HANDY);
@@ -114,11 +166,85 @@ public final class VillaPlatzierung {
             return;
         }
         spieler.addTag(TAG_ANGEKOMMEN);
-        // Willkommensgeschenk: eine Zugangskarte für Tore und Kartenleser
-        spieler.getInventory().add(new net.minecraft.world.item.ItemStack(de.moinmornhart.stinkendreich.register.ModItems.ZUGANGSKARTE));
-        BlockPos p = aktuelleVilla.spawn();
+        VillaInfo ziel = eigene != null ? eigene : VILLEN.get(0);
+        // Willkommensgeschenk: eine Zugangskarte für Tore und Kartenleser der eigenen Villa
+        spieler.getInventory().add(de.moinmornhart.stinkendreich.mechanik.Zugang.karte(ziel));
+        BlockPos p = ziel.spawn();
         Kompat.befehl(server, String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f %.1f 0",
-                spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, aktuelleVilla.spawnBlick()));
+                spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, ziel.spawnBlick()));
+        if (eigene != null) {
+            Kompat.befehl(server, String.format(java.util.Locale.ROOT, "spawnpoint %s %d %d %d",
+                    spieler.getScoreboardName(), p.getX(), p.getY(), p.getZ()));
+        }
+    }
+
+    /**
+     * Baut dem Spieler eine eigene Villa, wenn er neu ist und die Spawn-Villa schon einem anderen gehört (nur mit
+     * {@code mehrereVillen}). Gibt seine Villa zurück (auch eine schon vorhandene), sonst null.
+     */
+    private static VillaInfo nachbarvillaFuer(ServerPlayer spieler, MinecraftServer server) {
+        VillaInfo schon = vonBesitzer(spieler.getUUID());
+        if (schon != null || !Konfig.get().mehrereVillen) {
+            return schon;
+        }
+        de.moinmornhart.stinkendreich.mechanik.VillaZustand haupt = de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(server, 0);
+        if (haupt.bewohner().isEmpty() || haupt.bewohner().containsKey(spieler.getUUID())) {
+            return null;                                         // er ist der Herr der Spawn-Villa (oder ihr Bewohner)
+        }
+        VillaInfo neu = nachbarBauen(server, spieler);
+        de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(server, neu.nr()).bewohnerHinzufuegen(spieler);
+        return neu;
+    }
+
+    /**
+     * Baut die nächste Nachbarvilla im Raster. {@code besitzer} null = ohne Besitzer (Testbefehl /villa nachbar).
+     */
+    public static VillaInfo nachbarBauen(MinecraftServer server, ServerPlayer besitzer) {
+        int nr = VILLEN.size();
+        int[] platz = platz(nr);
+        int abstand = Math.max(240, Konfig.get().villenAbstand);
+        VillaInfo spawnVilla = VILLEN.get(0);
+        int x0 = spawnVilla.ursprung().getX() + platz[0] * abstand;
+        int z0 = spawnVilla.ursprung().getZ() + platz[1] * abstand;
+        long start = System.currentTimeMillis();
+        VillaInfo neu = bauenBei(server, server.overworld(), x0, z0, nr, besitzer);
+        VILLEN.add(neu);
+        merken();
+        StinkendReich.LOGGER.info("Nachbarvilla {} für {} gebaut bei {} in {} ms", nr,
+                besitzer == null ? "(Test)" : besitzer.getScoreboardName(), neu.ursprung(), System.currentTimeMillis() - start);
+        return neu;
+    }
+
+    /** Platz der Villa Nummer nr im Raster um die Spawn-Villa: Ringe von innen nach außen, je Ring im Kreis. */
+    static int[] platz(int nr) {
+        int n = 0;
+        for (int ring = 1; ; ring++) {
+            for (int dx = -ring; dx <= ring; dx++) {
+                for (int dz = -ring; dz <= ring; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) == ring && ++n == nr) {
+                        return new int[]{dx, dz};
+                    }
+                }
+            }
+        }
+    }
+
+    /** Schreibt alle Villen in die Merkdatei der Welt. */
+    private static void merken() {
+        if (merkdatei == null || VILLEN.isEmpty()) {
+            return;
+        }
+        try {
+            JsonObject j = VILLEN.get(0).alsJson();
+            JsonArray nachbarn = new JsonArray();
+            for (int i = 1; i < VILLEN.size(); i++) {
+                nachbarn.add(VILLEN.get(i).alsJson());
+            }
+            j.add("nachbarn", nachbarn);
+            Files.writeString(merkdatei, GSON.toJson(j), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            StinkendReich.LOGGER.error("Villen konnten nicht gemerkt werden", e);
+        }
     }
 
     // ------------------------------------------------------------------
@@ -128,8 +254,15 @@ public final class VillaPlatzierung {
     private static VillaInfo bauen(MinecraftServer server, ServerLevel welt) {
         VillaDaten plan = VillaDaten.get();
         BlockPos spawn = Kompat.spawnPunkt(welt);
-        int x0 = spawn.getX() - plan.breiteX / 2;
-        int z0 = spawn.getZ() - plan.breiteZ / 2;
+        return bauenBei(server, welt, spawn.getX() - plan.breiteX / 2, spawn.getZ() - plan.breiteZ / 2, 0, null);
+    }
+
+    /**
+     * Baut eine Villa mit der Nordwest-Ecke bei x0/z0. Nummer 0 ist die Spawn-Villa (setzt den Weltspawn); Nachbarn
+     * gehören gleich ihrem Besitzer (Butler mit seinem Namen).
+     */
+    private static VillaInfo bauenBei(MinecraftServer server, ServerLevel welt, int x0, int z0, int nr, ServerPlayer besitzer) {
+        VillaDaten plan = VillaDaten.get();
         int rand = Math.max(4, Konfig.get().villaAnblendung);
 
         // Alle betroffenen Chunks laden (bzw. erzeugen)
@@ -166,12 +299,16 @@ public final class VillaPlatzierung {
         BlockPos luke = Festungsbau.notausgang(welt, ursprung, plan);
         StinkendReich.LOGGER.info("Festung: {} Minen, Notausgang bei {}", minen, luke);
 
-        VillaInfo villa = new VillaInfo(ursprung, plan);
-        Kompat.setzeSpawnPunkt(welt, villa.spawn(), villa.spawnBlick());
-        Kompat.befehl(server, Kompat.spawnRadiusBefehl(0));
+        VillaInfo villa = new VillaInfo(ursprung, plan, nr, besitzer == null ? null : besitzer.getUUID(),
+                besitzer == null ? "" : besitzer.getScoreboardName());
+        if (nr == 0) {
+            Kompat.setzeSpawnPunkt(welt, villa.spawn(), villa.spawnBlick());
+            Kompat.befehl(server, Kompat.spawnRadiusBefehl(0));
+        }
         // Der Butler wartet in der Halle auf seinen Herrn
         JsonArray b = plan.ersteMarke("butler");
-        ButlerVerwaltung.villaButlerErzeugen(welt, villa.weltPos(b.get(0).getAsDouble(), b.get(1).getAsDouble(), b.get(2).getAsDouble()));
+        ButlerVerwaltung.villaButlerErzeugen(welt, villa.weltPos(b.get(0).getAsDouble(), b.get(1).getAsDouble(), b.get(2).getAsDouble()),
+                besitzer);
         // XXL-Fernseher (Penthouse, Gästezimmer, Bunker; die Marke kann Breite und Höhe in Blöcken mitbringen)
         for (JsonArray m : plan.marke("fernseher")) {
             de.moinmornhart.stinkendreich.fernseher.FernseherEntity tv = de.moinmornhart.stinkendreich.register.ModEntities.FERNSEHER.create(welt
@@ -214,9 +351,9 @@ public final class VillaPlatzierung {
         }
         // Der Fuhrpark steht in der Tiefgarage (Stellplätze aus dem Bauplan)
         for (JsonArray platz : plan.marke("stellplatz")) {
-            int nr = platz.get(4).getAsInt();
-            if (nr < FUHRPARK.length) {
-                abstellen(welt, FUHRPARK[nr].art(), FUHRPARK[nr].farbe(), ursprung.getX() + platz.get(0).getAsDouble(),
+            int stelle = platz.get(4).getAsInt();
+            if (stelle < FUHRPARK.length) {
+                abstellen(welt, FUHRPARK[stelle].art(), FUHRPARK[stelle].farbe(), ursprung.getX() + platz.get(0).getAsDouble(),
                         ursprung.getY() + platz.get(1).getAsDouble(), ursprung.getZ() + platz.get(2).getAsDouble(),
                         (float) platz.get(3).getAsDouble());
             }
@@ -410,6 +547,7 @@ public final class VillaPlatzierung {
      */
     private static void aufraeumen(MinecraftServer server) {
         long zeit = server.overworld().getGameTime();
+        VillaInfo aktuelleVilla = villa().orElse(null);
         if (aktuelleVilla == null || zeit > AUFRAEUMEN_BIS || zeit % 20 != 0) {
             return;
         }
@@ -479,8 +617,21 @@ public final class VillaPlatzierung {
         }
     }
 
-    /** Lage der gebauten Villa in einer Welt. */
-    public record VillaInfo(BlockPos ursprung, VillaDaten plan) {
+    /**
+     * Lage einer gebauten Villa: Ursprung, Bauplan, Nummer (0 = Spawn-Villa) und Besitzer (bei der Spawn-Villa
+     * leer: dort ist der erste Bewohner der Herr, siehe VillaZustand).
+     */
+    public record VillaInfo(BlockPos ursprung, VillaDaten plan, int nr, java.util.UUID besitzer, String besitzerName) {
+        public VillaInfo(BlockPos ursprung, VillaDaten plan) {
+            this(ursprung, plan, 0, null, "");
+        }
+
+        /** Waagerecht höchstens {@code rand} Blöcke vom Grundstück entfernt? */
+        public boolean inDerNaehe(BlockPos pos, int rand) {
+            return pos.getX() >= ursprung.getX() - rand && pos.getX() < ursprung.getX() + plan.breiteX + rand
+                    && pos.getZ() >= ursprung.getZ() - rand && pos.getZ() < ursprung.getZ() + plan.breiteZ + rand;
+        }
+
         public BlockPos weltPos(double lx, double ly, double lz) {
             return ursprung.offset((int) Math.floor(lx), (int) Math.floor(ly), (int) Math.floor(lz));
         }
@@ -519,15 +670,21 @@ public final class VillaPlatzierung {
             u.add(ursprung.getY());
             u.add(ursprung.getZ());
             j.add("ursprung", u);
+            if (besitzer != null) {
+                j.addProperty("besitzer", besitzer.toString());
+                j.addProperty("besitzerName", besitzerName);
+            }
             return j;
         }
 
-        static VillaInfo ausJson(JsonObject j) {
+        static VillaInfo ausJson(JsonObject j, int nr) {
             if (!j.has("gebaut") || !j.get("gebaut").getAsBoolean()) {
                 return null;
             }
             JsonArray u = j.getAsJsonArray("ursprung");
-            return new VillaInfo(new BlockPos(u.get(0).getAsInt(), u.get(1).getAsInt(), u.get(2).getAsInt()), VillaDaten.get());
+            return new VillaInfo(new BlockPos(u.get(0).getAsInt(), u.get(1).getAsInt(), u.get(2).getAsInt()), VillaDaten.get(), nr,
+                    j.has("besitzer") ? java.util.UUID.fromString(j.get("besitzer").getAsString()) : null,
+                    j.has("besitzerName") ? j.get("besitzerName").getAsString() : "");
         }
     }
 }

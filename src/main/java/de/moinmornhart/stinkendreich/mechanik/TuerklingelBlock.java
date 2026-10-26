@@ -28,7 +28,7 @@ public class TuerklingelBlock extends MechanikBlock {
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (!welt.isClientSide()) {
             welt.playSound(null, pos, ModSounds.KLINGEL, SoundSource.BLOCKS, 1.5F, 1.0F);
-            VillaZustand z = VillaZustand.get(welt.getServer());
+            VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
             for (ServerPlayer p : welt.getServer().getPlayerList().getPlayers()) {
                 if (z.istBewohner(p) && p != spieler) {
                     p.level().playSound(null, p.blockPosition(), ModSounds.KLINGEL, SoundSource.BLOCKS, 0.8F, 1.0F);

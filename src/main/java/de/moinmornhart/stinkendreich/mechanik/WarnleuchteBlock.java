@@ -28,7 +28,7 @@ public class WarnleuchteBlock extends MechanikBlock {
 
     @Override
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity daten) {
-        boolean alarm = VillaZustand.get(welt.getServer()).alarmAktiv() || Zugbruecke.warnen(pos);
+        boolean alarm = VillaZustand.fuer(welt.getServer(), pos).alarmAktiv() || Zugbruecke.warnen(pos);
         // Blinken: im Alarm (und wenn die Brücke fährt) abwechselnd an und aus
         boolean an = alarm && (welt.getGameTime() / 10) % 2 == 0;
         if (an != zustand.getValue(Eigenschaften.LEUCHTET)) {

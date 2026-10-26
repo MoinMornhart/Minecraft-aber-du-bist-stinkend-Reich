@@ -55,7 +55,7 @@ public class TorsteuerungBlock extends MechanikBlock {
 
     @Override
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity d) {
-        VillaZustand z = VillaZustand.get(welt.getServer());
+        VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
         String modus = d.text("modus", "schalter");
         int radius = d.zahl("radius", 6);
         boolean offen;

@@ -53,10 +53,26 @@ public final class VillaBefehle {
                         .then(Commands.literal("stufe").requires(Kompat.istOperator())
                                 .then(Commands.argument("stufe", IntegerArgumentType.integer(0, VillaZustand.MAX_STUFE))
                                         .executes(k -> {
-                                            VillaZustand.get(k.getSource().getServer()).setzeStufe(IntegerArgumentType.getInteger(k, "stufe"));
+                                            (k.getSource().getPlayer() != null ? VillaZustand.vonSpieler(k.getSource().getServer(), k.getSource().getPlayer())
+                                                    : VillaZustand.get(k.getSource().getServer())).setzeStufe(IntegerArgumentType.getInteger(k, "stufe"));
                                             return 1;
                                         })))
                         .then(Commands.literal("lecks").requires(Kompat.istOperator()).executes(VillaBefehle::lecks))
+                        // Testhilfe: nächste Nachbarvilla bauen (ohne Besitzer) und hinfliegen
+                        .then(Commands.literal("nachbar").requires(Kompat.istOperator()).executes(k -> {
+                            if (VillaPlatzierung.villa().isEmpty()) {
+                                return 0;
+                            }
+                            var neu = VillaPlatzierung.nachbarBauen(k.getSource().getServer(), null);
+                            var p = k.getSource().getPlayer();
+                            if (p != null) {
+                                net.minecraft.core.BlockPos s = neu.spawn();
+                                p.teleportTo(s.getX() + 0.5, s.getY(), s.getZ() + 0.5);
+                            }
+                            k.getSource().sendSuccess(() -> net.minecraft.network.chat.Component.literal("Nachbarvilla " + neu.nr()
+                                    + " bei " + neu.ursprung().toShortString()), false);
+                            return 1;
+                        }))
                         .then(Commands.literal("bruecke").requires(Kompat.istOperator())
                                 .then(Commands.literal("ein").executes(k -> bruecke(k, true)))
                                 .then(Commands.literal("aus").executes(k -> bruecke(k, false))))

@@ -55,6 +55,11 @@ public final class ButlerBefehle {
                             return 1;
                         }))
                         .then(Commands.literal("truhe").executes(ButlerBefehle::truheFestlegen))
+                        // Alles auf Anfang: Aufträge weg, jeder James weg, ein frischer James in der Halle
+                        .then(Commands.literal("zuruecksetzen").executes(k -> {
+                            ButlerVerwaltung.zuruecksetzen(k.getSource().getPlayerOrException());
+                            return 1;
+                        }))
                         // Knöpfe des Butler-Dialogs für Spieler ohne Mod (siehe server/ButlerDialog)
                         .then(Commands.literal("knopf").then(Commands.argument("nummer", com.mojang.brigadier.arguments.IntegerArgumentType.integer())
                                 .then(Commands.argument("befehl", StringArgumentType.greedyString()).executes(k -> {
@@ -391,11 +396,12 @@ public final class ButlerBefehle {
             }
             case BRUECKE -> {
                 // Nur Bewohner dürfen die Zugbrücke bedienen (wie am Schalter)
-                if (!de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(p.level().getServer()).istBewohner(p)) {
+                var villaZustand = de.moinmornhart.stinkendreich.mechanik.VillaZustand.vonSpieler(p.level().getServer(), p);
+                if (!villaZustand.istBewohner(p)) {
                     return new Antwort(Component.translatable("stinkendreich.bruecke.nur_bewohner"), true);
                 }
                 boolean zu = "zu".equals(bf.quelle());
-                String fehler = de.moinmornhart.stinkendreich.mechanik.Zugbruecke.sichern(p.level().getServer(), zu);
+                String fehler = de.moinmornhart.stinkendreich.mechanik.Zugbruecke.sichern(p.level().getServer(), villaZustand.nr(), zu);
                 return fehler != null ? new Antwort(Component.translatable(fehler), true)
                         : Antwort.ok(zu ? "stinkendreich.butler.bruecke.zu" : "stinkendreich.butler.bruecke.auf");
             }

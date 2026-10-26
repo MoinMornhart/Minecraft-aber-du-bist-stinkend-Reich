@@ -146,10 +146,23 @@ public class HandyBildschirm extends Screen {
                 knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
             }
             case AUFTRAG -> {
-                for (String a : List.of("eisen", "diamanten", "holz", "essen", "sortieren", "heim")) {
+                // Aufträge in zwei Spalten, darunter „Abbrechen“ und „James zurücksetzen“
+                int halb = (KNOPF_B - 4) / 2;
+                List<String> auftraege = List.of("eisen", "diamanten", "holz", "essen", "sortieren", "heim");
+                for (int i = 0; i < auftraege.size(); i++) {
+                    String a = auftraege.get(i);
                     String text = Component.translatable("stinkendreich.handy.auftrag." + a + ".text").getString();
-                    y = knopf(x, y, "auftrag." + a, () -> senden("auftrag|" + text));
+                    addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.auftrag." + a),
+                            b -> senden("auftrag|" + text)).bounds(x + (i % 2) * (halb + 4), y, halb, KNOPF_H).build());
+                    if (i % 2 == 1) {
+                        y += KNOPF_H + ABSTAND;
+                    }
                 }
+                addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.auftrag.stopp")
+                        .withStyle(ChatFormatting.RED), b -> senden("auftrag|stopp")).bounds(x, y, halb, KNOPF_H).build());
+                addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.auftrag.reset")
+                        .withStyle(ChatFormatting.GOLD), b -> senden("zuruecksetzen")).bounds(x + halb + 4, y, halb, KNOPF_H).build());
+                y += KNOPF_H + ABSTAND;
                 eingabe = new EditBox(font, x, y + 4, KNOPF_B, KNOPF_H, Component.translatable("stinkendreich.handy.auftrag.frei"));
                 eingabe.setHint(Component.translatable("stinkendreich.handy.auftrag.frei"));
                 eingabe.setMaxLength(120);

@@ -32,7 +32,7 @@ public class EntschaerfknopfBlock extends MechanikBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
         if (!welt.isClientSide()) {
-            int fehlt = VillaZustand.get(welt.getServer()).entschaerfknopf(pos, Konfig.get().tresorKnoepfe);
+            int fehlt = VillaZustand.fuer(welt.getServer(), pos).entschaerfknopf(pos, Konfig.get().tresorKnoepfe);
             welt.playSound(null, pos, ModSounds.PIEP_OK, SoundSource.BLOCKS, 0.3F, 0.6F);
             Kompat.nachricht(spieler, fehlt == 0
                     ? Component.translatable("stinkendreich.tresor.entschaerft").withStyle(ChatFormatting.GREEN)

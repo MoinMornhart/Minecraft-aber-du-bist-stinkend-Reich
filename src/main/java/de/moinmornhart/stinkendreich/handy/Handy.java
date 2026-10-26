@@ -84,7 +84,7 @@ public final class Handy {
             }
             case "smart" -> {
                 de.moinmornhart.stinkendreich.mechanik.SmartHome.befehl(p, angabe);
-                Netz.melden(p, "smart", de.moinmornhart.stinkendreich.mechanik.SmartHome.status(p.level().getServer()));
+                Netz.melden(p, "smart", de.moinmornhart.stinkendreich.mechanik.SmartHome.status(p.level().getServer(), p));
                 return;
             }
             case "bodyguards" -> {
@@ -126,6 +126,7 @@ public final class Handy {
                 }
             }
             case "auftrag" -> ButlerBefehle.verarbeiten(p, angabe, true);
+            case "zuruecksetzen" -> de.moinmornhart.stinkendreich.butler.ButlerVerwaltung.zuruecksetzen(p);
             case "orte" -> orteSenden(p, b);
             case "ort" -> {
                 String[] teil = angabe.split("\\|", 2);

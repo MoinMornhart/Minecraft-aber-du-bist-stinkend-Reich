@@ -41,7 +41,11 @@ public final class VillaZustand {
     public static final int FESTUNG = 4;
     private static final String DATEI = StinkendReich.MOD_ID + "-zustand.json";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static VillaZustand aktuell;
+    /** Zustand je Villa (Nummer wie in VillaPlatzierung; 0 = Spawn-Villa). */
+    private static final Map<Integer, VillaZustand> ALLE = new java.util.concurrent.ConcurrentHashMap<>();
+    private static MinecraftServer geladenFuer;
+    /** Nummer der Villa, zu der dieser Zustand gehört. */
+    private int nr;
 
     private int stufe = 1;
     private final Map<UUID, String> bewohner = new LinkedHashMap<>();
@@ -66,39 +70,76 @@ public final class VillaZustand {
     }
 
     public static void registrieren() {
-        ServerLifecycleEvents.SERVER_STARTED.register(VillaZustand::laden);
         ServerLifecycleEvents.SERVER_STOPPING.register(s -> {
-            if (aktuell != null) {
-                aktuell.speichern();
-            }
-            aktuell = null;
+            ALLE.values().forEach(VillaZustand::speichern);
+            ALLE.clear();
+            geladenFuer = null;
         });
-        // Der erste Spieler einer Welt wird automatisch Bewohner (Besitzer)
+        // Der erste Spieler einer Welt wird automatisch Bewohner (Besitzer) der Spawn-Villa; wer danach kommt,
+        // bekommt in der Nachbarschaft seine eigene Villa (siehe VillaPlatzierung)
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            VillaZustand z = get(server);
+            VillaZustand z = get(server, 0);
             if (z.bewohner.isEmpty()) {
                 z.bewohnerHinzufuegen(handler.getPlayer());
             }
         });
         ServerTickEvents.END_SERVER_TICK.register(s -> {
-            if (aktuell != null && aktuell.alarmBis > 0 && jetzt(s) > aktuell.alarmBis) {
-                aktuell.alarmBis = 0;
-                aktuell.anBewohner(Component.translatable("stinkendreich.alarm.ende").withStyle(ChatFormatting.GREEN), true);
+            for (VillaZustand z : ALLE.values()) {
+                if (z.server == s && z.alarmBis > 0 && jetzt(s) > z.alarmBis) {
+                    z.alarmBis = 0;
+                    z.anBewohner(Component.translatable("stinkendreich.alarm.ende").withStyle(ChatFormatting.GREEN), true);
+                }
             }
         });
     }
 
+    /** Zustand der Spawn-Villa (Nummer 0). */
     public static VillaZustand get(MinecraftServer server) {
-        if (aktuell == null || aktuell.server != server) {
-            laden(server);
-        }
-        return aktuell;
+        return get(server, 0);
     }
 
-    private static void laden(MinecraftServer server) {
+    /** Zustand der Villa mit dieser Nummer. */
+    public static VillaZustand get(MinecraftServer server, int nr) {
+        if (geladenFuer != server) {
+            ALLE.clear();
+            geladenFuer = server;
+        }
+        return ALLE.computeIfAbsent(Math.max(0, nr), n -> laden(server, n));
+    }
+
+    /** Zustand der Villa, zu deren Gelände die Stelle gehört (sonst der Spawn-Villa). */
+    public static VillaZustand fuer(MinecraftServer server, BlockPos pos) {
+        var v = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.bei(pos);
+        return get(server, v == null ? 0 : v.nr());
+    }
+
+    /**
+     * Zustand der Villa des Spielers: die, in der er Bewohner ist (eigene Villa zuerst), sonst die, auf deren
+     * Gelände er steht, sonst die Spawn-Villa. Für das Handy (Smart Home) und Befehle.
+     */
+    public static VillaZustand vonSpieler(MinecraftServer server, Player spieler) {
+        var eigene = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.vonBesitzer(spieler.getUUID());
+        if (eigene != null) {
+            return get(server, eigene.nr());
+        }
+        for (var v : de.moinmornhart.stinkendreich.villa.VillaPlatzierung.alle()) {
+            if (get(server, v.nr()).bewohner.containsKey(spieler.getUUID())) {
+                return get(server, v.nr());
+            }
+        }
+        return fuer(server, spieler.blockPosition());
+    }
+
+    /** Nummer der Villa, zu der dieser Zustand gehört. */
+    public int nr() {
+        return nr;
+    }
+
+    private static VillaZustand laden(MinecraftServer server, int nr) {
         VillaZustand z = new VillaZustand();
         z.server = server;
-        z.pfad = server.getWorldPath(LevelResource.ROOT).resolve(DATEI);
+        z.nr = nr;
+        z.pfad = server.getWorldPath(LevelResource.ROOT).resolve(nr == 0 ? DATEI : StinkendReich.MOD_ID + "-zustand-" + nr + ".json");
         try {
             if (Files.exists(z.pfad)) {
                 JsonObject j = GSON.fromJson(Files.readString(z.pfad, StandardCharsets.UTF_8), JsonObject.class);
@@ -121,7 +162,7 @@ public final class VillaZustand {
         } catch (Exception e) {
             StinkendReich.LOGGER.error("Sicherheitszustand konnte nicht gelesen werden", e);
         }
-        aktuell = z;
+        return z;
     }
 
     private void speichern() {
@@ -210,7 +251,7 @@ public final class VillaZustand {
      * (Philip: „jeder, der eine Zugangskarte hat, ist als Bewohner“). Nur die Alarmstufe stellt der Eigentümer ein.
      */
     public boolean istBewohner(Player spieler) {
-        return bewohner.isEmpty() || bewohner.containsKey(spieler.getUUID()) || Zugang.hatKarte(spieler);
+        return bewohner.isEmpty() || bewohner.containsKey(spieler.getUUID()) || Zugang.hatKarte(spieler, nr);
     }
 
     /** Eigentümer der Villa: der erste Bewohner (der erste Spieler, der die Welt betreten hat). */

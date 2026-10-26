@@ -44,7 +44,7 @@ public class AbwehrgeschuetzBlock extends MechanikBlock {
 
     @Override
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity daten) {
-        VillaZustand z = VillaZustand.get(welt.getServer());
+        VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
         boolean aktiv = Festung.bereit(z, pos, true);
         if (aktiv != zustand.getValue(Eigenschaften.AN)) {
             // Ausfahren bzw. Einfahren: Kopf mit den Läufen hebt sich aus dem Sockel

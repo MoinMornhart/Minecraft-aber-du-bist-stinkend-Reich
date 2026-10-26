@@ -35,7 +35,7 @@ public class HaifalleSchalterBlock extends MechanikBlock {
         if (welt.isClientSide() || !(welt instanceof ServerLevel sl)) {
             return InteractionResult.SUCCESS;      // der Server entscheidet
         }
-        VillaZustand z = VillaZustand.get(sl.getServer());
+        VillaZustand z = VillaZustand.fuer(sl.getServer(), pos);
         if (!z.istBewohner(spieler)) {
             welt.playSound(null, pos, ModSounds.PIEP_FEHLER, SoundSource.BLOCKS, 0.6F, 1.0F);
             Kompat.nachricht(spieler, Component.translatable("stinkendreich.haifalle.nur_bewohner").withStyle(ChatFormatting.RED), true);

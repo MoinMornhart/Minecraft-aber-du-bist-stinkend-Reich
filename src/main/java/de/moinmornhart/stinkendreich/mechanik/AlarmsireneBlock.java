@@ -25,7 +25,7 @@ public class AlarmsireneBlock extends MechanikBlock {
 
     @Override
     public void takt(ServerLevel welt, BlockPos pos, BlockState zustand, MechanikBlockEntity daten) {
-        if (VillaZustand.get(welt.getServer()).alarmAktiv()) {
+        if (VillaZustand.fuer(welt.getServer(), pos).alarmAktiv()) {
             welt.playSound(null, pos, ModSounds.SIRENE, SoundSource.BLOCKS, 3.0F, 1.0F);
         }
     }

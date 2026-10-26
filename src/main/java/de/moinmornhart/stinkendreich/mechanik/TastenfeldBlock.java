@@ -57,7 +57,7 @@ public class TastenfeldBlock extends MechanikBlock {
             } else {
                 welt.playSound(null, pos, ModSounds.PIEP_FEHLER, SoundSource.BLOCKS, 1.0F, 1.0F);
                 Kompat.nachricht(spieler, Component.translatable("stinkendreich.zugang.falscher_code").withStyle(ChatFormatting.RED), true);
-                VillaZustand z = VillaZustand.get(welt.getServer());
+                VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
                 if (Zugang.fehlversuch(spieler) && z.stufe() >= 1) {
                     z.alarm(pos, Component.translatable("stinkendreich.alarm.grund.code", spieler.getScoreboardName()));
                 }
@@ -68,7 +68,7 @@ public class TastenfeldBlock extends MechanikBlock {
             MechanikBlockEntity daten = daten(spieler.level(), pos);
             String[] teile = wert.split(":", 2);
             boolean gueltig = teile.length == 2 && teile[1].matches("\\d{4,8}");
-            if (daten == null || !gueltig || !VillaZustand.get(spieler.level().getServer()).istBewohner(spieler)
+            if (daten == null || !gueltig || !VillaZustand.fuer(spieler.level().getServer(), pos).istBewohner(spieler)
                     || !teile[0].equals(daten.text("code", STANDARD_CODE))) {
                 Kompat.nachricht(spieler, Component.translatable("stinkendreich.zugang.code_nicht_geaendert").withStyle(ChatFormatting.RED), true);
                 return;

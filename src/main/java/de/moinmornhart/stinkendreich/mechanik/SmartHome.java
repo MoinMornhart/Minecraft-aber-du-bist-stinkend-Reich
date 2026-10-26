@@ -30,7 +30,7 @@ public final class SmartHome {
             Eigenschaften.Lichtfarbe.GOLD};
 
     /** Lampen der Villa (Weltpositionen, aus den Marken „smartlicht“), erst beim ersten Bedarf berechnet. */
-    private static List<BlockPos> lampen;
+    private static final java.util.Map<Integer, List<BlockPos>> LAMPEN = new java.util.concurrent.ConcurrentHashMap<>();
     /** Muss der Zustand der Lampen neu gesetzt werden? */
     private static boolean lampenNeu = true;
     /** Zuletzt gesehene Tageshälfte für die Automatik (null = noch unbekannt). */
@@ -42,7 +42,7 @@ public final class SmartHome {
     public static void registrieren() {
         ServerTickEvents.END_SERVER_TICK.register(SmartHome::tick);
         net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STOPPED.register(s -> {
-            lampen = null;
+            LAMPEN.clear();
             lampenNeu = true;
             warAbend = null;
         });
@@ -58,9 +58,9 @@ public final class SmartHome {
      * „automatik|an/aus“.
      */
     /** Zustand aller Schalter für die Handy-App: „rollo=1,bruecke=0,…“ (1 = an/zu/eingefahren). */
-    public static String status(MinecraftServer server) {
-        VillaZustand z = VillaZustand.get(server);
-        return "rollo=" + (z.smart("rollo_zu", false) ? 1 : 0) + ",bruecke=" + (Zugbruecke.gesichert(server) ? 1 : 0)
+    public static String status(MinecraftServer server, ServerPlayer p) {
+        VillaZustand z = VillaZustand.vonSpieler(server, p);
+        return "rollo=" + (z.smart("rollo_zu", false) ? 1 : 0) + ",bruecke=" + (z.brueckeGesichert() ? 1 : 0)
                 + ",licht=" + (z.smart("licht", true) ? 1 : 0) + ",disco=" + (z.smart("disco", false) ? 1 : 0)
                 + ",automatik=" + (z.smart("automatik", false) ? 1 : 0) + ",inkognito=" + (z.smart("inkognito", false) ? 1 : 0)
                 + ",krisenbunker=" + (z.smart("krisenbunker", false) ? 1 : 0);
@@ -71,7 +71,7 @@ public final class SmartHome {
         if (angabe.equals("status")) {
             return;                                              // nur den Zustand abfragen (Antwort schickt Handy)
         }
-        VillaZustand z = VillaZustand.get(server);
+        VillaZustand z = VillaZustand.vonSpieler(server, p);     // die eigene Villa (in der Nachbarschaft jeder seine)
         if (!z.istBewohner(p)) {
             Kompat.nachricht(p, Component.translatable("stinkendreich.smarthome.nur_bewohner").withStyle(ChatFormatting.RED), true);
             return;
@@ -102,7 +102,7 @@ public final class SmartHome {
                 }
             }
             case "bruecke" -> {
-                String fehler = Zugbruecke.sichern(server, an);
+                String fehler = Zugbruecke.sichern(server, z.nr(), an);
                 if (fehler != null) {
                     Kompat.nachricht(p, Component.translatable(fehler).withStyle(ChatFormatting.RED), true);
                     return;
@@ -110,7 +110,7 @@ public final class SmartHome {
             }
             case "automatik" -> z.setzeSmart("automatik", an);
             case "inkognito" -> {
-                String fehler = Inkognito.schalten(server, an);
+                String fehler = Inkognito.schalten(server, z.nr(), an);
                 if (fehler != null) {
                     Kompat.nachricht(p, Component.translatable(fehler).withStyle(ChatFormatting.RED), true);
                     return;
@@ -121,11 +121,11 @@ public final class SmartHome {
                 z.setzeSmart("krisenbunker", an);
                 if (an) {
                     z.setzeSmart("rollo_zu", true);
-                    Zugbruecke.sichern(server, true);
+                    Zugbruecke.sichern(server, z.nr(), true);
                 }
             }
             case "haie" -> {
-                String fehler = Haifalle.smartHome(server, wert.equals("auf"));
+                String fehler = Haifalle.smartHome(server, z.nr(), wert.equals("auf"));
                 if (fehler != null) {
                     Kompat.nachricht(p, Component.translatable(fehler).withStyle(ChatFormatting.RED), true);
                 }
@@ -141,60 +141,62 @@ public final class SmartHome {
     }
 
     private static void tick(MinecraftServer server) {
-        if (server.getTickCount() % 10 != 0 || VillaPlatzierung.villa().isEmpty() || Inkognito.aktiv(server)) {
+        if (server.getTickCount() % 10 != 0 || VillaPlatzierung.alle().isEmpty()) {
             return;
         }
-        VillaZustand z = VillaZustand.get(server);
         ServerLevel welt = server.overworld();
-        automatik(welt, z);
-        boolean disco = z.smart("disco", false) && z.smart("licht", true);
-        if (lampenNeu || disco) {
-            lampenNeu = false;
-            lampenSetzen(welt, z, disco ? (int) (server.getTickCount() / 10) : -1);
-        }
-    }
-
-    /** Abends Rollläden runter, Licht an, Brücke ein; morgens umgekehrt (nur beim Wechsel, damit die App gilt). */
-    private static void automatik(ServerLevel welt, VillaZustand z) {
+        // Abend oder Morgen? Gewechselt wird für alle Villen gleichzeitig (es ist überall dieselbe Uhrzeit)
         //? if >=26.1 {
         long zeit = Math.floorMod(welt.getDefaultClockTime(), 24000L);
         //?} else
         /*long zeit = Math.floorMod(welt.getDayTime(), 24000L);*/
         boolean abend = zeit >= ABEND && zeit < MORGEN;
-        if (warAbend == null) {
-            warAbend = abend;
-            return;
-        }
-        if (abend == warAbend) {
-            return;
-        }
+        boolean wechsel = warAbend != null && abend != warAbend;
         warAbend = abend;
+        boolean neu = lampenNeu;
+        lampenNeu = false;
+        for (VillaPlatzierung.VillaInfo v : VillaPlatzierung.alle()) {
+            if (Inkognito.aktiv(server, v.nr())) {
+                continue;
+            }
+            VillaZustand z = VillaZustand.get(server, v.nr());
+            if (wechsel) {
+                automatik(welt, z, abend);
+            }
+            boolean disco = z.smart("disco", false) && z.smart("licht", true);
+            if (neu || wechsel || disco) {
+                lampenSetzen(welt, z, lampen(v), disco ? (int) (server.getTickCount() / 10) : -1);
+            }
+        }
+    }
+
+    /** Abends Rollläden runter, Licht an, Brücke ein; morgens umgekehrt (nur beim Wechsel, damit die App gilt). */
+    private static void automatik(ServerLevel welt, VillaZustand z, boolean abend) {
         if (!z.smart("automatik", true)) {
             return;
         }
         z.setzeSmart("rollo_zu", abend);
         z.setzeSmart("licht", abend);
         if (abend) {
-            if (!z.brueckeGesichert() && Zugbruecke.sichern(welt.getServer(), true) == null) {
+            if (!z.brueckeGesichert() && Zugbruecke.sichern(welt.getServer(), z.nr(), true) == null) {
                 z.setzeSmart("bruecke_auto", true);                // morgens wieder ausfahren
             }
         } else if (z.smart("bruecke_auto", false)) {
-            Zugbruecke.sichern(welt.getServer(), false);
+            Zugbruecke.sichern(welt.getServer(), z.nr(), false);
             z.setzeSmart("bruecke_auto", false);
         }
-        lampenNeu = true;
         z.anBewohner(Component.translatable(abend ? "stinkendreich.smarthome.abend" : "stinkendreich.smarthome.morgen")
                 .withStyle(ChatFormatting.GOLD), true);
     }
 
     /** Alle geladenen Lampen auf den eingestellten Zustand setzen; {@code disco} ≥ 0 = Schritt der Farbwelle. */
-    private static void lampenSetzen(ServerLevel welt, VillaZustand z, int disco) {
+    private static void lampenSetzen(ServerLevel welt, VillaZustand z, List<BlockPos> lampen, int disco) {
         boolean an = z.smart("licht", true);
         Eigenschaften.Lichtfarbe farbe = Eigenschaften.Lichtfarbe.von(z.smartText("farbe", "warm"));
         if (farbe == null) {
             farbe = Eigenschaften.Lichtfarbe.WARM;
         }
-        for (BlockPos pos : lampen()) {
+        for (BlockPos pos : lampen) {
             if (!welt.isLoaded(pos)) {
                 continue;
             }
@@ -210,15 +212,14 @@ public final class SmartHome {
         }
     }
 
-    private static List<BlockPos> lampen() {
-        if (lampen == null) {
-            lampen = new ArrayList<>();
-            VillaPlatzierung.villa().ifPresent(v -> {
-                for (JsonArray m : v.plan().marke("smartlicht")) {
-                    lampen.add(v.weltPos(m.get(0).getAsDouble(), m.get(1).getAsDouble(), m.get(2).getAsDouble()));
-                }
-            });
-        }
-        return lampen;
+    /** Lampen einer Villa (aus den Marken „smartlicht“ des Bauplans). */
+    private static List<BlockPos> lampen(VillaPlatzierung.VillaInfo v) {
+        return LAMPEN.computeIfAbsent(v.nr(), n -> {
+            List<BlockPos> liste = new ArrayList<>();
+            for (JsonArray m : v.plan().marke("smartlicht")) {
+                liste.add(v.weltPos(m.get(0).getAsDouble(), m.get(1).getAsDouble(), m.get(2).getAsDouble()));
+            }
+            return liste;
+        });
     }
 }

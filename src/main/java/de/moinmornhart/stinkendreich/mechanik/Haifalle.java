@@ -81,7 +81,7 @@ public final class Haifalle {
         if (fallen.isEmpty()) {
             return Ergebnis.KEINE_FALLE;
         }
-        VillaZustand z = VillaZustand.get(welt.getServer());
+        VillaZustand z = VillaZustand.fuer(welt.getServer(), schalter);
         if (opfer == null) {
             opfer = opferSuchen(welt, schalter, z);
         }
@@ -136,8 +136,8 @@ public final class Haifalle {
      * Smart-Home-App: auf = den nächsten Eindringling am Becken hineinwerfen; ist keiner da, geht der Glasboden trotzdem
      * für 5 Sekunden auf (wer darauf steht, fällt hinein). zu = sofort schließen. Gibt einen Fehlertext zurück oder null.
      */
-    public static String smartHome(net.minecraft.server.MinecraftServer server, boolean auf) {
-        var villa = VillaPlatzierung.villa().orElse(null);
+    public static String smartHome(net.minecraft.server.MinecraftServer server, int nr, boolean auf) {
+        var villa = VillaPlatzierung.nr(nr);
         if (villa == null || villa.plan().marke("haibecken").isEmpty()) {
             return "stinkendreich.haifalle.keine_falle";
         }
@@ -150,7 +150,7 @@ public final class Haifalle {
         }
         if (!auf) {
             schliessen(welt, schalter);
-            anzeigen(server, "stinkendreich.smarthome.haie.zu");
+            anzeigen(server, nr, "stinkendreich.smarthome.haie.zu");
             return null;
         }
         Ergebnis e = ausloesen(welt, schalter, null);
@@ -162,12 +162,12 @@ public final class Haifalle {
         if (e == Ergebnis.LAEUFT) {
             return "stinkendreich.haifalle.laeuft";
         }
-        anzeigen(server, "stinkendreich.smarthome.haie.auf");
+        anzeigen(server, nr, "stinkendreich.smarthome.haie.auf");
         return e == Ergebnis.OK ? null : "stinkendreich.haifalle.keine_falle";
     }
 
-    private static void anzeigen(net.minecraft.server.MinecraftServer server, String text) {
-        VillaZustand.get(server).anBewohner(Component.translatable(text).withStyle(ChatFormatting.AQUA), true);
+    private static void anzeigen(net.minecraft.server.MinecraftServer server, int nr, String text) {
+        VillaZustand.get(server, nr).anBewohner(Component.translatable(text).withStyle(ChatFormatting.AQUA), true);
     }
 
     /**
@@ -210,9 +210,12 @@ public final class Haifalle {
         if (!(bewohner.level() instanceof ServerLevel welt) || welt != welt.getServer().overworld() || angreifer.isSpectator()) {
             return;
         }
-        VillaZustand z = VillaZustand.get(welt.getServer());
-        if (!z.istBewohner(bewohner) || z.istBewohner(angreifer)
-                || !VillaPlatzierung.villa().map(v -> v.enthaelt(bewohner.blockPosition())).orElse(false)) {
+        var villa = VillaPlatzierung.bei(bewohner.blockPosition());
+        if (villa == null || !villa.enthaelt(bewohner.blockPosition())) {
+            return;
+        }
+        VillaZustand z = VillaZustand.get(welt.getServer(), villa.nr());
+        if (!z.istBewohner(bewohner) || z.istBewohner(angreifer)) {
             return;
         }
         BlockPos schalter = naechsterSchalter(welt, angreifer.blockPosition());

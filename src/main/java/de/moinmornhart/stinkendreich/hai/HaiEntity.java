@@ -66,7 +66,7 @@ public class HaiEntity extends Dolphin {
             return false;
         }
         if (e instanceof Player p) {
-            return level() instanceof ServerLevel sl && VillaZustand.get(sl.getServer()).istEindringling(p);
+            return level() instanceof ServerLevel sl && VillaZustand.fuer(sl.getServer(), blockPosition()).istEindringling(p);
         }
         return e instanceof Enemy;
     }

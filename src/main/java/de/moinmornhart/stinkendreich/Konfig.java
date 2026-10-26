@@ -27,6 +27,10 @@ public final class Konfig {
     public int villaAnblendung = 24;
     /** Spieler beim allerersten Betreten einer Welt vor die Villa stellen. */
     public boolean villaSpawnSetzen = true;
+    /** Auf Servern bekommt jeder neue Spieler seine eigene Villa (Nachbarschaft). */
+    public boolean mehrereVillen = true;
+    /** Abstand der Villen in der Nachbarschaft (Blöcke von Mitte zu Mitte). */
+    public int villenAbstand = 320;
 
     /** Wie viele versteckte Entschärfknöpfe kurz hintereinander gedrückt werden müssen. */
     public int tresorKnoepfe = 2;
@@ -135,6 +139,8 @@ public final class Konfig {
         Map<String, String> erklaerung = new LinkedHashMap<>();
         erklaerung.put("villaBauen", "Villa in jeder neuen Welt am Spawn bauen (true/false)");
         erklaerung.put("villaAnblendung", "Breite des Übergangs vom ebenen Grundstück ins Gelände in Blöcken");
+        erklaerung.put("mehrereVillen", "Jeder neue Spieler bekommt seine eigene Villa (true/false)");
+        erklaerung.put("villenAbstand", "Abstand der Villen in Blöcken (mindestens 240)");
         erklaerung.put("villaSpawnSetzen", "Spieler beim ersten Betreten vor die Villa stellen");
         erklaerung.put("tresorKnoepfe", "Anzahl versteckter Knöpfe, die zum Entschärfen der Tresorfallen nötig sind");
         erklaerung.put("butlerName", "Name des Butlers");

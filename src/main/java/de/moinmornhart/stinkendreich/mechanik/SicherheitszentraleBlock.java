@@ -34,7 +34,7 @@ public class SicherheitszentraleBlock extends MechanikBlock {
         if (welt.isClientSide()) {
             KlientBruecke.zentrale.accept(pos);
         } else {
-            VillaZustand z = VillaZustand.get(welt.getServer());
+            VillaZustand z = VillaZustand.fuer(welt.getServer(), pos);
             Kompat.nachricht(spieler, Component.translatable("stinkendreich.zentrale.status",
                     Component.translatable("stinkendreich.stufe." + z.stufe()),
                     Component.translatable(z.alarmAktiv() ? "stinkendreich.alarm.an" : "stinkendreich.alarm.aus"),
@@ -50,7 +50,7 @@ public class SicherheitszentraleBlock extends MechanikBlock {
             if (!(spieler.level().getBlockState(pos).getBlock() instanceof SicherheitszentraleBlock)) {
                 return;
             }
-            VillaZustand z = VillaZustand.get(spieler.level().getServer());
+            VillaZustand z = VillaZustand.fuer(spieler.level().getServer(), pos);
             boolean darf = z.istBewohner(spieler);
             if (wert.equals("eintragen")) {
                 // Neue Bewohner nur, wenn das System aus ist oder ein Bewohner sich selbst einträgt
