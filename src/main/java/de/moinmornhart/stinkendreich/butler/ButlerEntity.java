@@ -223,7 +223,7 @@ public class ButlerEntity extends PathfinderMob {
             inventarZeigen(sp);
         } else if (!de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)) {
             // Spieler ohne Mod (Server-Version): das Menü als Dialogfenster von Minecraft
-            //? if >=26.3
+            //? if >=26.1
             de.moinmornhart.stinkendreich.server.ButlerDialog.oeffnen(sp, this);
         }
         return InteractionResult.SUCCESS;

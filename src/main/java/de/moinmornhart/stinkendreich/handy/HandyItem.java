@@ -18,7 +18,7 @@ public class HandyItem extends Item {
         if (welt.isClientSide()) {
             KlientBruecke.handy.run();
         }
-        //? if >=26.3 {
+        //? if >=26.1 {
         else if (spieler instanceof net.minecraft.server.level.ServerPlayer sp
                 && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)
                 && !de.moinmornhart.stinkendreich.netz.OhneMod.geradeGezeigt(sp)) {

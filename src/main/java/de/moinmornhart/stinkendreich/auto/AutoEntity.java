@@ -188,7 +188,7 @@ public class AutoEntity extends Mob {
      * fährt der Server ihn mit den Tasten, die der Spieler drückt (W/S/A/D, Leertaste = Handbremse).
      */
     public net.minecraft.server.level.ServerPlayer fahrerOhneMod() {
-        //? if >=26.3 {
+        //? if >=26.1 {
         if (!level().isClientSide() && chauffeur() == null && getFirstPassenger() instanceof net.minecraft.server.level.ServerPlayer sp
                 && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)) {
             return sp;
@@ -380,7 +380,7 @@ public class AutoEntity extends Mob {
             // Der Fahrer schaut nach vorn, kann sich aber umsehen
             setYHeadRot(getYRot());
         }
-        //? if >=26.3 {
+        //? if >=26.1 {
         else if (fahrerOhneMod() instanceof net.minecraft.server.level.ServerPlayer sp) {
             net.minecraft.world.entity.player.Input tasten = sp.getLastClientInput();
             gas = (tasten.forward() ? 1 : 0) - (tasten.backward() ? 1 : 0);

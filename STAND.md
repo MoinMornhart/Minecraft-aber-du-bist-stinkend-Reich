@@ -177,8 +177,12 @@ _Zuletzt aktualisiert: 2026-10-26, 02:50 Uhr (Nachtschicht, Philip schläft)_
   immer „ohne Mod“ – ein Absturz dort lässt den Server den Chunk neu erzeugen (Villa weg).
 - Tests: `vanilla_bedien.txt` (alle Bedienfelder), `vanilla_figuren.txt` (Bodyguards, Butler, Geheimclub),
   `vanilla_oben.txt` (Villa von oben).
-- Offen: Fernseher, Drehteller, übrige 16 Versionen (Polymer gibt es für alle, Dialoge erst ab 1.21.6), danach
-  Paper-Plugin.
+- Server-Version jetzt ab 26.1 (Fences `//? if >=26.1` in server/* und an den Server-Stellen in ButlerEntity,
+  StinkendReich, Handy, HandyItem, AutoEntity, HubschrauberEntity; `deps.polymer` für 26.1–26.3). Geprüft mit
+  `vanilla_figuren.txt` in 26.1.2 und 26.2. Vorsicht beim Umstellen: nur diese Stellen ändern, nicht alle
+  `>=26.x`-Fences im Projekt.
+- Offen: Fernseher, Drehteller, 1.21.9–1.21.11 (Polymer 0.14/0.15: `xyz.nucleoid.packettweaker.PacketContext`,
+  andere Paketnamen für Anzeige-Daten), darunter ohne Schaufensterpuppen/Dialoge, danach Paper-Plugin.
 
 ## Version 0.3.2 (veröffentlicht 26.10. nachts)
 

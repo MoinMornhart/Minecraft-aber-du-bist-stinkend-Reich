@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=26.3 {
+//? if >=26.1 {
 import de.moinmornhart.stinkendreich.StinkendReich;
 import de.moinmornhart.stinkendreich.netz.ModErkennung;
 import eu.pb4.polymer.core.api.block.PolymerBlock;

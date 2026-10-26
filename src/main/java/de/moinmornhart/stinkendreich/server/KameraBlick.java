@@ -1,6 +1,6 @@
 package de.moinmornhart.stinkendreich.server;
 
-//? if >=26.3 {
+//? if >=26.1 {
 import de.moinmornhart.stinkendreich.Kompat;
 import de.moinmornhart.stinkendreich.mechanik.Eigenschaften;
 import de.moinmornhart.stinkendreich.mechanik.KameraBlock;

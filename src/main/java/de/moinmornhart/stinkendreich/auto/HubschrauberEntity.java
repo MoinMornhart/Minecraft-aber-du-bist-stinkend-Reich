@@ -59,7 +59,7 @@ public class HubschrauberEntity extends AutoEntity {
             }
             setYHeadRot(getYRot());
         }
-        //? if >=26.3 {
+        //? if >=26.1 {
         else if (fahrerOhneMod() instanceof net.minecraft.server.level.ServerPlayer sp) {
             // Spieler ohne Mod: Leertaste steigt, Sprinttaste (Strg) sinkt (Schleichen heißt bei ihm aussteigen)
             net.minecraft.world.entity.player.Input tasten = sp.getLastClientInput();
