@@ -43,15 +43,21 @@ public final class Inkognito {
     private static final int TICKS_JE_SCHRITT = 4;
     /** Ringe der Wiese, die sich je Tick schließen oder öffnen. */
     private static final int RINGE_JE_TICK = 2;
+    /** Bäume, die als Tarnung auf der Wiese wachsen (je Baum noch etwas Gras und Blumen). */
+    private static final int BAEUME = 18;
+    /** Ticks je wachsendem Baum. */
+    private static final int TICKS_JE_BAUM = 3;
     /** An Clients senden, keine Nachbar-Reaktionen, nichts fallen lassen. */
     private static final int FLAGS = 2 | 16 | 32;
 
-    private enum Phase { RUNTER, DECKEL_ZU, DECKEL_AUF, HOCH }
+    private enum Phase { RUNTER, DECKEL_ZU, BAEUME_HOCH, BAEUME_WEG, DECKEL_AUF, HOCH }
 
     /** Laufende Animation oder null. */
     private static Phase phase;
     /** Fortschritt: Schritte (RUNTER/HOCH) bzw. Ringe (Deckel). */
     private static int schritt;
+    /** Höhe jeder Figur am Anfang des laufenden Schritts nach unten. */
+    private static final java.util.Map<Entity, Double> startHoehen = new java.util.HashMap<>();
     /** Teil der Spalten innerhalb eines Schritts (0 bis TICKS_JE_SCHRITT - 1). */
     private static int teil;
 
@@ -62,6 +68,11 @@ public final class Inkognito {
         ServerTickEvents.END_SERVER_TICK.register(Inkognito::tick);
         ServerLifecycleEvents.SERVER_STOPPING.register(Inkognito::zuEndeBringen);
         ServerLifecycleEvents.SERVER_STOPPED.register(s -> phase = null);
+        // Wer während der Fahrt drinnen steht, fährt mit: kein Schaden durch Wände oder Fallen solange
+        net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents.ALLOW_DAMAGE.register((wer, quelle, menge) ->
+                !(phase == Phase.RUNTER || phase == Phase.HOCH)
+                        || !(quelle.is(net.minecraft.world.damagesource.DamageTypes.IN_WALL)
+                        || quelle.is(net.minecraft.world.damagesource.DamageTypes.FALL)));
     }
 
     /** Ist die Villa versteckt oder fährt sie gerade? Dann ruhen Graben, Zugbrücke, Rutsche und Smart Home. */
@@ -97,7 +108,7 @@ public final class Inkognito {
             phase = Phase.RUNTER;
         } else {
             speichern(welt, villa, -tiefe(villa));               // samt allem, was unten verändert wurde
-            phase = Phase.DECKEL_AUF;
+            phase = Phase.BAEUME_WEG;
         }
         schritt = 0;
         teil = 0;
@@ -163,12 +174,20 @@ public final class Inkognito {
             case RUNTER -> {
                 if (teil == 0) {
                     effekte(welt, villa, villa.plan().bodenY - schritt, true, sofort);
+                    startHoehen.clear();
+                    for (Entity e : figuren(welt, villa, -schritt)) {
+                        startHoehen.put(e, e.getY());
+                    }
                 }
                 for (int t = teil; t <= (sofort ? TICKS_JE_SCHRITT - 1 : teil); t++) {
                     spaltenSchieben(welt, villa, -schritt, -1, t);
                 }
                 if (sofort || ++teil == TICKS_JE_SCHRITT) {
-                    figurenSchieben(welt, villa, -schritt, -1);
+                    // Jede Figur landet genau einen Block unter ihrer Höhe vom Schrittanfang (auch wer kurz fiel)
+                    for (var e : startHoehen.entrySet()) {
+                        verschieben(e.getKey(), e.getValue() - 1 - e.getKey().getY(), -1);
+                    }
+                    startHoehen.clear();
                     teil = 0;
                     if (++schritt == tiefe) {
                         einsetzen(welt, villa, -tiefe);
@@ -182,9 +201,28 @@ public final class Inkognito {
                     deckelRing(welt, villa, schritt, true, sofort);
                 }
                 if (schritt >= ringe) {
-                    phase = null;
+                    phase = Phase.BAEUME_HOCH;
+                    schritt = 0;
                     welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_DEACTIVATE, SoundSource.BLOCKS,
                             4.0F, 0.8F);
+                }
+            }
+            case BAEUME_HOCH -> {
+                // Ein Baum nach dem anderen wächst auf der Wiese, damit niemand das Versteck vermutet
+                if (sofort || server.getTickCount() % TICKS_JE_BAUM == 0) {
+                    tarnung(welt, villa, schritt, true, sofort);
+                    schritt++;
+                }
+                if (schritt >= BAEUME) {
+                    phase = null;
+                }
+            }
+            case BAEUME_WEG -> {
+                // Vor dem Auftauchen verschwinden die Bäume wieder, schnell nacheinander
+                tarnung(welt, villa, schritt, false, sofort);
+                if (++schritt >= BAEUME) {
+                    phase = Phase.DECKEL_AUF;
+                    schritt = 0;
                 }
             }
             case DECKEL_AUF -> {
@@ -261,14 +299,89 @@ public final class Inkognito {
         welt.setBlock(p, neu, FLAGS);
     }
 
-    /** Figuren und Spieler auf dem Grundstück fahren mit (Mitfahrer sitzen schon in ihrem Fahrzeug). */
-    private static void figurenSchieben(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz, int richtung) {
+    /** Figuren und Spieler auf dem Grundstück (Mitfahrer sitzen schon in ihrem Fahrzeug). */
+    private static java.util.List<Entity> figuren(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz) {
         BlockPos a = villa.ursprung().above(versatz - 1);
         AABB bereich = new AABB(a.getX(), a.getY(), a.getZ(), a.getX() + villa.plan().breiteX,
                 a.getY() + villa.plan().hoehe + 3, a.getZ() + villa.plan().breiteZ);
-        for (Entity e : welt.getEntitiesOfClass(Entity.class, bereich, e -> !e.isPassenger() && !e.isSpectator())) {
-            e.teleportTo(e.getX(), e.getY() + richtung, e.getZ());
-            e.resetFallDistance();
+        return welt.getEntitiesOfClass(Entity.class, bereich, e -> !e.isPassenger() && !e.isSpectator());
+    }
+
+    /** Alle Figuren fahren mit (nach oben vor dem Schritt, damit der Boden sie nicht einklemmt). */
+    private static void figurenSchieben(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz, int richtung) {
+        for (Entity e : figuren(welt, villa, versatz)) {
+            verschieben(e, richtung, richtung);
+        }
+    }
+
+    /** Eine Figur um dy versetzen; Bilder hängen an ihrem Block, James merkt sich seine Plätze mit. */
+    private static void verschieben(Entity e, double dy, int richtung) {
+        if (!e.isAlive()) {
+            return;
+        }
+        if (e instanceof net.minecraft.world.entity.decoration.HangingEntity) {
+            e.setPos(e.getX(), e.getY() + dy, e.getZ());
+            // Bilder schicken von sich aus keine Bewegungen an die Spieler: einmal neu anmelden
+            if (e.level() instanceof ServerLevel sl) {
+                sl.getChunkSource().removeEntity(e);
+                sl.getChunkSource().addEntity(e);
+            }
+        } else {
+            e.teleportTo(e.getX(), e.getY() + dy, e.getZ());
+        }
+        e.resetFallDistance();
+        if (e instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity butler) {
+            butler.hoeheVerschieben(richtung);
+        }
+    }
+
+    /**
+     * Ein Tarnbaum (Eiche oder Birke) mit Gras und Blumen drumherum setzen oder wieder entfernen. Die Lage kommt aus
+     * einem Zufall, der nur von der Villa abhängt: so findet das Entfernen genau dieselben Blöcke, auch nach einem
+     * Neustart. Entfernt wird nur, was noch genau so dasteht (Spielerbauten bleiben).
+     */
+    private static void tarnung(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int nr, boolean setzen, boolean sofort) {
+        java.util.Random zufall = new java.util.Random(villa.ursprung().asLong() * 31 + nr);
+        int breiteX = villa.plan().breiteX, breiteZ = villa.plan().breiteZ, gras = villa.plan().bodenY;
+        int x = 8 + zufall.nextInt(breiteX - 16), z = 8 + zufall.nextInt(breiteZ - 16);
+        boolean birke = zufall.nextInt(3) == 0;
+        int hoehe = 4 + zufall.nextInt(3);
+        BlockState stamm = (birke ? Blocks.BIRCH_LOG : Blocks.OAK_LOG).defaultBlockState();
+        BlockState laub = (birke ? Blocks.BIRCH_LEAVES : Blocks.OAK_LEAVES).defaultBlockState()
+                .setValue(net.minecraft.world.level.block.LeavesBlock.PERSISTENT, true);
+        java.util.List<java.util.Map.Entry<BlockPos, BlockState>> teile = new java.util.ArrayList<>();
+        for (int dy = hoehe - 2; dy <= hoehe + 1; dy++) {
+            int r = dy >= hoehe ? 1 : 2;
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    boolean ecke = Math.abs(dx) == r && Math.abs(dz) == r;
+                    if ((dx != 0 || dz != 0 || dy > hoehe) && !(ecke && (r == 1 || zufall.nextBoolean()))) {
+                        teile.add(java.util.Map.entry(villa.weltPos(x + dx, gras + 1 + dy, z + dz), laub));
+                    }
+                }
+            }
+        }
+        for (int dy = 0; dy < hoehe + 1; dy++) {
+            teile.add(java.util.Map.entry(villa.weltPos(x, gras + 1 + dy, z), stamm));
+        }
+        BlockState[] bodendeko = {Blocks.SHORT_GRASS.defaultBlockState(), Blocks.SHORT_GRASS.defaultBlockState(),
+                Blocks.DANDELION.defaultBlockState(), Blocks.POPPY.defaultBlockState(), Blocks.OXEYE_DAISY.defaultBlockState()};
+        for (int i = 0; i < 6; i++) {
+            int bx = Math.max(1, Math.min(breiteX - 2, x + zufall.nextInt(11) - 5));
+            int bz = Math.max(1, Math.min(breiteZ - 2, z + zufall.nextInt(11) - 5));
+            teile.add(java.util.Map.entry(villa.weltPos(bx, gras + 1, bz), bodendeko[zufall.nextInt(bodendeko.length)]));
+        }
+        for (var t : teile) {
+            BlockState jetzt = welt.getBlockState(t.getKey());
+            if (setzen ? jetzt.isAir() : jetzt.is(t.getValue().getBlock())) {
+                welt.setBlock(t.getKey(), setzen ? t.getValue() : Blocks.AIR.defaultBlockState(), FLAGS);
+            }
+        }
+        if (!sofort) {
+            BlockPos fuss = villa.weltPos(x, gras + 1, z);
+            welt.sendParticles(setzen ? ParticleTypes.HAPPY_VILLAGER : ParticleTypes.POOF, fuss.getX() + 0.5, fuss.getY() + 2,
+                    fuss.getZ() + 0.5, 25, 1.5, 2.0, 1.5, 0.05);
+            welt.playSound(null, fuss, setzen ? SoundEvents.GRASS_PLACE : SoundEvents.GRASS_BREAK, SoundSource.BLOCKS, 1.5F, 0.8F);
         }
     }
 

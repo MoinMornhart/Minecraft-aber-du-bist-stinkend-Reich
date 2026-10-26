@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "stinkendreich:block/haifalle_schalter"
+    },
+    "facing=east": {
+      "model": "stinkendreich:block/haifalle_schalter",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "stinkendreich:block/haifalle_schalter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "stinkendreich:block/haifalle_schalter",
+      "y": 270
+    }
+  }
+}

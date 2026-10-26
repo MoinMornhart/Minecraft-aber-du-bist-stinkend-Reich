@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "stinkendreich:block/haifalle"
+    },
+    "open=true": {
+      "model": "stinkendreich:block/haifalle_offen"
+    }
+  }
+}

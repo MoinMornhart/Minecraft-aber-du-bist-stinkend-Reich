@@ -84,6 +84,7 @@ public final class Handy {
             }
             case "smart" -> {
                 de.moinmornhart.stinkendreich.mechanik.SmartHome.befehl(p, angabe);
+                Netz.melden(p, "smart", de.moinmornhart.stinkendreich.mechanik.SmartHome.status(p.level().getServer()));
                 return;
             }
             case "bodyguards" -> {

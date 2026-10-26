@@ -117,6 +117,13 @@ public final class ModBloecke {
     public static final Block ABWEHRGESCHUETZ = block("abwehrgeschuetz", de.moinmornhart.stinkendreich.mechanik.AbwehrgeschuetzBlock::new,
             technik().noOcclusion().strength(50.0F, 3600000.0F));
 
+    /** Glasboden über dem Haifischbecken: klappt auf, wenn die Haifalle auslöst (siehe {@link de.moinmornhart.stinkendreich.mechanik.Haifalle}). */
+    public static final Block HAIFALLE = block("haifalle", de.moinmornhart.stinkendreich.mechanik.HaifalleBlock::new,
+            BlockBehaviour.Properties.of().strength(50.0F, 3600000.0F).sound(SoundType.GLASS).noOcclusion()
+                    .isValidSpawn((s, w, pos, typ) -> false));
+    /** Roter Knopf an der Wand: wirft den nächsten Eindringling zu den Haien. */
+    public static final Block HAIFALLE_SCHALTER = block("haifalle_schalter", de.moinmornhart.stinkendreich.mechanik.HaifalleSchalterBlock::new, technik());
+
     // ---------- Türen zum Aufklappen (wie Holz- und Eisentüren) ----------
     /** Weiß lackiert mit Goldbeschlägen, für Wohnräume. */
     public static final Block PRUNKTUER = ModRegister.tuer("prunktuer", BlockSetType.OAK, tuer(MapColor.SNOW, SoundType.WOOD).strength(3.0F));
@@ -153,7 +160,7 @@ public final class ModBloecke {
             FabricBlockEntityTypeBuilder.create(MechanikBlockEntity::new,
                     SICHERHEITSZENTRALE, LASER_SENDER, BEWEGUNGSMELDER, ALARMSIRENE, WARNLEUCHTE, KARTENLESER, TASTENFELD,
                     TUERKLINGEL, TORSTEUERUNG, GEHEIMSCHALTER, AUFZUGSTAFEL, FALLENPLATTE, ENTSCHAERFKNOPF, KAMERA, MONITOR,
-                    WHIRLPOOLDUESE, KAMINSTEUERUNG, BRUECKENSCHALTER, LANDMINE, ABWEHRGESCHUETZ).build());
+                    WHIRLPOOLDUESE, KAMINSTEUERUNG, BRUECKENSCHALTER, LANDMINE, ABWEHRGESCHUETZ, HAIFALLE_SCHALTER).build());
 
     private ModBloecke() {
     }

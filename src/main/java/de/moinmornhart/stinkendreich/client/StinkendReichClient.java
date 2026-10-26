@@ -57,6 +57,7 @@ public class StinkendReichClient implements ClientModInitializer {
         *///?}
 
         // Türen und Tore mit durchsichtigen Stellen
+        KompatClient.durchsichtig(ModBloecke.HAIFALLE);
         KompatClient.durchsichtig(ModBloecke.TOR, ModBloecke.GITTERFALLE, ModBloecke.SCHIEBETUER, ModBloecke.PRUNKTUER,
                 ModBloecke.GLASTUER, ModBloecke.STAHLTUER, ModBloecke.BUNKERTUER, ModBloecke.PRIVATTUER,
                 ModBloecke.SICHERHEITSTUER, ModBloecke.CLUBTUER, ModBloecke.BANKTUER, ModBloecke.PORTALTUER);
@@ -108,6 +109,7 @@ public class StinkendReichClient implements ClientModInitializer {
                 de.moinmornhart.stinkendreich.client.club.TaenzerinModell.SCHICHT, de.moinmornhart.stinkendreich.client.club.TaenzerinModell::schicht);
         //?} else
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(de.moinmornhart.stinkendreich.client.club.TaenzerinModell.SCHICHT, de.moinmornhart.stinkendreich.client.club.TaenzerinModell::schicht);*/
+        EntityRendererRegistry.register(ModEntities.HAI, de.moinmornhart.stinkendreich.client.hai.HaiRenderer::new);
         EntityRendererRegistry.register(ModEntities.TAENZERIN, de.moinmornhart.stinkendreich.client.club.TaenzerinRenderer::new);
         EntityRendererRegistry.register(ModEntities.MITARBEITER, de.moinmornhart.stinkendreich.client.mitarbeiter.MitarbeiterRenderer::new);
         EntityRendererRegistry.register(ModEntities.BODYGUARD, de.moinmornhart.stinkendreich.client.bodyguard.BodyguardRenderer::new);
@@ -124,6 +126,8 @@ public class StinkendReichClient implements ClientModInitializer {
                 de.moinmornhart.stinkendreich.netz.Rueckmeldung.TYP, (paket, kontext) -> kontext.client().execute(() -> {
                     if (paket.art().equals("orte")) {
                         de.moinmornhart.stinkendreich.client.handy.HandyBildschirm.orteEmpfangen(paket.wert());
+                    } else if (paket.art().equals("smart")) {
+                        de.moinmornhart.stinkendreich.client.handy.HandyBildschirm.smartEmpfangen(paket.wert());
                     }
                 }));
         // Musikanlage: eigene Dateien abspielen, Spotify-Fernbedienung

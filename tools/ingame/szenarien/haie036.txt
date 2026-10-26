@@ -1,0 +1,51 @@
+# Haifischbecken (Haie, Smart-Home-Seite, Zombie fliegt hinein), Krisenbunker, Inkognito mit Tarnbäumen
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /clear @p
+server /villa ort 43 26 57 0 -28
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 2
+klick
+warte 1.5
+linksklick 640 524
+warte 1.5
+bild haie_smartapp
+klient schliessen
+taste F1
+server /gamemode spectator
+server /villa ort 43.5 31 41.5 0 50
+warte 4
+bild haibecken
+server /villa ort 47 26 48 135 30
+warte 3
+bild haifalle_schalter
+server /summon zombie -8 88 -4 {PersistenceRequired:1b}
+server /villa ort 48 29 41 30 40
+warte 2
+bild haifalle_zombie
+server /execute as @p run handy smart|haie|auf
+warte 1
+bild haifalle_auf
+warte 3
+bild haifalle_haie
+server /villa ort 43.5 23.5 38 0 15
+warte 2
+bild haifalle_von_unten
+server /execute as @p run handy smart|krisenbunker|an
+warte 2
+bild krisenbunker
+server /execute as @p run handy smart|krisenbunker|aus
+server /villa ort 118 58 128 139 19
+server /villa inkognito an
+warte 30
+bild tarnung_baeume
+server /execute as @e[type=!player,x=-56,y=85,z=-56,dx=112,dy=20,dz=112] run say WIESE
+server /villa ort 56 40 56 180 60
+warte 3
+bild tarnung_oben
+server /villa inkognito aus
+warte 30
+bild tarnung_zurueck

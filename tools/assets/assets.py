@@ -334,7 +334,29 @@ def tex_geheimluke():
     return img                                  # keine Fuge am Rand, damit man die Luke nicht sieht
 
 
+def tex_haifalle():
+    """Glasboden über dem Haibecken: dünner Goldrand, sonst klar mit ein paar Glanzpunkten (Haie gut sichtbar)."""
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, 15, 15], outline=(212, 175, 55, 255))
+    for x, y in ((3, 2), (2, 3), (4, 3), (3, 4), (11, 10), (12, 11)):
+        img.putpixel((x, y), (235, 245, 255, 255))
+    return img
+
+
+def tex_haifalle_schalter():
+    """Schalter der Haifalle: grauer Kasten, Haiflosse über Wellen, großer roter Knopf."""
+    img, d = metall(12, (34, 36, 40))
+    d.rectangle([2, 9, 13, 10], fill=(40, 90, 170))                  # Wasser
+    d.polygon([(6, 8), (9, 8), (9, 4)], fill=(150, 160, 170))        # Flosse
+    d.ellipse([5, 11, 10, 14], fill=(200, 20, 20))                   # roter Knopf
+    d.point([(6, 12)], fill=(255, 120, 120))
+    return img
+
+
 TEXTUREN = {
+    "haifalle": tex_haifalle,
+    "haifalle_schalter": tex_haifalle_schalter,
     "technik_seite": tex_technik_seite,
     "geheimluke": tex_geheimluke,
     **{f"smartlicht_{f}": (lambda f=f: tex_smartlicht(f)) for f in list(SMART_FARBEN) + ["aus"]},
@@ -652,12 +674,26 @@ BLOECKE: dict[str, dict] = {
                                 "geheimluke_open": m_rasenluke([0, 0, 13], [16, 16, 16], "north")},
                        zustand=bs_falltuer("geheimluke"), de="Versteckte Falltür (nur mit Zugangskarte)",
                        en="Hidden Trapdoor (key card only)"),
+    "haifalle": dict(modelle={"haifalle": m_wuerfel(B("haifalle")),
+                              "haifalle_offen": {"textures": {"particle": B("haifalle")}}},
+                     zustand={"variants": {"open=false": {"model": B("haifalle")}, "open=true": {"model": B("haifalle_offen")}}},
+                     de="Haifallen-Boden", en="Shark Trap Floor"),
+    "haifalle_schalter": dict(modelle={"haifalle_schalter": m_wandplatte(B("haifalle_schalter"))},
+                              zustand=bs_waagerecht(B("haifalle_schalter")), de="Haifallen-Schalter", en="Shark Trap Switch"),
     "abwehrgeschuetz": dict(modelle={"abwehrgeschuetz": m_geschuetz(), "abwehrgeschuetz_ein": m_geschuetz(eingefahren=True)},
                             zustand=bs_waagerecht("", {"powered=true": B("abwehrgeschuetz"), "powered=false": B("abwehrgeschuetz_ein")}),
                             de="Abwehrgeschütz", en="Defense Turret"),
 }
 
 TEXTE_DE = {
+    "entity.stinkendreich.hai": "Hai",
+    "stinkendreich.haifalle.nur_bewohner": "Nur Bewohner dürfen die Haie füttern.",
+    "stinkendreich.haifalle.ausgeloest": "♒ Ab zu den Haien!",
+    "stinkendreich.haifalle.kein_opfer": "Niemand Frecher in der Nähe.",
+    "stinkendreich.haifalle.keine_falle": "Kein Haibecken in der Nähe.",
+    "stinkendreich.haifalle.laeuft": "Die Falle ist noch offen.",
+    "stinkendreich.haifalle.opfer": "♒ Du landest bei den Haien!",
+    "stinkendreich.haifalle.automatik": "♒ %s hat dich angegriffen und landet bei den Haien!",
     "itemGroup.stinkendreich": "Stinkend Reich",
     "item.stinkendreich.zugangskarte": "Zugangskarte",
     "stinkendreich.stufe.0": "Stufe 0 – Aus",
@@ -739,6 +775,14 @@ TEXTE_DE = {
     "stinkendreich.kamera.nummer": "Kamera %s von %s",
 }
 TEXTE_EN = {
+    "entity.stinkendreich.hai": "Shark",
+    "stinkendreich.haifalle.nur_bewohner": "Only residents may feed the sharks.",
+    "stinkendreich.haifalle.ausgeloest": "♒ Off to the sharks!",
+    "stinkendreich.haifalle.kein_opfer": "Nobody cheeky nearby.",
+    "stinkendreich.haifalle.keine_falle": "No shark tank nearby.",
+    "stinkendreich.haifalle.laeuft": "The trap is still open.",
+    "stinkendreich.haifalle.opfer": "♒ You land with the sharks!",
+    "stinkendreich.haifalle.automatik": "♒ %s attacked you and lands with the sharks!",
     "itemGroup.stinkendreich": "Filthy Rich",
     "item.stinkendreich.zugangskarte": "Access Card",
     "stinkendreich.stufe.0": "Level 0 – Off",

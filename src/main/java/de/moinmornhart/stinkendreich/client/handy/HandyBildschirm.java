@@ -6,6 +6,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 //? if >=26.1 {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -30,6 +31,12 @@ public class HandyBildschirm extends Screen {
     private static final int ORTE_MAX = 7;
     /** Die Orte, die James kennt (schickt der Server, siehe {@link #orteEmpfangen}). */
     private static List<String> orte = List.of();
+    /** Smart-Home-Schalter: Name, Symbol, Wert zum Einschalten, Wert zum Ausschalten. */
+    private static final String[][] SMART_ZEILEN = {{"rollo", "▤", "zu", "auf"}, {"bruecke", "⇄", "zu", "auf"},
+            {"licht", "☀", "an", "aus"}, {"disco", "♫", "an", "aus"}, {"automatik", "☾", "an", "aus"},
+            {"inkognito", "◐", "an", "aus"}, {"krisenbunker", "☢", "an", "aus"}, {"haie", "♒", "auf", "auf"}};
+    /** Zustand der Smart-Home-Schalter (schickt der Server, siehe {@link #smartEmpfangen}). */
+    private static final java.util.Map<String, Boolean> smartZustand = new java.util.HashMap<>();
 
     private Seite seite = Seite.START;
     private EditBox eingabe;
@@ -109,14 +116,21 @@ public class HandyBildschirm extends Screen {
                 knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
             }
             case SMART -> {
-                // Smart Home: je Zeile zwei Knöpfe (an/aus), dazu acht Lichtfarben; das Handy bleibt dabei offen
-                int halb = (KNOPF_B - 4) / 2;
-                for (String[] zeile : new String[][]{{"rollo", "zu", "auf"}, {"bruecke", "zu", "auf"}, {"licht", "an", "aus"},
-                        {"disco", "an", "aus"}, {"automatik", "an", "aus"}, {"inkognito", "an", "aus"}}) {
-                    addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[1]),
-                            b -> anfragen("smart|" + zeile[0] + "|" + zeile[1])).bounds(x, y, halb, KNOPF_H).build());
-                    addRenderableWidget(Button.builder(Component.translatable("stinkendreich.handy.smart." + zeile[0] + "." + zeile[2]),
-                            b -> anfragen("smart|" + zeile[0] + "|" + zeile[2])).bounds(x + halb + 4, y, halb, KNOPF_H).build());
+                // Smart Home: je Funktion ein Schalter mit Symbol und Zustand (grün = an), Klick schaltet um;
+                // dazu acht Lichtfarben. Das Handy bleibt offen, der Server schickt den neuen Zustand zurück.
+                for (String[] zeile : SMART_ZEILEN) {
+                    String was = zeile[0];
+                    boolean an = smartZustand.getOrDefault(was, false);
+                    Component zustand = was.equals("haie")
+                            ? Component.translatable("stinkendreich.handy.sh.haie.los").withStyle(ChatFormatting.RED)
+                            : Component.translatable("stinkendreich.handy.sh." + was + "." + (an ? "an" : "aus"))
+                            .withStyle(an ? ChatFormatting.GREEN : ChatFormatting.GRAY);
+                    Component text = Component.literal(zeile[1] + " ").withStyle(ChatFormatting.GOLD)
+                            .append(Component.translatable("stinkendreich.handy.sh." + was).withStyle(ChatFormatting.WHITE))
+                            .append(Component.literal("  ")).append(zustand);
+                    String wert = an ? zeile[3] : zeile[2];
+                    addRenderableWidget(Button.builder(text, knopf -> anfragen("smart|" + was + "|" + wert))
+                            .bounds(x, y, KNOPF_B, KNOPF_H).build());
                     y += KNOPF_H + ABSTAND;
                 }
                 int fx = x, fb = (KNOPF_B - 7 * 2) / 8;
@@ -171,6 +185,9 @@ public class HandyBildschirm extends Screen {
         if (neu == Seite.ORTE) {
             anfragen("orte");
         }
+        if (neu == Seite.SMART) {
+            anfragen("smart|status");
+        }
         rebuildWidgets();
     }
 
@@ -178,6 +195,19 @@ public class HandyBildschirm extends Screen {
     private void anfragen(String wert) {
         Minecraft mc = Minecraft.getInstance();
         KompatClient.sende("handy", mc.player != null ? mc.player.blockPosition() : BlockPos.ZERO, wert);
+    }
+
+    /** Zustand der Smart-Home-Schalter vom Server („rollo=1,licht=0,…“); ein offenes Handy zeigt ihn sofort. */
+    public static void smartEmpfangen(String werte) {
+        for (String teil : werte.split(",")) {
+            String[] kv = teil.split("=", 2);
+            if (kv.length == 2) {
+                smartZustand.put(kv[0], kv[1].equals("1"));
+            }
+        }
+        if (KompatClient.offenerBildschirm() instanceof HandyBildschirm h && h.seite == Seite.SMART) {
+            h.rebuildWidgets();
+        }
     }
 
     /** Neue Ortsliste vom Server (Namen zeilenweise); ein offenes Handy zeigt sie sofort. */

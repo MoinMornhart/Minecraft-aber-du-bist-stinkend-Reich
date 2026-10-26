@@ -65,6 +65,11 @@ public final class ModEntities {
             EntityType.Builder.of(de.moinmornhart.stinkendreich.club.TaenzerinEntity::new, MobCategory.MISC).sized(0.6F, 1.9F)
                     .eyeHeight(1.6F).clientTrackingRange(8).updateInterval(2).fireImmune());
 
+    /** Hai im Haifischbecken (Delfin-Modell, grau und größer). */
+    public static final EntityType<de.moinmornhart.stinkendreich.hai.HaiEntity> HAI = registrieren("hai",
+            EntityType.Builder.of(de.moinmornhart.stinkendreich.hai.HaiEntity::new, MobCategory.WATER_CREATURE).sized(1.25F, 0.85F)
+                    .clientTrackingRange(8).fireImmune());
+
     /** Mitarbeiter aus der Mitarbeiterkiste: so groß wie James. */
     public static final EntityType<de.moinmornhart.stinkendreich.mitarbeiter.MitarbeiterEntity> MITARBEITER = registrieren("mitarbeiter",
             EntityType.Builder.of(de.moinmornhart.stinkendreich.mitarbeiter.MitarbeiterEntity::new, MobCategory.MISC).sized(0.6F, 1.95F)
@@ -116,6 +121,7 @@ public final class ModEntities {
         FabricDefaultAttributeRegistry.register(DREHTELLER, de.moinmornhart.stinkendreich.auto.DrehtellerEntity.attribute());
         FabricDefaultAttributeRegistry.register(TAENZERIN, de.moinmornhart.stinkendreich.club.TaenzerinEntity.attribute());
         FabricDefaultAttributeRegistry.register(MITARBEITER, ButlerEntity.attribute());
+        FabricDefaultAttributeRegistry.register(HAI, de.moinmornhart.stinkendreich.hai.HaiEntity.attribute());
         FabricDefaultAttributeRegistry.register(BODYGUARD, de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity.attribute());
     }
 }

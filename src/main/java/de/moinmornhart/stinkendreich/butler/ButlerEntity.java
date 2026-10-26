@@ -282,6 +282,13 @@ public class ButlerEntity extends PathfinderMob {
         zuhause = heimat;
     }
 
+    /** Die Villa fährt (Inkognito-Modus): alle gemerkten Plätze in der Villa wandern mit, um dy Blöcke. */
+    public void hoeheVerschieben(int dy) {
+        heimat = heimat == null ? null : heimat.above(dy);
+        zuhause = zuhause == null ? null : zuhause.above(dy);
+        liefertruhe = liefertruhe == null ? null : liefertruhe.above(dy);
+    }
+
     public BlockPos liefertruhe() {
         return liefertruhe;
     }

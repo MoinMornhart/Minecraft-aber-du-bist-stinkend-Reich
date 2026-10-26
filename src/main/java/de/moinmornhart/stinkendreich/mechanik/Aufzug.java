@@ -37,6 +37,12 @@ public final class Aufzug {
                         || !(spieler.level().getBlockState(start).getBlock() instanceof AufzugstafelBlock)) {
                     return;
                 }
+                // Krisenbunker (Smart Home): Der Aufzug ist ganz gesperrt, das Haus ist tot, nur der Bunker lebt
+                if (VillaZustand.get(spieler.level().getServer()).smart("krisenbunker", false)) {
+                    spieler.level().playSound(null, start, ModSounds.PIEP_FEHLER, SoundSource.BLOCKS, 1.0F, 0.6F);
+                    Kompat.nachricht(spieler, Component.translatable("stinkendreich.aufzug.gesperrt").withStyle(ChatFormatting.RED), true);
+                    return;
+                }
                 // Der Bunker ist nur mit Zugangskarte zu erreichen (wie die Banktür davor)
                 if (AufzugstafelBlock.nurMitKarte(spieler.level(), ziel) && !Zugang.hatKarte(spieler)) {
                     spieler.level().playSound(null, start, ModSounds.PIEP_FEHLER, SoundSource.BLOCKS, 1.0F, 1.0F);

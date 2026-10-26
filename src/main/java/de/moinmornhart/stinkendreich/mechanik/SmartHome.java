@@ -57,8 +57,20 @@ public final class SmartHome {
      * Befehl aus der App: „rollo|zu/auf“, „licht|an/aus“, „farbe|rot …“, „disco|an/aus“, „bruecke|zu/auf“,
      * „automatik|an/aus“.
      */
+    /** Zustand aller Schalter für die Handy-App: „rollo=1,bruecke=0,…“ (1 = an/zu/eingefahren). */
+    public static String status(MinecraftServer server) {
+        VillaZustand z = VillaZustand.get(server);
+        return "rollo=" + (z.smart("rollo_zu", false) ? 1 : 0) + ",bruecke=" + (Zugbruecke.gesichert(server) ? 1 : 0)
+                + ",licht=" + (z.smart("licht", true) ? 1 : 0) + ",disco=" + (z.smart("disco", false) ? 1 : 0)
+                + ",automatik=" + (z.smart("automatik", false) ? 1 : 0) + ",inkognito=" + (z.smart("inkognito", false) ? 1 : 0)
+                + ",krisenbunker=" + (z.smart("krisenbunker", false) ? 1 : 0);
+    }
+
     public static void befehl(ServerPlayer p, String angabe) {
         MinecraftServer server = p.level().getServer();
+        if (angabe.equals("status")) {
+            return;                                              // nur den Zustand abfragen (Antwort schickt Handy)
+        }
         VillaZustand z = VillaZustand.get(server);
         if (!z.istBewohner(p)) {
             Kompat.nachricht(p, Component.translatable("stinkendreich.smarthome.nur_bewohner").withStyle(ChatFormatting.RED), true);
@@ -103,6 +115,21 @@ public final class SmartHome {
                     Kompat.nachricht(p, Component.translatable(fehler).withStyle(ChatFormatting.RED), true);
                     return;
                 }
+            }
+            case "krisenbunker" -> {
+                // Haus dicht machen: Aufzug gesperrt (siehe Aufzug), Rollläden zu, Zugbrücke hoch
+                z.setzeSmart("krisenbunker", an);
+                if (an) {
+                    z.setzeSmart("rollo_zu", true);
+                    Zugbruecke.sichern(server, true);
+                }
+            }
+            case "haie" -> {
+                String fehler = Haifalle.smartHome(server, wert.equals("auf"));
+                if (fehler != null) {
+                    Kompat.nachricht(p, Component.translatable(fehler).withStyle(ChatFormatting.RED), true);
+                }
+                return;                                          // Meldung kommt von der Falle selbst
             }
             default -> {
                 return;
