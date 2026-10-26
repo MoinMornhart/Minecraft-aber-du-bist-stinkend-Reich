@@ -1,3 +1,8 @@
+### Neu in 0.3.3
+
+- **Server-Version (Vorschau) jetzt für Minecraft 1.21.9 bis 26.3** und deutlich schöner für Spieler ohne Mod: Böden, Teppiche und andere Mod-Blöcke sehen richtig aus (vorher teils wie Notenblöcke), Autos haben ihre Lackfarbe und fahren mit der Front voraus, Drehteller und Fernseher sind zu sehen. Ein Rechtsklick auf den Fernseher öffnet ein Fenster: YouTube-Link eingeben, Video im Browser ansehen oder ausschalten.
+- **Chauffeur:** Bleibt der Wagen auf einer Fahrt hängen, setzt James ihn ein Stück weiter vorn wieder auf die Straße und nie ins Wasser.
+
 ### Neu in 0.3.2
 
 - **Server-Version (Vorschau, 26.3):** Spieler mit Mod und Spieler ohne Mod können jetzt gemeinsam auf demselben Server spielen. In 0.3.1 flog ein Spieler mit Mod beim Betreten eines Servers mit Polymer wieder raus. Spieler ohne Mod sehen die Bodyguards jetzt als große Türsteher im Smoking mit Sonnenbrille statt als normale Eisengolems.

@@ -210,6 +210,14 @@ _Zuletzt aktualisiert: 2026-10-26, 06:40 Uhr (Nachtschicht, Philip schläft)_
   die Welt des nächsten Laufs: „Failed to load level data“).
 - Offen: 1.21–1.21.8 (ohne Schaufensterpuppen, bis 1.21.5 ohne Dialoge), Paper-Plugin.
 
+## Version 0.3.3 (veröffentlicht 26.10. morgens)
+
+- Server-Version 1.21.9–26.3 mit allen Darstellungs-Fixes (siehe oben), Drehteller und Fernseher ohne Mod,
+  Chauffeur-Rettung. Vorher geprüft: alle 17 Versionen übersetzen, 26.3 ohne Mod (`vanilla_richtung`, `_auto`,
+  `_bedien`, `_figuren`, `_modelle`, `_club`, `_tv`) und mit Mod (`kurz03` alles OK), 1.21.9 ohne Mod
+  (`vanilla_figuren`, `vanilla_richtung`). README: Server-Abschnitt ab 1.21.9, neue Bilder (Penthouse, Autos,
+  Garage, Fernseher-Menü).
+
 ## Versionstest 0.3.1 (kurz03, alle 17 Versionen)
 
 - Überall OK: Handy-Geschenk, Lieferung, Mitarbeiter, Bodyguards, Kreisel, Fahrt ins Dorf (außer einmal 26.1.1:

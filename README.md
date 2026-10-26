@@ -346,20 +346,24 @@ Gut zu wissen:
 
 Die Zahl hinter `+mc` muss **genau** deiner Version entsprechen. 1.21 bis 1.21.11 brauchen Java 21, 26.x braucht Java 25 (der offizielle Launcher bringt das passende Java mit).
 
-### 🖥️ Server: Freunde spielen ohne Mod mit (Vorschau, Minecraft 1.21.10 bis 26.3)
+### 🖥️ Server: Freunde spielen ohne Mod mit (Vorschau, Minecraft 1.21.9 bis 26.3)
 
 Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modrinth.com/mod/polymer) können Freunde mit ganz normalem Minecraft mitspielen, ohne etwas zu installieren:
 
 1. Fabric-Server aufsetzen, [Fabric API](https://modrinth.com/mod/fabric-api) und die passende Datei dieser Mod in `mods` legen.
-2. `polymer-bundled` für dieselbe Minecraft-Version ebenfalls in `mods` legen (für 26.3 z. B. `polymer-bundled-0.18.5+26.3.jar`, für 1.21.11 `0.15.2+1.21.11`).
+2. `polymer-bundled` für dieselbe Minecraft-Version ebenfalls in `mods` legen (für 26.3 z. B. `polymer-bundled-0.18.5+26.3.jar`, für 1.21.11 `0.15.2+1.21.11`, für 1.21.9 `0.14.2+1.21.9`).
 3. Server starten. Wer ohne Mod beitritt, bekommt automatisch ein Ressourcenpaket (annehmen).
 
-Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos und Hubschrauber. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik, Spotify und der Fernseher gehen nur mit der Mod. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).
+Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos, Hubschrauber, Drehteller und Fernseher. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage, Fernseher und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Eigene Musik und Spotify gehen nur mit der Mod; der Fernseher zeigt ohne Mod kein Vorschaubild, das Video öffnet sich dann im Browser. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).
 
 <table>
 <tr>
-<td><img src="docs/bilder/server_villa.jpg" alt="Villa in normalem Minecraft"><br><sub>Die Villa in ganz normalem Minecraft</sub></td>
+<td><img src="docs/bilder/server_villa.jpg" alt="Villa in normalem Minecraft"><br><sub>Das Penthouse in ganz normalem Minecraft</sub></td>
 <td><img src="docs/bilder/server_autos.jpg" alt="Autos ohne Mod"><br><sub>Autos als echte Modelle, fahrbar mit W/A/S/D</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/server_garage.jpg" alt="Tiefgarage ohne Mod"><br><sub>Tiefgarage mit Drehteller</sub></td>
+<td><img src="docs/bilder/server_fernseher.jpg" alt="Fernseher-Menü ohne Mod"><br><sub>Fernseher: YouTube-Link eingeben, Video im Browser</sub></td>
 </tr>
 <tr>
 <td><img src="docs/bilder/server_zentrale.jpg" alt="Sicherheitszentrale als Fenster"><br><sub>Sicherheitszentrale als Fenster</sub></td>
