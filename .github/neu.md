@@ -1,3 +1,19 @@
+### Neu in 0.3.9
+
+- **Inkognito-Modus komplett neu und geprüft:** Vor der Fahrt wird die ganze Villa samt allen Bildern, Fischen, Autos, Rüstungsständern und James als genaue Kopie gespeichert und am Ziel exakt so wieder aufgestellt. Ein Vergleich Block für Block und Figur für Figur nach einmal runter und wieder hoch meldet „alles gleich“. Kein rieselnder Kies, kein auslaufendes Wasser. Wer beim Auftauchen auf der Wiese steht, steht danach oben drauf.
+- **Straßen immer an der Luft:** Keine Straßen mehr unter der Erde, Brücken über Meer und Flüsse, offene Einschnitte statt Tunnel, halbe Stufen statt Erdreihen quer über der Fahrbahn. Ab Minecraft 26.1 zählten Gras, Blumen und Moos nicht mehr als „natürlich“, deshalb blieben Straßenbau und James davor hängen. `/butler strassen neu` baut alle Straßen neu.
+- **Auto:** Streifen am Bordstein oder Geländer bremst kaum noch, nur ein echter Aufprall.
+- **Aufzug** fährt ohne Ruckeln (die Kabine sprang auf dem Bildschirm alle 8 Ticks zurück).
+- **Tor und Garage** öffnen nur noch, wenn man direkt davor steht (zu Fuß 6, im Auto 14 Blöcke), und gehen zuverlässig wieder zu. Neu im Smart Home: „Eingangstor bleibt zu“ und „Garagentor bleibt zu“.
+- **Zugbrücke** fährt nach dem Weggehen in wenigen Sekunden ein (ein geparktes Auto mit James hielt sie vorher für immer draußen).
+- **Gästeliste:** „James, behandle Aircrafter als Gast“, im Handy unter „Gästeliste“ oder mit `/butler gast <Name>`. Gäste kommen ohne Karte durch Tor, Türen und über die Brücke und sind keine Eindringlinge.
+- **Echte Haie** mit eigenem Modell (Rückenflosse, Zähne, Sichelschwanz), die wirklich zubeißen, auch auf „Friedlich“.
+- **Bodyguards** halten die goldene Pistole in der Hand.
+- **Handy** geht im Hubschrauber und im Auto auf.
+- **YouTube im Fernseher:** kein endloses „Video wird geladen“ mehr nach den ersten Bildern, schnellerer Start.
+- **Absturz beim Öffnen der Kameras** mit dem NoRisk Client behoben.
+- Neue Welten: Haupttreppe mit allen Stufen, Sektturm im Erdgeschoss und Bambus am Bunker-Bett entfernt.
+
 ### Neu in 0.3.8
 
 - **Straßen:** Die automatischen Straßen führen jetzt an die Oberfläche der Ziele (in 0.3.7 konnte eine Straße zu einem weit entfernten Ziel in den Boden hinein gebaut werden). Bitte 0.3.7 nicht mehr verwenden.

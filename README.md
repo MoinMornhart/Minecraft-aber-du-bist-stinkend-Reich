@@ -98,13 +98,13 @@ Wassergraben mit Zugbrücke (wird im Lockdown und in der Festung zum Lava-Graben
 <td width="50%"><img src="docs/bilder/club_bar.jpg" alt="Bar vor dem Aquarium"><br><sub><b>Neue Bar</b> vor der Glaswand zum Aquarium, davor die große Tanzfläche</sub></td>
 </tr>
 <tr>
-<td><img src="docs/bilder/haibecken.jpg" alt="Hai im Haifischbecken"><br><sub><b>Haifischbecken</b> unter dem Glasboden im Wohnzimmer – über der Tanzfläche des Clubs</sub></td>
+<td><img src="docs/bilder/hai_neu.jpg" alt="Hai im Haifischbecken"><br><sub><b>Echte Haie</b> im Becken unter dem Glasboden im Wohnzimmer – über der Tanzfläche des Clubs</sub></td>
 <td><img src="docs/bilder/haifalle.jpg" alt="Haifalle offen"><br><sub><b>Falle offen:</b> Roter Knopf oder Handy, und der freche Gast landet bei den Haien</sub></td>
 </tr>
 </table>
 
 - **Seerestaurant:** Vom Club führt ein Glastunnel durchs Aquarium in die Kuppel. Rundherum Sand, Seegras, Tang, Korallen, Tropenfische, Schildkröten, Delfine – und zwei Haie.
-- **Haifischbecken:** Im Wohnzimmer ist ein Teil des Bodens aus Glas, darunter schwimmen Haie (von unten sieht man sie über der Tanzfläche des Clubs). Drückt ein Bewohner den roten Knopf an der Wand, landet der nächste Gast, der kein Bewohner ist, auf der Glasfläche, die Platten klappen auf, und er fällt zu den Haien. Greift jemand einen Bewohner an, passiert das von selbst.
+- **Haifischbecken:** Im Wohnzimmer ist ein Teil des Bodens aus Glas, darunter schwimmen echte Haie mit eigenem Modell (Rückenflosse, Zähne, Sichelschwanz), die wirklich zubeißen – auch auf „Friedlich“ (von unten sieht man sie über der Tanzfläche des Clubs). Drückt ein Bewohner den roten Knopf an der Wand, landet der nächste Gast, der kein Bewohner ist, auf der Glasfläche, die Platten klappen auf, und er fällt zu den Haien. Greift jemand einen Bewohner an, passiert das von selbst.
 
 ### 🛏️ Penthouse: dein privater Schlafbereich
 
@@ -364,7 +364,14 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 
 **Bodyguards:** Echte Eisengolems mit Sakko, weißem Hemd, Krawatte, roter Blume und Sonnenbrille. Sie können nicht sterben, folgen dir und beschützen dich – auf Abstand mit der Pistole, aus der Nähe mit Golem-Fäusten. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
 
-**Straßennetz:** Bevor James zum ersten Mal irgendwohin fährt, baut er eine echte Straße: zuerst einen Kreisel mit Insel vor der Villa, dann eine Straße mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein ganzes Netz – und du kannst es auch selbst befahren. Abgerissen wird nichts, weder an der Villa noch an deinen Bauten. `/butler strassen` zeigt alle Straßen, `Butler, bau eine Straße zum Dorf` baut eine schon vorher.
+**Straßennetz:** Sobald du die Welt betrittst, entstehen Straßen zum Dorf, zur Mine, zum Netherportal und zum Endportal; für jedes neue Ziel baut James eine echte Straße: zuerst einen Kreisel mit Insel vor der Villa, dann eine Straße mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein ganzes Netz – und du kannst es auch selbst befahren. Abgerissen wird nichts, weder an der Villa noch an deinen Bauten. Die Straßen liegen immer an der Luft: durch Hügel als offener Einschnitt, über Meer und Flüsse als Brücke mit Geländer und Laternen, Höhenunterschiede mit halben Stufen, über die das Auto weich rollt. `/butler strassen` zeigt alle Straßen, `Butler, bau eine Straße zum Dorf` baut eine schon vorher, `/butler strassen neu` baut alle neu.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/strasse_bruecke.jpg" alt="Brücke übers Meer"><br><sub><b>Brücke übers Meer</b> mit Geländer und Laternen</sub></td>
+<td width="50%"><img src="docs/bilder/strasse_stufen.jpg" alt="Straße am Hang"><br><sub><b>Am Hang:</b> halbe Stufen statt Kanten</sub></td>
+</tr>
+</table>
 
 ### 🏠 Smart Home
 
@@ -391,9 +398,10 @@ Jede Funktion hat einen eigenen Schalter mit Symbol, der Zustand steht farbig da
 | **■ Farben** | Weiß, Warmweiß, Rot, Grün, Blau, Lila, Pink, Gold |
 | **♫ Disco** | die Lampen wechseln reihum die Farbe |
 | **☾ Automatik** | abends: Rollläden runter, Licht an, Brücke ein · morgens: alles wieder auf |
-| **◐ Inkognito** | Für Geheimagenten: Die ganze Villa fährt wie ein Aufzug in die Erde, darüber schließt sich eine Wiese mit Bäumen. Unten bleibt alles stehen – wer drei Blöcke tief gräbt, landet im Haus. Auf Knopfdruck fährt sie wieder hoch, mit allem, was du unten verändert hast. Wer drinnen steht, fährt einfach mit |
+| **◐ Inkognito** | Für Geheimagenten: Die ganze Villa fährt wie ein Aufzug in die Erde, darüber schließt sich eine Wiese mit Bäumen. Unten bleibt alles stehen – wer drei Blöcke tief gräbt, landet im Haus. Auf Knopfdruck fährt sie wieder hoch, mit allem, was du unten verändert hast. Wer drinnen steht, fährt einfach mit. Jedes Bild, jeder Fisch, jedes Auto und James stehen danach exakt wieder an ihrem Platz |
 | **☢ Krisenbunker** | Das Haus ist tot, nur der Bunker lebt: Aufzug komplett gesperrt, Rollläden zu, Zugbrücke hoch. Raus nur über den Notausgang |
 | **♒ Haibecken** | wirft den nächsten frechen Gast zu den Haien (ohne Gast geht der Glasboden kurz auf) |
+| **▥ Eingangstor / ▦ Garagentor** | bleibt zu, auch wenn jemand davorsteht (sonst öffnet es sich, sobald ein Bewohner oder Gast direkt davor steht) |
 
 <table>
 <tr>
@@ -407,6 +415,19 @@ Jede Funktion hat einen eigenen Schalter mit Symbol, der Zustand steht farbig da
 </table>
 
 Ohne Handy geht es auch: Rechtsklick auf eine Lampe schaltet nur diese eine.
+
+### 🎟️ Gästeliste
+
+Jeder ohne Zugangskarte ist für die Villa ein Eindringling: Laser, Abwehrgeschütze, Haifalle und Minen kennen keine Gnade. Freunde setzt du auf die **Gästeliste** – dann kommen sie ohne Karte durch Tor, Türen, Kartenleser und über die Zugbrücke und sind keine Feinde mehr. Einstellungen (Smart Home, Alarmstufe) bleiben den Bewohnern vorbehalten.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/bilder/handy_gaeste.jpg" alt="Gästeliste im Handy"><br><sub><b>Gästeliste im Handy:</b> Name eintippen, ✕ streicht wieder</sub></td>
+<td width="50%"><img src="docs/bilder/bodyguard_pistole.jpg" alt="Bodyguard mit goldener Pistole"><br><sub><b>Bodyguard</b> mit der goldenen Pistole in der Hand</sub></td>
+</tr>
+</table>
+
+Eintragen geht auf drei Wegen: im Chat („James, behandle Aircrafter als Gast“, „Aircrafter ist kein Gast mehr“), im Handy unter **Gästeliste** oder mit `/butler gast <Name>` bzw. `/butler gast weg <Name>`.
 
 <br>
 
