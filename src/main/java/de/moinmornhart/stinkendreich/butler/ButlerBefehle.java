@@ -56,6 +56,13 @@ public final class ButlerBefehle {
                         }))
                         .then(Commands.literal("truhe").executes(ButlerBefehle::truheFestlegen))
                         // Alles auf Anfang: Aufträge weg, jeder James weg, ein frischer James in der Halle
+                        // Gästeliste: /butler gast <name> | /butler gast weg <name> | /butler gaeste
+                        .then(Commands.literal("gaeste").executes(k -> gastBefehl(k, null, -1)))
+                        .then(Commands.literal("gast")
+                                .then(Commands.literal("weg").then(Commands.argument("name", StringArgumentType.word())
+                                        .executes(k -> gastBefehl(k, StringArgumentType.getString(k, "name"), 0))))
+                                .then(Commands.argument("name", StringArgumentType.word())
+                                        .executes(k -> gastBefehl(k, StringArgumentType.getString(k, "name"), 1))))
                         .then(Commands.literal("zuruecksetzen").executes(k -> {
                             ButlerVerwaltung.zuruecksetzen(k.getSource().getPlayerOrException());
                             return 1;
@@ -309,6 +316,27 @@ public final class ButlerBefehle {
     }
 
     /** Straße zu einem Ziel bauen lassen (ohne hinzufahren). */
+    /**
+     * Gästeliste der eigenen Villa: Gäste dürfen ohne Zugangskarte herein und gelten nicht als Eindringlinge (keine
+     * Laser, Abwehr, Fallen). Eintragen und streichen dürfen nur Bewohner. {@code was}: 1 = eintragen, 0 = streichen,
+     * sonst die Liste nennen.
+     */
+    public static Antwort gast(ServerPlayer p, String name, int was) {
+        var z = de.moinmornhart.stinkendreich.mechanik.VillaZustand.vonSpieler(p.level().getServer(), p);
+        if (was < 0 || name == null || name.isBlank()) {
+            return z.gaeste().isEmpty() ? Antwort.ok("stinkendreich.butler.gast.leer")
+                    : Antwort.ok("stinkendreich.butler.gast.liste", String.join(", ", z.gaeste()));
+        }
+        if (!z.istBewohner(p)) {
+            return new Antwort(Component.translatable("stinkendreich.butler.gast.nur_bewohner"), true);
+        }
+        boolean geaendert = z.gastSetzen(name, was == 1);
+        if (was == 1) {
+            return Antwort.ok(geaendert ? "stinkendreich.butler.gast.neu" : "stinkendreich.butler.gast.schon", name);
+        }
+        return Antwort.ok(geaendert ? "stinkendreich.butler.gast.weg" : "stinkendreich.butler.gast.keiner", name);
+    }
+
     private static Antwort strasseBauen(ButlerEntity b, ServerPlayer p, String ziel) {
         Vec3 punkt;
         String name;
@@ -405,6 +433,9 @@ public final class ButlerBefehle {
                 return fehler != null ? new Antwort(Component.translatable(fehler), true)
                         : Antwort.ok(zu ? "stinkendreich.butler.bruecke.zu" : "stinkendreich.butler.bruecke.auf");
             }
+            case GAST -> {
+                return gast(p, bf.quelle(), bf.menge());
+            }
             case FAHREN -> {
                 return fahren(b, p, bf.quelle(), false);
             }
@@ -474,6 +505,13 @@ public final class ButlerBefehle {
     }
 
     /** Die angeschaute Truhe wird die Lieferkiste des eigenen Butlers. */
+    private static int gastBefehl(CommandContext<CommandSourceStack> k, String name, int was) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+        ServerPlayer p = k.getSource().getPlayerOrException();
+        Antwort a = gast(p, name, was);
+        Kompat.nachricht(p, a.text().copy().withStyle(a.fehler() ? ChatFormatting.RED : ChatFormatting.GOLD), false);
+        return a.fehler() ? 0 : 1;
+    }
+
     private static int truheFestlegen(CommandContext<CommandSourceStack> k) throws com.mojang.brigadier.exceptions.CommandSyntaxException {
         ServerPlayer p = k.getSource().getPlayerOrException();
         ButlerEntity b = ButlerVerwaltung.vonSpieler(p);

@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public final class Sprache {
     public enum Art { HOLEN, KOCHEN, SORTIEREN, FOLGEN, BLEIBEN, HEIM, KOMMEN, STOPP, INVENTAR, STATUS, HILFE,
-        FAHREN, FLIEGEN, ORT_MERKEN, ORTE, STRASSE, BRUECKE, UNBEKANNT }
+        FAHREN, FLIEGEN, ORT_MERKEN, ORTE, STRASSE, BRUECKE, GAST, UNBEKANNT }
 
     /** Ziele beim Fahren (in {@link Befehl#quelle()}): Villa, Blickziel, nur vorfahren; sonst Name eines Ortes. */
     public static final String ZIEL_VILLA = "#villa", ZIEL_BLICK = "#blick", ZIEL_ABHOLEN = "#abholen";
@@ -97,6 +97,42 @@ public final class Sprache {
         }
     }
 
+    /** Gästeliste: „behandle Aircrafter als Gast“, „Aircrafter ist kein Gast mehr“, „wer ist Gast?“ */
+    private static final java.util.regex.Pattern GAST_REIN = java.util.regex.Pattern.compile(
+            "(?:behandle?|nimm|setz|trag)\\s+(\\w{3,16})\\s+(?:als|auf die)\\s+(?:g(?:ast|äste|aeste))|(\\w{3,16})\\s+ist\\s+(?:ab jetzt\\s+|jetzt\\s+)?(?:ein|mein|unser)\\s+gast",
+            java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.UNICODE_CASE);
+    private static final java.util.regex.Pattern GAST_RAUS = java.util.regex.Pattern.compile(
+            "(\\w{3,16})\\s+ist\\s+(?:kein|nicht mehr)\\s+(?:mein\\s+)?gast|streich\\w*\\s+(\\w{3,16})|(\\w{3,16})\\s+(?:von|aus)\\s+der\\s+g(?:ä|ae)steliste|(\\w{3,16})\\s+(?:ist\\s+)?kein\\s+gast",
+            java.util.regex.Pattern.CASE_INSENSITIVE | java.util.regex.Pattern.UNICODE_CASE);
+
+    /**
+     * Erkennt Befehle zur Gästeliste. Der Name kommt aus dem Originaltext (Unterstriche und Groß-/Kleinschreibung
+     * bleiben). {@code menge}: 1 = eintragen, 0 = streichen, -1 = Liste nennen.
+     */
+    private static Befehl gast(String eingabe, String t) {
+        if (!enthaelt(t, "gast", "gaeste")) {
+            return null;
+        }
+        java.util.regex.Matcher m = GAST_RAUS.matcher(eingabe);
+        if (m.find()) {
+            return new Befehl(Art.GAST, ersterTreffer(m), 0, false);
+        }
+        m = GAST_REIN.matcher(eingabe);
+        if (m.find()) {
+            return new Befehl(Art.GAST, ersterTreffer(m), 1, false);
+        }
+        return Befehl.von(Art.GAST);
+    }
+
+    private static String ersterTreffer(java.util.regex.Matcher m) {
+        for (int i = 1; i <= m.groupCount(); i++) {
+            if (m.group(i) != null) {
+                return m.group(i);
+            }
+        }
+        return "";
+    }
+
     /** Kleinbuchstaben, Umlaute ausgeschrieben, Satzzeichen weg. */
     public static String normalisieren(String text) {
         return text.toLowerCase(Locale.ROOT)
@@ -107,6 +143,10 @@ public final class Sprache {
     public static Befehl verstehen(String eingabe) {
         String t = " " + normalisieren(eingabe) + " ";
         boolean inTruhe = false;
+        Befehl gast = gast(eingabe, t);
+        if (gast != null) {
+            return gast;
+        }
         for (String ziel : List.of(" in die truhe", " in die kiste", " in der truhe", " in truhe", " in die lieferkiste",
                 " ins lager", " einlagern", " in den vorrat", " in die truhen")) {
             if (t.contains(ziel)) {

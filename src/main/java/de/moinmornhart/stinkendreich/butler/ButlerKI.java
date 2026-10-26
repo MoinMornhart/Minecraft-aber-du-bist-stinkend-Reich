@@ -261,6 +261,12 @@ public final class ButlerKI {
                 case "ort_merken" -> new Sprache.Befehl(Sprache.Art.ORT_MERKEN, String.valueOf(e.get("name")), -1, false);
                 case "orte_zeigen" -> Sprache.Befehl.von(Sprache.Art.ORTE);
                 case "zugbruecke" -> new Sprache.Befehl(Sprache.Art.BRUECKE, "zu".equals(String.valueOf(e.get("zustand"))) ? "zu" : "auf", -1, false);
+                case "gast" -> new Sprache.Befehl(Sprache.Art.GAST, String.valueOf(e.get("name")),
+                        switch (String.valueOf(e.get("aktion"))) {
+                            case "eintragen" -> 1;
+                            case "streichen" -> 0;
+                            default -> -1;
+                        }, false);
                 default -> Sprache.Befehl.von(Sprache.Art.UNBEKANNT);
             };
         }
@@ -312,6 +318,10 @@ public final class ButlerKI {
             t.add(werkzeug("zugbruecke", "Schaltet die Zugbrücke am Tor der Villa: \"zu\" = gesichert (fährt ein und kommt nur für "
                     + "Bewohner und Kartenbesitzer heraus), \"auf\" = fährt aus und bleibt draußen.",
                     Map.of("zustand", Map.of("type", "string", "description", "\"zu\" oder \"auf\""))));
+            t.add(werkzeug("gast", "Gästeliste der Villa: Gäste dürfen ohne Zugangskarte herein und werden nicht als Eindringlinge "
+                    + "behandelt (keine Laser, Abwehr, Fallen). Einstellungen bleiben den Bewohnern vorbehalten.",
+                    Map.of("aktion", Map.of("type", "string", "description", "\"eintragen\", \"streichen\" oder \"liste\""),
+                            "name", Map.of("type", "string", "description", "Spielername des Gastes (bei \"liste\" leer)"))));
             werkzeuge = t;
             return t;
         }

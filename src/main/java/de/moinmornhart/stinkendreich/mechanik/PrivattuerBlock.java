@@ -28,7 +28,7 @@ public class PrivattuerBlock extends ZiertuerBlock {
         if (welt.isClientSide()) {
             return InteractionResult.SUCCESS;      // der Server entscheidet, ob die Tür aufgeht
         }
-        if (!VillaZustand.fuer(welt.getServer(), pos).istBewohner(spieler)) {
+        if (!VillaZustand.fuer(welt.getServer(), pos).darfRein(spieler)) {
             welt.playSound(null, pos, ModSounds.PIEP_FEHLER, SoundSource.BLOCKS, 1.0F, 1.0F);
             Kompat.nachricht(spieler, Component.translatable("stinkendreich.privattuer.verweigert").withStyle(ChatFormatting.RED), true);
             return InteractionResult.SUCCESS;

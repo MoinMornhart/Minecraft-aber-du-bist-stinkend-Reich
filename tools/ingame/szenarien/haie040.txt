@@ -1,0 +1,43 @@
+# Haie mit eigenem Modell beißen jeden im Becken (auch Bewohner im Überlebensmodus), Gästeliste im Handy
+# Becken: x 42–45, z 44–56, Wasser y 22–24 (Villa-Koordinaten)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+# Gästeliste im Handy
+server /clear @p
+server /villa ort 43 26 57 0 -28
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /execute as @p run handy gast|rein|Aircrafter
+server /execute as @p run handy gast|rein|Steve_42
+warte 2
+klick
+warte 1.5
+bild handy_start
+linksklick 640 566
+warte 1.5
+bild handy_gaeste
+klient schliessen
+server /clear @p
+taste F1
+server /gamemode spectator
+server /villa ort 44 23.2 44.3 0 15
+warte 4
+bild hai_modell_nah
+server /villa ort 43.2 23.4 55.7 160 20
+warte 2
+bild hai_modell_nah2
+server /villa ort 47 21 50 90 -5
+warte 2
+bild hai_modell_seite
+# Bewohner im Überlebensmodus ins Becken: Leben muss sinken
+server /gamemode survival
+server /effect give @p minecraft:water_breathing 60 0 true
+server /villa ort 43.5 22.2 50 0 0
+server /tp @e[type=stinkendreich:hai] @p
+warte 10
+server /execute if entity @p[nbt={Health:20.0f}] run say HAI_UNVERLETZT
+server /execute unless entity @p[nbt={Health:20.0f}] run say HAI_GEBISSEN
+bild hai_biss
+server /gamemode creative

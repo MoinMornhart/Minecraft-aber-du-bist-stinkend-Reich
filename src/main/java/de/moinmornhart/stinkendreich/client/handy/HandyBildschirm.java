@@ -25,12 +25,14 @@ public class HandyBildschirm extends Screen {
     private static final int BREITE = 160, HOEHE = 270;
     private static final int KNOPF_B = 136, KNOPF_H = 18, ABSTAND = 3;
 
-    private enum Seite { START, NAVI, ORTE, LIEFERUNG, AUFTRAG, SMART }
+    private enum Seite { START, NAVI, ORTE, LIEFERUNG, AUFTRAG, SMART, GAESTE }
 
     /** Höchstens so viele eigene Orte passen auf eine Seite. */
     private static final int ORTE_MAX = 7;
     /** Die Orte, die James kennt (schickt der Server, siehe {@link #orteEmpfangen}). */
     private static List<String> orte = List.of();
+    /** Gästeliste der eigenen Villa (schickt der Server, siehe {@link #gaesteEmpfangen}). */
+    private static List<String> gaeste = List.of();
     /** Smart-Home-Schalter: Name, Symbol, Wert zum Einschalten, Wert zum Ausschalten. */
     private static final String[][] SMART_ZEILEN = {{"rollo", "▤", "zu", "auf"}, {"bruecke", "⇄", "zu", "auf"},
             {"licht", "☀", "an", "aus"}, {"disco", "♫", "an", "aus"}, {"automatik", "☾", "an", "aus"},
@@ -72,7 +74,8 @@ public class HandyBildschirm extends Screen {
                 y = knopf(x, y, "mitarbeiter", () -> senden("mitarbeiter"));
                 y = knopf(x, y, "bodyguards", () -> senden("bodyguards|rufen"));
                 y = knopf(x, y, "bodyguards_heim", () -> senden("bodyguards|heim"));
-                knopf(x, y, "smarthome", () -> wechseln(Seite.SMART));
+                y = knopf(x, y, "smarthome", () -> wechseln(Seite.SMART));
+                knopf(x, y, "gaeste", () -> wechseln(Seite.GAESTE));
             }
             case NAVI -> {
                 for (String ziel : List.of("villa", "dorf", "endportal", "netherportal", "mine")) {
@@ -108,6 +111,32 @@ public class HandyBildschirm extends Screen {
                     }
                 });
                 knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.NAVI));
+            }
+            case GAESTE -> {
+                // Gästeliste: ✕ streicht einen Gast, unten Name eintippen + „Als Gast eintragen“
+                List<String> liste = gaeste.size() > ORTE_MAX ? gaeste.subList(0, ORTE_MAX) : gaeste;
+                for (String gast : liste) {
+                    addRenderableWidget(Button.builder(Component.literal("☺ " + gast), b -> { })
+                            .bounds(x, y, KNOPF_B - 22, KNOPF_H).build()).active = false;
+                    addRenderableWidget(Button.builder(Component.literal("✕").withStyle(ChatFormatting.RED), b -> anfragen("gast|raus|" + gast))
+                            .bounds(x + KNOPF_B - 20, y, 20, KNOPF_H).build());
+                    y += KNOPF_H + ABSTAND;
+                }
+                if (gaeste.isEmpty()) {
+                    y += 14;    // Platz für den Hinweis „noch keine Gäste“
+                }
+                int ey = Math.max(y + 4, oben() + 192);
+                eingabe = new EditBox(font, x, ey, KNOPF_B, KNOPF_H, Component.translatable("stinkendreich.handy.gaeste.name"));
+                eingabe.setHint(Component.translatable("stinkendreich.handy.gaeste.name"));
+                eingabe.setMaxLength(16);
+                addRenderableWidget(eingabe);
+                knopf(x, ey + KNOPF_H + 4, "gaeste.eintragen", () -> {
+                    if (!eingabe.getValue().isBlank()) {
+                        anfragen("gast|rein|" + eingabe.getValue().trim());
+                        eingabe.setValue("");
+                    }
+                });
+                knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
             }
             case LIEFERUNG -> {
                 for (String was : de.moinmornhart.stinkendreich.handy.Lieferservice.ANGEBOT) {
@@ -201,6 +230,9 @@ public class HandyBildschirm extends Screen {
         if (neu == Seite.SMART) {
             anfragen("smart|status");
         }
+        if (neu == Seite.GAESTE) {
+            anfragen("gaeste");
+        }
         rebuildWidgets();
     }
 
@@ -220,6 +252,18 @@ public class HandyBildschirm extends Screen {
         }
         if (KompatClient.offenerBildschirm() instanceof HandyBildschirm h && h.seite == Seite.SMART) {
             h.rebuildWidgets();
+        }
+    }
+
+    /** Neue Gästeliste vom Server (Namen zeilenweise); ein offenes Handy zeigt sie sofort. */
+    public static void gaesteEmpfangen(String zeilen) {
+        gaeste = zeilen.isBlank() ? List.of() : List.of(zeilen.split("\n"));
+        if (KompatClient.offenerBildschirm() instanceof HandyBildschirm h && h.seite == Seite.GAESTE) {
+            String text = h.eingabe != null ? h.eingabe.getValue() : "";
+            h.rebuildWidgets();
+            if (h.eingabe != null) {
+                h.eingabe.setValue(text);
+            }
         }
     }
 
@@ -298,6 +342,9 @@ public class HandyBildschirm extends Screen {
         schrift(g, titel, x + BREITE / 2, y + 28, 0xFFE8BA34, true);
         if (seite == Seite.ORTE && orte.isEmpty()) {
             schrift(g, Component.translatable("stinkendreich.handy.orte.leer").getString(), x + BREITE / 2, y + 46, 0xFFB8BCC8, true);
+        }
+        if (seite == Seite.GAESTE && gaeste.isEmpty()) {
+            schrift(g, Component.translatable("stinkendreich.handy.gaeste.leer").getString(), x + BREITE / 2, y + 46, 0xFFB8BCC8, true);
         }
     }
 

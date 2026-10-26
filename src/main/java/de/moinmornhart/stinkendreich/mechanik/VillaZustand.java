@@ -49,6 +49,8 @@ public final class VillaZustand {
 
     private int stufe = 1;
     private final Map<UUID, String> bewohner = new LinkedHashMap<>();
+    /** Gäste (Spielernamen, Groß-/Kleinschreibung egal): dürfen ohne Karte rein und sind keine Eindringlinge. */
+    private final java.util.Set<String> gaeste = new java.util.TreeSet<>(String.CASE_INSENSITIVE_ORDER);
     private long alarmBis;
     /** Spielzeit, zu der die Festung eingeschaltet wurde (für die Animation; nicht gespeichert, 0 = schon lange an). */
     private long festungSeit;
@@ -152,6 +154,9 @@ public final class VillaZustand {
                 if (j.has("bruecke_bloecke")) {
                     j.getAsJsonArray("bruecke_bloecke").forEach(e -> z.brueckeBloecke.add(e.getAsString()));
                 }
+                if (j.has("gaeste")) {
+                    j.getAsJsonArray("gaeste").forEach(e -> z.gaeste.add(e.getAsString()));
+                }
                 if (j.has("bewohner")) {
                     for (var e : j.getAsJsonArray("bewohner")) {
                         JsonObject b = e.getAsJsonObject();
@@ -177,6 +182,9 @@ public final class VillaZustand {
                 liste.add(b);
             });
             j.add("bewohner", liste);
+            JsonArray gastListe = new JsonArray();
+            gaeste.forEach(gastListe::add);
+            j.add("gaeste", gastListe);
             j.addProperty("bruecke_gesichert", brueckeGesichert);
             j.addProperty("bruecke_eingefahren", brueckeEingefahren);
             JsonArray bloecke = new JsonArray();
@@ -254,6 +262,38 @@ public final class VillaZustand {
         return bewohner.isEmpty() || bewohner.containsKey(spieler.getUUID()) || Zugang.hatKarte(spieler, nr);
     }
 
+    // ---------------- Gäste ----------------
+
+    /** Steht der Spieler auf der Gästeliste dieser Villa? */
+    public boolean istGast(Player spieler) {
+        return gaeste.contains(spieler.getScoreboardName());
+    }
+
+    /**
+     * Darf der Spieler herein (Türen, Tore, Kartenleser, Zugbrücke)? Bewohner, Kartenbesitzer und Gäste. Einstellungen
+     * (Smart Home, Alarmstufe, Zentrale) bleiben den Bewohnern vorbehalten.
+     */
+    public boolean darfRein(Player spieler) {
+        return istBewohner(spieler) || istGast(spieler);
+    }
+
+    /** Trägt einen Gast ein (true) oder streicht ihn (false); Rückgabe: hat sich etwas geändert? */
+    public boolean gastSetzen(String name, boolean gast) {
+        String n = name.trim();
+        if (n.isEmpty()) {
+            return false;
+        }
+        boolean geaendert = gast ? gaeste.add(n) : gaeste.remove(n);
+        if (geaendert) {
+            speichern();
+        }
+        return geaendert;
+    }
+
+    public java.util.Set<String> gaeste() {
+        return gaeste;
+    }
+
     /** Eigentümer der Villa: der erste Bewohner (der erste Spieler, der die Welt betreten hat). */
     public boolean istEigentuemer(Player spieler) {
         return bewohner.isEmpty() || bewohner.keySet().iterator().next().equals(spieler.getUUID());
@@ -270,11 +310,11 @@ public final class VillaZustand {
 
     /**
      * Ist diese Entity ein Eindringling? Feindliche Monster immer, Spieler nur,
-     * wenn sie keine Bewohner sind und keine Zugangskarte dabeihaben.
+     * wenn sie keine Bewohner sind, keine Zugangskarte dabeihaben und nicht auf der Gästeliste stehen.
      */
     public boolean istEindringling(Entity e) {
         if (e instanceof Player p) {
-            return !p.isSpectator() && !p.isCreative() && !istBewohner(p);
+            return !p.isSpectator() && !p.isCreative() && !darfRein(p);
         }
         return e instanceof Enemy;
     }

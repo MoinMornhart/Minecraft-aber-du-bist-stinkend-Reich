@@ -78,7 +78,7 @@ public final class Geheimgang {
             }
             schleichen.remove(p.getUUID());
             VillaZustand z = VillaZustand.fuer(server, regal);
-            if (z.stufe() > 0 && !z.istBewohner(p) && !Zugang.hatKarte(p)) {
+            if (z.stufe() > 0 && !z.darfRein(p)) {
                 Kompat.nachricht(p, Component.translatable("stinkendreich.geheimgang.nichts").withStyle(ChatFormatting.GRAY), true);
                 continue;
             }

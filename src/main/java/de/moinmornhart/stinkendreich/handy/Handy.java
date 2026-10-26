@@ -61,7 +61,7 @@ public final class Handy {
         }
         String[] teile = wert.split("\\|", 2);
         String was = teile[0], angabe = teile.length > 1 ? teile[1] : "";
-        if (!was.equals("orte")) {
+        if (!was.equals("orte") && !was.equals("gaeste")) {
             p.level().playSound(null, p.blockPosition(), SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.PLAYERS, 0.6F, 1.6F);
         }
         switch (was) {
@@ -85,6 +85,23 @@ public final class Handy {
             case "smart" -> {
                 de.moinmornhart.stinkendreich.mechanik.SmartHome.befehl(p, angabe);
                 Netz.melden(p, "smart", de.moinmornhart.stinkendreich.mechanik.SmartHome.status(p.level().getServer(), p));
+                return;
+            }
+            case "gaeste", "gast" -> {
+                // Gästeliste der eigenen Villa: „gast|rein|Name“, „gast|raus|Name“, „gaeste“ = nur die Liste
+                String[] teil = angabe.split("\\|", 2);
+                if (was.equals("gast") && teil.length == 2) {
+                    var antwort = ButlerBefehle.gast(p, teil[1].trim(), teil[0].equals("rein") ? 1 : 0);
+                    Kompat.nachricht(p, antwort.text().copy().withStyle(antwort.fehler() ? ChatFormatting.RED : ChatFormatting.GOLD), true);
+                }
+                var z = de.moinmornhart.stinkendreich.mechanik.VillaZustand.vonSpieler(p.level().getServer(), p);
+                Netz.melden(p, "gaeste", String.join("\n", z.gaeste()));
+                // Ohne Mod: die Gäste-Seite gleich wieder öffnen
+                //? if >=1.21.6 {
+                if (was.equals("gast") && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(p)) {
+                    de.moinmornhart.stinkendreich.server.HandyDialog.oeffnen(p, "gaeste");
+                }
+                //?}
                 return;
             }
             case "bodyguards" -> {

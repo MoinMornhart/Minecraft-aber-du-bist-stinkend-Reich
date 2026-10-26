@@ -23,6 +23,7 @@ from PIL import Image, ImageDraw
 import ausruestung
 import taenzerin
 import handy
+import hai
 import deko
 import drehteller
 import fahrzeuge
@@ -698,6 +699,8 @@ BLOECKE: dict[str, dict] = {
 
 TEXTE_DE = {
     "entity.stinkendreich.hai": "Hai",
+    "death.attack.stinkendreich.hai": "%1$s wurde von einem Hai gefressen",
+    "death.attack.stinkendreich.hai.player": "%1$s wurde von einem Hai gefressen, während %2$s zusah",
     "stinkendreich.haifalle.nur_bewohner": "Nur Bewohner dürfen die Haie füttern.",
     "stinkendreich.haifalle.ausgeloest": "♒ Ab zu den Haien!",
     "stinkendreich.haifalle.kein_opfer": "Niemand Frecher in der Nähe.",
@@ -788,6 +791,8 @@ TEXTE_DE = {
 }
 TEXTE_EN = {
     "entity.stinkendreich.hai": "Shark",
+    "death.attack.stinkendreich.hai": "%1$s was eaten by a shark",
+    "death.attack.stinkendreich.hai.player": "%1$s was eaten by a shark while fighting %2$s",
     "stinkendreich.haifalle.nur_bewohner": "Only residents may feed the sharks.",
     "stinkendreich.haifalle.ausgeloest": "♒ Off to the sharks!",
     "stinkendreich.haifalle.kein_opfer": "Nobody cheeky nearby.",
@@ -946,7 +951,7 @@ def main() -> None:
     fz = fahrzeuge.main()
     TEXTE_DE.update(fz["de"])
     TEXTE_EN.update(fz["en"])
-    for texte in (ausruestung.main(), drehteller.main(), fernseher.main(), taenzerin.main(), handy.main()):
+    for texte in (ausruestung.main(), drehteller.main(), fernseher.main(), taenzerin.main(), handy.main(), hai.main()):
         TEXTE_DE.update(texte["de"])
         TEXTE_EN.update(texte["en"])
     g = gemaelde.main()

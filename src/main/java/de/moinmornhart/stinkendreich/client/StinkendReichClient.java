@@ -111,6 +111,12 @@ public class StinkendReichClient implements ClientModInitializer {
                 de.moinmornhart.stinkendreich.client.club.TaenzerinModell.SCHICHT, de.moinmornhart.stinkendreich.client.club.TaenzerinModell::schicht);
         //?} else
         /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(de.moinmornhart.stinkendreich.client.club.TaenzerinModell.SCHICHT, de.moinmornhart.stinkendreich.client.club.TaenzerinModell::schicht);*/
+        // Hai im Becken unter dem Wohnzimmer (eigenes Modell)
+        //? if >=26.1 {
+        net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry.registerModelLayer(
+                de.moinmornhart.stinkendreich.client.hai.HaiModell.SCHICHT, de.moinmornhart.stinkendreich.client.hai.HaiModell::schicht);
+        //?} else
+        /*net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry.registerModelLayer(de.moinmornhart.stinkendreich.client.hai.HaiModell.SCHICHT, de.moinmornhart.stinkendreich.client.hai.HaiModell::schicht);*/
         EntityRendererRegistry.register(ModEntities.HAI, de.moinmornhart.stinkendreich.client.hai.HaiRenderer::new);
         EntityRendererRegistry.register(ModEntities.TAENZERIN, de.moinmornhart.stinkendreich.client.club.TaenzerinRenderer::new);
         EntityRendererRegistry.register(ModEntities.MITARBEITER, de.moinmornhart.stinkendreich.client.mitarbeiter.MitarbeiterRenderer::new);
@@ -128,6 +134,8 @@ public class StinkendReichClient implements ClientModInitializer {
                 de.moinmornhart.stinkendreich.netz.Rueckmeldung.TYP, (paket, kontext) -> kontext.client().execute(() -> {
                     if (paket.art().equals("orte")) {
                         de.moinmornhart.stinkendreich.client.handy.HandyBildschirm.orteEmpfangen(paket.wert());
+                    } else if (paket.art().equals("gaeste")) {
+                        de.moinmornhart.stinkendreich.client.handy.HandyBildschirm.gaesteEmpfangen(paket.wert());
                     } else if (paket.art().equals("smart")) {
                         de.moinmornhart.stinkendreich.client.handy.HandyBildschirm.smartEmpfangen(paket.wert());
                     }

@@ -1,0 +1,11 @@
+# Nur der Haibiss (Fehlersuche)
+server /gamemode creative
+server /time set 6000
+warte 30
+server /gamemode survival
+server /effect give @p minecraft:water_breathing 60 0 true
+server /villa ort 43.5 22.2 50 0 0
+server /tp @e[type=stinkendreich:hai] @p
+warte 6
+server /execute unless entity @p[nbt={Health:20.0f}] run say HAI_GEBISSEN
+server /gamemode creative

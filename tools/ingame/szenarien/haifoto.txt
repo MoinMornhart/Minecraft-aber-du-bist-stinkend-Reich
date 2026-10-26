@@ -1,0 +1,23 @@
+# Fotos vom neuen Hai-Modell (Becken x 42–45, z 44–56, Wasser y 22–24; Aquarium im Garten)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /gamemode spectator
+server /effect give @p minecraft:night_vision 999 0 true
+server /summon stinkendreich:hai -12 84.3 -10 {NoAI:1b,Rotation:[90f,0f]}
+server /villa ort 47.5 22.8 46 90 0
+warte 4
+bild hai_foto_seite
+server /villa ort 41.2 23.0 42.6 -40 8
+warte 2
+bild hai_foto_vorn
+server /villa ort 43.5 19 46 0 -60
+warte 2
+bild hai_foto_unten
+server /kill @e[type=stinkendreich:hai,nbt={NoAI:1b}]
+server /villa ort 46 30 86 140 15
+warte 3
+bild hai_foto_aquarium

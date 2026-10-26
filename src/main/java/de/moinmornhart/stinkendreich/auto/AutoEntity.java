@@ -293,6 +293,11 @@ public class AutoEntity extends Mob {
 
     @Override
     protected InteractionResult mobInteract(Player spieler, InteractionHand hand) {
+        // Wer schon drinsitzt, klickt beim Rechtsklick oft das eigene Fahrzeug an (der Hubschrauber umschließt ihn):
+        // dann geht der Klick an den Gegenstand in der Hand durch, z. B. an das Handy
+        if (spieler.getVehicle() == this) {
+            return InteractionResult.PASS;
+        }
         ItemStack stapel = spieler.getItemInHand(hand);
         net.minecraft.world.item.DyeColor farbstoff = de.moinmornhart.stinkendreich.Kompat.farbstoff(stapel);
         if (farbstoff != null) {

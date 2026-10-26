@@ -78,6 +78,20 @@ public final class HandyDialog {
                 }
                 zurueck(knoepfe);
             }
+            case "gaeste" -> {
+                titel = "gaeste";
+                var z = de.moinmornhart.stinkendreich.mechanik.VillaZustand.vonSpieler(spieler.level().getServer(), spieler);
+                for (String gast : z.gaeste()) {
+                    knoepfe.add(new ActionButton(new CommonButtonData(Component.literal("✕ " + gast), BREITE),
+                            Optional.of(befehl("gast|raus|" + gast))));
+                }
+                eingaben.add(new Input("name", new TextInput(BREITE, Component.translatable("stinkendreich.handy.gaeste.name"),
+                        true, "", 16, Optional.empty())));
+                knoepfe.add(new ActionButton(new CommonButtonData(Component.translatable("stinkendreich.handy.gaeste.eintragen"), BREITE),
+                        Optional.of(new CommandTemplate(ParsedTemplate.CODEC.parse(JsonOps.INSTANCE,
+                                new JsonPrimitive("handy gast|rein|$(name)")).getOrThrow()))));
+                zurueck(knoepfe);
+            }
             case "lieferung" -> {
                 titel = "lieferung";
                 for (String was : Lieferservice.ANGEBOT) {
@@ -108,6 +122,7 @@ public final class HandyDialog {
                 knopf(knoepfe, "bodyguards", "bodyguards|rufen");
                 knopf(knoepfe, "bodyguards_heim", "bodyguards|heim");
                 knopf(knoepfe, "smarthome", "seite|smarthome");
+                knopf(knoepfe, "gaeste", "seite|gaeste");
             }
         }
         CommonDialogData daten = new CommonDialogData(Component.translatable("stinkendreich.handy.titel." + titel),

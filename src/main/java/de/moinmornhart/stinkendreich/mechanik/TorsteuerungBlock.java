@@ -99,8 +99,8 @@ public class TorsteuerungBlock extends MechanikBlock {
 
     private static boolean berechtigteInDerNaehe(ServerLevel welt, BlockPos pos, int radius, VillaZustand z) {
         AABB nah = new AABB(pos).inflate(radius);
-        // Bewohner, Gäste mit Zugangskarte und der Butler dürfen durch
-        return !welt.getEntitiesOfClass(Player.class, nah, p -> !p.isSpectator() && (z.istBewohner(p) || Zugang.hatKarte(p))).isEmpty()
+        // Bewohner, Kartenbesitzer, Gäste und der Butler dürfen durch
+        return !welt.getEntitiesOfClass(Player.class, nah, p -> !p.isSpectator() && z.darfRein(p)).isEmpty()
                 || !welt.getEntitiesOfClass(ButlerEntity.class, nah, b -> true).isEmpty();
     }
 
