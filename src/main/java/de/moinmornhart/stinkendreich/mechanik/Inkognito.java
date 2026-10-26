@@ -50,7 +50,9 @@ public final class Inkognito {
     /** An Clients senden, keine Nachbar-Reaktionen, nichts fallen lassen. */
     private static final int FLAGS = 2 | 16 | 32;
 
-    private enum Phase { RUNTER, DECKEL_ZU, BAEUME_HOCH, BAEUME_WEG, DECKEL_AUF, HOCH }
+    private enum Phase { LADEN_RUNTER, RUNTER, DECKEL_ZU, BAEUME_HOCH, BAEUME_WEG, DECKEL_AUF, LADEN_HOCH, HOCH }
+    /** So lange (Ticks) bleibt das Grundstück vor der Fahrt geladen, damit alle Figuren da sind, bevor gespeichert wird. */
+    private static final int LADE_TICKS = 40;
 
     /** Laufende Fahrten je Villa (Nummer → Fahrt). */
     private static final java.util.Map<Integer, Fahrt> FAHRTEN = new java.util.concurrent.ConcurrentHashMap<>();
@@ -66,6 +68,12 @@ public final class Inkognito {
         int teil;
         /** Höhe jeder Figur am Anfang des laufenden Schritts. */
         final java.util.Map<Entity, Double> startHoehen = new java.util.HashMap<>();
+        /** Eingepackte Figuren (Bilder, Fische, Autos, James …) mit allen Daten; sie tauchen am Ziel genau so wieder auf. */
+        java.util.List<StructureTemplate.StructureEntityInfo> eingepackt = java.util.List.of();
+        /** Ticks, die beim Laden schon gewartet wurde. */
+        int gewartet;
+        /** Spieler, die beim Auftauchen oben auf der Wiese stehen: sie fahren nicht mit, sondern stehen danach oben drauf. */
+        final java.util.List<Entity> draussen = new java.util.ArrayList<>();
 
         Fahrt(int nr, Phase phase) {
             this.nr = nr;
@@ -83,6 +91,28 @@ public final class Inkognito {
             int tiefe = tiefe(villa);
             int ringe = (Math.min(villa.plan().breiteX, villa.plan().breiteZ) + 1) / 2;
             switch (phase) {
+                case LADEN_RUNTER -> {
+                    // Erst warten, bis das ganze Grundstück samt Figuren geladen ist, dann alles einpacken
+                    if (sofort || ++gewartet >= LADE_TICKS) {
+                        eingepackt = einpacken(welt, villa, 0);
+                        gewartet = 0;
+                        phase = Phase.RUNTER;
+                        schritt = 0;
+                    }
+                }
+                case LADEN_HOCH -> {
+                    if (sofort || ++gewartet >= LADE_TICKS) {
+                        eingepackt = einpacken(welt, villa, -tiefe);
+                        // Wer über der versenkten Villa steht (auf der Wiese), ist nicht drinnen: nicht 33 Blöcke mit hochheben
+                        int dach = villa.ursprung().getY() - tiefe + villa.plan().hoehe;
+                        draussen.clear();
+                        draussen.addAll(welt.getEntitiesOfClass(Entity.class, bereich(villa, -tiefe),
+                                e -> !e.isPassenger() && mitSpieler(e) && e.getY() >= dach));
+                        gewartet = 0;
+                        phase = Phase.HOCH;
+                        schritt = 0;
+                    }
+                }
                 case RUNTER -> {
                     if (teil == 0) {
                         effekte(welt, villa, villa.plan().bodenY - schritt, true, sofort);
@@ -108,6 +138,8 @@ public final class Inkognito {
                         teil = 0;
                         if (++schritt == tiefe) {
                             einsetzen(welt, villa, -tiefe);
+                            auspacken(welt, eingepackt, -tiefe);
+                            eingepackt = java.util.List.of();
                             phase = Phase.DECKEL_ZU;
                             schritt = 0;
                         }
@@ -132,6 +164,7 @@ public final class Inkognito {
                     }
                     if (schritt >= BAEUME) {
                         phase = null;
+                        laden(welt, villa, false);
                     }
                 }
                 case BAEUME_WEG -> {
@@ -147,7 +180,7 @@ public final class Inkognito {
                         deckelRing(welt, villa, ringe - 1 - schritt, false, sofort);
                     }
                     if (schritt >= ringe) {
-                        phase = Phase.HOCH;
+                        phase = Phase.LADEN_HOCH;
                         schritt = 0;
                     }
                 }
@@ -157,6 +190,9 @@ public final class Inkognito {
                         // niemand in den Schritt-Ticks zurückfällt und vom nachrückenden Boden eingeklemmt wird
                         startHoehen.clear();
                         for (Entity e : figuren(welt, villa, schritt - tiefe)) {
+                            if (draussen.contains(e)) {
+                                continue;
+                            }
                             startHoehen.put(e, e.getY() + 1);
                             verschieben(e, 1, 1);
                         }
@@ -173,6 +209,19 @@ public final class Inkognito {
                         startHoehen.clear();
                         if (++schritt == tiefe) {
                             einsetzen(welt, villa, 0);
+                            auspacken(welt, eingepackt, tiefe);
+                            eingepackt = java.util.List.of();
+                            // Wer draußen stand, steht jetzt oben auf dem, was unter ihm aufgetaucht ist
+                            for (Entity e : draussen) {
+                                if (e.isAlive()) {
+                                    int boden = welt.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                                            net.minecraft.util.Mth.floor(e.getX()), net.minecraft.util.Mth.floor(e.getZ()));
+                                    e.teleportTo(e.getX(), Math.max(e.getY(), boden), e.getZ());
+                                    e.resetFallDistance();
+                                }
+                            }
+                            draussen.clear();
+                            laden(welt, villa, false);
                             phase = null;
                             welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_ACTIVATE,
                                     SoundSource.BLOCKS, 4.0F, 1.0F);
@@ -247,13 +296,14 @@ public final class Inkognito {
         if (an && villa.ursprung().getY() - tiefe(villa) <= Kompat.minY(welt) + 1) {
             return "stinkendreich.inkognito.zutief";
         }
+        StinkendReich.LOGGER.info("Inkognito: Villa {} fährt {} (Tiefe {})", nr, an ? "runter" : "hoch", tiefe(villa));
+        // Das ganze Grundstück bleibt während der Fahrt geladen (sonst fehlten Figuren in entfernten Chunks)
+        laden(welt, villa, true);
         if (an) {
             z.setzeStufe(0);                                     // keine Laser, Minen oder Lava im Versteck
-            speichern(welt, villa, 0);
-            FAHRTEN.put(nr, new Fahrt(nr, Phase.RUNTER));
+            FAHRTEN.put(nr, new Fahrt(nr, Phase.LADEN_RUNTER));
         } else {
-            speichern(welt, villa, -tiefe(villa));               // samt allem, was unten verändert wurde
-            FAHRTEN.put(nr, new Fahrt(nr, Phase.BAEUME_WEG));
+            FAHRTEN.put(nr, new Fahrt(nr, Phase.BAEUME_WEG));    // gespeichert wird erst, wenn die Wiese offen ist
         }
         z.setzeSmart("inkognito", an);
         welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_POWER_SELECT, SoundSource.BLOCKS, 4.0F,
@@ -289,6 +339,20 @@ public final class Inkognito {
         StructurePlaceSettings ohneFiguren = new StructurePlaceSettings().setIgnoreEntities(true);
         Kompat.strukturen(welt.getServer()).get(datei(villa))
                 .ifPresent(v -> v.placeInWorld(welt, ecke, ecke, ohneFiguren, welt.getRandom(), 2 | 16));
+        ruhe(welt, villa);
+    }
+
+    /**
+     * Löscht alle geplanten Block- und Wasser-Ticks im ganzen Fahrbereich: Sonst rieselt beim Verschieben und nach dem
+     * Einsetzen Kies und Sand herunter (als fallende Blöcke, die nicht mitfahren) und Wasser läuft in Lücken. So steht
+     * am Ende alles genau so da wie vorher.
+     */
+    private static void ruhe(ServerLevel welt, VillaPlatzierung.VillaInfo villa) {
+        BlockPos u = villa.ursprung();
+        var box = new net.minecraft.world.level.levelgen.structure.BoundingBox(u.getX() - 1, u.getY() - tiefe(villa) - 2, u.getZ() - 1,
+                u.getX() + villa.plan().breiteX, u.getY() + villa.plan().hoehe + 1, u.getZ() + villa.plan().breiteZ);
+        welt.getBlockTicks().clearArea(box);
+        welt.getFluidTicks().clearArea(box);
     }
 
     private static void tick(MinecraftServer server) {
@@ -316,6 +380,11 @@ public final class Inkognito {
      * Wände und Erdreich bleiben stehen, nur ihre Enden wandern.
      */
     private static void spaltenSchieben(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz, int richtung, int t) {
+        schieben(welt, villa, versatz, richtung, t);
+        ruhe(welt, villa);
+    }
+
+    private static void schieben(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz, int richtung, int t) {
         int breiteX = villa.plan().breiteX, breiteZ = villa.plan().breiteZ;
         int unten = villa.ursprung().getY() + versatz, oben = unten + villa.plan().hoehe;    // [unten, oben)
         int x0 = breiteX * t / TICKS_JE_SCHRITT, x1 = breiteX * (t + 1) / TICKS_JE_SCHRITT;
@@ -353,12 +422,104 @@ public final class Inkognito {
         welt.setBlock(p, neu, FLAGS);
     }
 
-    /** Figuren und Spieler auf dem Grundstück (Mitfahrer sitzen schon in ihrem Fahrzeug). */
+    /**
+     * Wer live mitfährt: Spieler und Fahrzeuge, in denen ein Spieler sitzt (alles andere ist eingepackt). Mitfahrer sitzen
+     * schon in ihrem Fahrzeug.
+     */
     private static java.util.List<Entity> figuren(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz) {
-        BlockPos a = villa.ursprung().above(versatz - 1);
-        AABB bereich = new AABB(a.getX(), a.getY(), a.getZ(), a.getX() + villa.plan().breiteX,
-                a.getY() + villa.plan().hoehe + 3, a.getZ() + villa.plan().breiteZ);
-        return welt.getEntitiesOfClass(Entity.class, bereich, e -> !e.isPassenger() && !e.isSpectator());
+        return welt.getEntitiesOfClass(Entity.class, bereich(villa, versatz), e -> !e.isPassenger() && !e.isSpectator() && mitSpieler(e));
+    }
+
+    /** Ist das ein Spieler oder trägt die Figur (auch über Ecken) einen Spieler? */
+    private static boolean mitSpieler(Entity e) {
+        return e instanceof net.minecraft.world.entity.player.Player
+                || e.countPlayerPassengers() > 0;
+    }
+
+    /** Bereich der Villa (um versatz verschoben) samt etwas Luft darüber für den Hubschrauber auf dem Dach. */
+    private static AABB bereich(VillaPlatzierung.VillaInfo villa, int versatz) {
+        BlockPos a = villa.ursprung().above(versatz);
+        return new AABB(a.getX(), a.getY(), a.getZ(), a.getX() + villa.plan().breiteX,
+                a.getY() + villa.plan().hoehe + LUFT_OBEN, a.getZ() + villa.plan().breiteZ);
+    }
+
+    /** Wie viele Blöcke über der Villa Figuren noch mitgenommen werden (Hubschrauber auf dem Landeplatz). */
+    private static final int LUFT_OBEN = 4;
+
+    /** Hält alle Chunks des Grundstücks geladen (an) oder gibt sie wieder frei. */
+    private static void laden(ServerLevel welt, VillaPlatzierung.VillaInfo villa, boolean an) {
+        int x0 = villa.ursprung().getX() >> 4, z0 = villa.ursprung().getZ() >> 4;
+        int x1 = (villa.ursprung().getX() + villa.plan().breiteX - 1) >> 4, z1 = (villa.ursprung().getZ() + villa.plan().breiteZ - 1) >> 4;
+        for (int cx = x0; cx <= x1; cx++) {
+            for (int cz = z0; cz <= z1; cz++) {
+                welt.setChunkForced(cx, cz, an);
+            }
+        }
+    }
+
+    /**
+     * Packt die Villa ein: Blöcke samt Inhalten in die Strukturdatei, dazu alle Figuren auf dem Grundstück (Bilder,
+     * Rahmen, Rüstungsständer, Autos, Hubschrauber, Fische, Haie, James, Tänzerinnen …) mit allen ihren Daten. Die
+     * Figuren verschwinden für die Fahrt und tauchen am Ziel genau so wieder auf. Nur Spieler und Fahrzeuge mit einem
+     * Spieler darin fahren live mit. Vorher wurden alle Figuren Schritt für Schritt mitgeschoben; dabei fielen Bilder von
+     * der Wand, Fische landeten im Trockenen und Autos rutschten in den Boden.
+     */
+    private static java.util.List<StructureTemplate.StructureEntityInfo> einpacken(ServerLevel welt, VillaPlatzierung.VillaInfo villa, int versatz) {
+        speichern(welt, villa, versatz);
+        AABB bereich = bereich(villa, versatz);
+        // Mitfahrer ohne Spieler steigen aus (die Datei kennt keine Mitfahrer), Spieler-Fahrzeuge bleiben besetzt
+        for (Entity e : welt.getEntitiesOfClass(Entity.class, bereich, e -> e.isPassenger() && !mitSpieler(e.getRootVehicle()))) {
+            e.stopRiding();
+        }
+        StructureTemplate figuren = new StructureTemplate();
+        BlockPos ecke = villa.ursprung().above(versatz);
+        Vec3i groesse = new Vec3i(villa.plan().breiteX, villa.plan().hoehe + LUFT_OBEN, villa.plan().breiteZ);
+        //? if >=1.21.6 {
+        figuren.fillFromWorld(welt, ecke, groesse, true, java.util.List.of(Blocks.STRUCTURE_VOID));
+        //?} else
+        /*figuren.fillFromWorld(welt, ecke, groesse, true, Blocks.STRUCTURE_VOID);*/
+        java.util.List<StructureTemplate.StructureEntityInfo> liste =
+                new java.util.ArrayList<>(((de.moinmornhart.stinkendreich.mixin.StrukturZugriff) figuren).stinkendreich$figuren());
+        // Nur wegräumen, was sicher in der Liste steckt (Minecraft sucht in einem mindestens so großen Bereich)
+        int weg = 0;
+        for (Entity e : welt.getEntitiesOfClass(Entity.class, bereich, e -> !e.isPassenger() && !mitSpieler(e) && e.getType().canSerialize())) {
+            e.discard();
+            weg++;
+        }
+        StinkendReich.LOGGER.info("Inkognito: {} Figuren eingepackt, {} weggeräumt", liste.size(), weg);
+        return liste;
+    }
+
+    /** Stellt die eingepackten Figuren um dy Blöcke versetzt wieder auf (gleiche Kennung, gleiche Daten). */
+    private static void auspacken(ServerLevel welt, java.util.List<StructureTemplate.StructureEntityInfo> liste, int dy) {
+        int da = 0;
+        for (StructureTemplate.StructureEntityInfo info : liste) {
+            //? if >=1.21.6 {
+            var neu = de.moinmornhart.stinkendreich.mixin.StrukturZugriff.stinkendreich$figurBauen(
+                    net.minecraft.util.ProblemReporter.DISCARDING, welt, info.nbt.copy());
+            //?} else
+            /*var neu = de.moinmornhart.stinkendreich.mixin.StrukturZugriff.stinkendreich$figurBauen(welt, info.nbt.copy());*/
+            if (neu.isEmpty()) {
+                continue;
+            }
+            Entity e = neu.get();
+            if (e instanceof net.minecraft.world.entity.decoration.HangingEntity bild) {
+                // Bilder hängen an ihrem Block: genau diesen Block versetzen (über die Mitte gerechnet rutschen breite Bilder)
+                BlockPos haken = bild.getPos().above(dy);
+                bild.setPos(haken.getX() + 0.5, haken.getY() + 0.5, haken.getZ() + 0.5);
+            } else {
+                // Die Daten enthalten schon die alte Weltposition (info.pos ist nur relativ zur Datei)
+                e.setPos(e.getX(), e.getY() + dy, e.getZ());
+            }
+            e.resetFallDistance();
+            if (e instanceof de.moinmornhart.stinkendreich.butler.ButlerEntity butler) {
+                butler.hoeheVerschieben(dy);
+            }
+            if (welt.addFreshEntity(e)) {
+                da++;
+            }
+        }
+        StinkendReich.LOGGER.info("Inkognito: {} von {} Figuren wieder aufgestellt", da, liste.size());
     }
 
     /** Alle Figuren fahren mit (nach oben vor dem Schritt, damit der Boden sie nicht einklemmt). */

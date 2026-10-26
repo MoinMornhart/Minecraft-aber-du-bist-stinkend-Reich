@@ -63,7 +63,8 @@ public final class SmartHome {
         return "rollo=" + (z.smart("rollo_zu", false) ? 1 : 0) + ",bruecke=" + (z.brueckeGesichert() ? 1 : 0)
                 + ",licht=" + (z.smart("licht", true) ? 1 : 0) + ",disco=" + (z.smart("disco", false) ? 1 : 0)
                 + ",automatik=" + (z.smart("automatik", false) ? 1 : 0) + ",inkognito=" + (z.smart("inkognito", false) ? 1 : 0)
-                + ",krisenbunker=" + (z.smart("krisenbunker", false) ? 1 : 0);
+                + ",krisenbunker=" + (z.smart("krisenbunker", false) ? 1 : 0)
+                + ",tor=" + (z.smart("tor_zu", false) ? 1 : 0) + ",garage=" + (z.smart("garage_zu", false) ? 1 : 0);
     }
 
     public static void befehl(ServerPlayer p, String angabe) {
@@ -109,6 +110,9 @@ public final class SmartHome {
                 }
             }
             case "automatik" -> z.setzeSmart("automatik", an);
+            // Eingangstor bzw. Garagentor geschlossen halten (siehe TorsteuerungBlock)
+            case "tor" -> z.setzeSmart("tor_zu", an);
+            case "garage" -> z.setzeSmart("garage_zu", an);
             case "inkognito" -> {
                 String fehler = Inkognito.schalten(server, z.nr(), an);
                 if (fehler != null) {

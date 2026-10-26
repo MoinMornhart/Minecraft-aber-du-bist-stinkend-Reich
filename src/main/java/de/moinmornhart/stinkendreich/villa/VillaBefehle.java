@@ -79,6 +79,12 @@ public final class VillaBefehle {
                         .then(Commands.literal("inkognito").requires(Kompat.istOperator())
                                 .then(Commands.literal("an").executes(k -> inkognito(k, true)))
                                 .then(Commands.literal("aus").executes(k -> inkognito(k, false))))
+                        // Testhilfe Inkognito: Stand merken und nach der Fahrt vergleichen
+                        .then(Commands.literal("vergleich").requires(Kompat.istOperator())
+                                .then(Commands.literal("merken").executes(k -> vergleich(k, true, 0)))
+                                .then(Commands.literal("pruefen").executes(k -> vergleich(k, false, 0))
+                                        .then(Commands.argument("dy", IntegerArgumentType.integer())
+                                                .executes(k -> vergleich(k, false, IntegerArgumentType.getInteger(k, "dy"))))))
                         .then(Commands.literal("minentest").requires(Kompat.istOperator()).executes(VillaBefehle::minentest))
                         .then(Commands.literal("luke").requires(Kompat.istOperator()).executes(VillaBefehle::luke))
                         .then(Commands.literal("ort").requires(Kompat.istOperator())
@@ -174,6 +180,24 @@ public final class VillaBefehle {
             return 0;
         }
         return 1;
+    }
+
+    private static int vergleich(CommandContext<CommandSourceStack> k, boolean merken, int dy) {
+        Optional<VillaPlatzierung.VillaInfo> villa = VillaPlatzierung.villa();
+        if (villa.isEmpty()) {
+            k.getSource().sendFailure(Component.translatable("stinkendreich.villa.keine"));
+            return 0;
+        }
+        ServerLevel welt = k.getSource().getServer().overworld();
+        if (merken) {
+            int n = VillaVergleich.merken(welt, villa.get());
+            k.getSource().sendSuccess(() -> Component.literal("Gemerkt: " + n + " Figuren"), false);
+            return 1;
+        }
+        List<String> unterschiede = VillaVergleich.pruefen(welt, villa.get(), dy);
+        k.getSource().sendSuccess(() -> Component.literal(unterschiede.isEmpty() ? "VERGLEICH_OK alles gleich"
+                : "VERGLEICH_FEHLER " + String.join(" | ", unterschiede.subList(0, Math.min(8, unterschiede.size())))), false);
+        return unterschiede.isEmpty() ? 1 : 0;
     }
 
     private static int luke(CommandContext<CommandSourceStack> k) throws CommandSyntaxException {

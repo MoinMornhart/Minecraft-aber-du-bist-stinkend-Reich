@@ -1,0 +1,14 @@
+# Wann wird Gras zu Erde? Vergleich direkt nach dem Runterfahren und 30 s später
+server /gamemode creative
+server /time set 6000
+server /gamerule advance_time false
+warte 40
+server /villa ort 50 26 60 0 10
+warte 5
+server /villa vergleich merken
+server /villa inkognito an
+merke
+bis 60 Figuren wieder aufgestellt
+server /villa vergleich pruefen -33
+warte 30
+server /villa vergleich pruefen -33

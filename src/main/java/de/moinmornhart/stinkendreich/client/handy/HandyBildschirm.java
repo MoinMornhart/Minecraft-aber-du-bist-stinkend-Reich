@@ -24,6 +24,8 @@ import java.util.List;
 public class HandyBildschirm extends Screen {
     private static final int BREITE = 160, HOEHE = 270;
     private static final int KNOPF_B = 136, KNOPF_H = 18, ABSTAND = 3;
+    /** Etwas flachere Schalter auf der Smart-Home-Seite, damit alle zehn plus Farben passen. */
+    private static final int SMART_H = 16;
 
     private enum Seite { START, NAVI, ORTE, LIEFERUNG, AUFTRAG, SMART, GAESTE }
 
@@ -36,7 +38,8 @@ public class HandyBildschirm extends Screen {
     /** Smart-Home-Schalter: Name, Symbol, Wert zum Einschalten, Wert zum Ausschalten. */
     private static final String[][] SMART_ZEILEN = {{"rollo", "▤", "zu", "auf"}, {"bruecke", "⇄", "zu", "auf"},
             {"licht", "☀", "an", "aus"}, {"disco", "♫", "an", "aus"}, {"automatik", "☾", "an", "aus"},
-            {"inkognito", "◐", "an", "aus"}, {"krisenbunker", "☢", "an", "aus"}, {"haie", "♒", "auf", "auf"}};
+            {"inkognito", "◐", "an", "aus"}, {"krisenbunker", "☢", "an", "aus"}, {"haie", "♒", "auf", "auf"},
+            {"tor", "▥", "zu", "auf"}, {"garage", "▦", "zu", "auf"}};
     /** Zustand der Smart-Home-Schalter (schickt der Server, siehe {@link #smartEmpfangen}). */
     private static final java.util.Map<String, Boolean> smartZustand = new java.util.HashMap<>();
 
@@ -159,14 +162,14 @@ public class HandyBildschirm extends Screen {
                             .append(Component.literal("  ")).append(zustand);
                     String wert = an ? zeile[3] : zeile[2];
                     addRenderableWidget(Button.builder(text, knopf -> anfragen("smart|" + was + "|" + wert))
-                            .bounds(x, y, KNOPF_B, KNOPF_H).build());
-                    y += KNOPF_H + ABSTAND;
+                            .bounds(x, y, KNOPF_B, SMART_H).build());
+                    y += SMART_H + 2;
                 }
                 int fx = x, fb = (KNOPF_B - 7 * 2) / 8;
                 for (var f : de.moinmornhart.stinkendreich.mechanik.Eigenschaften.Lichtfarbe.values()) {
                     String name = f.getSerializedName();
                     Button knopf = Button.builder(Component.literal("■").withStyle(s -> s.withColor(FARBEN.get(name))),
-                            b -> anfragen("smart|farbe|" + name)).bounds(fx, y, fb, KNOPF_H).build();
+                            b -> anfragen("smart|farbe|" + name)).bounds(fx, y, fb, SMART_H).build();
                     knopf.setTooltip(net.minecraft.client.gui.components.Tooltip.create(
                             Component.translatable("stinkendreich.smarthome.farbe." + name)));
                     addRenderableWidget(knopf);

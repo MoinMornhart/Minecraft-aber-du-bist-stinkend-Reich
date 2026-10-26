@@ -1,0 +1,10 @@
+# Gegenprobe: wird Gras auch ohne Inkognito zu Erde?
+server /gamemode creative
+server /time set 6000
+server /gamerule advance_time false
+warte 40
+server /villa ort 50 26 60 0 10
+warte 5
+server /villa vergleich merken
+warte 45
+server /villa vergleich pruefen

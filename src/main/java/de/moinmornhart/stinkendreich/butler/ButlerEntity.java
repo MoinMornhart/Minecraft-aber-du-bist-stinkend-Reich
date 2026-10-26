@@ -709,7 +709,7 @@ public class ButlerEntity extends PathfinderMob {
      * Ist das der Butler eines Spielers (und nicht etwa ein Mitarbeiter, der dieselben Fähigkeiten nutzt)? Nur
      * Butler werden in der Butler-Verwaltung geführt.
      */
-    protected boolean istButler() {
+    public boolean istButler() {
         return true;
     }
 

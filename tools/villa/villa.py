@@ -482,7 +482,6 @@ def erdgeschoss() -> None:
     kronleuchter(b, 72, OG - 1, 57)
     b.quader(65, EG, 54, 75, EG, 60, "red_wool")
     gemaelde(b, HX1 - 1, y + 1, 56, "west", "james", 2, 2)
-    deko(b, 61, y, 52, "sektturm")
     # Durchgang zur Garage: 2 breit, 3 hoch, durch Hauswand (x 79) und Garagenwand (x 80); in der Hauswand
     # sitzt die automatische Schiebetür (siehe mechanismen())
     b.luft(HX1, y, 60, HX1 + 1, y + 2, 61)
@@ -1643,8 +1642,6 @@ def bunker_suite(y: int, y0: int, y1: int) -> None:
     deko(b, 43, y, 68, "nachttisch", "north")
     fernbedienung(b, 43, y + 1, 68, "north", 2)
     kronleuchter(b, 40, y1 - 1, 66)
-    pflanze(b, 37, y, 68, "potted_bamboo")
-    pflanze(b, 44, y, 68, "potted_bamboo")
     # Notvorrat und Ausrüstung an der Wand neben dem Bett
     truhe(b, 37, y, 65, "east", [("enchanted_golden_apple", 4), ("golden_apple", 16), ("totem_of_undying", 1)])
     truhe(b, 37, y, 64, "east", [("torch", 64), ("lantern", 16), ("water_bucket", 2), ("milk_bucket", 2)])

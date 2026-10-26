@@ -60,7 +60,11 @@ public class TorsteuerungBlock extends MechanikBlock {
         int radius = d.zahl("radius", 6);
         boolean offen;
         switch (modus) {
-            case "tor" -> offen = z.stufe() == 0 || berechtigteInDerNaehe(welt, pos, radius + 4, z);
+            case "tor" -> {
+                // Per Smart Home „geschlossen halten“: bleibt für alle zu (Tor bzw. Garage getrennt)
+                String smart = d.text("ziel", "").endsWith("garagentor") ? "garage_zu" : "tor_zu";
+                offen = !z.smart(smart, false) && (z.stufe() == 0 || amTor(welt, pos, z));
+            }
             case "rollladen" -> offen = z.stufe() < 2 && !SmartHome.rolllaedenZu(z);       // Lockdown oder Smart Home
             case "redstone" -> offen = welt.hasNeighborSignal(pos);
             case "redstone_invers" -> offen = !welt.hasNeighborSignal(pos);
@@ -95,6 +99,21 @@ public class TorsteuerungBlock extends MechanikBlock {
         if (umschalten(welt, pos, radius, ziel, offen)) {
             welt.playSound(null, pos, ModSounds.TRESOR, SoundSource.BLOCKS, 0.6F, offen ? 1.3F : 1.0F);
         }
+    }
+
+    /**
+     * Steht ein Berechtigter direkt am Tor? Zu Fuß 6 Blöcke um die Tormitte (und höchstens 4 darüber/darunter, damit
+     * niemand im Haus oder in der Garage das Tor offen hält), im Auto 14 Blöcke, damit es rechtzeitig aufgeht. Der
+     * Butler zählt nur, wenn er fährt oder unterwegs ist (nicht, wenn er in der Halle wartet); Mitarbeiter nie.
+     */
+    private static boolean amTor(ServerLevel welt, BlockPos pos, VillaZustand z) {
+        BlockPos mitte = pos.above(3);
+        AABB fuss = new AABB(mitte).inflate(6, 4, 6);
+        AABB auto = new AABB(mitte).inflate(14, 5, 14);
+        return !welt.getEntitiesOfClass(Player.class, auto, p -> !p.isSpectator() && z.darfRein(p)
+                && (p.getVehicle() != null || fuss.contains(p.position()))).isEmpty()
+                || !welt.getEntitiesOfClass(ButlerEntity.class, auto, b -> b.istButler()
+                && (b.getVehicle() != null ? true : fuss.contains(b.position()) && b.getNavigation().isInProgress())).isEmpty();
     }
 
     private static boolean berechtigteInDerNaehe(ServerLevel welt, BlockPos pos, int radius, VillaZustand z) {

@@ -1,0 +1,14 @@
+# Aufzugsfahrt filmen, um Ruckeln zu messen (Bunker → Penthouse, Blick auf die Schachtwand)
+server /gamemode creative
+server /time set noon
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /give @p stinkendreich:zugangskarte
+server /villa ort 58 6 42 180 8
+warte 4
+
+klient aufzug Penthouse
+warte 14
+

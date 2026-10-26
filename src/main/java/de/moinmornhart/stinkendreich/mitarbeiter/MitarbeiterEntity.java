@@ -40,7 +40,7 @@ public class MitarbeiterEntity extends ButlerEntity {
     }
 
     @Override
-    protected boolean istButler() {
+    public boolean istButler() {
         return false;
     }
 

@@ -69,7 +69,7 @@ public final class HandyDialog {
                 titel = "smarthome";
                 for (String[] zeile : new String[][]{{"rollo", "zu", "auf"}, {"bruecke", "zu", "auf"}, {"licht", "an", "aus"},
                         {"disco", "an", "aus"}, {"automatik", "an", "aus"}, {"inkognito", "an", "aus"},
-                        {"krisenbunker", "an", "aus"}, {"haie", "auf", "zu"}}) {
+                        {"krisenbunker", "an", "aus"}, {"haie", "auf", "zu"}, {"tor", "zu", "auf"}, {"garage", "zu", "auf"}}) {
                     knopf(knoepfe, "smart." + zeile[0] + "." + zeile[1], "smart|" + zeile[0] + "|" + zeile[1]);
                     knopf(knoepfe, "smart." + zeile[0] + "." + zeile[2], "smart|" + zeile[0] + "|" + zeile[2]);
                 }

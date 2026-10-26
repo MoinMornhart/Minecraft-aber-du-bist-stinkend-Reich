@@ -1,0 +1,32 @@
+# Inkognito: Villa merken, runter (unten vergleichen) und wieder hoch, dann Block für Block und Figur für Figur vergleichen
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 40
+taste F1
+server /villa ort 50 26 60 0 10
+warte 5
+server /villa vergleich merken
+bild ink_vorher_wohnzimmer
+server /villa ort 85 26 55 180 10
+warte 3
+bild ink_vorher_garage
+server /villa ort 50 26 60 0 10
+warte 2
+server /villa inkognito an
+warte 35
+server /villa vergleich pruefen -33
+bild ink_unten_wohnzimmer
+server /villa ort 56 50 56 180 60
+warte 3
+bild ink_unten_wiese
+server /villa ort 50 26 60 0 10
+warte 2
+server /villa inkognito aus
+warte 35
+server /villa vergleich pruefen
+bild ink_nachher_wohnzimmer
+server /villa ort 85 26 55 180 10
+warte 3
+bild ink_nachher_garage

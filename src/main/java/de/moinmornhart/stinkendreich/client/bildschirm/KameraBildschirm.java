@@ -84,6 +84,9 @@ public class KameraBildschirm extends Screen {
             if (blick == null) {
                 blick = new ArmorStand(client.level, 0, 0, 0);
                 blick.setInvisible(true);
+                // Eigene Kennnummer: Die Hilfsfigur ist nie in der Welt angemeldet, andere Mods (z. B. NoRisk Client)
+                // fragen die Nummer der Kamera-Figur aber ab; ohne Nummer stürzt das Spiel ab
+                blick.setId(-424242);
             }
             // Ein halber Block vor der Kamera, leicht nach unten geneigt
             double x = k.getX() + 0.5 + vorne.getStepX() * 0.6;

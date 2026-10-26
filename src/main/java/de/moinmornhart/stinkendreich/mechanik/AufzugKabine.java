@@ -77,6 +77,10 @@ public class AufzugKabine extends Mob {
     private int abholWarten;
     /** Ticks seit Abfahrt, auf jeder Seite selbst gezählt (-1 = steht). */
     private int fahrtZaehler = -1;
+    /** Zuletzt vom Server gemeldeter Fahrtstand (nur auf dem Klient benutzt). */
+    private int zuletztGemeldet = -1;
+    /** Wie viele Ticks der Klient noch aufholen (+) bzw. abwarten (−) muss. */
+    private int korrektur;
 
     public AufzugKabine(EntityType<? extends AufzugKabine> typ, Level welt) {
         super(typ, welt);
@@ -265,9 +269,32 @@ public class AufzugKabine extends Mob {
             // Der Klient zählt selbst weiter; der Server meldet Abfahrt, Ende und alle zwei Sekunden den Stand
             if (gemeldet < 0) {
                 fahrtZaehler = -1;
+                zuletztGemeldet = -1;
                 return;
             }
-            fahrtZaehler = fahrtZaehler < 0 || Math.abs(fahrtZaehler - gemeldet) > 6 ? gemeldet : fahrtZaehler + 1;
+            // Nur wenn eine neue Meldung kommt, mit dem Server abgleichen (und nur bei echter Abweichung). Vorher
+            // wurde jeden Tick mit der alten Meldung verglichen: nach 7 Ticks sprang die Kabine zurück (Ruckeln).
+            // Kleine Abweichungen holt der Klient sanft auf (ein Tick mehr oder weniger je Tick) statt zu springen.
+            if (fahrtZaehler < 0) {
+                fahrtZaehler = gemeldet;
+                korrektur = 0;
+            } else if (gemeldet != zuletztGemeldet) {
+                // ±2 Ticks sind Laufzeit des Pakets, die gleicht niemand aus (sonst stockt die Fahrt kurz)
+                korrektur = Math.abs(gemeldet - fahrtZaehler) <= 2 ? 0 : gemeldet - fahrtZaehler;
+                if (Math.abs(korrektur) > 40) {
+                    fahrtZaehler = gemeldet;
+                    korrektur = 0;
+                }
+            }
+            if (korrektur > 0) {
+                fahrtZaehler += 2;
+                korrektur--;
+            } else if (korrektur < 0) {
+                korrektur++;
+            } else {
+                fahrtZaehler++;
+            }
+            zuletztGemeldet = gemeldet;
             setPos(getX(), hoehe(entityData.get(START_Y), entityData.get(ZIEL_Y), fahrtZaehler), getZ());
             return;
         }

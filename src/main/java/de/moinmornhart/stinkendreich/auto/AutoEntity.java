@@ -453,6 +453,12 @@ public class AutoEntity extends Mob {
 
         move(MoverType.SELF, new Vec3(schub.x, y, schub.z));
 
+        // DEBUG Straße
+        if (horizontalCollision && betrag > 0.15) {
+            BlockPos vorn = BlockPos.containing(position().add(richtung.scale(getBbWidth() / 2 + 0.6)));
+            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("AUTO-STOSS {} client={} tempo={} y={} boden={} vorn0={} vorn1={} vorn-1={}", blockPosition(), level().isClientSide(),
+                    String.format("%.2f", tempo), String.format("%.2f", getY()), onGround(), level().getBlockState(vorn), level().getBlockState(vorn.above()), level().getBlockState(vorn.below()));
+        }
         // Aufprall
         if (horizontalCollision) {
             if (betrag > 0.5 && crashSperre <= 0) {
