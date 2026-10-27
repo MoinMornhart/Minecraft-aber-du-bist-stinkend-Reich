@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 12:10 Uhr (Release 0.4.1 veröffentlicht: 17 Mod-Dateien + Paper-Plugin)_
+_Zuletzt aktualisiert: 2026-10-27, 22:15 Uhr (Nachtschicht 0.4.2: Villen jederzeit auf Paper, nie über Spielerbauten, Bodyguards zielen; Release erst nach Philips OK)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -556,6 +556,42 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   entfernt. Neu: `vanilla_klickfeld.txt` (F3-Blick und Klick auf Aufzugstafel und Flügel).
 - Server ohne Mod 1.21.6, 1.21.7, 1.21.8 im Spiel geprüft (Figuren, Handy, Butler, Zentrale, Tastenfeld, Musik,
   Klaviatur, Kameras, Aufzug); Kette: `scratchpad/alt_tests.sh "<versionen>" <szenario>…`.
+
+## Nachtschicht 27./28.10. (0.4.2, noch kein Release)
+
+- Philip (27.10. abends): Paper-Server mit schon bestehender Welt → keine Villa, kein James. Grund: Das Plugin baute die erste
+  Villa nur, wenn die Welt jünger als eine Minute war. Wunsch: „muss wirklich jederzeit gehen“, auch wenn später noch ein
+  Freund joint. Dazu: Bodyguards zielen nicht, einer macht alles, der andere nichts.
+- **Paper `villa/Bauleitung`** (ersetzt Baustelle/Warteschlange in StinkendReichPaper): erste Villa auch in bestehenden
+  Welten (neu: ohne Prüfung am Spawn; bestehend: Platz ohne Spielerbauten, Ringe um den Spawn, Schritt
+  max(breite) + 2·Anblendung + 48), eigene Villa für jeden, der dazukommt – auch während gerade gebaut wird (Warteliste
+  für die erste Villa; der Erste wird Herr: Karte, Teleport). Nummern und Plätze zählen wartende Aufträge mit (vorher bekamen
+  zwei gleichzeitige Spieler denselben Platz). Merkdatei `plugins/StinkendReich/baustellen.json` (Aufträge, verworfene
+  Plätze); ab dem Ebnen steht `y0` fest → nach einem Neustart geht der Bau an derselben Stelle weiter (ohne Messen/Prüfen).
+  Fehler im Bau: bis zu 3 Versuche. `auchInAltenWelten` gibt es nicht mehr. `/villa bauen` (Auslöser wird Herr),
+  `/villa auftraege`, `/villa zaehlen <nr>` (Figuren je Art auf dem Grundstück, Testhilfe).
+- **Paper `Baustelle`**: Schritt PRUEFEN nach MESSEN (über dem Boden: Spalten mit `Natur.gebaut`, ab 4 → bebaut; unter dem
+  Grundstück `Natur.spielerSpur` (Fackel, Werkbank, Ofen, Bett, Schild …), ab 3 → bebaut). LADEN wartet auf
+  `Chunk.isEntitiesLoaded` (sonst doppelte Anzeigen beim Fortsetzen). `STINKENDREICH_BAUZEIT_MS` (Test) kürzt die Rechenzeit
+  je Tick. Landminen nur auf natürlichem Boden.
+- **Mod `VillaBaustelle`**: gleiche Prüfung (SpielerBloecke + `Schutz.istGebaut`/`istSpielerSpur`), verworfene Plätze bis zum
+  Neustart; angefangener Bau in `stinkendreich-baustelle.json` (Weltordner) je Besitzer, geht beim nächsten Betreten weiter.
+- **Bodyguards Mod**: synchronisiertes Feld ZIELT; `BodyguardModell` hebt den rechten Arm (xRot −90° + Kopfneigung, yRot =
+  Kopfgier), `BodyguardRenderState` (ab 1.21.2), `PistolenLayer` lässt beim Zielen die 90°-Drehung weg. Kopf/Körper zum Ziel,
+  Ziele werden zwischen den Bodyguards eines Chefs aufgeteilt, `Bodyguards.freieStelle` (Golem 1,4 × 2,7), Feststecken
+  (in der Wand oder 2 × 40 Ticks kein Fortschritt) → zurück zum Chef. Ab 1.21.9: Pistole in der Hand, beim Zielen
+  `ClientboundSetEquipmentPacket` mit geladener Armbrust + `item_model` goldene_pistole → Spieler ohne Mod sehen die
+  Zielhaltung der Schaufensterpuppe (CROSSBOW_HOLD).
+- **Bodyguards Paper**: Puppe schaut zum Ziel (Neigung), geladene Armbrust mit Pistolenbild = Zielhaltung (kein
+  `swingMainHand` mehr, das bricht die Haltung ab), Ziele verteilt, freie Stellen, Feststecken wie in der Mod.
+- Tests (Paper): `KEINE_VILLA=1 paper.sh paper_altwelt_vorbereiten.txt` (Haus am Spawn), dann `WELT_BEHALTEN=1` mit
+  `paper_altwelt.txt` (Spawn verworfen, Villa 184 Blöcke daneben, Max/Anna gleichzeitig an zwei Plätzen),
+  `STINKENDREICH_BAUZEIT_MS=1 WELT_BEHALTEN=1 … paper_neustart_a.txt` + `WELT_BEHALTEN=1 … paper_neustart_b.txt`
+  (fortgesetzt, Zählung gleich: 2699 Anzeigen, 658 Klickfelder, 7 Puppen). `paper.sh` kennt jetzt `merke anfang`.
+- Tests (Mod): `bodyguard_ziel.txt`, `nachbar_bebaut.txt` (Haus auf allen acht Plätzen des inneren Rings).
+- `mod.version` = 0.4.2, `.github/neu.md` hat den Abschnitt 0.4.2; `.github/release-version` bleibt 0.4.1 bis Philips OK.
+- Philip (27.10. abends, mehrfach): Auf der Fortschrittsseite auch „Läuft gerade“ und „Als Nächstes“ immer aktuell halten –
+  `seite_neu.py` zeigt dort jetzt Mod- und Server-Punkte zusammen.
 
 ## Nächster Schritt
 

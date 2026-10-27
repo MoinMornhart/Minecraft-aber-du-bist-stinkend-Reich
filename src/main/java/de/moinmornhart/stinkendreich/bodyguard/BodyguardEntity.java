@@ -169,6 +169,10 @@ public class BodyguardEntity extends IronGolem {
         //?}
         if (zielt() != zielen) {
             entityData.set(ZIELT, zielen);
+            if (de.moinmornhart.stinkendreich.dev.Autotest.aktiv()) {
+                de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Autotest: Bodyguard {} {}", getId(),
+                        zielen ? "zielt auf " + ziel.getType().getDescriptionId() + " " + ziel.getId() : "zielt nicht mehr");
+            }
             //? if >=1.21.9
             handZeigen(zielen);
         }

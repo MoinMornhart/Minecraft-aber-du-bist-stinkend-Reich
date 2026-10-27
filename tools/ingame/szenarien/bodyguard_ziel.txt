@@ -1,5 +1,6 @@
 # Bodyguards zielen (Mod): Kopf und Körper zum Gegner, Arm mit der Pistole gehoben; bei zwei Gegnern nimmt jeder einen
-# anderen. Diener (Vindicator) statt Zombies: die brennen in der Sonne. Die Kamera steht schräg hinter den Bodyguards.
+# anderen. Diener (Vindicator) statt Zombies: die brennen in der Sonne. Die Kamera steht schräg hinter den Bodyguards, keine 16 Blöcke
+# von den Gegnern (sonst gelten sie nicht als Gefahr für den Chef). Die Diener sind für die Fotos kurz unverwundbar.
 # Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/bodyguard_ziel.txt
 server /gamemode creative
 server /time set 6000
@@ -17,19 +18,19 @@ linksklick 640 440
 bis 15 Bodyguards sind da
 warte 3
 taste F1
-server /execute as @p at @s run summon minecraft:vindicator ~-3 ~ ~-12 {NoAI:1b,PersistenceRequired:1b}
-server /execute as @p at @s run summon minecraft:vindicator ~3 ~ ~-12 {NoAI:1b,PersistenceRequired:1b}
+server /execute as @p at @s run summon minecraft:vindicator ~-3 ~ ~-12 {NoAI:1b,PersistenceRequired:1b,active_effects:[{id:"minecraft:resistance",amplifier:4b,duration:2400,show_particles:0b}]}
+server /execute as @p at @s run summon minecraft:vindicator ~3 ~ ~-12 {NoAI:1b,PersistenceRequired:1b,active_effects:[{id:"minecraft:resistance",amplifier:4b,duration:2400,show_particles:0b}]}
 warte 1
 server /gamemode spectator
-server /villa ort 62 28 99 148 18
+server /villa ort 67 28 86 90 8
+warte 1.5
 bild bg_ziel_1
-warte 0.7
+warte 1.5
 bild bg_ziel_2
-warte 0.7
+warte 2
 bild bg_ziel_3
-warte 0.7
-bild bg_ziel_4
-warte 10
+server /effect clear @e[type=minecraft:vindicator]
+warte 12
 bild bg_ziel_danach
 server /execute as @p at @s unless entity @e[type=minecraft:vindicator,distance=..40] run say GEGNER_WEG_OK
 server /difficulty peaceful

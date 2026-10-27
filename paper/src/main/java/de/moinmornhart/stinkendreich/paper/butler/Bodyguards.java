@@ -212,6 +212,10 @@ public final class Bodyguards implements Listener {
         ItemStack hand = m.getEquipment().getItem(EquipmentSlot.HAND);
         boolean imAnschlag = hand.getType() == Material.CROSSBOW;
         if (imAnschlag != (ziel != null)) {
+            if (de.moinmornhart.stinkendreich.paper.Autotest.aktiv()) {
+                plugin.getLogger().info("Autotest: Bodyguard " + g.getEntityId() + (ziel != null
+                        ? " zielt auf " + ziel.getType().getKey().getKey() + " " + ziel.getEntityId() : " zielt nicht mehr"));
+            }
             m.getEquipment().setItem(EquipmentSlot.HAND, (ziel != null ? pistoleImAnschlag : pistoleLocker).clone());
         }
     }

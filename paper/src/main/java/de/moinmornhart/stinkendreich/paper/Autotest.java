@@ -13,10 +13,15 @@ import java.util.List;
  * führt das Plugin neue Zeilen aus {@code stinkendreich-befehle.txt} im Serverordner aus – mit „/“ als Befehl des
  * ersten Spielers, mit „@/“ als Befehl der Konsole (Ausgabe im Protokoll), sonst als Chatnachricht des Spielers. Im normalen Betrieb tut diese Klasse nichts.
  */
-final class Autotest {
+public final class Autotest {
     private static int gelesen;
 
     private Autotest() {
+    }
+
+    /** Läuft das Plugin im Spieltest (dann schreiben einige Teile zusätzliche Zeilen ins Protokoll)? */
+    public static boolean aktiv() {
+        return System.getenv().getOrDefault("STINKENDREICH_AUTOTEST", "").contains("befehle");
     }
 
     static void registrieren(StinkendReichPaper plugin) {
