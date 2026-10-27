@@ -1,0 +1,35 @@
+# Paper-Plugin: Villa entsteht in einer neuen Welt am Spawn, Ressourcenpaket kommt an, Mod-Blöcke sind zu sehen
+# Aufruf: tools/ingame/paper.sh tools/ingame/szenarien/paper_start.txt
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+merke
+bis 400 Baustelle: Villa 0 fertig
+warte 15
+taste F1
+server /villa ort 55.5 26 92 180 -6
+warte 10
+bild p_haustuer
+server /villa ort 160 80 175 139 22
+warte 12
+bild p_villa_von_oben
+server /villa ort 55 26.5 76 180 2
+warte 6
+bild p_halle
+server /villa ort 51.23 29.00 66.75 218.0 14.0
+warte 6
+bild p_ballsaal
+server /villa ort 45.23 27.40 56.42 26.0 22.0
+warte 6
+bild p_wohnzimmer
+server /villa ort 63.5 39.6 41.6 0 10
+warte 6
+bild p_penthouse
+server /villa ort 66 47.5 60 135 18
+warte 6
+bild p_dach
+server /villa ort 91.5 17 45.2 180 30
+warte 6
+bild p_garage
+server /villa info
+warte 2

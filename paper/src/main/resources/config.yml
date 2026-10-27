@@ -1,0 +1,23 @@
+# Einstellungen des Paper-Plugins „Minecraft, aber du bist stinkend reich“
+
+villa:
+  # Villa in jeder neuen Welt am Spawn bauen
+  amSpawn: true
+  # Auch in schon bestehenden Welten (sonst nur, wenn die Welt gerade erst entstanden ist)
+  auchInAltenWelten: false
+  # Breite des weich angeblendeten Geländestreifens rund ums Grundstück
+  anblendung: 12
+  # Jeder neue Spieler bekommt seine eigene Villa im Raster um die erste herum
+  mehrereVillen: true
+  # Abstand der Villen im Raster (Blöcke, mindestens 240)
+  abstand: 320
+
+ressourcenpaket:
+  # Port des eingebauten Webservers, der das Paket an die Spieler ausliefert
+  port: 25580
+  # Adresse, unter der Spieler den Server erreichen (leer = server-ip aus server.properties bzw. localhost)
+  host: ""
+  # Eigene Adresse (z. B. selbst gehostet); dann läuft kein eingebauter Webserver
+  adresse: ""
+  # Spieler müssen das Paket annehmen
+  pflicht: true

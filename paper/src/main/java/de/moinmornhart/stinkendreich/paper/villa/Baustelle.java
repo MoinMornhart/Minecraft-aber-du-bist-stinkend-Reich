@@ -1,0 +1,360 @@
+package de.moinmornhart.stinkendreich.paper.villa;
+
+import de.moinmornhart.stinkendreich.paper.Nbt;
+import de.moinmornhart.stinkendreich.paper.StinkendReichPaper;
+import de.moinmornhart.stinkendreich.paper.block.Zustand;
+import org.bukkit.Chunk;
+import org.bukkit.HeightMap;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Leaves;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Mob;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+/**
+ * Baut eine Villa über viele Ticks verteilt, damit der Server dabei nicht stehen bleibt (wie {@code VillaBaustelle}
+ * in der Mod): Chunks im Hintergrund laden, Bodenhöhe messen, Gelände ebnen und anblenden, Laub wegräumen,
+ * Bauplan setzen (je Tick höchstens {@link #BUDGET_NS}), Figuren aufstellen, ausstatten.
+ */
+public final class Baustelle {
+    private enum Schritt { LADEN, MESSEN, GELAENDE, BLAETTER, BLOECKE, FIGUREN, AUSSTATTEN, FERTIG }
+
+    /** Rechenzeit je Tick. */
+    private static final long BUDGET_NS = 20_000_000L;
+
+    private final StinkendReichPaper plugin;
+    private final Bauplan plan;
+    private final World welt;
+    private final int x0, z0, nr, rand;
+    private final UUID besitzer;
+    private final String besitzerName;
+    private final Consumer<Villen.Villa> fertig;
+    private final List<Chunk> geladen = new ArrayList<>();
+    private final long start = System.currentTimeMillis();
+    private Schritt schritt = Schritt.LADEN;
+    private int angefordert, zeiger, y0;
+    private int[] hoehen;
+    private long laengsterTick;
+    private BukkitTask aufgabe;
+
+    public Baustelle(StinkendReichPaper plugin, World welt, int x0, int z0, int nr, UUID besitzer, String besitzerName,
+                     Consumer<Villen.Villa> fertig) {
+        this.plugin = plugin;
+        this.plan = plugin.bauplan();
+        this.welt = welt;
+        this.x0 = x0;
+        this.z0 = z0;
+        this.nr = nr;
+        this.besitzer = besitzer;
+        this.besitzerName = besitzerName;
+        this.fertig = fertig;
+        this.rand = Math.max(4, plugin.getConfig().getInt("villa.anblendung", 12));
+    }
+
+    public void starten() {
+        plugin.getLogger().info("Baustelle: Villa " + nr + (besitzerName.isEmpty() ? "" : " für " + besitzerName)
+                + " bei " + x0 + " " + z0);
+        aufgabe = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 1L, 1L);
+    }
+
+    /** Fortschritt 0–100 (für die Anzeige über der Leiste). */
+    public int prozent() {
+        return switch (schritt) {
+            case LADEN -> angefordert == 0 ? 0 : 10 * geladen.size() / angefordert;
+            case MESSEN -> 12;
+            case GELAENDE -> 15 + 15 * zeiger / Math.max(1, plan.breiteX + 2 * rand);
+            case BLAETTER -> 30;
+            case BLOECKE -> 32 + 60 * zeiger / Math.max(1, plan.bloecke.size());
+            case FIGUREN -> 94;
+            case AUSSTATTEN -> 97;
+            case FERTIG -> 100;
+        };
+    }
+
+    private void tick() {
+        long t0 = System.nanoTime(), ende = t0 + BUDGET_NS;
+        try {
+            switch (schritt) {
+                case LADEN -> laden();
+                case MESSEN -> messen(ende);
+                case GELAENDE -> gelaende(ende);
+                case BLAETTER -> blaetter(ende);
+                case BLOECKE -> bloecke(ende);
+                case FIGUREN -> figuren();
+                case AUSSTATTEN -> ausstatten();
+                case FERTIG -> { }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().severe("Baustelle: Fehler in " + schritt + ": " + e);
+            e.printStackTrace();
+            schritt = Schritt.FERTIG;
+            freigeben();
+        }
+        laengsterTick = Math.max(laengsterTick, System.nanoTime() - t0);
+    }
+
+    private void weiter(Schritt naechster) {
+        plugin.getLogger().info("Baustelle: " + schritt + " → " + naechster + " nach " + (System.currentTimeMillis() - start) / 1000 + " s");
+        schritt = naechster;
+        zeiger = 0;
+    }
+
+    // ------------------------------------------------------------------
+    // Schritte
+    // ------------------------------------------------------------------
+
+    private void laden() {
+        if (angefordert == 0) {
+            int r = rand + 8;
+            for (int cx = (x0 - r) >> 4; cx <= (x0 + plan.breiteX + r) >> 4; cx++) {
+                for (int cz = (z0 - r) >> 4; cz <= (z0 + plan.breiteZ + 40 + r) >> 4; cz++) {
+                    angefordert++;
+                    welt.getChunkAtAsync(cx, cz, true, chunk -> {
+                        chunk.addPluginChunkTicket(plugin);
+                        geladen.add(chunk);
+                    });
+                }
+            }
+            return;
+        }
+        if (geladen.size() >= angefordert) {
+            weiter(Schritt.MESSEN);
+        }
+    }
+
+    private void messen(long ende) {
+        if (hoehen == null) {
+            hoehen = new int[plan.breiteX * plan.breiteZ];
+        }
+        while (zeiger < plan.breiteX && System.nanoTime() < ende) {
+            for (int z = 0; z < plan.breiteZ; z++) {
+                hoehen[zeiger * plan.breiteZ + z] = bodenHoehe(welt, x0 + zeiger, z0 + z);
+            }
+            zeiger++;
+        }
+        if (zeiger >= plan.breiteX) {
+            int[] sortiert = hoehen.clone();
+            Arrays.sort(sortiert);
+            int y = Math.max(sortiert[sortiert.length / 2], welt.getSeaLevel() + 1);
+            y0 = Math.clamp(y, welt.getMinHeight() + plan.bodenY + 2, welt.getMaxHeight() - (plan.hoehe - plan.bodenY) - 2);
+            plugin.getLogger().info("Baustelle: Bodenhöhe " + y0);
+            weiter(Schritt.GELAENDE);
+        }
+    }
+
+    private void gelaende(long ende) {
+        int reihen = plan.breiteX + 2 * rand;
+        while (zeiger < reihen && System.nanoTime() < ende) {
+            gelaendeReihe(x0 - rand + zeiger);
+            zeiger++;
+        }
+        if (zeiger >= reihen) {
+            weiter(Schritt.BLAETTER);
+        }
+    }
+
+    private void blaetter(long ende) {
+        int r = rand + 8, reihen = plan.breiteX + 2 * r;
+        while (zeiger < reihen && System.nanoTime() < ende) {
+            blaetterReihe(x0 - r + zeiger, r);
+            zeiger++;
+        }
+        if (zeiger >= reihen) {
+            // Tiere, die gleich in Wänden stecken würden
+            int uy = ursprungY();
+            for (Entity e : welt.getNearbyEntities(new org.bukkit.util.BoundingBox(x0, uy, z0, x0 + plan.breiteX,
+                    uy + plan.hoehe, z0 + plan.breiteZ), e -> e instanceof Mob)) {
+                e.remove();
+            }
+            weiter(Schritt.BLOECKE);
+        }
+    }
+
+    /** Ursprung des Bauplans: seine Grasschicht liegt auf y0 − 1. */
+    private int ursprungY() {
+        return y0 - 1 - plan.bodenY;
+    }
+
+    private void bloecke(long ende) {
+        int uy = ursprungY();
+        while (zeiger < plan.bloecke.size() && System.nanoTime() < ende) {
+            Bauplan.Eintrag e = plan.bloecke.get(zeiger++);
+            Block b = welt.getBlockAt(x0 + e.x(), uy + e.y(), z0 + e.z());
+            Object p = plan.palette[e.palette()];
+            if (p instanceof BlockData d) {
+                b.setBlockData(d, false);
+                if (e.daten() != null) {
+                    inhalt(b, e.daten());
+                }
+            } else if (p instanceof Zustand z) {
+                plugin.bloecke().setzen(b, z);
+                if (e.daten() != null) {
+                    plugin.bloecke().datenSetzen(b, e.daten());
+                }
+            }
+        }
+        if (zeiger >= plan.bloecke.size()) {
+            weiter(Schritt.FIGUREN);
+        }
+    }
+
+    /** Truhen und Fässer füllen (Gegenstände wie im Bauplan, über das Datenformat von Minecraft). */
+    private void inhalt(Block b, Map<String, Object> daten) {
+        if (!(b.getState(false) instanceof Container behaelter)) {
+            return;
+        }
+        for (Object o : Nbt.liste(daten, "Items")) {
+            @SuppressWarnings("unchecked") Map<String, Object> ding = new HashMap<>((Map<String, Object>) o);
+            int platz = Nbt.zahl(ding, "Slot", -1);
+            ding.remove("Slot");
+            ding.put("DataVersion", plan.datenVersion);
+            try {
+                ItemStack stapel = ItemStack.deserializeBytes(Nbt.schreibenGzip(ding));
+                if (platz >= 0 && platz < behaelter.getInventory().getSize()) {
+                    behaelter.getInventory().setItem(platz, stapel);
+                }
+            } catch (Exception ex) {
+                plugin.getLogger().fine("Truheninhalt übersprungen: " + ex.getMessage());
+            }
+        }
+    }
+
+    private void figuren() {
+        int uy = ursprungY();
+        int n = 0;
+        for (Bauplan.Figur f : plan.figuren) {
+            Location ort = new Location(welt, x0 + f.x(), uy + f.y(), z0 + f.z());
+            if (plugin.figurenUebersetzen().aufstellen(f, ort)) {
+                n++;
+            }
+        }
+        plugin.getLogger().info("Baustelle: " + n + " von " + plan.figuren.size() + " Figuren aufgestellt");
+        weiter(Schritt.AUSSTATTEN);
+    }
+
+    private void ausstatten() {
+        Villen.Villa villa = new Villen.Villa(welt.getUID(), x0, ursprungY(), z0, nr, besitzer, besitzerName);
+        plugin.ausstattung().ausstatten(villa, y0, rand);
+        plugin.villen().hinzufuegen(villa);
+        weiter(Schritt.FERTIG);
+        freigeben();
+        plugin.getLogger().info("Baustelle: Villa " + nr + " fertig nach " + (System.currentTimeMillis() - start) / 1000
+                + " s (längster Tick " + laengsterTick / 1_000_000 + " ms)");
+        if (fertig != null) {
+            fertig.accept(villa);
+        }
+    }
+
+    private void freigeben() {
+        if (aufgabe != null) {
+            aufgabe.cancel();
+        }
+        for (Chunk c : geladen) {
+            c.removePluginChunkTicket(plugin);
+        }
+        geladen.clear();
+    }
+
+    // ------------------------------------------------------------------
+    // Gelände (wie VillaPlatzierung in der Mod)
+    // ------------------------------------------------------------------
+
+    /** Höhe des natürlichen Bodens (erste Luft über Erde/Stein), ohne Bäume und Pflanzen. */
+    public static int bodenHoehe(World welt, int x, int z) {
+        int y = welt.getHighestBlockYAt(x, z, HeightMap.WORLD_SURFACE) + 1;
+        int min = welt.getMinHeight();
+        while (y > min) {
+            Block b = welt.getBlockAt(x, y - 1, z);
+            if (!istBewuchs(b) && !b.isLiquid()) {
+                break;
+            }
+            y--;
+        }
+        return y;
+    }
+
+    private static boolean istBewuchs(Block b) {
+        Material m = b.getType();
+        return m.isAir() || Tag.LEAVES.isTagged(m) || Tag.LOGS.isTagged(m) || b.isReplaceable() || Tag.FLOWERS.isTagged(m)
+                || m == Material.BAMBOO || m == Material.CACTUS || m == Material.SUGAR_CANE || m == Material.BROWN_MUSHROOM_BLOCK
+                || m == Material.RED_MUSHROOM_BLOCK || m == Material.MUSHROOM_STEM;
+    }
+
+    /** Ebnet eine Reihe x des Grundstücks samt angeblendetem Rand. */
+    private void gelaendeReihe(int x) {
+        int bx = plan.breiteX, bz = plan.breiteZ, meer = welt.getSeaLevel();
+        for (int z = z0 - rand; z < z0 + bz + rand; z++) {
+            int dx = Math.max(Math.max(x0 - x, x - (x0 + bx - 1)), 0);
+            int dz = Math.max(Math.max(z0 - z, z - (z0 + bz - 1)), 0);
+            double abstand = Math.sqrt(dx * dx + dz * dz);
+            if (abstand >= rand) {
+                continue;
+            }
+            int boden = bodenHoehe(welt, x, z);
+            double t = abstand / rand;
+            double weich = t * t * (3 - 2 * t);
+            int ziel = (int) Math.round(y0 + (boden - y0) * weich);
+            int oben = Math.max(welt.getHighestBlockYAt(x, z, HeightMap.WORLD_SURFACE) + 1, ziel) + 1;
+            for (int y = Math.min(boden, ziel) - 4; y < ziel; y++) {
+                Block b = welt.getBlockAt(x, y, z);
+                Material neu = y == ziel - 1 ? Material.GRASS_BLOCK : (y >= ziel - 4 ? Material.DIRT : Material.STONE);
+                if (y < boden && !b.getType().isAir() && !b.isLiquid() && y < ziel - 1) {
+                    continue;
+                }
+                if (b.getType() != neu) {
+                    b.setType(neu, false);
+                }
+            }
+            for (int y = ziel; y <= oben; y++) {
+                Block b = welt.getBlockAt(x, y, z);
+                if (b.getType().isAir()) {
+                    continue;
+                }
+                boolean nass = abstand > 0 && y < meer && b.isLiquid();
+                b.setType(nass ? Material.WATER : Material.AIR, false);
+            }
+        }
+    }
+
+    /** Lose Blätter gefällter Bäume am Rand entfernen (sonst zerfallen sie und lassen Setzlinge fallen). */
+    private void blaetterReihe(int x, int r) {
+        for (int z = z0 - r; z < z0 + plan.breiteZ + r; z++) {
+            int oben = welt.getHighestBlockYAt(x, z, HeightMap.WORLD_SURFACE) + 1;
+            for (int y = oben - 1; y > oben - 24; y--) {
+                Block b = welt.getBlockAt(x, y, z);
+                if (Tag.LEAVES.isTagged(b.getType()) && b.getBlockData() instanceof Leaves l && !l.isPersistent()
+                        && !stammInDerNaehe(b)) {
+                    b.setType(Material.AIR, false);
+                }
+            }
+        }
+    }
+
+    private static boolean stammInDerNaehe(Block mitte) {
+        for (int dx = -4; dx <= 4; dx++) {
+            for (int dy = -4; dy <= 4; dy++) {
+                for (int dz = -4; dz <= 4; dz++) {
+                    if (Tag.LOGS.isTagged(mitte.getRelative(dx, dy, dz).getType())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}

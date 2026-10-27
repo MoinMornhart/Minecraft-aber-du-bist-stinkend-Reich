@@ -15,6 +15,8 @@ import java.util.Map;
 public final class ModDecken {
     /** Kurzname → Block (registriert als „decke_&lt;Kurzname&gt;“). */
     public static final Map<String, Block> BLOECKE = new LinkedHashMap<>();
+    /** Kurzname → ID des Vorbilds aus dem Spiel (das Paper-Plugin setzt dort das Vorbild selbst). */
+    public static final Map<String, String> VORBILDER = new LinkedHashMap<>();
 
     static {
         // Vorbilder über ihre ID (Wolle und Beton heißen im Code je nach Version anders)
@@ -34,6 +36,7 @@ public final class ModDecken {
     /** Übernimmt Härte, Klang und Werkzeug vom Vorbild. */
     private static void decke(String name, String vorbild) {
         Block block = de.moinmornhart.stinkendreich.Kompat.blockNachId(net.minecraft.resources.Identifier.withDefaultNamespace(vorbild));
+        VORBILDER.put(name, vorbild);
         BLOECKE.put(name, ModRegister.block("decke_" + name, Block::new, BlockBehaviour.Properties.ofFullCopy(block)));
     }
 

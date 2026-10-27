@@ -370,12 +370,14 @@ server /villa inkognito an
 merke
 server fahrt 11 | 118.00 58.00 128.00 139.0 19.0 | 90.00 52.00 140.00 160.0 18.0 | 56.00 46.00 150.00 180.0 16.0
 bis 159 Fahrt fertig
+bis 360 Inkognito: Villa 0 ist unten
 server /time set 6000
 kapitel … und taucht wieder auf
 server /villa inkognito aus
 merke
 server fahrt 11 | 56.00 46.00 150.00 180.0 16.0 | 90.00 52.00 140.00 160.0 18.0 | 118.00 58.00 128.00 139.0 19.0
 bis 159 Fahrt fertig
+bis 360 Inkognito: Villa 0 ist oben
 server /time set 6000
 kapitel Neue Freunde bekommen ihre eigene Villa
 server /villa hin 1

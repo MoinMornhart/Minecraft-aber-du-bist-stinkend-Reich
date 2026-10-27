@@ -56,6 +56,8 @@ public final class Inkognito {
 
     /** Laufende Fahrten je Villa (Nummer → Fahrt). */
     private static final java.util.Map<Integer, Fahrt> FAHRTEN = new java.util.concurrent.ConcurrentHashMap<>();
+    /** Wunsch, der während einer Fahrt kam (an/aus): wird ausgeführt, sobald die Fahrt fertig ist. */
+    private static final java.util.Map<Integer, Boolean> WUNSCH = new java.util.concurrent.ConcurrentHashMap<>();
 
     /** Eine laufende Fahrt einer Villa: Phase, Fortschritt und die Figuren, die gerade mitfahren. */
     private static final class Fahrt {
@@ -163,6 +165,7 @@ public final class Inkognito {
                         schritt++;
                     }
                     if (schritt >= BAEUME) {
+                        StinkendReich.LOGGER.info("Inkognito: Villa {} ist unten", nr);
                         phase = null;
                         laden(welt, villa, false);
                     }
@@ -222,6 +225,7 @@ public final class Inkognito {
                             }
                             draussen.clear();
                             laden(welt, villa, false);
+                            StinkendReich.LOGGER.info("Inkognito: Villa {} ist oben", nr);
                             phase = null;
                             welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_ACTIVATE,
                                     SoundSource.BLOCKS, 4.0F, 1.0F);
@@ -286,8 +290,11 @@ public final class Inkognito {
             return "stinkendreich.villa.keine";
         }
         if (FAHRTEN.containsKey(nr)) {
-            return "stinkendreich.inkognito.laeuft";
+            // Während der Fahrt gedrückt: merken und danach ausführen (vorher ging so ein Wunsch verloren)
+            WUNSCH.put(nr, an);
+            return "stinkendreich.inkognito.gemerkt";
         }
+        WUNSCH.remove(nr);
         VillaZustand z = VillaZustand.get(server, nr);
         if (an == z.smart("inkognito", false)) {
             return null;                                         // ist schon so
@@ -360,6 +367,10 @@ public final class Inkognito {
             f.weiter(server, false);
             if (f.phase == null) {
                 FAHRTEN.remove(f.nr);
+                Boolean wunsch = WUNSCH.remove(f.nr);
+                if (wunsch != null) {
+                    schalten(server, f.nr, wunsch);
+                }
             }
         }
     }

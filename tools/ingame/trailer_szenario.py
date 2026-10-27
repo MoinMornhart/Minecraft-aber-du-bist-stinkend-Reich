@@ -44,6 +44,12 @@ def fahrt(sekunden: float, *punkte) -> None:
       f"bis {int(sekunden * 3 + 20)} Fahrt fertig")
 
 
+def fahrt_und_warten(sekunden: float, muster: str, *punkte) -> None:
+    """Kamerafahrt, danach warten, bis <muster> seit dem letzten „merke“ im Protokoll stand (z. B. „Villa ist unten“).
+    Die Fahrt selbst wird nur abgewartet (warte), damit „bis“ die Marke für das Muster behält."""
+    z(f"server fahrt {sekunden} | " + " | ".join(punkt(*p) for p in punkte), f"warte {sekunden + 0.5}", f"bis 120 {muster}")
+
+
 def zufahren(sekunden: float, x, y, z_, gier, neigung, zurueck=3.5, schwenk=-15.0, hoch=0.0) -> None:
     """Gleitet von etwas weiter hinten (und leicht verdreht) auf den Standpunkt zu."""
     dx, dz = -math.sin(math.radians(gier)), math.cos(math.radians(gier))
@@ -204,11 +210,12 @@ z("server /gamemode survival", "server /difficulty normal",
   "server /kill @e[type=vindicator]", "server /gamemode spectator", "server /difficulty peaceful")
 
 titel("Inkognito: Die Villa fährt in die Erde")
-z("server /villa ort 118 58 128 139 19", "warte 1", "server /villa inkognito an")
-fahrt(11, (118, 58, 128, 139, 19), (90, 52, 140, 160, 18), (56, 46, 150, 180, 16))
+# Nach der Kamerafahrt noch warten, bis die Villa ganz unten bzw. wieder oben ist (in Zeitlupe dauert das länger)
+z("server /villa ort 118 58 128 139 19", "warte 1", "merke", "server /villa inkognito an")
+fahrt_und_warten(11, "Inkognito: Villa 0 ist unten", (118, 58, 128, 139, 19), (90, 52, 140, 160, 18), (56, 46, 150, 180, 16))
 titel("… und taucht wieder auf")
-z("server /villa inkognito aus")
-fahrt(11, (56, 46, 150, 180, 16), (90, 52, 140, 160, 18), (118, 58, 128, 139, 19))
+z("merke", "server /villa inkognito aus")
+fahrt_und_warten(11, "Inkognito: Villa 0 ist oben", (56, 46, 150, 180, 16), (90, 52, 140, 160, 18), (118, 58, 128, 139, 19))
 
 titel("Neue Freunde bekommen ihre eigene Villa")
 z("server /villa hin 1", "warte 1", "server /villa ort 55 75 200 180 35", "warte 2")

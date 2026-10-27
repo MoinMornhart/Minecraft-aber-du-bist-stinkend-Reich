@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-26, 23:30 Uhr (0.3.9 veröffentlicht, 0.4.0 Nachbarschaft in Arbeit)_
+_Zuletzt aktualisiert: 2026-10-27, 00:15 Uhr (0.4.0 Nachbarschaft fertig, Trailer wird aufgenommen, dann Release)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -236,6 +236,9 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   (`Sprache.ziel`, `VillaPlatzierung.mitHerrnImText`), „nach Hause“ = eigene Villa.
 - **Nummernschild:** `client/auto/KennzeichenLayer` (goldene Schrift auf schwarz), Lage aus `schilder` in den
   Fahrzeugdaten (fahrzeuge.py), Name in `AutoEntity.KENNZEICHEN` (wird gesetzt, wenn der Wagen in einer Villa steht).
+- **Inkognito-Wunsch:** `Inkognito.schalten` während einer laufenden Fahrt merkt sich den Wunsch (`WUNSCH`) und führt
+  ihn nach der Fahrt aus (vorher verworfen → Villa blieb im Trailer unten). Log „Inkognito: Villa N ist unten/oben“,
+  der Trailer wartet darauf (`bis 120 Inkognito: Villa 0 ist …`).
 - Test: `nachbarn041.txt` (26.3). Bekannt: Minecrafts Strukturen-Suche (Dorf, Endportal) ruckelt beim ersten Betreten
   einmal 2–7 s.
 
@@ -433,6 +436,5 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Trailer 0.3.9 fertig machen und schicken, Release 0.3.9 prüfen. Danach (Philip: „Rest des Tages“): mehrere Villen
-auf dem Server (mit Abstand, Straßen dazwischen, im Handy-Navi, Besitzername über dem Butler, auf Zugangskarte und
-Nummernschild), dann das Paper-Plugin.
+Trailer 0.4.0 schneiden (`ZEITLUPE=3 python3 tools/ingame/video.py …`), nach `docs/trailer.mp4`, Release 0.4.0
+(Version steht schon auf 0.4.0) pushen und prüfen. Danach das Paper-Plugin (Philip: „Rest des Tages“).

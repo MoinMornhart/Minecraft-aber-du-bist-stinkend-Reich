@@ -7,6 +7,7 @@
 - **James und das Handy kennen die anderen Villen:** „James, fahr mich zur Villa von Aircrafter“, im Handy-Navi stehen sie gleich mit drin (auch ohne Mod). „Nach Hause“ heißt für jeden seine eigene Villa.
 - **Nummernschilder mit Namen:** Auf jedem Auto steht vorn und hinten der Name des Besitzers in Gold.
 - Die Zufahrt jeder neuen Villa ist im Hang ein offener Einschnitt statt eines Tunnels. Pflanzenreste rund um eine frisch gebaute Villa werden weggeräumt.
+- **Inkognito:** Drückt man „wieder auftauchen“, während die Villa noch nach unten fährt, merkt sie sich das jetzt und kommt direkt danach wieder hoch (vorher ging der Befehl verloren und sie blieb unten).
 
 ### Neu in 0.3.9
 
