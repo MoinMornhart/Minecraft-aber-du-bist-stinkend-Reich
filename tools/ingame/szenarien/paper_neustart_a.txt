@@ -1,0 +1,10 @@
+# Bau mitten drin unterbrochen: Villa für Paul beauftragen und den Server stoppen, während die Blöcke gesetzt werden.
+# Aufruf (nach paper_altwelt.txt): STINKENDREICH_BAUZEIT_MS=1 WELT_BEHALTEN=1 tools/ingame/paper.sh …/paper_neustart_a.txt
+# (1 ms Rechenzeit je Tick statt 20: der Bau dauert lange genug, um ihn mittendrin zu stoppen)
+merke
+server @/villa nachbar Paul
+bis 600 → BLOECKE
+warte 6
+server @/villa auftraege
+server @/stop
+warte 20

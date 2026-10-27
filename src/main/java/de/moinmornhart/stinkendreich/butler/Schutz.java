@@ -5,9 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Regeln, was der Butler abbauen darf. Er baut nur natürliche Blöcke ab (Stein, Erde, Sand, Erze,
@@ -82,6 +86,47 @@ public final class Schutz {
                 || s.is(Blocks.SOUL_SAND) || s.is(Blocks.SOUL_SOIL) || s.is(Blocks.MAGMA_BLOCK)
                 // Gras, Blumen, Ranken und Schneedecken (selbst gepflanzte sind über SpielerBloecke geschützt)
                 || s.canBeReplaced();
+    }
+
+    /** Namensteile von Blöcken, die nur Spieler (oder Dörfer und andere Bauwerke) setzen. */
+    private static final String[] GEBAUT = {"planks", "_stairs", "_slab", "fence", "_wall", "glass", "wool", "carpet",
+            "_bed", "door", "sign", "banner", "torch", "lantern", "brick", "concrete", "glazed", "crafting_table",
+            "furnace", "smoker", "chest", "barrel", "rail", "polished_", "smooth_stone", "cut_", "chiseled_", "cobblestone",
+            "bookshelf", "anvil", "hopper", "ladder", "stripped_", "button", "pressure_plate", "lever", "redstone",
+            "piston", "observer", "dispenser", "dropper", "bell", "cauldron", "potted_", "candle", "campfire", "composter",
+            "lectern", "loom", "stonecutter", "grindstone", "smithing_table", "cartography_table", "fletching_table",
+            "beehive", "scaffolding", "hay_block", "target", "iron_block", "gold_block", "diamond_block", "emerald_block",
+            "netherite_block", "quartz", "purpur", "prismarine", "sea_lantern", "shulker_box", "enchanting_table",
+            "brewing_stand", "beacon", "jukebox", "note_block", "farmland", "dirt_path", "iron_bars", "chain", "copper_",
+            "_tiles", "grate", "bulb", "crafter", "decorated_pot", "spawner"};
+    /** Eindeutige Spuren von Spielern unter der Erde (in Minen und Höhlen von Minecraft gibt es sie nicht). */
+    private static final String[] SPUR = {"torch", "crafting_table", "furnace", "smoker", "_bed", "sign", "barrel",
+            "lantern", "shulker_box", "enchanting_table", "brewing_stand"};
+    /** Antworten je Blockart (die Platzprüfung einer neuen Villa fragt hunderttausende Blöcke ab; nur Server-Thread). */
+    private static final Map<Block, Boolean> GEBAUT_MERK = new HashMap<>(), SPUR_MERK = new HashMap<>();
+
+    /**
+     * Ein Block, den Spieler (oder ein Dorf) gesetzt haben – nie Gelände, Pflanzen, Wasser oder Luft. Für die Platzwahl
+     * neuer Villen, zusätzlich zu {@link SpielerBloecke} (das kennt nur, was seit der Mod gesetzt wurde).
+     */
+    public static boolean istGebaut(BlockState s) {
+        return !s.isAir() && s.getFluidState().isEmpty() && !istNatuerlich(s)
+                && GEBAUT_MERK.computeIfAbsent(s.getBlock(), b -> enthaelt(b, GEBAUT));
+    }
+
+    /** Ein Block unter der Erde, der sicher von einem Spieler stammt (Fackel, Werkbank, Ofen, Bett …). */
+    public static boolean istSpielerSpur(BlockState s) {
+        return !s.isAir() && SPUR_MERK.computeIfAbsent(s.getBlock(), b -> enthaelt(b, SPUR));
+    }
+
+    private static boolean enthaelt(Block b, String[] teile) {
+        String name = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(b).getPath();
+        for (String t : teile) {
+            if (name.contains(t)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Alle Erze der Oberwelt und des Nethers. */

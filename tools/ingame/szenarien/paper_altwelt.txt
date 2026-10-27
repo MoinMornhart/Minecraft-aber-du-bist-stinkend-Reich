@@ -1,0 +1,30 @@
+# Bestehende Welt (aus paper_altwelt_vorbereiten.txt, Spielerhaus am Spawn): Das Plugin baut die erste Villa trotzdem,
+# aber auf einem Platz ohne Spielerbauten; Philip wird ihr Herr. Dann kommen zwei Freunde gleichzeitig dazu – zwei
+# Villen an zwei verschiedenen Plätzen mit verschiedenen Nummern.
+# Aufruf: WELT_BEHALTEN=1 tools/ingame/paper.sh tools/ingame/szenarien/paper_altwelt.txt
+merke anfang
+bis 600 Baustelle: Villa 0 fertig
+warte 8
+server @/villa auftraege
+bild altwelt_ankunft
+server /villa ort 56 boden+45 175 180 35
+warte 8
+bild altwelt_villa_oben
+server @/execute positioned 6 0 -14 positioned over world_surface run tp Philip ~ ~6 ~ 0 25
+warte 8
+bild altwelt_haus_steht
+server @/villa nachbar Max
+server @/villa nachbar Anna
+server @/villa auftraege
+merke
+bis 900 Baustelle: Villa 2 fertig
+warte 5
+server @/villa auftraege
+server /villa hin 1
+warte 12
+server @/villa zaehlen 1
+bild altwelt_max
+server /villa hin 2
+warte 12
+server @/villa zaehlen 2
+bild altwelt_anna

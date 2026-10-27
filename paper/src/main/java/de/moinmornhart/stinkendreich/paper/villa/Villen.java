@@ -150,10 +150,6 @@ public final class Villen {
         }
     }
 
-    public int naechsteNummer() {
-        return villen.stream().mapToInt(Villa::nr).max().orElse(-1) + 1;
-    }
-
     public void hinzufuegen(Villa v) {
         villen.add(v);
         speichern();
@@ -171,19 +167,5 @@ public final class Villen {
                 }
             }
         }
-    }
-
-    /** Erster freier Rasterplatz (Nordwest-Ecke x, z) für eine neue Villa. */
-    public int[] freierPlatz(Villa spawnVilla, int abstand) {
-        for (int k = 1; k < 400; k++) {
-            int[] p = platz(k);
-            int x = spawnVilla.x() + p[0] * abstand, z = spawnVilla.z() + p[1] * abstand;
-            boolean belegt = villen.stream().anyMatch(v -> v.welt().equals(spawnVilla.welt())
-                    && Math.max(Math.abs(v.x() - x), Math.abs(v.z() - z)) < abstand / 2);
-            if (!belegt) {
-                return new int[]{x, z};
-            }
-        }
-        return new int[]{spawnVilla.x() + 400 * abstand, spawnVilla.z()};
     }
 }

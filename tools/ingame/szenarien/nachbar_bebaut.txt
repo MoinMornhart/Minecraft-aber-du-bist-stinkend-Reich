@@ -1,0 +1,34 @@
+# Nachbarvilla nie über Spielerbauten (Mod): Auf jedem Platz des inneren Rings steht ein Holzhaus; die Baustelle
+# muss diese Plätze verwerfen und die Villa woanders bauen. Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/nachbar_bebaut.txt
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /forceload add -326 -326
+server /forceload add -326 -6
+server /forceload add -326 314
+server /forceload add -6 -326
+server /forceload add -6 314
+server /forceload add 314 -326
+server /forceload add 314 -6
+server /forceload add 314 314
+warte 15
+server /execute positioned -326 0 -326 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+server /execute positioned -326 0 -6 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+server /execute positioned -326 0 314 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+server /execute positioned -6 0 -326 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+server /execute positioned -6 0 314 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+server /execute positioned 314 0 -326 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+server /execute positioned 314 0 -6 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+server /execute positioned 314 0 314 positioned over world_surface run fill ~ ~ ~ ~8 ~5 ~8 minecraft:oak_planks hollow
+warte 2
+server /forceload remove all
+merke
+server /villa nachbar Max
+bis 900 Baustelle: Villa 1 fertig
+warte 5
+server /villa hin 1
+warte 10
+taste F1
+bild bebaut_villa1

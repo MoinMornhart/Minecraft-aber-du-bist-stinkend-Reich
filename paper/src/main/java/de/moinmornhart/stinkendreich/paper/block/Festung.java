@@ -273,7 +273,9 @@ public final class Festung {
             for (int[] s : stellen) {
                 int y = Baustelle.bodenHoehe(w, s[0], s[1]);
                 Block hier = w.getBlockAt(s[0], y, s[1]), unten = hier.getRelative(BlockFace.DOWN);
-                if (!unten.getType().isSolid() || unten.isLiquid() || !(hier.getType().isAir() || hier.isReplaceable()) || hier.isLiquid()) {
+                // Nur auf natürlichem Boden (nie in einem Garten oder Haus nebenan)
+                if (!unten.getType().isSolid() || unten.isLiquid() || !(hier.getType().isAir() || hier.isReplaceable()) || hier.isLiquid()
+                        || !de.moinmornhart.stinkendreich.paper.strasse.Natur.natuerlich(unten.getType())) {
                     continue;
                 }
                 bloecke.setzen(hier, Zustand.lesen("stinkendreich:landmine[lit=false]"));

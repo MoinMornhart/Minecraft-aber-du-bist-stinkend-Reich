@@ -3,6 +3,7 @@ package de.moinmornhart.stinkendreich.paper.villa;
 import de.moinmornhart.stinkendreich.paper.Nbt;
 import de.moinmornhart.stinkendreich.paper.StinkendReichPaper;
 import de.moinmornhart.stinkendreich.paper.block.Zustand;
+import de.moinmornhart.stinkendreich.paper.strasse.Natur;
 import org.bukkit.Chunk;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
@@ -24,52 +25,76 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 /**
  * Baut eine Villa über viele Ticks verteilt, damit der Server dabei nicht stehen bleibt (wie {@code VillaBaustelle}
- * in der Mod): Chunks im Hintergrund laden, Bodenhöhe messen, Gelände ebnen und anblenden, Laub wegräumen,
- * Bauplan setzen (je Tick höchstens {@link #BUDGET_NS}), Figuren aufstellen, ausstatten.
+ * in der Mod): Chunks im Hintergrund laden, Bodenhöhe messen, Platz auf Spielerbauten prüfen, Gelände ebnen und
+ * anblenden, Laub wegräumen, Bauplan setzen (je Tick höchstens {@link #BUDGET_NS}), Figuren aufstellen, ausstatten.
+ * Den Auftrag (Platz, Besitzer, Fortschritt) führt die {@link Bauleitung}; ist die Bodenhöhe schon bekannt, war der
+ * Bau vor einem Neustart angefangen und geht ohne Messen und Prüfen an derselben Stelle weiter.
  */
 public final class Baustelle {
-    private enum Schritt { LADEN, MESSEN, GELAENDE, BLAETTER, BLOECKE, FIGUREN, AUSSTATTEN, FERTIG }
+    private enum Schritt { LADEN, MESSEN, PRUEFEN, GELAENDE, BLAETTER, BLOECKE, FIGUREN, AUSSTATTEN, FERTIG }
 
-    /** Rechenzeit je Tick. */
-    private static final long BUDGET_NS = 20_000_000L;
+    /** Ab so vielen Spalten mit gebauten Blöcken über dem Boden gilt ein Platz als bebaut. */
+    private static final int BEBAUT_SPALTEN = 4;
+    /** Ab so vielen eindeutigen Spielerblöcken (Fackeln, Werkbank …) unter dem Grundstück gilt ein Platz als bebaut. */
+    private static final int BEBAUT_UNTEN = 3;
+
+    /** Rechenzeit je Tick (Tests können sie mit STINKENDREICH_BAUZEIT_MS kürzen, um einen Bau mittendrin zu stoppen). */
+    private static final long BUDGET_NS = budget();
 
     private final StinkendReichPaper plugin;
+    private final Bauleitung leitung;
+    private final Bauleitung.Auftrag auftrag;
     private final Bauplan plan;
     private final World welt;
     private final int x0, z0, nr, rand;
     private final UUID besitzer;
     private final String besitzerName;
-    private final Consumer<Villen.Villa> fertig;
     private final List<Chunk> geladen = new ArrayList<>();
     private final long start = System.currentTimeMillis();
     private Schritt schritt = Schritt.LADEN;
     private int angefordert, zeiger, y0;
     private int[] hoehen;
+    /** Prüfung: Spalten mit gebauten Blöcken über dem Boden, Spielerblöcke darunter. */
+    private int bebautOben, bebautUnten;
     private long laengsterTick;
     private BukkitTask aufgabe;
 
-    public Baustelle(StinkendReichPaper plugin, World welt, int x0, int z0, int nr, UUID besitzer, String besitzerName,
-                     Consumer<Villen.Villa> fertig) {
+    private static long budget() {
+        try {
+            String ms = System.getenv("STINKENDREICH_BAUZEIT_MS");
+            return ms == null ? 20_000_000L : Math.max(1, Long.parseLong(ms)) * 1_000_000L;
+        } catch (NumberFormatException e) {
+            return 20_000_000L;
+        }
+    }
+
+    Baustelle(StinkendReichPaper plugin, Bauleitung leitung, Bauleitung.Auftrag auftrag) {
         this.plugin = plugin;
+        this.leitung = leitung;
+        this.auftrag = auftrag;
         this.plan = plugin.bauplan();
-        this.welt = welt;
-        this.x0 = x0;
-        this.z0 = z0;
-        this.nr = nr;
-        this.besitzer = besitzer;
-        this.besitzerName = besitzerName;
-        this.fertig = fertig;
+        this.welt = auftrag.world();
+        this.x0 = auftrag.x0;
+        this.z0 = auftrag.z0;
+        this.nr = auftrag.nr;
+        this.besitzer = auftrag.besitzer;
+        this.besitzerName = auftrag.name;
         this.rand = Math.max(4, plugin.getConfig().getInt("villa.anblendung", 12));
     }
 
     public void starten() {
         plugin.getLogger().info("Baustelle: Villa " + nr + (besitzerName.isEmpty() ? "" : " für " + besitzerName)
-                + " bei " + x0 + " " + z0);
+                + " bei " + x0 + " " + z0 + (auftrag.y0 != null ? " (geht nach Neustart weiter)" : ""));
         aufgabe = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 1L, 1L);
+    }
+
+    /** Server fährt herunter: aufhören, ohne die Bauleitung zu benachrichtigen (der Auftrag bleibt gemerkt). */
+    void abbrechen() {
+        schritt = Schritt.FERTIG;
+        freigeben();
     }
 
     /** Fortschritt 0–100 (für die Anzeige über der Leiste). */
@@ -77,6 +102,7 @@ public final class Baustelle {
         return switch (schritt) {
             case LADEN -> angefordert == 0 ? 0 : 10 * geladen.size() / angefordert;
             case MESSEN -> 12;
+            case PRUEFEN -> 13;
             case GELAENDE -> 15 + 15 * zeiger / Math.max(1, plan.breiteX + 2 * rand);
             case BLAETTER -> 30;
             case BLOECKE -> 32 + 60 * zeiger / Math.max(1, plan.bloecke.size());
@@ -92,6 +118,7 @@ public final class Baustelle {
             switch (schritt) {
                 case LADEN -> laden();
                 case MESSEN -> messen(ende);
+                case PRUEFEN -> pruefen(ende);
                 case GELAENDE -> gelaende(ende);
                 case BLAETTER -> blaetter(ende);
                 case BLOECKE -> bloecke(ende);
@@ -104,6 +131,7 @@ public final class Baustelle {
             e.printStackTrace();
             schritt = Schritt.FERTIG;
             freigeben();
+            leitung.fehler(auftrag);
         }
         laengsterTick = Math.max(laengsterTick, System.nanoTime() - t0);
     }
@@ -132,8 +160,15 @@ public final class Baustelle {
             }
             return;
         }
-        if (geladen.size() >= angefordert) {
-            weiter(Schritt.MESSEN);
+        // Erst weiter, wenn auch die Figuren der Chunks geladen sind: sonst legt ein fortgesetzter Bau die Anzeigen
+        // der schon gesetzten Blöcke ein zweites Mal an
+        if (geladen.size() >= angefordert && geladen.stream().allMatch(Chunk::isEntitiesLoaded)) {
+            if (auftrag.y0 != null) {
+                y0 = auftrag.y0;                        // nach Neustart: Gelände wurde schon angefasst
+                weiter(Schritt.GELAENDE);
+            } else {
+                weiter(Schritt.MESSEN);
+            }
         }
     }
 
@@ -153,8 +188,67 @@ public final class Baustelle {
             int y = Math.max(sortiert[sortiert.length / 2], welt.getSeaLevel() + 1);
             y0 = Math.clamp(y, welt.getMinHeight() + plan.bodenY + 2, welt.getMaxHeight() - (plan.hoehe - plan.bodenY) - 2);
             plugin.getLogger().info("Baustelle: Bodenhöhe " + y0);
-            weiter(Schritt.GELAENDE);
+            if (auftrag.pruefen) {
+                weiter(Schritt.PRUEFEN);
+            } else {
+                gelaendeAnfangen();
+            }
         }
+    }
+
+    /**
+     * Sucht Spielerbauten auf dem Platz: über dem Boden in allem, was Gelände, Zufahrt und Anblendung verändern,
+     * darunter (Bunker, Garage) nach eindeutigen Spuren wie Fackeln oder einer Werkbank. Dörfer und andere Bauwerke
+     * zählen mit – auch sie werden nicht überbaut.
+     */
+    private void pruefen(long ende) {
+        int breite = plan.breiteX + 2 * rand;
+        while (zeiger < breite && System.nanoTime() < ende) {
+            int x = x0 - rand + zeiger;
+            for (int z = z0 - rand; z < z0 + plan.breiteZ + rand + 40; z++) {
+                if (spalteBebaut(x, z)) {
+                    bebautOben++;
+                }
+                boolean grundstueck = x >= x0 && x < x0 + plan.breiteX && z >= z0 && z < z0 + plan.breiteZ;
+                if (grundstueck) {
+                    for (int y = ursprungY(); y < y0 - 1; y++) {
+                        if (Natur.spielerSpur(welt.getBlockAt(x, y, z).getType())) {
+                            bebautUnten++;
+                        }
+                    }
+                }
+            }
+            zeiger++;
+            if (bebautOben >= BEBAUT_SPALTEN || bebautUnten >= BEBAUT_UNTEN) {
+                freigeben();
+                schritt = Schritt.FERTIG;
+                leitung.platzBebaut(auftrag, bebautOben >= BEBAUT_SPALTEN ? "Bauten über dem Boden" : "Spuren unter dem Boden");
+                return;
+            }
+        }
+        if (zeiger >= breite) {
+            plugin.getLogger().info("Baustelle: Platz ist frei");
+            gelaendeAnfangen();
+        }
+    }
+
+    /** Steht in dieser Spalte zwischen Boden und Himmel etwas Gebautes? */
+    private boolean spalteBebaut(int x, int z) {
+        int oben = welt.getHighestBlockYAt(x, z, HeightMap.WORLD_SURFACE);
+        int unten = Math.max(bodenHoehe(welt, x, z) - 1, oben - 32);
+        for (int y = oben; y >= unten; y--) {
+            if (Natur.gebaut(welt.getBlockAt(x, y, z).getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Ab hier wird die Welt verändert: Bodenhöhe bei der Bauleitung merken (Neustart geht hier weiter). */
+    private void gelaendeAnfangen() {
+        auftrag.y0 = y0;
+        leitung.gelaendeBeginnt(auftrag);
+        weiter(Schritt.GELAENDE);
     }
 
     private void gelaende(long ende) {
@@ -209,7 +303,7 @@ public final class Baustelle {
             }
         }
         if (zeiger >= plan.bloecke.size()) {
-            weiter(Schritt.FIGUREN);
+            weiter(auftrag.figurenFertig ? Schritt.AUSSTATTEN : Schritt.FIGUREN);
         }
     }
 
@@ -266,6 +360,7 @@ public final class Baustelle {
             }
         }
         plugin.getLogger().info("Baustelle: " + n + " von " + plan.figuren.size() + " Figuren aufgestellt");
+        leitung.figurenAufgestellt(auftrag);
         weiter(Schritt.AUSSTATTEN);
     }
 
@@ -277,9 +372,7 @@ public final class Baustelle {
         freigeben();
         plugin.getLogger().info("Baustelle: Villa " + nr + " fertig nach " + (System.currentTimeMillis() - start) / 1000
                 + " s (längster Tick " + laengsterTick / 1_000_000 + " ms)");
-        if (fertig != null) {
-            fertig.accept(villa);
-        }
+        leitung.fertig(auftrag, villa);
     }
 
     private void freigeben() {

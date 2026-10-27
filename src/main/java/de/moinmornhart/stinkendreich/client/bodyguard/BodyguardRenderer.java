@@ -2,11 +2,17 @@ package de.moinmornhart.stinkendreich.client.bodyguard;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import de.moinmornhart.stinkendreich.StinkendReich;
+import de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.IronGolemRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
+//? if >=1.21.11 {
+import net.minecraft.world.entity.animal.golem.IronGolem;
+//?} else
+/*import net.minecraft.world.entity.animal.IronGolem;*/
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,7 +24,8 @@ import java.io.InputStream;
  * Zeichnet den Bodyguard als echten Eisengolem mit Smoking und Sonnenbrille. Die Golem-Textur kommt aus Minecraft
  * selbst (auch aus Ressourcenpaketen des Spielers); beim ersten Zeichnen legt diese Klasse unseren Überzug
  * ({@code textures/entity/bodyguard_smoking.png}, nur Smoking und Brille, sonst durchsichtig) darüber und merkt sich
- * das Ergebnis als eigene Textur. Gesicht, Nase, Hände und Füße bleiben so, wie Minecraft sie zeichnet.
+ * das Ergebnis als eigene Textur. Gesicht, Nase, Hände und Füße bleiben so, wie Minecraft sie zeichnet. Beim Zielen
+ * hebt das Modell den Arm mit der Pistole ({@link BodyguardModell}).
  */
 public class BodyguardRenderer extends IronGolemRenderer {
     private static final Identifier GOLEM = Identifier.withDefaultNamespace("textures/entity/iron_golem/iron_golem.png");
@@ -29,8 +36,24 @@ public class BodyguardRenderer extends IronGolemRenderer {
 
     public BodyguardRenderer(EntityRendererProvider.Context kontext) {
         super(kontext);
+        model = new BodyguardModell(kontext.bakeLayer(ModelLayers.IRON_GOLEM));   // hebt beim Zielen den Arm
         addLayer(new PistolenLayer(this));       // die goldene Pistole in der rechten Hand
     }
+
+    //? if >=1.21.2 {
+    @Override
+    public net.minecraft.client.renderer.entity.state.IronGolemRenderState createRenderState() {
+        return new BodyguardRenderState();
+    }
+
+    @Override
+    public void extractRenderState(IronGolem golem, net.minecraft.client.renderer.entity.state.IronGolemRenderState zustand, float teil) {
+        super.extractRenderState(golem, zustand, teil);
+        if (zustand instanceof BodyguardRenderState b) {
+            b.zielt = golem instanceof BodyguardEntity bg && bg.zielt();
+        }
+    }
+    //?}
 
     //? if >=1.21.2 {
     @Override
@@ -39,7 +62,7 @@ public class BodyguardRenderer extends IronGolemRenderer {
     }
     //?} else {
     /*@Override
-    public Identifier getTextureLocation(net.minecraft.world.entity.animal.IronGolem golem) {
+    public Identifier getTextureLocation(IronGolem golem) {
         return textur();
     }
     *///?}

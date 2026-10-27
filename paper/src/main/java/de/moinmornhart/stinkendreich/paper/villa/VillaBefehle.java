@@ -37,16 +37,35 @@ public final class VillaBefehle implements TabExecutor {
         Player p = wer instanceof Player pl ? pl : null;
         switch (was) {
             case "bauen" -> {
+                // Erste Villa, falls sie fehlt (wer den Befehl gibt, wird nach dem Bau ihr Herr)
                 if (p == null) {
                     return false;
                 }
-                plugin.spawnVillaBauen(p.getWorld());
-                antwort(wer, "Villa wird am Spawn gebaut.");
+                antwort(wer, plugin.bauleitung().ersteVilla(p.getWorld(), p)
+                        ? "Die erste Villa wird gebaut – gleich bringe ich dich hin."
+                        : "Die erste Villa gibt es schon oder sie wird gerade gebaut (/villa auftraege).");
             }
             case "nachbar" -> {
-                String besitzer = args.length > 1 ? args[1] : "Nachbar" + plugin.villen().naechsteNummer();
-                plugin.nachbarBauen(UUID.nameUUIDFromBytes(("Nachbar:" + besitzer).getBytes(StandardCharsets.UTF_8)), besitzer);
-                antwort(wer, "Villa für " + besitzer + " wird gebaut.");
+                String besitzer = args.length > 1 ? args[1] : "Nachbar" + plugin.bauleitung().naechsteNummer();
+                boolean ok = plugin.bauleitung().villaFuer(UUID.nameUUIDFromBytes(("Nachbar:" + besitzer)
+                        .getBytes(StandardCharsets.UTF_8)), besitzer);
+                antwort(wer, ok ? "Villa für " + besitzer + " wird gebaut." : "Geht nicht: Es gibt noch keine erste Villa.");
+            }
+            case "auftraege" -> antwort(wer, "Villen im Bau: " + plugin.bauleitung().uebersicht());
+            case "zaehlen" -> {
+                // Testhilfe: Figuren je Art auf dem Grundstück einer Villa (doppelt angelegte Anzeigen fallen auf)
+                Villen.Villa v = plugin.villen().nr(args.length > 1 ? Integer.parseInt(args[1]) : 0);
+                if (v == null) {
+                    antwort(wer, "Keine solche Villa.");
+                    return true;
+                }
+                Bauplan plan = plugin.bauplan();
+                java.util.Map<String, Integer> anzahl = new java.util.TreeMap<>();
+                for (org.bukkit.entity.Entity e : v.world().getNearbyEntities(new org.bukkit.util.BoundingBox(v.x(), v.y(), v.z(),
+                        v.x() + plan.breiteX, v.y() + plan.hoehe, v.z() + plan.breiteZ))) {
+                    anzahl.merge(e.getType().getKey().getKey(), 1, Integer::sum);
+                }
+                antwort(wer, "Zählung Villa " + v.nr() + ": " + anzahl);
             }
             case "hin" -> {
                 Villen.Villa v = plugin.villen().nr(args.length > 1 ? Integer.parseInt(args[1]) : 0);

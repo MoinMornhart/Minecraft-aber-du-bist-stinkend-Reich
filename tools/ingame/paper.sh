@@ -5,10 +5,12 @@
 # Aufruf:   tools/ingame/paper.sh [szenario-datei]          (Minecraft 26.3)
 # Vorher:   ./gradlew -p paper build
 # Ausgabe:  build/ingame/paper/*.png und build/ingame/paper/logs/
-# Umgebung: PORT (Spielserver, Standard 25575), SEED, SICHTWEITE, PAPER_BUILD (Paper-Build, Standard 226)
+# Umgebung: PORT (Spielserver, Standard 25575), SEED, SICHTWEITE, PAPER_BUILD (Paper-Build, Standard 226),
+#           WELT_BEHALTEN=1 (Welt und Plugin-Daten vom letzten Lauf weiterbenutzen),
+#           KEINE_VILLA=1 (Plugin baut keine Villa – so entsteht eine „schon bestehende“ Welt für Tests)
 #
 # Szenario-Zeilen wie bei tools/ingame/test.sh: warte, taste, bild, klick, linksklick, maus, halte, druecke,
-# loslassen, tippe, server </befehl oder Chattext>, merke, bis <sek> <muster> (im Serverprotokoll).
+# loslassen, tippe, server </befehl oder Chattext>, merke [anfang], bis <sek> <muster> (im Serverprotokoll).
 set -uo pipefail
 
 V=26.3
@@ -35,8 +37,16 @@ fi
 PLUGIN="$(ls -t "$ROOT"/paper/build/libs/stinkendreich_paper-*.jar 2>/dev/null | head -1)"
 [[ -n "$PLUGIN" ]] || { melde "FEHLER: erst ./gradlew -p paper build"; exit 1; }
 
-rm -rf "$RUN/world" "$RUN/world_nether" "$RUN/world_the_end" "$RUN/plugins/StinkendReich" "$RUN/stinkendreich-befehle.txt"
-mkdir -p "$RUN/plugins"
+if [[ "${WELT_BEHALTEN:-0}" != 1 ]]; then
+  rm -rf "$RUN/world" "$RUN/world_nether" "$RUN/world_the_end" "$RUN/plugins/StinkendReich"
+fi
+rm -f "$RUN/stinkendreich-befehle.txt"
+mkdir -p "$RUN/plugins/StinkendReich"
+if [[ "${KEINE_VILLA:-0}" == 1 ]]; then
+  printf 'villa:\n  amSpawn: false\n' > "$RUN/plugins/StinkendReich/config.yml"
+elif grep -q "amSpawn: false" "$RUN/plugins/StinkendReich/config.yml" 2>/dev/null; then
+  rm -f "$RUN/plugins/StinkendReich/config.yml"           # Einstellung aus einem KEINE_VILLA-Lauf zurücknehmen
+fi
 rm -f "$RUN/plugins/"stinkendreich-paper-*.jar "$RUN/plugins/"stinkendreich_paper-*.jar
 cp "$PLUGIN" "$RUN/plugins/"
 echo "eula=true" > "$RUN/eula.txt"
@@ -171,7 +181,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     linksklick) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3; xdotool click 1; sleep 1 ;;
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;
-    merke) MARKE=$(wc -l < "$CHATLOG") ;;
+    merke) if [[ "$rest" == anfang ]]; then MARKE=0; else MARKE=$(wc -l < "$CHATLOG"); fi ;;   # „merke anfang“: ab Serverstart
     bis) set -f; set -- $rest; set +f; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$CHATLOG")}"; MARKE=""; ende=$((SECONDS + frist))
          until tail -n +"$((ab + 1))" "$CHATLOG" | grep -qaE "$muster"; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi

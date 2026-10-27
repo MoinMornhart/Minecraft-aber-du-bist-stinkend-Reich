@@ -31,6 +31,11 @@ import java.util.function.Consumer;
  * angleichen (Zäune, Scheiben und Treppen verbinden sich wie beim normalen Setzen einer Struktur), Figuren aufstellen und
  * zuletzt Zufahrt, Festung, Butler, Fernseher und Fahrzeuge. Jeder Tick arbeitet höchstens {@link #BUDGET_NS}.
  * Mehrere Aufträge (zwei neue Spieler gleichzeitig) warten in einer Schlange.
+ * <p>
+ * Vor dem Ebnen wird der Platz auf Spielerbauten geprüft (gemerkte Spielerblöcke und gebaute Blockarten, auch Dörfer);
+ * ist er bebaut, wird der nächstbeste gesucht. Ab dem Ebnen merkt sich die Baustelle den Platz im Weltordner
+ * ({@code stinkendreich-baustelle.json}): Bricht ein Neustart den Bau ab, geht er beim nächsten Betreten des Besitzers
+ * dort weiter, statt eine halbe Villa stehen zu lassen.
  */
 public final class VillaBaustelle {
     /** Arbeitszeit je Tick (ein Tick hat 50 ms, der Rest bleibt dem Spiel). */
@@ -42,7 +47,18 @@ public final class VillaBaustelle {
     /** Setzen ohne Nachbar-Updates; die Formen werden danach in einem eigenen Schritt angeglichen. */
     private static final int FLAGS = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE;
 
-    private enum Schritt { SUCHEN, LADEN, MESSEN, GELAENDE, BLAETTER, BLOECKE, FORMEN, FIGUREN, AUSSTATTEN }
+    private enum Schritt { SUCHEN, LADEN, MESSEN, PRUEFEN, GELAENDE, BLAETTER, BLOECKE, FORMEN, FIGUREN, AUSSTATTEN }
+
+    /** Ab so vielen Spalten mit gebauten Blöcken über dem Boden gilt ein Platz als bebaut. */
+    private static final int BEBAUT_SPALTEN = 4;
+    /** Ab so vielen eindeutigen Spielerblöcken (Fackeln, Werkbank …) unter dem Grundstück gilt ein Platz als bebaut. */
+    private static final int BEBAUT_UNTEN = 3;
+    /** Merkdatei angefangener Bauten im Weltordner. */
+    private static final String DATEI = StinkendReich.MOD_ID + "-baustelle.json";
+    /** Verworfene Plätze („x:z“, bis zum Neustart) und angefangene Bauten je Besitzer (x0, z0, y0, Figuren fertig 0/1). */
+    private static final java.util.Set<String> BEBAUT = new java.util.HashSet<>();
+    private static final java.util.Map<UUID, int[]> ANGEFANGEN = new java.util.HashMap<>();
+    private static java.nio.file.Path merkdatei;
 
     /** So viele freie Plätze im Raster werden verglichen (die beiden innersten Ringe: 8 + 16). */
     private static final int KANDIDATEN = 24;
@@ -86,6 +102,11 @@ public final class VillaBaustelle {
     private int[] hoehen;
     private BlockPos ursprung;
     private List<StructureTemplate.StructureBlockInfo> bloecke;
+    /** Prüfung: Spalten mit gebauten Blöcken über dem Boden, Spielerblöcke darunter. */
+    private int bebautOben, bebautUnten;
+    /** Bodenhöhe aus einem angefangenen Bau (vor einem Neustart); dann ohne Suchen, Messen und Prüfen weiter. */
+    private Integer fortsetzenY;
+    private boolean figurenFertig;
 
     private VillaBaustelle(MinecraftServer server, Auftrag auftrag) {
         this.server = server;
@@ -94,6 +115,16 @@ public final class VillaBaustelle {
         this.nr = VillaPlatzierung.alle().size();
         this.rand = VillaPlatzierung.anblendung();
         this.kandidaten = VillaPlatzierung.freiePlaetze(KANDIDATEN);
+        int[] alt = auftrag.besitzer() == null ? null : ANGEFANGEN.get(auftrag.besitzer());
+        if (alt != null) {
+            // Vor einem Neustart angefangen: an derselben Stelle weiter
+            bester = new int[]{alt[0], alt[1], 0};
+            fortsetzenY = alt[2];
+            figurenFertig = alt[3] == 1;
+            StinkendReich.LOGGER.info("Baustelle: Villa {} für {} geht nach dem Neustart bei {} {} weiter", nr, auftrag.name(), alt[0], alt[1]);
+            platzGewaehlt();
+            schritt = Schritt.LADEN;
+        }
     }
 
     /**
@@ -153,11 +184,12 @@ public final class VillaBaustelle {
         ServerTickEvents.END_SERVER_TICK.register(VillaBaustelle::tick);
         // Mit mehreren Villen gleich nach dem Start vorladen, dann wartet der erste Neue nicht darauf
         ServerLifecycleEvents.SERVER_STARTED.register(s -> {
+            laden(s);                                      // angefangene Bauten (gehen beim Betreten des Besitzers weiter)
             if (de.moinmornhart.stinkendreich.Konfig.get().mehrereVillen && !VillaPlatzierung.alle().isEmpty()) {
                 vorlageLaden(s);
             }
         });
-        // Beim Beenden nichts erzwungen geladen zurücklassen; die halbe Villa wird beim nächsten Start neu gebaut
+        // Beim Beenden nichts erzwungen geladen zurücklassen; eine angefangene Villa ist gemerkt und geht weiter
         ServerLifecycleEvents.SERVER_STOPPING.register(s -> {
             if (aktuell != null) {
                 aktuell.freigeben();
@@ -250,7 +282,12 @@ public final class VillaBaustelle {
                     }
                     if (zeiger < kandidaten.size()) {
                         int[] k = kandidaten.get(zeiger);
-                        // Plätze, über die schon eine Straße führt (samt Minengürtel), kommen nicht in Frage
+                        // Plätze mit Spielerbauten (bei einer früheren Prüfung verworfen) und Plätze, über die schon eine
+                        // Straße führt (samt Minengürtel), kommen nicht in Frage
+                        if (punkt == 0 && BEBAUT.contains(k[0] + ":" + k[1])) {
+                            zeiger++;
+                            return false;
+                        }
                         if (punkt == 0 && de.moinmornhart.stinkendreich.strasse.Strassennetz.get(server).strasseIn(k[0] - RAND_LADEN,
                                 k[1] - RAND_LADEN, k[0] + plan.breiteX + RAND_LADEN, k[1] + plan.breiteZ + RAND_LADEN)) {
                             zeiger++;
@@ -281,6 +318,13 @@ public final class VillaBaustelle {
                         return false;                          // nächsten Tick wieder nachsehen
                     }
                     StinkendReich.LOGGER.info("Baustelle: Chunks fertig nach {} s", (System.currentTimeMillis() - start) / 1000);
+                    if (fortsetzenY != null) {
+                        y0 = fortsetzenY;
+                        ursprung = VillaPlatzierung.ursprung(x0, y0, z0, plan);
+                        zeiger = x0 - rand;
+                        weiter(Schritt.GELAENDE);
+                        return false;
+                    }
                     hoehen = new int[plan.breiteX * plan.breiteZ];
                     weiter(Schritt.MESSEN);
                 }
@@ -289,6 +333,19 @@ public final class VillaBaustelle {
                     if (++zeiger >= plan.breiteX) {
                         y0 = VillaPlatzierung.zielhoehe(welt, plan, hoehen);
                         ursprung = VillaPlatzierung.ursprung(x0, y0, z0, plan);
+                        zeiger = x0 - rand;
+                        weiter(Schritt.PRUEFEN);
+                    }
+                }
+                case PRUEFEN -> {
+                    pruefenReihe(zeiger);
+                    if (bebautOben >= BEBAUT_SPALTEN || bebautUnten >= BEBAUT_UNTEN) {
+                        platzVerwerfen(bebautOben >= BEBAUT_SPALTEN ? "Bauten über dem Boden" : "Spuren unter dem Boden");
+                        return false;
+                    }
+                    if (++zeiger >= x0 + plan.breiteX + rand) {
+                        StinkendReich.LOGGER.info("Baustelle: Platz ist frei");
+                        merken(false);                         // ab hier wird die Welt verändert
                         zeiger = x0 - rand;
                         weiter(Schritt.GELAENDE);
                     }
@@ -328,7 +385,7 @@ public final class VillaBaustelle {
                         formen(bloecke.get(zeiger++));
                     }
                     if (zeiger >= bloecke.size()) {
-                        weiter(Schritt.FIGUREN);
+                        weiter(figurenFertig ? Schritt.AUSSTATTEN : Schritt.FIGUREN);
                     }
                 }
                 case FIGUREN -> {
@@ -341,6 +398,7 @@ public final class VillaBaustelle {
                     /*vorlage.stinkendreich$figurenAufstellen(welt, ursprung, net.minecraft.world.level.block.Mirror.NONE,
                             net.minecraft.world.level.block.Rotation.NONE, BlockPos.ZERO, null, false);
                     *///?}
+                    merken(true);
                     weiter(Schritt.AUSSTATTEN);
                     return false;                              // Ausstatten bekommt einen eigenen Tick
                 }
@@ -348,6 +406,9 @@ public final class VillaBaustelle {
                     VillaPlatzierung.VillaInfo villa = VillaPlatzierung.ausstatten(server, welt, ursprung, y0, nr,
                             auftrag.besitzer(), auftrag.name());
                     freigeben();
+                    if (auftrag.besitzer() != null && ANGEFANGEN.remove(auftrag.besitzer()) != null) {
+                        speichern();
+                    }
                     StinkendReich.LOGGER.info("Baustelle: Villa {} fertig bei {} nach {} s ({} Ticks, längster Tick {} ms)", nr, ursprung,
                             (System.currentTimeMillis() - start) / 1000, ticks, laengsterTick / 1_000_000);
                     VillaPlatzierung.fertigGebaut(server, villa);
@@ -370,6 +431,101 @@ public final class VillaBaustelle {
             ruhe();
         }
         return false;
+    }
+
+    /**
+     * Sucht Spielerbauten in einer Reihe x: über dem Boden in allem, was Gelände, Zufahrt und Anblendung verändern
+     * (gemerkte Spielerblöcke und gebaute Blockarten, auch Dörfer), darunter auf dem Grundstück nach eindeutigen Spuren
+     * wie Fackeln oder einer Werkbank.
+     */
+    private void pruefenReihe(int x) {
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        for (int z = z0 - rand; z < z0 + plan.breiteZ + rand + 40; z++) {
+            int oben = welt.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, x, z) - 1;
+            int unten = Math.max(VillaPlatzierung.bodenHoehe(welt, x, z) - 1, oben - 32);
+            for (int y = oben; y >= unten; y--) {
+                p.set(x, y, z);
+                if (de.moinmornhart.stinkendreich.butler.SpielerBloecke.istGesetzt(welt, p)
+                        || de.moinmornhart.stinkendreich.butler.Schutz.istGebaut(welt.getBlockState(p))) {
+                    bebautOben++;
+                    break;
+                }
+            }
+            if (x >= x0 && x < x0 + plan.breiteX && z >= z0 && z < z0 + plan.breiteZ) {
+                for (int y = ursprung.getY(); y < y0 - 1; y++) {
+                    p.set(x, y, z);
+                    if (de.moinmornhart.stinkendreich.butler.SpielerBloecke.istGesetzt(welt, p)
+                            || de.moinmornhart.stinkendreich.butler.Schutz.istSpielerSpur(welt.getBlockState(p))) {
+                        bebautUnten++;
+                    }
+                }
+            }
+        }
+    }
+
+    /** Platz ist bebaut: merken, Chunks freigeben und den nächstbesten suchen. */
+    private void platzVerwerfen(String grund) {
+        StinkendReich.LOGGER.info("Baustelle: Platz {} {} für Villa {} verworfen ({})", x0, z0, nr, grund);
+        BEBAUT.add(x0 + ":" + z0);
+        freigeben();
+        chunks.clear();
+        angefordert = 0;
+        bester = null;
+        besteWertung = Integer.MAX_VALUE;
+        punkt = 0;
+        tiefster = Integer.MAX_VALUE;
+        hoechster = Integer.MIN_VALUE;
+        nass = 0;
+        bebautOben = 0;
+        bebautUnten = 0;
+        zeiger = 0;
+        kandidaten = VillaPlatzierung.freiePlaetze(KANDIDATEN);
+        weiter(Schritt.SUCHEN);
+    }
+
+    /** Angefangenen Bau merken (Platz, Bodenhöhe, ob die Figuren schon stehen), damit er einen Neustart übersteht. */
+    private void merken(boolean figuren) {
+        if (auftrag.besitzer() != null) {
+            ANGEFANGEN.put(auftrag.besitzer(), new int[]{x0, z0, y0, figuren ? 1 : 0});
+            speichern();
+        }
+    }
+
+    private static void laden(MinecraftServer server) {
+        ANGEFANGEN.clear();
+        BEBAUT.clear();
+        merkdatei = server.getWorldPath(net.minecraft.world.level.storage.LevelResource.ROOT).resolve(DATEI);
+        try {
+            if (java.nio.file.Files.exists(merkdatei)) {
+                com.google.gson.JsonObject j = com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(merkdatei)).getAsJsonObject();
+                for (var e : j.entrySet()) {
+                    com.google.gson.JsonArray a = e.getValue().getAsJsonArray();
+                    ANGEFANGEN.put(UUID.fromString(e.getKey()), new int[]{a.get(0).getAsInt(), a.get(1).getAsInt(), a.get(2).getAsInt(),
+                            a.size() > 3 ? a.get(3).getAsInt() : 0});
+                }
+            }
+        } catch (Exception e) {
+            StinkendReich.LOGGER.warn("Baustelle: {} nicht lesbar ({})", DATEI, e.getMessage());
+        }
+    }
+
+    private static void speichern() {
+        if (merkdatei == null) {
+            return;
+        }
+        com.google.gson.JsonObject j = new com.google.gson.JsonObject();
+        ANGEFANGEN.forEach((wer, w) -> {
+            com.google.gson.JsonArray a = new com.google.gson.JsonArray();
+            for (int zahl : w) {
+                a.add(zahl);
+            }
+            j.add(wer.toString(), a);
+        });
+        try {
+            java.nio.file.Files.writeString(merkdatei, j.toString());
+        } catch (Exception e) {
+            StinkendReich.LOGGER.warn("Baustelle: {} nicht schreibbar ({})", DATEI, e.getMessage());
+        }
     }
 
     private void weiter(Schritt neu) {
@@ -477,6 +633,7 @@ public final class VillaBaustelle {
                 yield 2 + (int) (28 * da / Math.max(1, chunks.size()));
             }
             case MESSEN -> 30 + 5 * zeiger / Math.max(1, plan.breiteX);
+            case PRUEFEN -> 35;
             case GELAENDE -> 35 + 7 * (zeiger - x0 + rand) / Math.max(1, plan.breiteX + 2 * rand);
             case BLAETTER -> 42 + 3 * (zeiger - x0 + rand + 8) / Math.max(1, plan.breiteX + 2 * rand + 16);
             case BLOECKE -> 45 + 40 * zeiger / Math.max(1, bloecke.size());

@@ -1,3 +1,13 @@
+### Neu in 0.4.2 – Villen jederzeit, Bodyguards zielen
+
+- **Paper: Villen jederzeit.** Das Plugin baut die erste Villa jetzt auch in einer Welt, die es schon vor dem Plugin gab (vorher nur in ganz neuen Welten – auf einem bestehenden Server gab es deshalb weder Villa noch James). Jeder Spieler, der irgendwann dazukommt, bekommt seine eigene Villa, auch wenn gerade eine andere gebaut wird.
+- **Nie über Spielerbauten:** Bevor eine Villa gebaut wird, prüft das Plugin (und die Mod für die Villen der Freunde) den Platz. Stehen dort Häuser, ein Dorf oder Spuren unter der Erde (Fackeln, Werkbank …), nimmt es den nächsten freien Platz. Landminen der Festung liegen nur noch auf natürlichem Boden.
+- **Kein Doppelbau mehr:** Kamen zwei Spieler gleichzeitig dazu, bekamen beide auf Paper dieselbe Nummer und denselben Platz. Jetzt bekommt jeder seinen eigenen.
+- **Neustart mitten im Bau:** Der Bau geht danach an derselben Stelle weiter (Plugin sofort, Mod beim nächsten Betreten des Besitzers) – keine halbe Villa mehr in der Landschaft.
+- **Herr der ersten Villa ohne Neu-Verbinden:** Wer auf die erste Villa wartet, wird nach dem Bau ihr Herr, bekommt die Zugangskarte und wird vor die Tür gebracht. `/villa bauen` macht den, der den Befehl gibt, zum Herrn; `/villa auftraege` zeigt, was gerade gebaut wird.
+- **Bodyguards zielen:** Sie drehen sich zum Gegner und heben die goldene Pistole (Mod: Arm des Golems; Paper und Freunde ohne Mod: Zielhaltung mit beiden Armen). Bei mehreren Gegnern nimmt jeder Bodyguard einen anderen, statt dass einer alles macht.
+- **Bodyguards stecken nicht mehr fest:** Sie erscheinen nur auf freien Stellen (vorher manchmal in einer Wand) und stehen gleich wieder neben dir, wenn sie in einer Wand stecken oder nicht hinterherkommen.
+
 ### Neu in 0.4.1 – Paper-Server
 
 - **Paper-Plugin:** Für Server mit [Paper](https://papermc.io/) (Minecraft 26.3) gibt es jetzt `stinkendreich_paper-0.4.1+paper26.3.jar` für den `plugins`-Ordner. Die Spieler brauchen keine Mod: Der Server liefert das Ressourcenpaket selbst aus, alles öffnet sich als Fenster.

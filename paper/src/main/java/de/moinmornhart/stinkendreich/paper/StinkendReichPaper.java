@@ -3,6 +3,7 @@ package de.moinmornhart.stinkendreich.paper;
 import de.moinmornhart.stinkendreich.paper.block.Blockdaten;
 import de.moinmornhart.stinkendreich.paper.block.VirtuelleBloecke;
 import de.moinmornhart.stinkendreich.paper.villa.Ausstattung;
+import de.moinmornhart.stinkendreich.paper.villa.Bauleitung;
 import de.moinmornhart.stinkendreich.paper.villa.Bauplan;
 import de.moinmornhart.stinkendreich.paper.villa.Baustelle;
 import de.moinmornhart.stinkendreich.paper.villa.FigurenUebersetzen;
@@ -11,8 +12,6 @@ import de.moinmornhart.stinkendreich.paper.villa.Villen;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,11 +19,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Paper-Plugin „Minecraft, aber du bist stinkend reich“: dieselbe Villa wie in der Fabric-Mod, für Server, auf denen
@@ -59,11 +53,8 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
     private de.moinmornhart.stinkendreich.paper.strasse.Strassen strassen;
-    /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
-    private Baustelle baustelle;
-    private final Deque<Runnable> warteschlange = new ArrayDeque<>();
-    /** Spieler, die auf ihre Villa warten (werden nach dem Bau hingebracht). */
-    private final Set<UUID> wartende = new HashSet<>();
+    /** Baut alle Villen nacheinander (erste Villa, eine je Spieler) und setzt angefangene Bauten fort. */
+    private Bauleitung bauleitung;
 
     @Override
     public void onEnable() {
@@ -163,17 +154,17 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this, this);
         VillaBefehle.registrieren(this);
         Autotest.registrieren(this);
-        // Villa am Spawn der Hauptwelt (nur in neuen Welten, außer die Config sagt anders)
-        World welt = Bukkit.getWorlds().getFirst();
-        if (getConfig().getBoolean("villa.amSpawn", true) && villen.spawnVilla(welt) == null
-                && (welt.getFullTime() < 20 * 60 || getConfig().getBoolean("villa.auchInAltenWelten", false))) {
-            spawnVillaBauen(welt);
-        }
+        // Erste Villa (in einer neuen Welt am Spawn, sonst am nächsten Platz ohne Spielerbauten) und angefangene Bauten
+        bauleitung = new Bauleitung(this);
+        bauleitung.starten();
         getServer().getScheduler().runTaskTimer(this, this::fortschrittZeigen, 20L, 20L);
     }
 
     @Override
     public void onDisable() {
+        if (bauleitung != null) {
+            bauleitung.stoppen();                       // Lade-Tickets zurück; der Bau geht nach dem Start weiter
+        }
         if (inkognito != null) {
             inkognito.stoppen();                        // laufende Fahrt ohne Animation fertig machen
         }
@@ -303,68 +294,21 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         return paket;
     }
 
+    public Bauleitung bauleitung() {
+        return bauleitung;
+    }
+
     // ------------------------------------------------------------------
     // Villen bauen
     // ------------------------------------------------------------------
 
-    public void spawnVillaBauen(World welt) {
-        Location spawn = welt.getSpawnLocation();
-        bauen(new Baustelle(this, welt, spawn.getBlockX() - bauplan.breiteX / 2, spawn.getBlockZ() - bauplan.breiteZ / 2,
-                0, null, "", villa -> {
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (p.getWorld().equals(welt)) {
-                    p.teleport(villa.spawn(bauplan));
-                }
-            }
-        }));
-    }
-
-    /** Baut eine Villa für einen Spieler im Raster um die Spawn-Villa. */
-    public void nachbarBauen(UUID besitzer, String name) {
-        Villen.Villa spawnVilla = villen.alle().stream().filter(v -> v.nr() == 0).findFirst().orElse(null);
-        if (spawnVilla == null) {
-            return;
-        }
-        int abstand = Math.max(240, getConfig().getInt("villa.abstand", 320));
-        int[] platz = villen.freierPlatz(spawnVilla, abstand);
-        wartende.add(besitzer);
-        bauen(new Baustelle(this, spawnVilla.world(), platz[0], platz[1], villen.naechsteNummer(), besitzer, name, villa -> {
-            wartende.remove(besitzer);
-            strassen.zurVilla(villa);                   // Straße von der Spawn-Villa bis vor die Tür
-            Player p = Bukkit.getPlayer(besitzer);
-            if (p != null) {
-                p.teleport(villa.spawn(bauplan));
-                p.getInventory().addItem(zugang.karte(villa));
-                p.sendMessage(Component.text("Willkommen in deiner eigenen Villa! Deine Zugangskarte liegt im Inventar.", NamedTextColor.GOLD));
-            }
-        }));
-    }
-
-    private void bauen(Baustelle b) {
-        Runnable start = () -> {
-            baustelle = b;
-            b.starten();
-        };
-        if (baustelle == null) {
-            start.run();
-        } else {
-            warteschlange.add(start);
-        }
-    }
-
-    /** Wird von der Baustelle nach dem Ausstatten gerufen: Figuren der Villa (Butler …) und nächster Bau. */
+    /** Wird von der Ausstattung nach dem Bau gerufen: Figuren der Villa (Butler …). */
     public void figurenNachDemBau(Villen.Villa villa) {
         butler.erzeugen(villa);
-        getServer().getScheduler().runTask(this, () -> {
-            baustelle = null;
-            Runnable naechste = warteschlange.poll();
-            if (naechste != null) {
-                naechste.run();
-            }
-        });
     }
 
     private void fortschrittZeigen() {
+        Baustelle baustelle = bauleitung.baustelle();
         if (baustelle == null) {
             return;
         }
@@ -376,22 +320,6 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     @EventHandler
     public void beimBetreten(PlayerJoinEvent e) {
-        Player p = e.getPlayer();
-        if (!getConfig().getBoolean("villa.mehrereVillen", true) || villen.vonBesitzer(p.getUniqueId()) != null
-                || wartende.contains(p.getUniqueId())) {
-            return;
-        }
-        Villen.Villa spawnVilla = villen.alle().stream().filter(v -> v.nr() == 0).findFirst().orElse(null);
-        if (spawnVilla == null) {
-            return;
-        }
-        if (spawnVilla.besitzer() == null) {
-            // Der erste Spieler ist der Herr der Spawn-Villa
-            villen.besitzerSetzen(spawnVilla, p.getUniqueId(), p.getName());
-            p.getInventory().addItem(zugang.karte(villen.nr(0)));
-            return;
-        }
-        p.sendMessage(Component.text("Deine eigene Villa wird gerade gebaut – gleich bringe ich dich hin.", NamedTextColor.GOLD));
-        nachbarBauen(p.getUniqueId(), p.getName());
+        bauleitung.beimBetreten(e.getPlayer());
     }
 }

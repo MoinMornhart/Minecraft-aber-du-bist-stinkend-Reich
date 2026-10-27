@@ -2,6 +2,9 @@ package de.moinmornhart.stinkendreich.bodyguard;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -33,28 +36,49 @@ import net.minecraft.world.level.storage.ValueOutput;
 /*import net.minecraft.nbt.CompoundTag;
 *///?}
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Bodyguard: ein Eisengolem im Smoking mit Sonnenbrille und goldener Pistole. Er folgt seinem Chef, kann nie
  * sterben (nur /kill) und beschützt nur: Er greift Monster in der Nähe des Chefs an und jeden, der den Chef angreift.
  * Aus der Ferne schießt er mit der Pistole (Sofort-Treffer, ohne Blockschaden), aus der Nähe schlägt er zu wie ein
- * Eisengolem (wirft Gegner in die Luft). Spieler und Tiere lässt er in Ruhe.
+ * Eisengolem (wirft Gegner in die Luft). Spieler und Tiere lässt er in Ruhe. Beim Schießen zielt er: Er dreht sich
+ * zum Gegner und hebt den Arm mit der Pistole (der Client liest dafür {@link #zielt()}). Zwei Bodyguards teilen sich
+ * die Gegner auf, und wer in einer Wand steckt oder nicht hinterherkommt, steht gleich wieder neben dem Chef.
  */
 public class BodyguardEntity extends IronGolem {
     private static final String SCHLUESSEL = "stinkendreich";
     /** Ab diesem Abstand schießt er statt zuzuschlagen (Blöcke). */
     private static final double SCHUSS_AB = 4.5, SCHUSS_BIS = 24.0;
     private static final int NACHLADEN = 18;
+    /** Zielt gerade auf einen Gegner (für den Arm auf dem Client). */
+    private static final EntityDataAccessor<Boolean> ZIELT = SynchedEntityData.defineId(BodyguardEntity.class, EntityDataSerializers.BOOLEAN);
 
     private UUID chef;
     private int nachladen;
+    /** Für das Erkennen, ob er feststeckt: Stelle bei der letzten Prüfung und wie oft er seitdem nicht vorankam. */
+    private Vec3 letzteStelle;
+    private int festgesteckt;
 
     public BodyguardEntity(EntityType<? extends IronGolem> typ, Level welt) {
         super(typ, welt);
         setPersistenceRequired();
         setPlayerCreated(true);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder daten) {
+        super.defineSynchedData(daten);
+        daten.define(ZIELT, false);
+    }
+
+    /** Zielt er gerade mit der Pistole (auf dem Client: Arm gehoben)? */
+    public boolean zielt() {
+        return entityData.get(ZIELT);
     }
 
     public static AttributeSupplier.Builder attribute() {
@@ -122,13 +146,81 @@ public class BodyguardEntity extends IronGolem {
             nachladen--;
         }
         LivingEntity ziel = getTarget();
-        if (ziel != null && ziel.isAlive() && nachladen == 0 && hasLineOfSight(ziel)) {
+        boolean zielen = false;
+        if (ziel != null && ziel.isAlive()) {
             double d = distanceTo(ziel);
-            if ((d > SCHUSS_AB || ziel instanceof Creeper) && d < SCHUSS_BIS) {
+            zielen = (d > SCHUSS_AB || ziel instanceof Creeper) && d < SCHUSS_BIS && hasLineOfSight(ziel);
+        }
+        if (zielen) {
+            // Zum Gegner drehen: Kopf und Körper, damit der gehobene Arm wirklich auf ihn zeigt
+            getLookControl().setLookAt(ziel, 60.0F, 60.0F);
+            setYBodyRot(getYHeadRot());
+            if (nachladen == 0) {
                 schiessen((ServerLevel) level(), ziel);
             }
         }
+        //? if >=1.21.9 {
+        if (getMainHandItem().isEmpty()) {
+            // Die Pistole sieht nur, wer die Mod nicht hat (Server-Version: Schaufensterpuppe); der Golem zeigt sie nicht
+            setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, new net.minecraft.world.item.ItemStack(
+                    de.moinmornhart.stinkendreich.register.ModItems.GOLDENE_PISTOLE));
+            setDropChance(net.minecraft.world.entity.EquipmentSlot.MAINHAND, 0.0F);
+        }
+        //?}
+        if (zielt() != zielen) {
+            entityData.set(ZIELT, zielen);
+            //? if >=1.21.9
+            handZeigen(zielen);
+        }
+        if (tickCount % 40 == 0) {
+            feststeckenPruefen();
+        }
     }
+
+    /**
+     * Steckt er in einer Wand oder kommt seit vier Sekunden nicht voran, obwohl der Chef weiter weg ist (z. B. hinter
+     * einer Tür, die ein Golem nicht öffnen kann), steht er gleich wieder an einer freien Stelle neben dem Chef.
+     */
+    private void feststeckenPruefen() {
+        ServerPlayer c = chefOnline();
+        if (c == null || c.level() != level()) {
+            return;
+        }
+        boolean steht = letzteStelle != null && letzteStelle.distanceToSqr(position()) < 0.25;
+        boolean mussLaufen = distanceToSqr(c) > 5 * 5 && !zielt();
+        festgesteckt = steht && mussLaufen ? festgesteckt + 1 : 0;
+        letzteStelle = position();
+        if (isInWall() || festgesteckt >= 2) {
+            Vec3 frei = Bodyguards.freieStelle((ServerLevel) level(), this, c, c.getYRot() + 180);
+            teleportTo(frei.x, frei.y, frei.z);
+            getNavigation().stop();
+            festgesteckt = 0;
+        }
+    }
+
+    //? if >=1.21.9 {
+    /**
+     * Spieler ohne Mod sehen den Bodyguard als Schaufensterpuppe (Server-Version). Zielt er, bekommt die Puppe eine
+     * geladene Armbrust mit dem Bild der Pistole in die Hand – Minecraft zeichnet dann die Zielhaltung mit beiden Armen;
+     * sonst die Pistole. Spieler mit Mod sehen die Hand eines Golems nicht, für sie ändert sich nichts.
+     */
+    private void handZeigen(boolean zielen) {
+        net.minecraft.world.item.ItemStack hand = zielen ? imAnschlag() : getMainHandItem().copy();
+        ((ServerLevel) level()).getChunkSource().sendToTrackingPlayers(this, new net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket(
+                getId(), List.of(com.mojang.datafixers.util.Pair.of(net.minecraft.world.entity.EquipmentSlot.MAINHAND, hand))));
+    }
+
+    private static net.minecraft.world.item.ItemStack imAnschlag() {
+        net.minecraft.world.item.ItemStack s = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.CROSSBOW);
+        s.set(net.minecraft.core.component.DataComponents.ITEM_MODEL, de.moinmornhart.stinkendreich.StinkendReich.id("goldene_pistole"));
+        List<net.minecraft.world.item.ItemStack> pfeil = List.of(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.ARROW));
+        //? if >=26.1 {
+        s.set(net.minecraft.core.component.DataComponents.CHARGED_PROJECTILES, net.minecraft.world.item.component.ChargedProjectiles.ofNonEmpty(pfeil));
+        //?} else
+        /*s.set(net.minecraft.core.component.DataComponents.CHARGED_PROJECTILES, net.minecraft.world.item.component.ChargedProjectiles.of(pfeil));*/
+        return s;
+    }
+    //?}
 
     /** Ein Schuss mit der goldenen Pistole: Mündungsfeuer, Leuchtspur, Treffer. */
     private void schiessen(ServerLevel welt, LivingEntity ziel) {
@@ -170,7 +262,8 @@ public class BodyguardEntity extends IronGolem {
                 return;
             }
             if (distanceToSqr(c) > 28 * 28) {
-                teleportTo(c.getX() + (random.nextDouble() - 0.5) * 4, c.getY(), c.getZ() + (random.nextDouble() - 0.5) * 4);
+                Vec3 frei = Bodyguards.freieStelle((ServerLevel) level(), BodyguardEntity.this, c, c.getYRot() + 180);
+                teleportTo(frei.x, frei.y, frei.z);
                 getNavigation().stop();
             } else if (tickCount % 10 == 0) {
                 getNavigation().moveTo(c, 1.1);
@@ -183,7 +276,10 @@ public class BodyguardEntity extends IronGolem {
         }
     }
 
-    /** Wer den Chef angreift oder vom Chef angegriffen wird, und Monster in seiner Nähe (Creeper zuerst). */
+    /**
+     * Wer den Chef angreift oder vom Chef angegriffen wird, und Monster in seiner Nähe (Creeper zuerst). Bei mehreren
+     * Monstern nimmt jeder Bodyguard ein anderes, damit nicht einer alles macht und der andere zuschaut.
+     */
     private class BeschuetzenZiel extends Goal {
         BeschuetzenZiel() {
             setFlags(EnumSet.of(Flag.TARGET));
@@ -215,18 +311,22 @@ public class BodyguardEntity extends IronGolem {
             if (angegriffen != null && angegriffen.isAlive() && angegriffen instanceof Enemy && angegriffen.distanceToSqr(c) < 32 * 32) {
                 return angegriffen;
             }
-            LivingEntity bestes = null;
-            double beste = 16 * 16;
-            for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, c.getBoundingBox().inflate(16),
-                    e -> e instanceof Enemy && e.isAlive())) {
-                // Creeper zählen näher, damit sie weg sind, bevor sie zischen
-                double d = e.distanceToSqr(c) * (e instanceof Creeper ? 0.25 : 1.0);
-                if (d < beste) {
-                    beste = d;
-                    bestes = e;
+            List<LivingEntity> monster = new ArrayList<>(level().getEntitiesOfClass(LivingEntity.class,
+                    c.getBoundingBox().inflate(16), e -> e instanceof Enemy && e.isAlive() && e.distanceToSqr(c) < 16 * 16));
+            // Creeper zählen näher, damit sie weg sind, bevor sie zischen
+            monster.sort(Comparator.comparingDouble(e -> e.distanceToSqr(c) * (e instanceof Creeper ? 0.25 : 1.0)));
+            if (monster.isEmpty()) {
+                return null;
+            }
+            // Was die anderen Bodyguards des Chefs schon im Visier haben, kommt erst danach an die Reihe
+            List<LivingEntity> belegt = new ArrayList<>();
+            for (BodyguardEntity b : level().getEntitiesOfClass(BodyguardEntity.class, c.getBoundingBox().inflate(48),
+                    b -> b != BodyguardEntity.this && c.getUUID().equals(b.chef()))) {
+                if (b.getTarget() != null) {
+                    belegt.add(b.getTarget());
                 }
             }
-            return bestes;
+            return monster.stream().filter(e -> !belegt.contains(e)).findFirst().orElse(monster.getFirst());
         }
     }
 

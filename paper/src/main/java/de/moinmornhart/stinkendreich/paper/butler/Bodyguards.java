@@ -43,6 +43,9 @@ import java.util.UUID;
  * Türsteher im Smoking (Schaufensterpuppe mit Haut, 1,45-fach) mit goldener Pistole. Darunter steckt ein unsichtbarer
  * Eisengolem: er läuft, kämpft im Nahkampf und ist unverwundbar. Aus der Entfernung (4,5 bis 24 Blöcke, Creeper immer)
  * schießt er mit der Pistole. Zwei je Spieler, gerufen und heimgeschickt über das Handy.
+ * <p>Beim Zielen dreht sich die Puppe zum Gegner und hält die Pistole mit beiden Händen im Anschlag: Sie bekommt dafür
+ * eine geladene Armbrust mit dem Bild der Pistole (Minecraft zeichnet dann die Zielhaltung). Bei mehreren Gegnern nimmt
+ * jeder Bodyguard einen anderen; wer in einer Wand steckt oder nicht hinterherkommt, steht gleich wieder beim Chef.
  */
 public final class Bodyguards implements Listener {
     public static final int ANZAHL = 2;
@@ -54,6 +57,11 @@ public final class Bodyguards implements Listener {
     /** Golem (Körper) → Puppe. */
     private final Map<IronGolem, Mannequin> paare = new HashMap<>();
     private final Map<IronGolem, Integer> nachladen = new HashMap<>();
+    /** Für das Erkennen, ob ein Golem feststeckt: Stelle bei der letzten Prüfung und wie oft er nicht vorankam. */
+    private final Map<IronGolem, Location> letzteStelle = new HashMap<>();
+    private final Map<IronGolem, Integer> festgesteckt = new HashMap<>();
+    /** Pistole in der Hand: locker (normal) und im Anschlag (geladene Armbrust mit dem Bild der Pistole). */
+    private final ItemStack pistoleLocker, pistoleImAnschlag;
     /** Wer den Chef zuletzt angegriffen hat bzw. wen der Chef angegriffen hat. */
     private final Map<UUID, LivingEntity> feinde = new HashMap<>();
 
@@ -61,6 +69,12 @@ public final class Bodyguards implements Listener {
         this.plugin = plugin;
         this.schluesselChef = new NamespacedKey(plugin, "bodyguard");
         this.schluesselPaar = new NamespacedKey(plugin, "bodyguard_paar");
+        this.pistoleLocker = ItemStack.of(Material.PAPER);
+        pistoleLocker.setData(DataComponentTypes.ITEM_MODEL, Key.key("stinkendreich", "goldene_pistole"));
+        this.pistoleImAnschlag = ItemStack.of(Material.CROSSBOW);
+        pistoleImAnschlag.setData(DataComponentTypes.ITEM_MODEL, Key.key("stinkendreich", "goldene_pistole"));
+        pistoleImAnschlag.setData(DataComponentTypes.CHARGED_PROJECTILES,
+                io.papermc.paper.datacomponent.item.ChargedProjectiles.chargedProjectiles(List.of(ItemStack.of(Material.ARROW))));
         Bukkit.getScheduler().runTaskTimer(plugin, this::takt, 1L, 1L);
         Bukkit.getScheduler().runTaskLater(plugin, () -> Bukkit.getWorlds().forEach(w -> w.getEntities().forEach(this::aufnehmen)), 1L);
     }
@@ -78,8 +92,11 @@ public final class Bodyguards implements Listener {
     /** Handy: Bodyguards rufen (es kommen so viele, dass es zwei sind). */
     public void rufen(Player p) {
         List<IronGolem> da = vom(p);
+        for (int i = 0; i < da.size(); i++) {
+            da.get(i).teleport(freieStelle(p, p.getYaw() + (i == 0 ? 135 : -135)));
+        }
         for (int i = da.size(); i < ANZAHL; i++) {
-            Location ort = p.getLocation().add((i == 0 ? -1.5 : 1.5), 0, -1.5);
+            Location ort = freieStelle(p, p.getYaw() + (i == 0 ? 135 : -135));
             ort.setYaw(p.getLocation().getYaw());
             IronGolem g = ort.getWorld().spawn(ort, IronGolem.class, k -> {
                 k.setInvisible(true);
@@ -97,9 +114,7 @@ public final class Bodyguards implements Listener {
             if (m.getAttribute(Attribute.SCALE) != null) {
                 m.getAttribute(Attribute.SCALE).setBaseValue(1.45);
             }
-            ItemStack pistole = ItemStack.of(Material.PAPER);
-            pistole.setData(DataComponentTypes.ITEM_MODEL, Key.key("stinkendreich", "goldene_pistole"));
-            m.getEquipment().setItem(EquipmentSlot.HAND, pistole);
+            m.getEquipment().setItem(EquipmentSlot.HAND, pistoleLocker.clone());
             m.getPersistentDataContainer().set(schluesselChef, PersistentDataType.STRING, p.getUniqueId().toString());
             m.getPersistentDataContainer().set(schluesselPaar, PersistentDataType.STRING, g.getUniqueId().toString());
             paare.put(g, m);
@@ -144,40 +159,125 @@ public final class Bodyguards implements Listener {
 
     private void takt() {
         paare.entrySet().removeIf(e -> !e.getKey().isValid() || !e.getValue().isValid());
+        letzteStelle.keySet().removeIf(g -> !paare.containsKey(g));
+        festgesteckt.keySet().removeIf(g -> !paare.containsKey(g));
         long tick = Bukkit.getCurrentTick();
         for (Map.Entry<IronGolem, Mannequin> e : paare.entrySet()) {
             IronGolem g = e.getKey();
             Mannequin m = e.getValue();
-            Location l = g.getLocation();
-            if (m.getLocation().distanceSquared(l) > 0.0001 || Math.abs(m.getYaw() - l.getYaw()) > 1) {
-                m.teleport(l);
-                m.setBodyYaw(g.getBodyYaw());
-            }
             String chefId = g.getPersistentDataContainer().get(schluesselChef, PersistentDataType.STRING);
             Player chef = chefId == null ? null : Bukkit.getPlayer(UUID.fromString(chefId));
-            if (chef == null || !chef.getWorld().equals(g.getWorld())) {
-                continue;
-            }
-            if (tick % 10 == 0) {
+            boolean daheim = chef != null && chef.getWorld().equals(g.getWorld());
+            if (daheim && tick % 10 == 0) {
                 ziel(g, chef);
                 folgen(g, chef);
             }
+            if (daheim && tick % 40 == 0) {
+                feststeckenPruefen(g, chef);
+            }
+            // Gegner in Schussweite und Sicht? Dann zielt er (Puppe dreht sich hin, Pistole im Anschlag)
+            LivingEntity ziel = daheim ? (g.getTarget() != null ? g.getTarget() : naechsterCreeper(chef)) : null;
+            boolean zielen = false;
+            if (ziel != null && ziel.isValid() && !ziel.isDead()) {
+                double d = ziel.getLocation().distance(g.getLocation());
+                zielen = (d > SCHUSS_AB || ziel instanceof Creeper) && d < SCHUSS_BIS && freieSicht(g, ziel);
+            }
+            puppeNachfuehren(g, m, zielen ? ziel : null);
             int rest = nachladen.getOrDefault(g, 0);
             if (rest > 0) {
                 nachladen.put(g, rest - 1);
-                continue;
-            }
-            LivingEntity ziel = g.getTarget() != null ? g.getTarget() : naechsterCreeper(chef);
-            if (ziel != null && ziel.isValid() && !ziel.isDead()) {
-                double d = ziel.getLocation().distance(l);
-                if ((d > SCHUSS_AB || ziel instanceof Creeper) && d < SCHUSS_BIS && freieSicht(g, ziel)) {
-                    schiessen(g, m, ziel);
-                }
+            } else if (zielen) {
+                schiessen(g, m, ziel);
             }
         }
     }
 
-    /** Wer den Chef angreift oder vom Chef angegriffen wird, sonst das nächste Monster (Creeper schießt er nur). */
+    /**
+     * Die Puppe steht dort, wo der unsichtbare Golem läuft. Zielt er, schaut sie den Gegner an (Kopf und Körper, mit
+     * Neigung) und hält die Pistole im Anschlag, sonst schaut sie wie der Golem und hält die Pistole locker.
+     */
+    private void puppeNachfuehren(IronGolem g, Mannequin m, LivingEntity ziel) {
+        Location soll = g.getLocation();
+        if (ziel != null) {
+            Location auge = soll.clone().add(0, m.getEyeHeight(), 0);
+            soll.setDirection(ziel.getLocation().add(0, ziel.getHeight() * 0.6, 0).toVector().subtract(auge.toVector()));
+        } else {
+            soll.setPitch(0);
+        }
+        Location ist = m.getLocation();
+        if (ist.distanceSquared(soll) > 0.0001 || Math.abs(ist.getYaw() - soll.getYaw()) > 1 || Math.abs(ist.getPitch() - soll.getPitch()) > 1) {
+            m.teleport(soll);
+            m.setBodyYaw(ziel != null ? soll.getYaw() : g.getBodyYaw());
+        }
+        ItemStack hand = m.getEquipment().getItem(EquipmentSlot.HAND);
+        boolean imAnschlag = hand.getType() == Material.CROSSBOW;
+        if (imAnschlag != (ziel != null)) {
+            m.getEquipment().setItem(EquipmentSlot.HAND, (ziel != null ? pistoleImAnschlag : pistoleLocker).clone());
+        }
+    }
+
+    /**
+     * Steckt der Golem in einer Wand oder kommt seit vier Sekunden nicht voran, obwohl der Chef weiter weg ist (z. B.
+     * hinter einer Tür, die ein Golem nicht öffnen kann), steht er gleich wieder an einer freien Stelle beim Chef.
+     */
+    private void feststeckenPruefen(IronGolem g, Player chef) {
+        Location jetzt = g.getLocation();
+        Location vorher = letzteStelle.put(g, jetzt);
+        boolean steht = vorher != null && vorher.getWorld().equals(jetzt.getWorld()) && vorher.distanceSquared(jetzt) < 0.25;
+        boolean mussLaufen = jetzt.distanceSquared(chef.getLocation()) > 5 * 5 && g.getTarget() == null;
+        int mal = steht && mussLaufen ? festgesteckt.getOrDefault(g, 0) + 1 : 0;
+        boolean inDerWand = jetzt.getBlock().isSolid() || jetzt.clone().add(0, 2, 0).getBlock().isSolid();
+        if (inDerWand || mal >= 2) {
+            g.teleport(freieStelle(chef, chef.getYaw() + 180));
+            g.getPathfinder().stopPathfinding();
+            mal = 0;
+        }
+        festgesteckt.put(g, mal);
+    }
+
+    /**
+     * Freie Stelle für einen Golem neben dem Chef (1,4 breit, 2,7 hoch, fester Boden darunter): erst schräg hinter ihm
+     * im gewünschten Winkel, dann ringsum und etwas weiter weg. Notfalls die Stelle des Chefs selbst.
+     */
+    private static Location freieStelle(Player chef, float winkel) {
+        Location c = chef.getLocation();
+        for (double r : new double[]{2.5, 3.5, 1.8, 4.5}) {
+            for (int i = 0; i < 8; i++) {
+                double w = Math.toRadians(winkel + i * 45);
+                int x = (int) Math.floor(c.getX() - Math.sin(w) * r), z = (int) Math.floor(c.getZ() + Math.cos(w) * r);
+                for (int dy : new int[]{0, 1, -1, 2, -2}) {
+                    int y = c.getBlockY() + dy;
+                    if (platzFuerGolem(c.getWorld(), x, y, z)) {
+                        Location l = new Location(c.getWorld(), x + 0.5, y, z + 0.5, c.getYaw(), 0);
+                        return l;
+                    }
+                }
+            }
+        }
+        return c.clone();
+    }
+
+    /** 3 × 3 Blöcke Grundfläche, drei Blöcke hoch frei, darunter fester Boden. */
+    private static boolean platzFuerGolem(org.bukkit.World w, int x, int y, int z) {
+        if (!w.getBlockAt(x, y - 1, z).isSolid()) {
+            return false;
+        }
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dy = 0; dy < 3; dy++) {
+                    if (!w.getBlockAt(x + dx, y + dy, z + dz).isPassable()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Wer den Chef angreift oder vom Chef angegriffen wird, sonst das nächste Monster (Creeper schießt er nur). Bei
+     * mehreren Monstern nimmt jeder Bodyguard eines, das der andere noch nicht im Visier hat.
+     */
     private void ziel(IronGolem g, Player chef) {
         LivingEntity jetzt = g.getTarget();
         if (jetzt != null && jetzt.isValid() && !jetzt.isDead() && !(jetzt instanceof Creeper)) {
@@ -189,16 +289,28 @@ public final class Bodyguards implements Listener {
             g.setTarget(feind);
             return;
         }
-        LivingEntity best = null;
-        double d = 16 * 16;
-        for (Entity e : chef.getNearbyEntities(16, 8, 16)) {
-            if (e instanceof Enemy && e instanceof LivingEntity le && !(e instanceof Creeper) && !le.isDead()
-                    && e.getLocation().distanceSquared(chef.getLocation()) < d) {
-                d = e.getLocation().distanceSquared(chef.getLocation());
-                best = le;
+        List<LivingEntity> belegt = new ArrayList<>();
+        for (IronGolem anderer : vom(chef)) {
+            if (anderer != g && anderer.getTarget() != null) {
+                belegt.add(anderer.getTarget());
             }
         }
-        g.setTarget(best);
+        LivingEntity best = null, frei = null;
+        double d = 16 * 16, dFrei = 16 * 16;
+        for (Entity e : chef.getNearbyEntities(16, 8, 16)) {
+            if (e instanceof Enemy && e instanceof LivingEntity le && !(e instanceof Creeper) && !le.isDead()) {
+                double abstand = e.getLocation().distanceSquared(chef.getLocation());
+                if (abstand < d) {
+                    d = abstand;
+                    best = le;
+                }
+                if (abstand < dFrei && !belegt.contains(le)) {
+                    dFrei = abstand;
+                    frei = le;
+                }
+            }
+        }
+        g.setTarget(frei != null ? frei : best);
     }
 
     private static LivingEntity naechsterCreeper(Player chef) {
@@ -236,7 +348,7 @@ public final class Bodyguards implements Listener {
         Vector richtung = ziel.getLocation().toVector().subtract(blick.toVector());
         blick.setDirection(richtung);
         g.setRotation(blick.getYaw(), 0);
-        m.swingMainHand();
+        // Kein Ausholen mit der Hand: das bräche die Zielhaltung der Puppe für einen Moment ab
         Location von = g.getLocation().add(0, 2.0, 0).add(blick.getDirection().setY(0).normalize().multiply(0.8));
         Location nach = ziel.getLocation().add(0, ziel.getHeight() * 0.6, 0);
         Vector schritt = nach.toVector().subtract(von.toVector()).normalize().multiply(0.6);

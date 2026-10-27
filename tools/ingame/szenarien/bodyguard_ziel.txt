@@ -1,0 +1,35 @@
+# Bodyguards zielen (Mod): Kopf und Körper zum Gegner, Arm mit der Pistole gehoben; bei zwei Gegnern nimmt jeder einen
+# anderen. Diener (Vindicator) statt Zombies: die brennen in der Sonne. Die Kamera steht schräg hinter den Bodyguards.
+# Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/bodyguard_ziel.txt
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+server /difficulty easy
+server /villa ort 55.5 26 92 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+merke
+linksklick 640 440
+bis 15 Bodyguards sind da
+warte 3
+taste F1
+server /execute as @p at @s run summon minecraft:vindicator ~-3 ~ ~-12 {NoAI:1b,PersistenceRequired:1b}
+server /execute as @p at @s run summon minecraft:vindicator ~3 ~ ~-12 {NoAI:1b,PersistenceRequired:1b}
+warte 1
+server /gamemode spectator
+server /villa ort 62 28 99 148 18
+bild bg_ziel_1
+warte 0.7
+bild bg_ziel_2
+warte 0.7
+bild bg_ziel_3
+warte 0.7
+bild bg_ziel_4
+warte 10
+bild bg_ziel_danach
+server /execute as @p at @s unless entity @e[type=minecraft:vindicator,distance=..40] run say GEGNER_WEG_OK
+server /difficulty peaceful

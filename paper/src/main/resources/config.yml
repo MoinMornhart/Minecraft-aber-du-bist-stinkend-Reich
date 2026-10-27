@@ -1,10 +1,9 @@
 # Einstellungen des Paper-Plugins „Minecraft, aber du bist stinkend reich“
 
 villa:
-  # Villa in jeder neuen Welt am Spawn bauen
+  # Villen bauen: in einer neuen Welt die erste am Spawn, in einer schon bestehenden Welt am nächsten Platz in der
+  # Nähe des Spawns, auf dem nichts gebaut ist (Spielerbauten und Dörfer werden nie überbaut)
   amSpawn: true
-  # Auch in schon bestehenden Welten (sonst nur, wenn die Welt gerade erst entstanden ist)
-  auchInAltenWelten: false
   # Breite des weich angeblendeten Geländestreifens rund ums Grundstück
   anblendung: 12
   # Jeder neue Spieler bekommt seine eigene Villa im Raster um die erste herum
