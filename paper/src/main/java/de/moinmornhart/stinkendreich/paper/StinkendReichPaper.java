@@ -41,6 +41,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Mechanik mechanik;
     private de.moinmornhart.stinkendreich.paper.butler.Butler butler;
     private Gaeste gaeste;
+    private SmartHome smartHome;
     private de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge fahrzeuge;
     private de.moinmornhart.stinkendreich.paper.block.Zugang zugang;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
@@ -69,6 +70,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
             return;
         }
         gaeste = new Gaeste(this);
+        smartHome = new SmartHome(this);
         mechanik = new de.moinmornhart.stinkendreich.paper.block.Mechanik(this, bloecke);
         new de.moinmornhart.stinkendreich.paper.block.Tore(this, bloecke, mechanik);
         zugang = new de.moinmornhart.stinkendreich.paper.block.Zugang(this, bloecke, mechanik);
@@ -82,7 +84,13 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         // /handy öffnet das Handy, /butler <Satz> spricht mit James (wie „Butler, …“ im Chat)
         getCommand("handy").setExecutor((wer, befehl, name, args) -> {
             if (wer instanceof Player p) {
-                handy.oeffnen(p);
+                if (args.length >= 3 && args[0].equals("smart")) {
+                    smartHome.schalten(p, args[1], args[2]);      // wie ein Knopf der Smart-Home-Seite
+                } else if (args.length >= 1 && args[0].equals("smart")) {
+                    smartHome.seite(p);
+                } else {
+                    handy.oeffnen(p);
+                }
             }
             return true;
         });
@@ -156,6 +164,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge fahrzeuge() {
         return fahrzeuge;
+    }
+
+    public SmartHome smartHome() {
+        return smartHome;
     }
 
     public Gaeste gaeste() {

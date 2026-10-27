@@ -41,6 +41,7 @@ tasks.processResources {
         include("assets/minecraft/**")
         include("deko_bloecke.json")
         include("data/stinkendreich/structure/villa/**")
+        include("data/stinkendreich/painting_variant/**")
         into("mod")
     }
 }

@@ -53,8 +53,9 @@ public final class FigurenUebersetzen {
                 return spawnen(delfin, ort) != null;
             }
             if (id.startsWith("minecraft:")) {
-                if (id.equals("minecraft:painting") && !Nbt.text(f.daten(), "variant", "minecraft:").startsWith("minecraft:")) {
-                    return false;   // eigene Bilder der Mod: kommen über das Ressourcenpaket (noch nicht auf Paper)
+                String variante = Nbt.text(f.daten(), "variant", "minecraft:");
+                if (id.equals("minecraft:painting") && variante.startsWith("stinkendreich:")) {
+                    return gemaelde(variante.substring("stinkendreich:".length()), Nbt.zahl(f.daten(), "facing", 0), ort);
                 }
                 return spawnen(new HashMap<>(f.daten()), ort) != null;
             }
@@ -62,6 +63,55 @@ public final class FigurenUebersetzen {
             plugin.getLogger().fine("Figur " + id + " übersprungen: " + e.getMessage());
         }
         return false;
+    }
+
+    /**
+     * Ein Gemälde der Mod (eigene Bildvarianten gibt es auf Paper nicht): Anzeige-Figur mit dem flachen Bildmodell,
+     * gestreckt auf Breite × Höhe und an die Wand gesetzt wie ein Bild im Spiel (Mitte des Blocks, fast an der Wand,
+     * bei gerader Breite/Höhe einen halben Block versetzt).
+     */
+    private boolean gemaelde(String name, int richtung, Location ort) {
+        com.google.gson.JsonObject variante = de.moinmornhart.stinkendreich.paper.block.Blockdaten.json(plugin,
+                "mod/data/stinkendreich/painting_variant/" + name + ".json");
+        if (variante == null) {
+            return false;
+        }
+        int breite = variante.get("width").getAsInt(), hoehe = variante.get("height").getAsInt();
+        // facing: 0 Süden, 1 Westen, 2 Norden, 3 Osten (wie bei Bildern im Spiel)
+        org.bukkit.block.BlockFace blick = switch (richtung) {
+            case 1 -> org.bukkit.block.BlockFace.WEST;
+            case 2 -> org.bukkit.block.BlockFace.NORTH;
+            case 3 -> org.bukkit.block.BlockFace.EAST;
+            default -> org.bukkit.block.BlockFace.SOUTH;
+        };
+        org.bukkit.block.BlockFace links = switch (blick) {           // gegen den Uhrzeigersinn
+            case NORTH -> org.bukkit.block.BlockFace.WEST;
+            case WEST -> org.bukkit.block.BlockFace.SOUTH;
+            case SOUTH -> org.bukkit.block.BlockFace.EAST;
+            default -> org.bukkit.block.BlockFace.NORTH;
+        };
+        double versatzB = breite % 2 == 0 ? 0.5 : 0.0, versatzH = hoehe % 2 == 0 ? 0.5 : 0.0;
+        Location mitte = ort.getBlock().getLocation().add(0.5, 0.5, 0.5)
+                .add(-blick.getModX() * 0.46875, 0, -blick.getModZ() * 0.46875)
+                .add(links.getModX() * versatzB, versatzH, links.getModZ() * versatzB);
+        // Item-Anzeigen zeichnen ihr Modell um 180° gedreht: die Bildseite (Süden im Modell) zeigt bei Gierwinkel 0
+        // nach Norden, deshalb hier jeweils die Gegenrichtung
+        mitte.setYaw(switch (blick) {
+            case WEST -> 270.0F;
+            case NORTH -> 0.0F;
+            case EAST -> 90.0F;
+            default -> 180.0F;
+        });
+        mitte.getWorld().spawn(mitte, org.bukkit.entity.ItemDisplay.class, d -> {
+            org.bukkit.inventory.ItemStack bild = org.bukkit.inventory.ItemStack.of(org.bukkit.Material.PAPER);
+            bild.setData(io.papermc.paper.datacomponent.DataComponentTypes.ITEM_MODEL, Key.key("stinkendreich", "polymer/bild/" + name));
+            d.setItemStack(bild);
+            d.setPersistent(true);
+            d.setItemDisplayTransform(org.bukkit.entity.ItemDisplay.ItemDisplayTransform.NONE);
+            d.setTransformation(new org.bukkit.util.Transformation(new org.joml.Vector3f(), new org.joml.Quaternionf(),
+                    new org.joml.Vector3f(breite, hoehe, 1), new org.joml.Quaternionf()));
+        });
+        return true;
     }
 
     private Entity spawnen(Map<String, Object> daten, Location ort) {

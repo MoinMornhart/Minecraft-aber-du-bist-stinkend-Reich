@@ -63,8 +63,8 @@ public final class Tore {
             int radius = zahl(w.get("radius"), 6);
             String k = schluessel(b);
             boolean offen = switch (modus) {
-                case "tor" -> amTor(b);
-                case "rollladen" -> true;
+                case "tor" -> !plugin.smartHome().zuGehalten(b, w.getOrDefault("ziel", "").endsWith("garagentor")) && amTor(b);
+                case "rollladen" -> !plugin.smartHome().rolllaedenZu(b);
                 case "redstone" -> b.isBlockIndirectlyPowered();
                 case "redstone_invers" -> !b.isBlockIndirectlyPowered();
                 case "schiebetuer" -> jemandNah(b.getLocation().add(0.5, 0.5, 0.5), radius);

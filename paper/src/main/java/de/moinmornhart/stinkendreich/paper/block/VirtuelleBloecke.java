@@ -121,6 +121,7 @@ public final class VirtuelleBloecke implements Listener {
             return;
         }
         b.setBlockData(traeger(d), false);
+        lichtDarueber(b, d);
         ItemDisplay figur = figur(b);
         if (figur == null) {
             Location mitte = b.getLocation().add(0.5, 0.5, 0.5);
@@ -137,17 +138,45 @@ public final class VirtuelleBloecke implements Listener {
         klickfeld(b, d);
     }
 
-    /** Träger aus dem Spiel: Barriere (fest), Licht (leuchtet) oder Strukturleere. */
+    /**
+     * Träger aus dem Spiel: Leuchtende Blöcke ohne großen Körper (Lampen, Kronleuchter) werden ein Lichtblock (man
+     * läuft hindurch, dafür leuchten sie wirklich), feste Blöcke eine Barriere, alles andere Strukturleere.
+     */
     private static BlockData traeger(Blockdaten.Darstellung d) {
+        if (d.licht() > 0 && !grosserKoerper(d)) {
+            return lichtblock(d.licht());
+        }
         if (d.fest()) {
             return Material.BARRIER.createBlockData();
         }
-        if (d.licht() > 0) {
-            Light licht = (Light) Material.LIGHT.createBlockData();
-            licht.setLevel(Math.min(15, d.licht()));
-            return licht;
-        }
         return Material.STRUCTURE_VOID.createBlockData();
+    }
+
+    private static BlockData lichtblock(int staerke) {
+        Light licht = (Light) Material.LIGHT.createBlockData();
+        licht.setLevel(Math.clamp(staerke, 1, 15));
+        return licht;
+    }
+
+    /** Hat der Block einen Körper, auf dem man steht (z. B. leuchtende Tanzfläche)? Dann bleibt er eine Barriere. */
+    private static boolean grosserKoerper(Blockdaten.Darstellung d) {
+        for (Blockdaten.Kasten k : d.kollision()) {
+            if (k.y1() - k.y0() >= 8 && k.x1() - k.x0() >= 12 && k.z1() - k.z0() >= 12) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Feste leuchtende Blöcke geben ihr Licht über den Block darüber ab (falls dort Luft ist). */
+    private void lichtDarueber(Block b, Blockdaten.Darstellung d) {
+        Block oben = b.getRelative(org.bukkit.block.BlockFace.UP);
+        boolean soll = d.licht() > 0 && d.fest() && grosserKoerper(d);
+        if (soll && oben.getType().isAir()) {
+            oben.setBlockData(lichtblock(d.licht()), false);
+        } else if (!soll && oben.getType() == Material.LIGHT && figur(oben) == null) {
+            oben.setType(Material.AIR, false);
+        }
     }
 
     private void anzeigen(ItemDisplay figur, Blockdaten.Darstellung d) {

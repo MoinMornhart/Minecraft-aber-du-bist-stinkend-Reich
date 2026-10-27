@@ -81,6 +81,8 @@ public final class Handy implements Listener {
         knoepfe.add(Dialoge.Knopf.von("James rufen", (s, a) -> butler.befehl(s, "komm")));
         knoepfe.add(Dialoge.Knopf.von("James: warten", (s, a) -> butler.befehl(s, "warte")));
         knoepfe.add(Dialoge.Knopf.von("James nach Hause", (s, a) -> butler.befehl(s, "nach hause")));
+        knoepfe.add(Dialoge.Knopf.von("Smart Home", (s, a) -> plugin.smartHome().seite(s)));
+        knoepfe.add(Dialoge.Knopf.von("Gästeliste", (s, a) -> gaesteSeite(s)));
         Villen.Villa eigene = plugin.villen().vonBesitzer(p.getUniqueId());
         if (eigene != null) {
             knoepfe.add(Dialoge.Knopf.von("Zu meiner Villa", (s, a) -> s.teleport(eigene.spawn(plugin.bauplan()))));
@@ -91,5 +93,27 @@ public final class Handy implements Listener {
             }
         }
         Dialoge.zeigen(p, "Goldenes Handy", "Was darf es sein?", List.of(), knoepfe);
+    }
+
+    /** Gästeliste: Namen eintragen oder streichen (Gäste kommen ohne Karte durch Tor und Türen). */
+    private void gaesteSeite(Player p) {
+        Villen.Villa v = plugin.villen().vonBesitzer(p.getUniqueId());
+        if (v == null) {
+            p.sendActionBar(Component.text("Du wohnst in keiner Villa.", NamedTextColor.RED));
+            return;
+        }
+        List<Dialoge.Knopf> knoepfe = new ArrayList<>();
+        knoepfe.add(Dialoge.Knopf.von("Eintragen", (s, a) -> {
+            String name = a.getText("name");
+            if (name != null && !name.isBlank()) {
+                plugin.gaeste().eintragen(v.nr(), name.trim());
+                s.sendActionBar(Component.text(name.trim() + " steht auf der Gästeliste.", NamedTextColor.GOLD));
+            }
+        }));
+        for (String gast : plugin.gaeste().von(v.nr())) {
+            knoepfe.add(Dialoge.Knopf.von("✕ " + gast, (s, a) -> plugin.gaeste().streichen(v.nr(), gast)));
+        }
+        Dialoge.zeigen(p, "Gästeliste", "Gäste kommen ohne Zugangskarte durch Tor, Türen und über die Brücke.",
+                List.of(io.papermc.paper.registry.data.dialog.input.DialogInput.text("name", Component.text("Name")).build()), knoepfe);
     }
 }

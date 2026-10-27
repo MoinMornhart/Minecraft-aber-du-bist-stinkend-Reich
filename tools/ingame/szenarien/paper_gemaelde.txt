@@ -1,0 +1,14 @@
+# Paper-Plugin: eigene Gemälde der Villa (Bildseite vorn, richtige Größe)
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+# Gemälde „Bonzenauto“ im Erdgeschoss (hängt an der Westwand, schaut nach Osten)
+server /villa ort 84.5 27.6 54.5 90 0
+warte 6
+bild pg_gemaelde
+server /villa ort 51.23 29.00 66.75 218.0 14.0
+warte 4
+bild pg_ballsaal

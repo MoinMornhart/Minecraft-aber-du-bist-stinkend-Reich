@@ -69,6 +69,15 @@ public final class Ressourcenpaket implements Listener {
                     String pfad = name.substring(name.indexOf("assets/"));
                     dateien.put(pfad, inhalt);
                     // Lack der Fahrzeuge: dieselbe Textur auch dort, wo die Fahrzeug-Modelle sie suchen
+                    // Gemälde der Mod: als flaches Item-Modell (Bild vorn, Holz hinten), Textur im Block-Atlas (der Rahmen ist Fichtenholz, ein Modell darf nur einen Atlas nutzen)
+                    String bilder = "assets/stinkendreich/textures/painting/";
+                    if (pfad.startsWith(bilder) && pfad.endsWith(".png")) {
+                        String bild = pfad.substring(bilder.length(), pfad.length() - 4);
+                        dateien.put("assets/stinkendreich/textures/block/polymer/bild/" + bild + ".png", inhalt);
+                        dateien.put("assets/stinkendreich/models/item/polymer/bild/" + bild + ".json", gemaeldeModell(bild));
+                        dateien.put("assets/stinkendreich/items/polymer/bild/" + bild + ".json", ("{\"model\":{\"type\":\"minecraft:model\","
+                                + "\"model\":\"stinkendreich:item/polymer/bild/" + bild + "\"}}").getBytes(StandardCharsets.UTF_8));
+                    }
                     String lack = "assets/stinkendreich/textures/entity/";
                     if (pfad.startsWith(lack) && FAHRZEUGE.contains(pfad.substring(lack.length()).split("/")[0])
                             && pfad.substring(lack.length()).contains("/")) {
@@ -106,6 +115,18 @@ public final class Ressourcenpaket implements Listener {
         Files.createDirectories(ziel.getParent());
         Files.write(ziel, daten);
         plugin.getLogger().info("Ressourcenpaket: " + dateien.size() + " Dateien, " + (daten.length / 1024) + " KB (" + ziel + ")");
+    }
+
+    /**
+     * Ein Gemälde als Item-Modell: eine 1 × 1 Block große, einen Pixel dicke Tafel (die Anzeige-Figur streckt sie auf
+     * Breite × Höhe), Bild auf der Südseite, Rückseite und Kanten aus Fichtenholz wie bei Bildern im Spiel.
+     */
+    private static byte[] gemaeldeModell(String name) {
+        String holz = "{\"uv\":[0,0,16,16],\"texture\":\"#holz\"}";
+        return ("{\"textures\":{\"bild\":\"stinkendreich:block/polymer/bild/" + name + "\",\"holz\":\"minecraft:block/spruce_planks\","
+                + "\"particle\":\"minecraft:block/spruce_planks\"},\"elements\":[{\"from\":[0,0,7.5],\"to\":[16,16,8.5],\"faces\":{"
+                + "\"south\":{\"uv\":[0,0,16,16],\"texture\":\"#bild\"},\"north\":" + holz + ",\"east\":" + holz
+                + ",\"west\":" + holz + ",\"up\":" + holz + ",\"down\":" + holz + "}}]}").getBytes(StandardCharsets.UTF_8);
     }
 
     /** Startet den eingebauten Webserver (oder nimmt die Adresse aus der Config). */

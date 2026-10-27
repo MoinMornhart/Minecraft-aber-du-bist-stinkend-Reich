@@ -95,7 +95,7 @@ public final class Blockdaten {
         plugin.getLogger().info("Blockdaten: " + bloecke.size() + " Blöcke der Mod, " + modelle.size() + " Modelle");
     }
 
-    static JsonObject json(StinkendReichPaper plugin, String pfad) {
+    public static JsonObject json(StinkendReichPaper plugin, String pfad) {
         try (InputStream ein = plugin.getResource(pfad)) {
             if (ein == null) {
                 return null;
