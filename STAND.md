@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 22:15 Uhr (Nachtschicht 0.4.2: Villen jederzeit auf Paper, nie über Spielerbauten, Bodyguards zielen; Release erst nach Philips OK)_
+_Zuletzt aktualisiert: 2026-10-27, 23:10 Uhr (Nachtschicht 0.4.2 fertig: Villen jederzeit auf Paper, nie über Spielerbauten, Bodyguards zielen und arbeiten beide, README und Trailer neu; Release erst nach Philips OK)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -598,6 +598,12 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   eigener Nahkampf (`nahkampf`, `g.attack`). Testprotokoll je Sekunde: „Autotest: Bodyguard <id> bei … Ziel … Abstand …“.
 - Tests (Mod): `bodyguard_ziel.txt` (Diener mit Resistenz V für die Fotos), `nachbar_bebaut.txt` (Haus auf dem Platz, den
   die Suche in der Welt mit Saat „stinkendreich“ wählt: 584 -696 → verworfen, Villa bei 264 -376).
+- **Paper: Puppe und Golem ohne Kollision** (`setCollidable(false)` für beide, auch beim Laden): Sie stehen aufeinander und
+  schoben sich gegenseitig an – ein Golem, der einmal lief, glitt mit 1 Block/s endlos weiter (auch beim Zielen). Im
+  Zuschauermodus sieht man unsichtbare Figuren als Schemen → Paper-Aufnahmen mit Bodyguards im Kreativmodus drehen.
+- **Trailer Teil 5** (0.4.2, 39 s, „Neu in 0.4.2 – Bodyguards im Einsatz“): `trailer5a.txt` (Mod, `SICHTWEITE=12 test.sh`),
+  `trailer5b.txt` (Paper, `CHAT_AUS=1 paper.sh`), Schnitt `tools/ingame/trailer5_schnitt.py`, dann `video.py`, mit ffmpeg concat
+  (`-c copy`) an `docs/trailer.mp4` gehängt: jetzt 13:48, 87 MB (GitHub-Grenze 100 MB → beim nächsten Teil neu kodieren).
 - `mod.version` = 0.4.2, `.github/neu.md` hat den Abschnitt 0.4.2; `.github/release-version` bleibt 0.4.1 bis Philips OK.
 - Philip (27.10. abends, mehrfach): Auf der Fortschrittsseite auch „Läuft gerade“ und „Als Nächstes“ immer aktuell halten –
   `seite_neu.py` zeigt dort jetzt Mod- und Server-Punkte zusammen.

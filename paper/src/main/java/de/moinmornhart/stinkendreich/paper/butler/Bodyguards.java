@@ -115,11 +115,15 @@ public final class Bodyguards implements Listener {
                 k.setRemoveWhenFarAway(false);
                 k.setPlayerCreated(true);
                 k.setSilent(true);
+                k.setCollidable(false);
                 k.getPersistentDataContainer().set(schluesselChef, PersistentDataType.STRING, p.getUniqueId().toString());
             });
             kiAnpassen(g);
             Mannequin m = FigurenUebersetzen.puppe(ort, "bodyguard_mensch");
             m.setInvulnerable(true);
+            // Puppe und Golem stehen aufeinander: mit Kollision schöben sie sich gegenseitig an, und ein Golem, der einmal
+            // lief, glitt endlos weiter (auch beim Zielen)
+            m.setCollidable(false);
             m.customName(Component.text("Bodyguard", NamedTextColor.GOLD));
             m.setCustomNameVisible(false);
             if (m.getAttribute(Attribute.SCALE) != null) {
@@ -153,11 +157,14 @@ public final class Bodyguards implements Listener {
     private void aufnehmen(Entity e) {
         String paar = e.getPersistentDataContainer().get(schluesselPaar, PersistentDataType.STRING);
         if (e instanceof Mannequin m && paar != null && Bukkit.getEntity(UUID.fromString(paar)) instanceof IronGolem g) {
+            m.setCollidable(false);
             paare.put(g, m);
         } else if (e instanceof IronGolem g && e.getPersistentDataContainer().has(schluesselChef)) {
             kiAnpassen(g);   // Ziele der KI werden nicht gespeichert, nach dem Laden sind die eigenen wieder da
+            g.setCollidable(false);
             for (Entity n : g.getNearbyEntities(3, 3, 3)) {
                 if (n instanceof Mannequin m && g.getUniqueId().toString().equals(m.getPersistentDataContainer().get(schluesselPaar, PersistentDataType.STRING))) {
+                    m.setCollidable(false);
                     paare.put(g, m);
                 }
             }
@@ -222,10 +229,16 @@ public final class Bodyguards implements Listener {
             if (tick % 20 == 0 && de.moinmornhart.stinkendreich.paper.Autotest.aktiv()) {
                 // Testprotokoll: was jeder Bodyguard gerade tut
                 Location o = g.getLocation();
-                plugin.getLogger().info(String.format("Autotest: Bodyguard %d bei %d %d %d Ziel %s Abstand %s Chef %s" + (nahkampf.contains(g) ? " Nahkampf" : ""),
+                StringBuilder ki = new StringBuilder();
+                Bukkit.getMobGoals().getRunningGoals(g).forEach(z -> ki.append(z.getKey().getNamespacedKey().getKey()).append(' '));
+                var weg = g.getPathfinder().getCurrentPath();
+                ki.append(weg == null || weg.getFinalPoint() == null ? "| kein Weg" : "| Weg nach " + weg.getFinalPoint().getBlockX() + " "
+                        + weg.getFinalPoint().getBlockZ()).append(String.format(" v %.2f %.2f", g.getVelocity().getX(), g.getVelocity().getZ()));
+                plugin.getLogger().info(String.format("Autotest: Bodyguard %d bei %d %d %d Ziel %s Abstand %s Chef %s%s läuft %s",
                         g.getEntityId(), o.getBlockX(), o.getBlockY(), o.getBlockZ(), ziel == null ? "-" : ziel.getEntityId(),
                         ziel == null ? "-" : String.format("%.1f", ziel.getLocation().distance(o)),
-                        daheim ? String.format("%.1f", chef.getLocation().distance(o)) : "-"));
+                        daheim ? String.format("%.1f", chef.getLocation().distance(o)) : "-", nahkampf.contains(g) ? " Nahkampf" : "",
+                        ki));
             }
             int rest = nachladen.getOrDefault(g, 0);
             if (rest > 0) {

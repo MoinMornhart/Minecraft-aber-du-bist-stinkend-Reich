@@ -30,7 +30,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (13 Minuten, echtes Minecraft, am Ende Paper-Server, neue Skins und Freunde in deiner Welt)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (14 Minuten, echtes Minecraft, am Ende Paper-Server, neue Skins, Freunde in deiner Welt und Bodyguards im Einsatz)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
@@ -367,7 +367,7 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 
 **Mitarbeiter:** Stell die Mitarbeiterkiste auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Sie graben sich selbst zum Erz und bringen jede Ladung in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis und Holz), Schleichen + Rechtsklick zeigt, was er gerade dabeihat.
 
-**Bodyguards:** Echte Eisengolems mit Sakko, weißem Hemd, Krawatte, roter Blume und Sonnenbrille. Sie können nicht sterben, folgen dir und beschützen dich – auf Abstand mit der Pistole, aus der Nähe mit Golem-Fäusten. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
+**Bodyguards:** Echte Eisengolems mit Sakko, weißem Hemd, Krawatte, roter Blume und Sonnenbrille. Sie können nicht sterben und bleiben wie echte Personenschützer an deiner Seite: Taucht ein Monster auf, drehen sie sich hin, heben die goldene Pistole und schießen – bei mehreren Gegnern nimmt sich jeder einen eigenen. Kommt einer zu nah, gibt es die Golem-Faust. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
 
 **Straßennetz:** Sobald du die Welt betrittst, entstehen Straßen zum Dorf, zur Mine, zum Netherportal und zum Endportal; für jedes neue Ziel baut James eine echte Straße: zuerst einen Kreisel mit Insel vor der Villa, dann eine Straße mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein ganzes Netz – und du kannst es auch selbst befahren. Abgerissen wird nichts, weder an der Villa noch an deinen Bauten. Die Straßen liegen immer an der Luft: durch Hügel als offener Einschnitt, über Meer und Flüsse als Brücke mit Geländer und Laternen, Höhenunterschiede mit halben Stufen, über die das Auto weich rollt. `/butler strassen` zeigt alle Straßen, `Butler, bau eine Straße zum Dorf` baut eine schon vorher, `/butler strassen neu` baut alle neu.
 
@@ -428,7 +428,7 @@ Jeder ohne Zugangskarte ist für die Villa ein Eindringling: Laser, Abwehrgesch�
 <table>
 <tr>
 <td width="50%"><img src="docs/bilder/handy_gaeste.jpg" alt="Gästeliste im Handy"><br><sub><b>Gästeliste im Handy:</b> Name eintippen, ✕ streicht wieder</sub></td>
-<td width="50%"><img src="docs/bilder/bodyguard_pistole.jpg" alt="Bodyguard mit goldener Pistole"><br><sub><b>Bodyguard</b> mit der goldenen Pistole in der Hand</sub></td>
+<td width="50%"><img src="docs/bilder/bodyguards_zielen.jpg" alt="Bodyguards zielen"><br><sub><b>Bodyguards im Einsatz:</b> jeder zielt auf einen eigenen Gegner</sub></td>
 </tr>
 </table>
 
@@ -438,7 +438,7 @@ Eintragen geht auf drei Wegen: im Chat („James, behandle Aircrafter als Gast�
 
 ## 🏘️ Nachbarschaft: jeder bekommt seine eigene Villa
 
-Auf einem Server mit Freunden bekommt **jeder neue Spieler seine eigene Villa** – mit Butler, Fuhrpark, Hubschrauber, Bunker, Festung und allem, was dazugehört. Die Villen stehen mit großem Abstand im Raster rund um die erste (Standard 320 Blöcke). Die Mod sucht dafür zuerst den **flachsten freien Platz** in der Nähe und lässt Plätze aus, über die schon eine Straße führt.
+Auf einem Server mit Freunden bekommt **jeder neue Spieler seine eigene Villa** – mit Butler, Fuhrpark, Hubschrauber, Bunker, Festung und allem, was dazugehört. Die Villen stehen mit großem Abstand im Raster rund um die erste (Standard 320 Blöcke). Die Mod sucht dafür zuerst den **flachsten freien Platz** in der Nähe und lässt Plätze aus, über die schon eine Straße führt. **Deine Bauten bleiben unangetastet:** Stehen auf einem Platz Häuser oder findet sich darunter etwas Gebautes (Fackeln, Werkbank, Bett …), nimmt die Mod den nächsten. Wird der Server mitten im Bau neu gestartet, geht es beim nächsten Betreten an derselben Stelle weiter.
 
 Gebaut wird **im Hintergrund**, Stück für Stück: Der Server läuft dabei normal weiter, der Neue sieht den Fortschritt in Prozent über der Schnellleiste und wird nach etwa einer halben Minute vor seine Haustür gebracht. Seine Zugangskarte gilt nur für seine Villa, James heißt „James · Name“, und **auf jedem Nummernschild** seines Fuhrparks steht sein Name in Gold.
 
@@ -588,7 +588,7 @@ Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die
 
 Läuft dein Server mit [Paper](https://papermc.io/), nimm statt der Mod das Plugin `stinkendreich_paper-…+paper26.3.jar` aus dem [neuesten Release](https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/latest) und leg es in den `plugins`-Ordner. Mehr braucht es nicht – auch keine weiteren Plugins. Der Server liefert das Ressourcenpaket selbst aus (eingebauter Webserver auf Port 25580, einstellbar in `plugins/StinkendReich/config.yml`); Spieler nehmen es beim Betreten an und spielen mit ganz normalem Minecraft.
 
-In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt seine eigene Villa in der Nachbarschaft (im Hintergrund gebaut, ohne Hänger) samt Zugangskarte. Mit dabei sind fast alle Mechanismen der Mod: Türen, Tore und Rollläden, Kartenleser und Tastenfeld, Aufzug, Zugbrücke mit Animation, Sicherheitssystem mit Laser, Bewegungsmeldern, Sirenen und Tresorfallen, die Festung mit Minen und Abwehrgeschützen, der Inkognito-Modus, Smart Home mit Lichtfarben und Disco, Überwachungskameras, Konzertflügel und Musikanlage, Kamin, Whirlpool, Dusche und Schublade, Gemälde, Fuhrpark mit fahrbaren Autos, Hubschrauber, Fernseher (Video-Link im Fenster, abspielen im Browser) und Butler James. Dazu der Agenten-Anzug mit allen Kräften, goldene Pistole, Laseruhr und Geldkanone, die Waffenkammer im Bunker, Bodyguards und Lieferservice per Handy, tanzende Tänzerinnen im Geheimclub und echte Haie im Becken, die auch auf „Friedlich“ zubeißen – samt Haifalle unter dem Glasboden im Wohnzimmer, Wasserrutsche und Goldmünzen-Becken. Handy, Zentrale, Aufzug, Tastenfeld und Co. öffnen sich als Fenster.
+**Jederzeit, auch auf einem bestehenden Server:** In einer neuen Welt steht die Villa am Spawn; gab es die Welt schon vorher, baut das Plugin die erste Villa auf dem nächsten Platz ohne Spielerbauten, und der erste Spieler wird ihr Herr (Zugangskarte, vor die Tür gebracht). Jeder, der irgendwann dazukommt – auch während gerade gebaut wird –, bekommt seine eigene Villa in der Nachbarschaft (im Hintergrund gebaut, ohne Hänger) samt Zugangskarte. Ein Neustart mitten im Bau schadet nicht: Der Bau geht an derselben Stelle weiter. Mit dabei sind fast alle Mechanismen der Mod: Türen, Tore und Rollläden, Kartenleser und Tastenfeld, Aufzug, Zugbrücke mit Animation, Sicherheitssystem mit Laser, Bewegungsmeldern, Sirenen und Tresorfallen, die Festung mit Minen und Abwehrgeschützen, der Inkognito-Modus, Smart Home mit Lichtfarben und Disco, Überwachungskameras, Konzertflügel und Musikanlage, Kamin, Whirlpool, Dusche und Schublade, Gemälde, Fuhrpark mit fahrbaren Autos, Hubschrauber, Fernseher (Video-Link im Fenster, abspielen im Browser) und Butler James. Dazu der Agenten-Anzug mit allen Kräften, goldene Pistole, Laseruhr und Geldkanone, die Waffenkammer im Bunker, Bodyguards und Lieferservice per Handy, tanzende Tänzerinnen im Geheimclub und echte Haie im Becken, die auch auf „Friedlich“ zubeißen – samt Haifalle unter dem Glasboden im Wohnzimmer, Wasserrutsche und Goldmünzen-Becken. Handy, Zentrale, Aufzug, Tastenfeld und Co. öffnen sich als Fenster.
 
 <table>
 <tr>
@@ -610,6 +610,10 @@ In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt sein
 <tr>
 <td><img src="docs/bilder/paper_bodyguards.jpg" alt="Bodyguards auf Paper"><br><sub>Per Handy: Bodyguards und ein gelieferter Hund</sub></td>
 <td><img src="docs/bilder/paper_taenzerinnen.jpg" alt="Tänzerinnen auf Paper"><br><sub>Geheimclub: die Tänzerinnen kreisen um die Stangen</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/paper_bodyguards_zielen.jpg" alt="Bodyguards zielen auf Paper"><br><sub>Bodyguards im Anschlag, jeder auf einen eigenen Gegner</sub></td>
+<td><img src="docs/bilder/server_bodyguard.jpg" alt="Bodyguard als Türsteher"><br><sub>Bodyguard als Türsteher im Smoking</sub></td>
 </tr>
 <tr>
 <td><img src="docs/bilder/paper_hai.jpg" alt="Hai auf Paper"><br><sub>Echte Haie im Becken</sub></td>
@@ -665,7 +669,7 @@ Beim Start schaut die Mod in den Releases dieses Projekts nach einer neueren Ver
 ./gradlew :1.21.4:buildAndCollect  # nur eine Version
 ```
 
-Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, `paper_trailer2.txt`, `paper_trailer3.txt`, `paper_trailer3h.txt` und `paper_trailer3k.txt`, Spieltest mit `tools/ingame/paper.sh`; die neuen Skins aus `trailer4a.txt`, „Freunde in deiner Welt“ aus `trailer4b.txt` mit `tools/ingame/lan.sh`, Schnitt `tools/ingame/trailer4_schnitt.py`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
+Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, `paper_trailer2.txt`, `paper_trailer3.txt`, `paper_trailer3h.txt` und `paper_trailer3k.txt`, Spieltest mit `tools/ingame/paper.sh`; die neuen Skins aus `trailer4a.txt`, „Freunde in deiner Welt“ aus `trailer4b.txt` mit `tools/ingame/lan.sh`, Schnitt `tools/ingame/trailer4_schnitt.py`; die Bodyguards aus `trailer5a.txt` und `trailer5b.txt`, Schnitt `tools/ingame/trailer5_schnitt.py`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
 
 **Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
 

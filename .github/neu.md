@@ -7,8 +7,10 @@
 - **Herr der ersten Villa ohne Neu-Verbinden:** Wer auf die erste Villa wartet, wird nach dem Bau ihr Herr, bekommt die Zugangskarte und wird vor die Tür gebracht. `/villa bauen` macht den, der den Befehl gibt, zum Herrn; `/villa auftraege` zeigt, was gerade gebaut wird.
 - **Bodyguards zielen:** Sie drehen sich zum Gegner und heben die goldene Pistole (Mod: Arm des Golems; Paper und Freunde ohne Mod: Zielhaltung mit beiden Armen), das Mündungsfeuer sitzt vorn an der Pistole. Wie echte Personenschützer bleiben sie bei dir und schießen; in den Nahkampf gehen sie erst, wenn ein Gegner nah herankommt.
 - **Beide Bodyguards arbeiten:** Einer der beiden kam bisher nie dazu, sich ein Ziel zu suchen oder hinterherzulaufen (Minecraft fragt die KI eines Wesens nur jeden zweiten Tick ab – je nach gerader oder ungerader Nummer). Jetzt sucht jeder selbst, und bei mehreren Gegnern nimmt jeder einen anderen. Auf Paper hat außerdem die eingebaute Golem-KI beide auf denselben Gegner geschickt – die ist jetzt abgeschaltet.
+- **Paper: Bodyguards gleiten nicht mehr davon.** Schaufensterpuppe und unsichtbarer Golem schoben sich gegenseitig an, so dass ein Bodyguard, der einmal losgelaufen war, langsam weiterglitt – auch beim Zielen.
 - **Haie** mit ungerader Nummer haben aus demselben Grund nie gejagt – behoben. James erkennt jetzt auch beim Hinterherlaufen zuverlässig, wenn er festhängt.
 - **Bodyguards stecken nicht mehr fest:** Sie erscheinen nur auf freien Stellen (vorher manchmal in einer Wand) und stehen gleich wieder neben dir, wenn sie in einer Wand stecken oder nicht hinterherkommen.
+- **Trailer** mit neuem Teil „Neu in 0.4.2 – Bodyguards im Einsatz“ (Mod und Paper-Server).
 
 ### Neu in 0.4.1 – Paper-Server
 
