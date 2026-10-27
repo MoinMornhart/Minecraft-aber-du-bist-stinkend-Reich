@@ -61,7 +61,7 @@ public final class Ressourcenpaket implements Listener {
         try (JarFile jar = new JarFile(plugin.jarDatei())) {
             for (JarEntry e : java.util.Collections.list(jar.entries())) {
                 String name = e.getName();
-                if (e.isDirectory() || !(name.startsWith("mod/assets/") || name.startsWith("paket/assets/"))) {
+                if (e.isDirectory() || !(name.startsWith("mod/assets/") || name.startsWith("paket/assets/") || name.startsWith("zusatz/assets/"))) {
                     continue;
                 }
                 try (InputStream ein = jar.getInputStream(e)) {

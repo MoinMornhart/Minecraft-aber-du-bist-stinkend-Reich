@@ -83,6 +83,9 @@ public final class Handy implements Listener {
         knoepfe.add(Dialoge.Knopf.von("James nach Hause", (s, a) -> butler.befehl(s, "nach hause")));
         knoepfe.add(Dialoge.Knopf.von("Smart Home", (s, a) -> plugin.smartHome().seite(s)));
         knoepfe.add(Dialoge.Knopf.von("Gästeliste", (s, a) -> gaesteSeite(s)));
+        knoepfe.add(Dialoge.Knopf.von("Lieferservice", (s, a) -> lieferSeite(s)));
+        knoepfe.add(Dialoge.Knopf.von("Bodyguards rufen", (s, a) -> plugin.bodyguards().rufen(s)));
+        knoepfe.add(Dialoge.Knopf.von("Bodyguards heim", (s, a) -> plugin.bodyguards().entlassen(s)));
         Villen.Villa eigene = plugin.villen().vonBesitzer(p.getUniqueId());
         if (eigene != null) {
             knoepfe.add(Dialoge.Knopf.von("Zu meiner Villa", (s, a) -> s.teleport(eigene.spawn(plugin.bauplan()))));
@@ -93,6 +96,78 @@ public final class Handy implements Listener {
             }
         }
         Dialoge.zeigen(p, "Goldenes Handy", "Was darf es sein?", List.of(), knoepfe);
+    }
+
+    // ------------------------------------------------------------------
+    // Lieferservice (wie in der Mod: Tiere neben dem Spieler, Waren ins Inventar)
+    // ------------------------------------------------------------------
+
+    private static final String[][] ANGEBOT = {
+            {"kuehe", "2 Kühe", "2 Kühe"}, {"schweine", "2 Schweine", "2 Schweine"}, {"schafe", "2 Schafe", "2 Schafe"},
+            {"huehner", "4 Hühner", "4 Hühner"}, {"hund", "Hund (zahm)", "ein Hund (er gehört schon Ihnen)"},
+            {"katze", "Katze (zahm)", "eine Katze (sie gehört schon Ihnen)"}, {"papagei", "Papagei (zahm)", "ein Papagei (er gehört schon Ihnen)"},
+            {"festessen", "Festessen", "ein Festessen (in Ihrem Inventar)"}, {"feuerwerk", "64 Raketen", "64 Feuerwerksraketen (in Ihrem Inventar)"},
+            {"gold", "Ein Sack Gold", "Gold (in Ihrem Inventar)"}};
+
+    private void lieferSeite(Player p) {
+        List<Dialoge.Knopf> knoepfe = new ArrayList<>();
+        for (String[] a : ANGEBOT) {
+            knoepfe.add(Dialoge.Knopf.von(a[1], (s, x) -> bestellen(s, a[0])));
+        }
+        Dialoge.zeigen(p, "Lieferservice", "James bringt es vorbei.", List.of(), knoepfe);
+    }
+
+    /** Bestellung (auch /handy liefer <was>): nach ein paar Sekunden ist sie da. */
+    public void bestellen(Player p, String was) {
+        String[] eintrag = null;
+        for (String[] a : ANGEBOT) {
+            if (a[0].equals(was)) {
+                eintrag = a;
+            }
+        }
+        if (eintrag == null) {
+            return;
+        }
+        String satz = eintrag[2];
+        p.sendActionBar(Component.text("Ihre Bestellung ist unterwegs, Sir.", NamedTextColor.GOLD));
+        org.bukkit.Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (!p.isOnline()) {
+                return;
+            }
+            org.bukkit.Location bei = p.getLocation().add(p.getLocation().getDirection().setY(0).normalize().multiply(2));
+            switch (was) {
+                case "kuehe" -> tiere(p, bei, org.bukkit.entity.EntityType.COW, 2);
+                case "schweine" -> tiere(p, bei, org.bukkit.entity.EntityType.PIG, 2);
+                case "schafe" -> tiere(p, bei, org.bukkit.entity.EntityType.SHEEP, 2);
+                case "huehner" -> tiere(p, bei, org.bukkit.entity.EntityType.CHICKEN, 4);
+                case "hund" -> tiere(p, bei, org.bukkit.entity.EntityType.WOLF, 1);
+                case "katze" -> tiere(p, bei, org.bukkit.entity.EntityType.CAT, 1);
+                case "papagei" -> tiere(p, bei, org.bukkit.entity.EntityType.PARROT, 1);
+                case "festessen" -> waren(p, new ItemStack(Material.COOKED_BEEF, 32), new ItemStack(Material.GOLDEN_CARROT, 32),
+                        new ItemStack(Material.CAKE, 2), new ItemStack(Material.PUMPKIN_PIE, 16));
+                case "feuerwerk" -> waren(p, new ItemStack(Material.FIREWORK_ROCKET, 64));
+                default -> waren(p, new ItemStack(Material.GOLD_INGOT, 64), new ItemStack(Material.GOLD_BLOCK, 16));
+            }
+            bei.getWorld().spawnParticle(org.bukkit.Particle.HAPPY_VILLAGER, bei.clone().add(0, 1, 0), 30, 1.5, 0.8, 1.5, 0.1);
+            p.sendMessage(Component.text("James: Ihre Lieferung, Sir: " + satz + ".", NamedTextColor.GOLD));
+            plugin.getLogger().info("Lieferservice: " + was + " für " + p.getName());
+        }, 60L);
+    }
+
+    private static void tiere(Player herr, org.bukkit.Location bei, org.bukkit.entity.EntityType typ, int anzahl) {
+        for (int i = 0; i < anzahl; i++) {
+            org.bukkit.entity.Entity e = bei.getWorld().spawnEntity(bei.clone().add(i % 2, 0, i / 2), typ);
+            if (e instanceof org.bukkit.entity.Tameable zahm) {
+                zahm.setTamed(true);
+                zahm.setOwner(herr);
+            }
+        }
+    }
+
+    private static void waren(Player p, ItemStack... sachen) {
+        for (ItemStack s : sachen) {
+            p.getInventory().addItem(s).values().forEach(rest -> p.getWorld().dropItem(p.getLocation(), rest));
+        }
     }
 
     /** Gästeliste: Namen eintragen oder streichen (Gäste kommen ohne Karte durch Tor und Türen). */

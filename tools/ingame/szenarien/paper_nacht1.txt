@@ -1,0 +1,55 @@
+# Paper-Plugin: Fernseher-Fenster, Lieferservice, Bodyguards gegen einen Zombie
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+# Fernseher im Penthouse: Fenster, dann Link
+server /villa ort 63.5 39.6 41.6 0 10
+warte 3
+server /gamemode survival
+server /villa ort 63.5 39 43.6 0 0
+warte 1
+klick
+warte 2
+bild pn1_tv_fenster
+taste Escape
+server /gamemode spectator
+server /villa ort 63.5 39.6 41.6 0 10
+server /villa fernseher https://www.youtube.com/watch?v=dQw4w9WgXcQ
+warte 2
+bild pn1_tv_link
+server /villa fernseher
+warte 2
+bild pn1_tv_fenster2
+taste Escape
+# Lieferservice: Hund und Gold, Bodyguards rufen
+server /gamemode survival
+server /villa ort 55.5 26 86 180 15
+warte 2
+merke
+server /handy liefer hund
+bis 10 Lieferservice
+server /handy bodyguards rufen
+warte 3
+taste F5
+warte 1
+bild pn1_bodyguards
+taste F5
+taste F5
+# Zombie kommt: die Bodyguards schießen
+server /difficulty easy
+server /execute positioned ~ ~ ~-12 run summon zombie ~ ~ ~
+warte 1
+bild pn1_schuss1
+warte 1
+bild pn1_schuss2
+warte 4
+bild pn1_nach
+server /difficulty peaceful
+server /handy
+warte 2
+bild pn1_handy
+taste Escape
+server /villa info

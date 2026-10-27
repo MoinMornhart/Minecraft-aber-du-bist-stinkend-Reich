@@ -24,9 +24,19 @@ import java.util.function.BiConsumer;
  */
 public final class Dialoge {
     /** Ein Knopf mit Text und dem, was er tut (bekommt den Spieler und die Eingaben des Fensters). */
-    public record Knopf(Component text, BiConsumer<Player, DialogResponseView> aktion) {
+    public record Knopf(Component text, BiConsumer<Player, DialogResponseView> aktion, String adresse) {
         public static Knopf von(String text, BiConsumer<Player, DialogResponseView> aktion) {
-            return new Knopf(Component.text(text), aktion);
+            return new Knopf(Component.text(text), aktion, null);
+        }
+
+        /** Knopf mit eigenem Text (Farbe …). */
+        public Knopf(Component text, BiConsumer<Player, DialogResponseView> aktion) {
+            this(text, aktion, null);
+        }
+
+        /** Knopf, der eine Internetseite im Browser des Spielers öffnet (Minecraft fragt vorher nach). */
+        public static Knopf link(String text, String adresse) {
+            return new Knopf(Component.text(text), null, adresse);
         }
     }
 
@@ -48,6 +58,11 @@ public final class Dialoge {
         ClickCallback.Options optionen = ClickCallback.Options.builder()
                 .uses(offenLassen ? ClickCallback.UNLIMITED_USES : 1).lifetime(Duration.ofMinutes(offenLassen ? 30 : 10)).build();
         for (Knopf k : knoepfe) {
+            if (k.adresse() != null) {
+                buttons.add(ActionButton.create(k.text(), null, breite,
+                        DialogAction.staticAction(net.kyori.adventure.text.event.ClickEvent.openUrl(k.adresse()))));
+                continue;
+            }
             buttons.add(ActionButton.create(k.text(), null, breite, DialogAction.customClick((antwort, wer) -> {
                 if (wer instanceof Player spieler) {
                     k.aktion().accept(spieler, antwort);

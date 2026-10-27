@@ -127,8 +127,9 @@ public final class Ausstattung {
     private void anzeigen(Villen.Villa villa, Bauplan plan) {
         for (JsonArray m : plan.marke("fernseher")) {
             float breite = m.size() >= 6 ? m.get(4).getAsFloat() : 5.0F, hoehe = m.size() >= 6 ? m.get(5).getAsFloat() : 2.8125F;
-            modellAufstellen(ort(villa, m), m.get(3).getAsFloat(), "polymer/fernseher",
+            ItemDisplay tv = modellAufstellen(ort(villa, m), m.get(3).getAsFloat(), "polymer/fernseher",
                     new Vector3f(breite / 5.0F, hoehe / 2.8125F, 1.0F));
+            plugin.fernseher().klickfelder(tv, breite, hoehe);
         }
         for (JsonArray m : plan.marke("drehteller")) {
             modellAufstellen(ort(villa, m), 0.0F, "polymer/drehteller", new Vector3f(1, 1, 1));

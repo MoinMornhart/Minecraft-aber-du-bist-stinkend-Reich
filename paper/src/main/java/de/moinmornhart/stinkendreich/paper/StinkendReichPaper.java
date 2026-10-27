@@ -49,6 +49,8 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Zugbruecke zugbruecke;
     private de.moinmornhart.stinkendreich.paper.block.Kameras kameras;
     private de.moinmornhart.stinkendreich.paper.block.Festung festung;
+    private de.moinmornhart.stinkendreich.paper.block.Fernseher fernseher;
+    private de.moinmornhart.stinkendreich.paper.butler.Bodyguards bodyguards;
     private de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
@@ -87,6 +89,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         new de.moinmornhart.stinkendreich.paper.block.Geheimgang(this, bloecke, mechanik, tore);
         new de.moinmornhart.stinkendreich.paper.block.Graben(this);
         festung = new de.moinmornhart.stinkendreich.paper.block.Festung(this, bloecke, mechanik);
+        fernseher = new de.moinmornhart.stinkendreich.paper.block.Fernseher(this);
+        bodyguards = new de.moinmornhart.stinkendreich.paper.butler.Bodyguards(this);
+        getServer().getPluginManager().registerEvents(bodyguards, this);
+        getServer().getPluginManager().registerEvents(fernseher, this);
         inkognito = new de.moinmornhart.stinkendreich.paper.block.Inkognito(this, bloecke);
         getServer().getPluginManager().registerEvents(inkognito, this);
         getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Haushalt(this, bloecke, mechanik), this);
@@ -103,7 +109,15 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         // /handy öffnet das Handy, /butler <Satz> spricht mit James (wie „Butler, …“ im Chat)
         getCommand("handy").setExecutor((wer, befehl, name, args) -> {
             if (wer instanceof Player p) {
-                if (args.length >= 3 && args[0].equals("smart")) {
+                if (args.length >= 2 && args[0].equals("bodyguards")) {
+                    if (args[1].equals("heim")) {
+                        bodyguards.entlassen(p);
+                    } else {
+                        bodyguards.rufen(p);
+                    }
+                } else if (args.length >= 2 && args[0].equals("liefer")) {
+                    handy.bestellen(p, args[1]);                     // wie ein Knopf des Lieferservice
+                } else if (args.length >= 3 && args[0].equals("smart")) {
                     smartHome.schalten(p, args[1], args[2]);      // wie ein Knopf der Smart-Home-Seite
                 } else if (args.length >= 1 && args[0].equals("smart")) {
                     smartHome.seite(p);
@@ -212,6 +226,14 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito() {
         return inkognito;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.butler.Bodyguards bodyguards() {
+        return bodyguards;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Fernseher fernseher() {
+        return fernseher;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Festung festung() {

@@ -86,6 +86,17 @@ public final class VillaBefehle implements TabExecutor {
                 Zustand z = b == null ? null : plugin.bloecke().zustand(b);
                 antwort(wer, b == null ? "Kein Block." : b.getType() + " " + (z == null ? "" : z + " " + plugin.bloecke().werte(b)));
             }
+            case "fernseher" -> {
+                // Testhilfe: Fenster des nächsten Fernsehers bzw. /villa fernseher <link>
+                org.bukkit.entity.ItemDisplay tv = p == null ? null : plugin.fernseher().naechster(p.getLocation());
+                if (tv == null) {
+                    antwort(wer, "Kein Fernseher in der Nähe.");
+                } else if (args.length > 1) {
+                    plugin.fernseher().anzeigen(p, tv, args[1]);
+                } else {
+                    plugin.fernseher().menue(p, tv);
+                }
+            }
             case "inkognito" -> {
                 Villen.Villa v = p == null ? null : plugin.villen().bei(p.getLocation(), 64);
                 if (v == null) {
@@ -189,6 +200,6 @@ public final class VillaBefehle implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender wer, Command befehl, String name, String[] args) {
-        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "inkognito", "bruecke", "zentrale", "code", "klick", "kamera", "lied", "klaviatur", "platte", "info") : List.of();
+        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "fernseher", "inkognito", "bruecke", "zentrale", "code", "klick", "kamera", "lied", "klaviatur", "platte", "info") : List.of();
     }
 }

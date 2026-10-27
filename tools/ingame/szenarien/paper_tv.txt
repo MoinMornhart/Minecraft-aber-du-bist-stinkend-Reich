@@ -1,0 +1,13 @@
+# Paper-Plugin: Fernseher mit Link zeigt „▶ YouTube“
+server /gamemode spectator
+server /time set 6000
+warte 20
+taste F1
+server /villa ort 63.5 39.6 41.6 0 10
+warte 3
+server /villa fernseher https://www.youtube.com/watch?v=dQw4w9WgXcQ
+warte 2
+bild ptv_link
+server /villa ort 60.5 39.6 46.6 300 5
+warte 2
+bild ptv_seite
