@@ -284,6 +284,10 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   neben dem Spieler (`Flug.landeplatzBei`: eben, kein Laub/Wasser). Dorf über `org.bukkit.StructureType.VILLAGE` (eine
   Suche, je Welt gemerkt; dauert beim ersten Mal 2–4 s). Test `paper_flug.txt`: abholen in 11 s, 1200 Blöcke ins Dorf
   in 90 s, zurück auf den Landeplatz. Testhilfe `/villa einsteigen`.
+- Trailer (07:15, 11:35): neuer Paper-Teil 3 (1:53) am Ende: Haifalle, Rutsche, Münzbecken, Tunnel, Holz, Sortieren,
+  Jagd, Mitarbeiter, Hubschrauber. Aufnahme in Stücken (`paper_trailer3.txt` a–g, `paper_trailer3h.txt` h–j, mit
+  `CHAT_AUS=1`), Schnitt `tools/ingame/trailer3_schnitt.py` (Leerlauf raus), dann `video.py` und an `docs/trailer.mp4`
+  gehängt (ffmpeg concat).
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
   ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
 

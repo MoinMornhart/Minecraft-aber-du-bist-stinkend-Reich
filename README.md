@@ -30,7 +30,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (knapp 10 Minuten, echtes Minecraft, am Ende der Paper-Server)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (knapp 12 Minuten, echtes Minecraft, am Ende der Paper-Server)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
@@ -617,6 +617,10 @@ In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt sein
 <td><img src="docs/bilder/paper_sortiert.jpg" alt="Sortierte Truhe auf Paper"><br><sub>„Butler, sortier die Truhen“: jede Sorte in ihrer Stammtruhe</sub></td>
 <td><img src="docs/bilder/paper_kiste.jpg" alt="Mitarbeiterkiste auf Paper"><br><sub>Die erste Ladung: 16 Kohle in der Mitarbeiterkiste</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/paper_heli_abflug.jpg" alt="Hubschrauber startet auf Paper"><br><sub>„Butler, flieg mich ins Dorf“: James startet vom Dach</sub></td>
+<td><img src="docs/bilder/paper_heli_dorf.jpg" alt="Hubschrauber im Dorf auf Paper"><br><sub>Gelandet im Dorf, gut 1200 Blöcke weiter</sub></td>
+</tr>
 </table>
 
 James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt einen Treppentunnel, baut die ganze Ader ab, schmilzt Metall im Hochofen der Villa und bringt es dir. „Butler, hol mir 16 Holz“ – er fällt echte Bäume (keine gebauten) und pflanzt an jeder Stelle einen neuen Setzling. „Butler, sortier die Truhen“ – er geht alle Truhen und Fässer um dich herum ab und räumt sie auf, jede Sorte in ihre Stammtruhe. „Butler, geh jagen“ – er jagt Kühe, Schweine, Schafe, Hühner und Kaninchen, schont aber Jungtiere, Tiere mit Namen und lässt von jeder Art mindestens zwei übrig (abschaltbar mit `butler.jagen: false`). Die Mitarbeiterkiste aus dem Handy bringt drei Mitarbeiter, die Diamanten, Eisen und Kohle in ihre Kiste schaffen.
@@ -645,7 +649,7 @@ Beim Start schaut die Mod in den Releases dieses Projekts nach einer neueren Ver
 ./gradlew :1.21.4:buildAndCollect  # nur eine Version
 ```
 
-Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt` und `paper_trailer2.txt`, Spieltest mit `tools/ingame/paper.sh`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
+Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, `paper_trailer2.txt`, `paper_trailer3.txt` und `paper_trailer3h.txt`, Spieltest mit `tools/ingame/paper.sh`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
 
 **Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
 
