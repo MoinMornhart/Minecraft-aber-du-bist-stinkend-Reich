@@ -35,10 +35,20 @@ public final class Dialoge {
 
     /** Fenster mit Titel, Text, optionalen Eingaben und Knöpfen (zwei Spalten). */
     public static void zeigen(Player p, String titel, String text, List<DialogInput> eingaben, List<Knopf> knoepfe) {
+        zeigen(p, titel, text, eingaben, knoepfe, 2, 150, false);
+    }
+
+    /**
+     * Fenster mit frei wählbaren Spalten und Knopfbreite; {@code offenLassen}: das Fenster bleibt nach einem Klick offen
+     * und jeder Knopf geht beliebig oft (Klaviatur des Flügels).
+     */
+    public static void zeigen(Player p, String titel, String text, List<DialogInput> eingaben, List<Knopf> knoepfe,
+                              int spalten, int breite, boolean offenLassen) {
         List<ActionButton> buttons = new ArrayList<>();
-        ClickCallback.Options optionen = ClickCallback.Options.builder().uses(1).lifetime(Duration.ofMinutes(10)).build();
+        ClickCallback.Options optionen = ClickCallback.Options.builder()
+                .uses(offenLassen ? ClickCallback.UNLIMITED_USES : 1).lifetime(Duration.ofMinutes(offenLassen ? 30 : 10)).build();
         for (Knopf k : knoepfe) {
-            buttons.add(ActionButton.create(k.text(), null, 150, DialogAction.customClick((antwort, wer) -> {
+            buttons.add(ActionButton.create(k.text(), null, breite, DialogAction.customClick((antwort, wer) -> {
                 if (wer instanceof Player spieler) {
                     k.aktion().accept(spieler, antwort);
                 }
@@ -49,11 +59,11 @@ public final class Dialoge {
         DialogBase basis = DialogBase.builder(Component.text(titel, NamedTextColor.GOLD))
                 .canCloseWithEscape(true)
                 .pause(false)
-                .afterAction(DialogBase.DialogAfterAction.CLOSE)
+                .afterAction(offenLassen ? DialogBase.DialogAfterAction.NONE : DialogBase.DialogAfterAction.CLOSE)
                 .body(koerper)
                 .inputs(eingaben)
                 .build();
-        Dialog fenster = Dialog.create(f -> f.empty().base(basis).type(DialogType.multiAction(buttons).columns(2).build()));
+        Dialog fenster = Dialog.create(f -> f.empty().base(basis).type(DialogType.multiAction(buttons).columns(spalten).build()));
         p.showDialog(fenster);
     }
 }

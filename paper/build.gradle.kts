@@ -27,6 +27,16 @@ java {
     toolchain { languageVersion.set(JavaLanguageVersion.of(25)) }
 }
 
+// Aus der Mod übernommen (reines Java ohne Minecraft): die Stücke des Konzertflügels
+sourceSets {
+    main {
+        java {
+            srcDir("../src/main/java")
+            include("de/moinmornhart/stinkendreich/paper/**", "de/moinmornhart/stinkendreich/klavier/Lieder.java")
+        }
+    }
+}
+
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.release.set(25)

@@ -103,6 +103,19 @@ public final class VillaBefehle implements TabExecutor {
                     plugin.mechanik().benutzen(p, b, plugin.bloecke().zustand(b));
                 }
             }
+            case "lied", "klaviatur", "platte" -> {
+                // Testhilfe: Stück am nächsten Flügel, Klaviatur zeigen, Schallplatte an der nächsten Musikanlage
+                Block b = p == null ? null : naechster(p, was.equals("platte") ? "musikanlage" : "konzertfluegel");
+                if (b == null) {
+                    antwort(wer, "Nichts in der Nähe.");
+                    return true;
+                }
+                switch (was) {
+                    case "lied" -> plugin.unterhaltung().liedSpielen(b, args.length > 1 ? args[1] : "fuer_elise");
+                    case "klaviatur" -> plugin.unterhaltung().klaviatur(p, b);
+                    default -> plugin.unterhaltung().platte(b, args.length > 1 ? args[1] : "pigstep");
+                }
+            }
             case "zentrale", "code" -> {
                 // Testhilfe: Knopf der nächsten Zentrale bzw. Code am nächsten Tastenfeld (wie im Dialog)
                 Block b = p == null ? null : naechster(p, was.equals("code") ? "tastenfeld" : "sicherheitszentrale");
@@ -151,6 +164,6 @@ public final class VillaBefehle implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender wer, Command befehl, String name, String[] args) {
-        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "bruecke", "zentrale", "code", "klick", "kamera", "info") : List.of();
+        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "bruecke", "zentrale", "code", "klick", "kamera", "lied", "klaviatur", "platte", "info") : List.of();
     }
 }
