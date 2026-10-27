@@ -43,13 +43,30 @@ public abstract class BlockBenutzenMixin {
         Vec3 ende = auge.add(spieler.getViewVector(1.0F).scale(spieler.blockInteractionRange() + 1.0));
         BlockHitResult echt = welt.clip(new ClipContext(auge, ende, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, spieler));
         BlockPos geklickt = treffer.getBlockPos();
-        if (echt.getType() != HitResult.Type.BLOCK || echt.getBlockPos().equals(geklickt)
+        if (de.moinmornhart.stinkendreich.dev.Autotest.aktiv()) {
+            StinkendReich.LOGGER.info("Autotest: Blockklick {} ({}) – Strahl trifft {} ({}, innen {})", geklickt,
+                    welt.getBlockState(geklickt).getBlock(), echt.getBlockPos(), welt.getBlockState(echt.getBlockPos()).getBlock(), echt.isInside());
+        }
+        // Steht der Spieler mit dem Kopf in einem unserer Blöcke (z. B. in der offenen Aufzugstür), trifft der Strahl
+        // diesen zuerst („innen“); dann gilt, was sein Minecraft angeklickt hat
+        if (echt.getType() != HitResult.Type.BLOCK || echt.isInside() || echt.getBlockPos().equals(geklickt)
                 || !(istUnserer(welt, geklickt) || istUnserer(welt, echt.getBlockPos()))) {
             return;
         }
         stinkendreich$umgeleitet = true;
         try {
-            cir.setReturnValue(((ServerPlayerGameMode) (Object) this).useItemOn(spieler, welt, stapel, hand, echt));
+            ServerPlayerGameMode modus = (ServerPlayerGameMode) (Object) this;
+            // Angeklickt ist einer unserer Blöcke, der genaue Strahl geht aber daran vorbei auf einen fremden (die
+            // Aufzugstafel ist nur ein dünnes Schild an der Wand): Erst darf der angeklickte Block antworten, nur wenn
+            // er nichts tut (Deko-Lampe vor einer Truhe), geht der Klick an den Block dahinter
+            if (istUnserer(welt, geklickt) && !istUnserer(welt, echt.getBlockPos())) {
+                InteractionResult eigen = modus.useItemOn(spieler, welt, stapel, hand, treffer);
+                if (eigen.consumesAction()) {
+                    cir.setReturnValue(eigen);
+                    return;
+                }
+            }
+            cir.setReturnValue(modus.useItemOn(spieler, welt, stapel, hand, echt));
         } finally {
             stinkendreich$umgeleitet = false;
         }

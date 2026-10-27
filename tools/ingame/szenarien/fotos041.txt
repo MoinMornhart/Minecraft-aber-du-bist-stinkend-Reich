@@ -1,0 +1,31 @@
+# README-Fotos 0.4.1: neue Häute (James, Tänzerinnen). Bildnamen = Dateinamen in docs/bilder.
+# Aufruf: SICHTWEITE=12 WELT_BEHALTEN=1 tools/ingame/test.sh 26.3 tools/ingame/szenarien/fotos041.txt
+warte 30
+server /gamemode spectator
+server /weather clear
+server /time set 6000
+server /gamerule advance_time false
+taste F1
+# Geheimclub mit den Tänzerinnen an den Stangen (Blick wie in fotos3.txt)
+server /villa ort 16 7 66 60 5
+warte 6
+bild geheimclub
+# James in der Eingangshalle
+server /villa ort 55.5 26 70 0 0
+warte 2
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+server /execute at @p rotated ~ 0 run tp @e[type=stinkendreich:butler,limit=1] ^0.8 ^ ^3.2 facing entity @p eyes
+warte 3
+bild butler
+# Tänzerinnen in einer Reihe vor der Villa (neue Häute)
+server /villa ort 55.5 26 84 180 0
+warte 2
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|0"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|1"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|2"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|3"}
+warte 4
+bild taenzerinnen
+server /execute as @p at @s run tp @s ^ ^ ^8 ~180 0
+warte 4
+bild taenzerinnen_hinten

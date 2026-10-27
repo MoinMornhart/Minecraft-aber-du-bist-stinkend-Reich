@@ -7,6 +7,8 @@ server /time set 6000
 server /weather clear
 server /gamerule advance_time false
 server /gamerule doDaylightCycle false
+# Bodyguards aus einem früheren Lauf stünden sonst vor den Bedienfeldern im Weg
+server /kill @e[type=stinkendreich:bodyguard]
 # Sicherheitszentrale im Büro
 server /villa ort 71.5 32 59.3 0 10
 warte 3
@@ -39,20 +41,20 @@ server /dialog clear @a
 server /execute as @p run stinkendreich knopf aufzug 3 89 -15 1099511566405
 warte 12
 bild d04b_kabine
-# Konzertflügel: Liste, dann Klaviatur, ein Stück spielen
-server /villa ort 58.5 26 60.4 0 30
+# Konzertflügel im Wohnzimmer (seit 0.3.5, Villa 40/62): Liste, dann Klaviatur, ein Stück spielen
+server /villa ort 40.5 26 59.2 0 20
 warte 3
 klick
 warte 2
 bild d05_fluegel
 server /dialog clear @a
-server /execute as @p run stinkendreich knopf fenster_klaviatur 2 88 7
+server /execute as @p run stinkendreich knopf fenster_klaviatur -16 88 6
 warte 2
 bild d06_klaviatur
 server /dialog clear @a
-server /execute as @p run stinkendreich knopf klavier 2 88 7 l|ode
+server /execute as @p run stinkendreich knopf klavier -16 88 6 l|ode
 warte 3
-server /execute as @p run stinkendreich knopf klavier 2 88 7 s
+server /execute as @p run stinkendreich knopf klavier -16 88 6 s
 # Musikanlage im Erdgeschoss
 server /villa ort 54.5 26 18.3 180 25
 warte 3

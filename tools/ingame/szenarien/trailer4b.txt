@@ -1,0 +1,23 @@
+# Trailer Teil 4b (0.4.1): ein Freund mit normalem Minecraft tritt Philips geöffneter Welt bei (LAN / NoRisk).
+# Aufruf: CHAT_AUS=1 GAST=ohne tools/ingame/lan.sh 26.3 tools/ingame/szenarien/trailer4b.txt
+server /time set 6000
+server /weather clear
+video start trailer4b
+kapitel Freunde in deiner Welt: LAN oder NoRisk „Hosted Worlds“
+warte 6
+kapitel Max hat kein Mod – seine eigene Villa entsteht im Hintergrund
+bis 300 Baustelle: Villa 1 fertig
+warte 6
+kapitel Max ist da: seine eigene Villa
+warte 7
+server /gamemode spectator Max
+server /execute as Max at @s rotated ~ 0 run tp @s ^ ^25 ^-14 ~ 45
+warte 6
+server /execute as Max at @s rotated ~ 0 run tp @s ^ ^-25 ^14 ~ 0
+server /gamemode creative Max
+server /execute as Max run butler rufen
+warte 5
+server /execute as Max at @s run tp @e[type=stinkendreich:butler,limit=1,sort=nearest] ^ ^ ^2.5 facing entity @s
+kapitel Sein James – auch ohne Mod im neuen Frack
+warte 6
+video stopp

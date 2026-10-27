@@ -32,6 +32,10 @@ public final class OhneMod {
     /** Zeigt dem Spieler das Fenster {@code art}, falls er die Mod nicht hat und es eins gibt. */
     public static void zeigen(Player spieler, String art, BlockPos pos) {
         Fenster f = FENSTER.get(art);
+        if (de.moinmornhart.stinkendreich.dev.Autotest.aktiv() && spieler instanceof ServerPlayer sp) {
+            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Autotest: Fenster {} bei {} für {} (Takt {}, Fenster bekannt: {})",
+                    art, pos, sp.getScoreboardName(), sp.level().getServer().getTickCount(), f != null);
+        }
         if (f != null && spieler instanceof ServerPlayer sp && !ModErkennung.hatMod(sp)) {
             f.oeffnen(sp, pos);
             benutzt(sp);

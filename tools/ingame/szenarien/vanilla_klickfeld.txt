@@ -1,0 +1,21 @@
+# Server-Version (1.21.6–1.21.8): Worauf zielt das Fadenkreuz vor Aufzugstafel und Flügel? (F3 zeigt rechts
+# „Targeted Block/Entity“.) Aufruf: VANILLA=1 PORT=25571 WELT_BEHALTEN=1 tools/ingame/test.sh 1.21.8 …
+warte 8
+server /gamemode creative
+server /time set 6000
+server /kill @e[type=stinkendreich:bodyguard]
+server /villa ort 59.5 26 42.6 180 25
+warte 4
+taste F3
+warte 2
+bild k01_aufzug_f3
+klick
+warte 2
+bild k02_aufzug_klick
+server /dialog clear @a
+server /villa ort 40.5 26 59.2 0 20
+warte 4
+bild k03_fluegel_f3
+klick
+warte 2
+bild k04_fluegel_klick

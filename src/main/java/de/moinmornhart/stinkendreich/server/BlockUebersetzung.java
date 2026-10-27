@@ -138,6 +138,9 @@ final class BlockUebersetzung implements PolymerTexturedBlock, BlockWithElementH
             /*public void interact(ServerPlayer spieler, InteractionHand hand) {*/
                 if (getAttachment() instanceof BlockAwareAttachment a) {
                     BlockPos pos = a.getBlockPos();
+                    if (de.moinmornhart.stinkendreich.dev.Autotest.aktiv()) {
+                        StinkendReich.LOGGER.info("Autotest: Klickfeld bei {} von {}", pos, spieler.getScoreboardName());
+                    }
                     spieler.gameMode.useItemOn(spieler, spieler.level(), spieler.getItemInHand(hand), hand,
                             new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
                 }

@@ -89,6 +89,10 @@ Wassergraben mit Zugbrücke (wird im Lockdown und in der Festung zum Lava-Graben
 <td><img src="docs/bilder/esszimmer.jpg" alt="Esszimmer"><br><sub><b>Esszimmer:</b> Marmortafel mit 18 Lederstühlen zum Hinsetzen</sub></td>
 <td><img src="docs/bilder/geheimclub.jpg" alt="Geheimclub"><br><sub><b>Geheimclub</b> hinter dem Bücherregal: Show-Bühne mit Tänzerinnen an den Stangen</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/taenzerinnen.jpg" alt="Die vier Tänzerinnen"><br><sub><b>Die Tänzerinnen</b> im Glitzer-Showkostüm, mit Haaren mit Volumen und Federschmuck</sub></td>
+<td><img src="docs/bilder/taenzerinnen_hinten.jpg" alt="Die Tänzerinnen von hinten"><br><sub><b>Von hinten:</b> lange Haare über den Rücken (zweite Hautschicht, auch ohne Mod)</sub></td>
+</tr>
 </table>
 
 ### 🦈 Unterwasser: VIP-Seerestaurant und Haifischbecken

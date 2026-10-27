@@ -542,6 +542,15 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   wie bisher. Mitarbeiter: linke Seite gespiegelt. Schaufensterpuppen: Tänzerinnen „slim“ (Mod und Paper), Standbild
   mit schmalen Armen. Vorher fehlten ohne Mod allen dreien linker Arm und linkes Bein.
 - `test.sh` setzt den Port jetzt auch bei `WELT_BEHALTEN=1` (sonst wartete der Client auf dem falschen Port).
+- **Aufzugstafel ohne Mod (alle Versionen):** Für ein normales Minecraft ist sie ein ganzer Barriere-Block;
+  `BlockBenutzenMixin` rechnete mit der dünnen echten Tafel nach, der Strahl ging vorbei und traf die Lampe dahinter →
+  Klick dorthin umgeleitet, das Handy ging auf. Jetzt darf erst der angeklickte Mod-Block antworten; nur wenn er nichts
+  tut, geht der Klick an den fremden Block dahinter. Strahl „innen“ (Kopf steckt in einem Block) wird ignoriert.
+  Autotest-Protokoll: „Autotest: Blockklick …“, „Fenster …“, „Handy-Fenster …“, „Klickfeld …“.
+- `vanilla_bedien.txt`: Flügel steht seit 0.3.5 im Wohnzimmer (Villa 40/62 = Welt −16 88 6), Bodyguards werden vorher
+  entfernt. Neu: `vanilla_klickfeld.txt` (F3-Blick und Klick auf Aufzugstafel und Flügel).
+- Server ohne Mod 1.21.6, 1.21.7, 1.21.8 im Spiel geprüft (Figuren, Handy, Butler, Zentrale, Tastenfeld, Musik,
+  Klaviatur, Kameras, Aufzug); Kette: `scratchpad/alt_tests.sh "<versionen>" <szenario>…`.
 
 ## Nächster Schritt
 

@@ -1,0 +1,30 @@
+# Trailer Teil 4a (0.4.1): neue Häute in der Mod – Tänzerinnen von vorn und hinten, James rundherum.
+# Aufruf: SICHTWEITE=12 WELT_BEHALTEN=1 tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer4a.txt
+warte 30
+server /gamemode spectator
+server /weather clear
+server /time set 6000
+server /gamerule advance_time false
+taste F1
+server /villa ort 55.5 26 84 180 0
+warte 2
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|0"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|1"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|2"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|3"}
+# James vor dem Eingang, Blick nach Süden (Weltkoordinaten = Villa + (-56, 62, -56))
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+server /tp @e[type=stinkendreich:butler,limit=1] -0.5 88 17 0 0
+server /villa ort 50.5 26.2 86.5 210 8
+warte 4
+video start trailer4a
+kapitel Neue Skins: Show-Tänzerinnen mit Haaren und Glitzer-Top
+server fahrt 7 | 50.5 26.2 86.5 210 8 | 55.5 26.3 87.5 180 8 | 60.5 26.2 86.5 150 8
+warte 8
+kapitel Lange Haare über den Rücken, Federschmuck
+server fahrt 6 | 60.5 26.2 86.5 150 8 | 62.5 26.2 80 90 6 | 59 26.2 75.5 25 6 | 55.5 26.2 75 0 6
+warte 7
+kapitel James im neuen Frack: Haare, Weste, Fliege, Frackschöße
+server fahrt 8 | 55.5 26.2 76.8 180 6 | 58.8 26.2 74.5 120 6 | 59 26.2 71.5 60 6 | 55.5 26.2 69.5 0 6
+warte 9
+video stopp

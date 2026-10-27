@@ -22,6 +22,10 @@ public class HandyItem extends Item {
         else if (spieler instanceof net.minecraft.server.level.ServerPlayer sp
                 && !de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(sp)
                 && !de.moinmornhart.stinkendreich.netz.OhneMod.geradeGezeigt(sp)) {
+            if (de.moinmornhart.stinkendreich.dev.Autotest.aktiv()) {
+                de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Autotest: Handy-Fenster für {} (Takt {})",
+                        sp.getScoreboardName(), sp.level().getServer().getTickCount());
+            }
             de.moinmornhart.stinkendreich.server.HandyDialog.oeffnen(sp, "start");
         }
         //?}

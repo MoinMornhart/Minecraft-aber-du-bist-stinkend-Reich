@@ -10,7 +10,13 @@
 - **Straßen zwischen den Villen auf Paper:** Für jede neue Villa baut der Server eine Straße von der Spawn-Villa bis vor ihre Zufahrt (Mittellinie, Laternen, Einschnitte, Brücken). **James als Chauffeur:** „Butler, fahr mich zur Villa von Max“ – die Limo fährt vor, James fährt dich hin.
 - **James als Pilot auf Paper:** „Butler, flieg mich ins Dorf“ (oder nach Hause, zur Villa eines Nachbarn; auch im Handy): Der Hubschrauber holt dich ab, landet neben dir und fliegt dich über alles hinweg zum Ziel.
 - **Handy auf Paper:** Ein Rechtsklick auf Truhe, Tür oder Knopf öffnet diese (vorher ging das Handy auf).
-- **Trailer** mit neuem Kapitel „Paper-Server“.
+- **Neue Skins:** James mit gekämmten Haaren und grauen Schläfen, Frack mit Revers und Einstecktuch, Weste mit Goldknöpfen, Fliege und Frackschößen. Die Tänzerinnen mit Haaren mit Volumen, langen Haaren über den Rücken, Federschmuck und Glitzer-Top. Beide mit zweiter Hautschicht (3D-Effekt).
+- **Ohne Mod vollständig:** James, Mitarbeiter und Tänzerinnen fehlten auf Servern ohne Mod (Schaufensterpuppe, Paper) der linke Arm und das linke Bein. Jetzt haben alle Häute beide Seiten.
+- **Eigene Welt für Freunde öffnen (LAN oder NoRisk Client „Hosted Worlds“):** Jeder Freund bekommt seine eigene Villa, eine Straße zu dir und seinen eigenen James. Freunde ohne Mod flogen vorher sofort raus („container_set_content“) – behoben. Mit Polymer im Profil können auch Freunde mit normalem Minecraft mitspielen.
+- **Ressourcenpaket für Spieler ohne Mod:** Die Mod schaltet Polymers Versand selbst ein (vorher musste man ihn in `config/polymer/auto-host.json` von Hand einschalten). Einstellung `serverRessourcenpaket`.
+- **Server ohne Mod 1.21.6–1.21.8:** Menschenfiguren (Standbilder) sind nicht mehr schwarz, wenn sie ein Stück im Boden stehen.
+- **Aufzug ohne Mod:** Ein Klick auf die Aufzugstafel öffnete bei Spielern ohne Mod das Handy statt der Etagenwahl (der Klick landete bei der Lampe dahinter). Jetzt antwortet zuerst der angeklickte Block.
+- **Trailer** mit neuen Kapiteln „Paper-Server“, „Neue Skins“ und „Freunde in deiner Welt“.
 
 ### Neu in 0.4.0 – Nachbarschaft
 

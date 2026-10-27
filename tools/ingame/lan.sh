@@ -6,7 +6,8 @@
 #           GAST=ohne: der Freund hat ein ganz normales Minecraft (Philip hat dann Polymer mit in seinem Profil)
 #           GAST=mit:  der Freund hat die Mod auch (wie beim Teilen des NoRisk-Profils)
 # Ausgabe:  build/ingame/<version>/lan_<gast>/*.png und …/logs/
-# Szenario: wie test.sh (warte, server, bis, merke, bild, taste, klick, halte); „taste“, „klick“, „halte“ und „bild“
+# Szenario: wie test.sh (warte, server, bis, merke, bild, taste, klick, halte, video, kapitel); „taste“, „klick“, „halte“,
+#           „bild“ und „video“
 #           gelten für den Freund, „server“-Zeilen laufen als Philip (für den Freund: „server /execute as Max …“).
 set -uo pipefail
 
@@ -64,6 +65,8 @@ optionen "$RUN"
 GAST_ORDNER="$RUN/gast_$GAST"
 rm -rf "$GAST_ORDNER/screenshots"
 optionen "$GAST_ORDNER"
+# Für Trailer: CHAT_AUS=1 blendet bei Max den Chat aus
+[[ "${CHAT_AUS:-0}" == 1 ]] && echo "chatVisibility:2" >> "$GAST_ORDNER/options.txt"
 
 # Philips Profil: bei Freunden ohne Mod gehört Polymer dazu
 rm -rf "$RUN/mods"; mkdir -p "$RUN/mods"
@@ -167,6 +170,22 @@ bild() {
     melde "WARNUNG: kein Bild für $1"
   fi
 }
+# Videoaufnahme von Max' Bildschirm (wie test.sh: „video start <name>“, „video stopp“, „kapitel <text>“)
+VIDEO_PID=""
+video() {
+  case "$1" in
+    start)
+      VIDEO_NAME="$2"; : > "$AUS/${VIDEO_NAME}_kapitel.txt"
+      ffmpeg -y -loglevel error -f x11grab -framerate "${VIDEO_FPS:-25}" -video_size 1280x720 -draw_mouse 0 -i ":$NR_GAST" \
+        -c:v libx264 -preset ultrafast -crf 18 -pix_fmt yuv420p "$AUS/${VIDEO_NAME}_roh.mp4" </dev/null &
+      VIDEO_PID=$!; VIDEO_START=$(date +%s.%N); melde "Video läuft: $AUS/${VIDEO_NAME}_roh.mp4" ;;
+    stopp)
+      if [[ -n "$VIDEO_PID" ]]; then kill -INT "$VIDEO_PID" 2>/dev/null; wait "$VIDEO_PID" 2>/dev/null; VIDEO_PID=""; melde "Video gespeichert"; fi ;;
+  esac
+}
+kapitel() {
+  [[ -n "$VIDEO_PID" ]] && printf '%.1f|%s\n' "$(echo "$(date +%s.%N) - $VIDEO_START" | bc)" "$1" >> "$AUS/${VIDEO_NAME}_kapitel.txt"
+}
 CHATLOG="$LOGS/host.log"
 cp "$SZENARIO" "$AUS/szenario.txt"
 while read -r wort rest || [[ -n "$wort" ]]; do
@@ -184,7 +203,10 @@ while read -r wort rest || [[ -n "$wort" ]]; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi
            sleep 2
          done ;;
+    video) video $rest ;;
+    kapitel) kapitel "$rest" ;;
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac
 done < "$AUS/szenario.txt"
+video stopp
 melde "Fertig"
