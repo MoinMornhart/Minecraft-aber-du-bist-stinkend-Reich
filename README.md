@@ -30,7 +30,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (12 Minuten, echtes Minecraft, am Ende der Paper-Server)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (13 Minuten, echtes Minecraft, am Ende Paper-Server, neue Skins und Freunde in deiner Welt)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
@@ -665,7 +665,7 @@ Beim Start schaut die Mod in den Releases dieses Projekts nach einer neueren Ver
 ./gradlew :1.21.4:buildAndCollect  # nur eine Version
 ```
 
-Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, `paper_trailer2.txt`, `paper_trailer3.txt`, `paper_trailer3h.txt` und `paper_trailer3k.txt`, Spieltest mit `tools/ingame/paper.sh`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
+Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, `paper_trailer2.txt`, `paper_trailer3.txt`, `paper_trailer3h.txt` und `paper_trailer3k.txt`, Spieltest mit `tools/ingame/paper.sh`; die neuen Skins aus `trailer4a.txt`, „Freunde in deiner Welt“ aus `trailer4b.txt` mit `tools/ingame/lan.sh`, Schnitt `tools/ingame/trailer4_schnitt.py`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
 
 **Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
 

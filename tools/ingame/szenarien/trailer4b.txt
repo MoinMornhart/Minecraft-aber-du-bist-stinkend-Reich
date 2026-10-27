@@ -5,7 +5,7 @@ server /weather clear
 video start trailer4b
 kapitel Freunde in deiner Welt: LAN oder NoRisk „Hosted Worlds“
 warte 6
-kapitel Max hat kein Mod – seine eigene Villa entsteht im Hintergrund
+kapitel Max ohne Mod: seine Villa entsteht im Hintergrund
 bis 300 Baustelle: Villa 1 fertig
 warte 6
 kapitel Max ist da: seine eigene Villa

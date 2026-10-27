@@ -547,6 +547,11 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   Klick dorthin umgeleitet, das Handy ging auf. Jetzt darf erst der angeklickte Mod-Block antworten; nur wenn er nichts
   tut, geht der Klick an den fremden Block dahinter. Strahl „innen“ (Kopf steckt in einem Block) wird ignoriert.
   Autotest-Protokoll: „Autotest: Blockklick …“, „Fenster …“, „Handy-Fenster …“, „Klickfeld …“.
+- **Trailer Teil 4** (0.4.1, 69 s, an `docs/trailer.mp4` gehängt, jetzt 13:09, 84 MB – GitHub erlaubt höchstens 100 MB je
+  Datei, beim nächsten Teil also neu kodieren oder kürzen): `trailer4a.txt` (neue Skins, `SICHTWEITE=12 WELT_BEHALTEN=1
+  test.sh`), `trailer4b.txt` (Freund ohne Mod, `CHAT_AUS=1 GAST=ohne lan.sh`), Schnitt `tools/ingame/trailer4_schnitt.py`
+  (Bauzeit, Himmel beim Laden der neuen Villa und James in Max' Kopf nach „rufen“ raus), dann `video.py … "Neu in 0.4.1"`.
+  README-Fotos mit den neuen Skins aus `fotos041.txt`.
 - `vanilla_bedien.txt`: Flügel steht seit 0.3.5 im Wohnzimmer (Villa 40/62 = Welt −16 88 6), Bodyguards werden vorher
   entfernt. Neu: `vanilla_klickfeld.txt` (F3-Blick und Klick auf Aufzugstafel und Flügel).
 - Server ohne Mod 1.21.6, 1.21.7, 1.21.8 im Spiel geprüft (Figuren, Handy, Butler, Zentrale, Tastenfeld, Musik,
