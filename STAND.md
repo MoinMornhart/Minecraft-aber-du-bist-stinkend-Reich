@@ -559,7 +559,7 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Release 0.4.1 erst nach Philips „Release raus“ (dann `.github/release-version` auf 0.4.1). Vorher geprüft (27.10. 11:45):
+**Release 0.4.1 angestoßen** (Philip 27.10. mittags: „Ja, Release 0.4.1 raus“; `.github/release-version` = 0.4.1). Vorher geprüft (27.10. 11:45):
 alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
 bei Philip bestätigen (Log-Zeilen mit „yt-dlp“), Server-Version ohne Mod für 1.21.6–1.21.8 fertig prüfen (Bedienfelder,
 1.21.6/1.21.7; Figuren in 1.21.8 hell), neue Skins ohne Mod (Tänzerinnen) und im Paper-Plugin ansehen, danach
