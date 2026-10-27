@@ -54,6 +54,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.ausruestung.Agent agent;
     private de.moinmornhart.stinkendreich.paper.butler.Taenzerinnen taenzerinnen;
     private de.moinmornhart.stinkendreich.paper.hai.Haie haie;
+    private de.moinmornhart.stinkendreich.paper.block.Haifalle haifalle;
     private de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
@@ -101,6 +102,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(taenzerinnen, this);
         haie = new de.moinmornhart.stinkendreich.paper.hai.Haie(this);
         getServer().getPluginManager().registerEvents(haie, this);
+        haifalle = new de.moinmornhart.stinkendreich.paper.block.Haifalle(this, bloecke, mechanik);
+        getServer().getPluginManager().registerEvents(haifalle, this);
+        getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Pool(this, bloecke), this);
         getServer().getPluginManager().registerEvents(fernseher, this);
         inkognito = new de.moinmornhart.stinkendreich.paper.block.Inkognito(this, bloecke);
         getServer().getPluginManager().registerEvents(inkognito, this);
@@ -251,6 +255,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.hai.Haie haie() {
         return haie;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Haifalle haifalle() {
+        return haifalle;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Fernseher fernseher() {

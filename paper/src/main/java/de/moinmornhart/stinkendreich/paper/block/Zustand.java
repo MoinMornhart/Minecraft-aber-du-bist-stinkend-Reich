@@ -44,6 +44,13 @@ public record Zustand(String block, Map<String, String> eigenschaften) {
         return wert.equals(eigenschaften.get(eigenschaft));
     }
 
+    /** Derselbe Zustand mit einer zusätzlichen Eigenschaft (auch wenn sie bisher fehlte). */
+    public Zustand ergaenzt(String eigenschaft, String wert) {
+        Map<String, String> e = new TreeMap<>(eigenschaften);
+        e.put(eigenschaft, wert);
+        return new Zustand(block, e);
+    }
+
     /** Derselbe Zustand mit einer geänderten Eigenschaft (nur wenn es sie gibt). */
     public Zustand mit(String eigenschaft, String wert) {
         if (!eigenschaften.containsKey(eigenschaft)) {

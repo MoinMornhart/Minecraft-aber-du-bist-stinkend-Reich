@@ -129,6 +129,12 @@ public final class SmartHome {
             case "automatik" -> setzen(nr, "automatik", an ? "1" : "0");
             case "tor" -> setzen(nr, "tor_zu", an ? "1" : "0");
             case "garage" -> setzen(nr, "garage_zu", an ? "1" : "0");
+            case "haie" -> {
+                // Haifalle: auf = Eindringling hinein (sonst geht der Boden trotzdem auf), zu = schließen
+                p.sendActionBar(Component.text(plugin.haifalle().smartHome(v, wert.equals("auf")), NamedTextColor.AQUA));
+                plugin.getLogger().info("Smart Home: haie " + wert + " (Villa " + nr + ")");
+                return;
+            }
             default -> {
                 return;
             }
@@ -208,6 +214,8 @@ public final class SmartHome {
                 (s, a) -> schalten(s, "tor", an(nr, "tor_zu") ? "auf" : "zu")));
         k.add(Dialoge.Knopf.von(an(nr, "garage_zu") ? "Garagentor frei" : "Garagentor bleibt zu",
                 (s, a) -> schalten(s, "garage", an(nr, "garage_zu") ? "auf" : "zu")));
+        k.add(Dialoge.Knopf.von("Haifalle öffnen", (s, a) -> schalten(s, "haie", "auf")));
+        k.add(Dialoge.Knopf.von("Haifalle schließen", (s, a) -> schalten(s, "haie", "zu")));
         boolean versteckt = plugin.inkognito().versteckt(v);
         k.add(Dialoge.Knopf.von(versteckt ? "Inkognito aus (Villa taucht auf)" : "Inkognito an (Villa verschwindet)", (s, a) -> {
             if (v != null && plugin.zugang().istEigentuemer(s, v)) {

@@ -55,7 +55,7 @@ public final class Bauplan {
         breiteZ = ((Number) groesse.get(2)).intValue();
         List<Object> pal = Nbt.liste(nbt, "palette");
         palette = new Object[pal.size()];
-        int unbekannt = 0;
+        int unbekannt = 0, ergaenzt = 0;
         for (int i = 0; i < pal.size(); i++) {
             @SuppressWarnings("unchecked") Map<String, Object> e = (Map<String, Object>) pal.get(i);
             String name = Nbt.text(e, "Name", "minecraft:air");
@@ -84,8 +84,16 @@ public final class Bauplan {
                 }
                 palette[i] = d;
             } else {
-                palette[i] = Zustand.lesen(text.toString());
+                // Standardwerte, die im Bauplan fehlen, ergänzen (sonst gälte z. B. der Haifallen-Boden als offen)
+                Zustand roh = Zustand.lesen(text.toString());
+                palette[i] = plugin.bloecke().daten().vervollstaendigen(roh);
+                if (!palette[i].equals(roh)) {
+                    ergaenzt++;
+                }
             }
+        }
+        if (ergaenzt > 0) {
+            plugin.getLogger().info("Bauplan: " + ergaenzt + " Blockzustände um Standardwerte ergänzt");
         }
         for (Object o : Nbt.liste(nbt, "blocks")) {
             @SuppressWarnings("unchecked") Map<String, Object> b = (Map<String, Object>) o;

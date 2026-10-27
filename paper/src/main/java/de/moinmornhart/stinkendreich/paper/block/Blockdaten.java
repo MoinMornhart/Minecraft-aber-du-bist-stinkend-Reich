@@ -135,6 +135,34 @@ public final class Blockdaten {
         return modelle;
     }
 
+    /**
+     * Ergänzt Eigenschaften, die im Bauplan fehlen (villa.py lässt Standardwerte weg, z. B. „haifalle“ ohne open oder
+     * Türen ohne powered; das Spiel setzt dort den Standard ein). Wahr/Falsch-Eigenschaften werden „false“ – das ist bei
+     * allen Blöcken der Mod der Standard –, sonst gilt der erste bekannte Wert.
+     */
+    public Zustand vervollstaendigen(Zustand zustand) {
+        Blockinfo info = bloecke.get(zustand.block());
+        if (info == null || info.zustaende().isEmpty() || info.zustaende().containsKey(zustand.schluessel())) {
+            return zustand;
+        }
+        Map<String, Set<String>> werte = new java.util.LinkedHashMap<>();
+        for (String schluessel : info.zustaende().keySet()) {
+            for (String teil : schluessel.split(",")) {
+                String[] kv = teil.split("=", 2);
+                if (kv.length == 2) {
+                    werte.computeIfAbsent(kv[0], k -> new java.util.LinkedHashSet<>()).add(kv[1]);
+                }
+            }
+        }
+        Zustand neu = zustand;
+        for (Map.Entry<String, Set<String>> e : werte.entrySet()) {
+            if (zustand.wert(e.getKey()) == null) {
+                neu = neu.ergaenzt(e.getKey(), e.getValue().contains("false") ? "false" : e.getValue().iterator().next());
+            }
+        }
+        return neu;
+    }
+
     /** Darstellung eines Zustands (zwischengespeichert). */
     public Darstellung darstellung(Zustand zustand) {
         return cache.computeIfAbsent(zustand, this::berechnen);

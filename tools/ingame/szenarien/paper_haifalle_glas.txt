@@ -1,0 +1,25 @@
+# Paper-Plugin: Glasboden der Haifalle (begehbar, Goldrand sichtbar, öffnet und schließt)
+server /gamemode spectator
+server /time set 6000
+warte 20
+taste F1
+server /villa ort 48.5 27 50.5 90 30
+warte 2
+bild pg_raum
+server /villa ort 43.5 26.6 50.5 0 90
+warte 1
+bild pg_zu
+# Stehen auf dem Glas
+server /gamemode survival
+server /villa ort 43.5 26 50.5 0 0
+warte 2
+server @/data get entity @p Pos
+server /handy smart haie auf
+warte 1
+server @/data get entity @p Pos
+server /gamemode spectator
+server /villa ort 48.5 27 50.5 90 30
+warte 0.5
+bild pg_offen
+warte 6
+bild pg_wieder_zu

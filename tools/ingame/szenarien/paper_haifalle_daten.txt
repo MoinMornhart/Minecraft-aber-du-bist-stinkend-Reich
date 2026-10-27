@@ -1,0 +1,5 @@
+# Paper-Plugin: Daten der Anzeige-Figur über dem Glasboden
+server /gamemode spectator
+warte 15
+server @/execute positioned -12.5 87.5 -5.5 as @e[type=item_display,distance=..0.9] run data get entity @s
+server @/execute positioned -12.5 87.5 -5.5 run data get block ~ ~ ~

@@ -1,0 +1,65 @@
+# Paper-Plugin: Haifalle (Knopf und Smart Home), Goldmünzen-Becken, Wasserrutsche
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+# Haifalle: Zombie im Wohnzimmer, Bewohner drückt den roten Knopf
+server /difficulty easy
+server /villa ort 51 26 52 0 0
+server /execute positioned ~ ~ ~ run summon zombie ~ ~ ~ {NoAI:1b,PersistenceRequired:1b,Tags:["opfer"]}
+server /villa ort 53 30.5 50 90 40
+warte 2
+bild pp_vorher
+server /gamemode survival
+server /villa ort 49.5 26 47.5 0 0
+merke
+server /villa klick haifalle_schalter
+server /gamemode spectator
+server /villa ort 53 30.5 50 90 40
+bis 10 Haifalle: Zombie
+warte 0.5
+bild pp_offen
+warte 1.5
+bild pp_gefallen
+server @/execute as @e[tag=opfer] run data get entity @s Pos
+warte 5
+bild pp_zu
+# Smart Home: Haifalle öffnen ohne Opfer
+server /gamemode survival
+merke
+server /handy smart haie auf
+bis 10 Smart Home: haie auf
+server /gamemode spectator
+server /villa ort 53 30.5 50 90 40
+warte 1
+bild pp_smart_auf
+server /handy smart haie zu
+warte 1
+bild pp_smart_zu
+server /kill @e[tag=opfer]
+server /difficulty peaceful
+# Goldmünzen: hineinspringen, kein Fallschaden, mit Leertaste hoch
+server /gamemode survival
+server /villa ort 67.5 12 62.5 0 60
+warte 0.3
+server @/data get entity @p Health
+warte 3
+server @/data get entity @p Health
+server @/data get entity @p Pos
+bild pp_muenzen
+halte 1.5 space
+server @/data get entity @p Pos
+warte 1
+# Rutsche: oben hinein
+server /villa ort 68.5 32.2 21.5 90 20
+warte 0.2
+server @/data get entity @p Pos
+warte 0.8
+server @/data get entity @p Pos
+bild pp_rutsche
+warte 1.5
+server @/data get entity @p Pos
+bild pp_rutsche_unten
+server /gamemode spectator

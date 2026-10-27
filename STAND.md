@@ -260,6 +260,12 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   `tools/paper/hai_modell.py`, Biss ohne Verursacher = wirkt auch auf Friedlich, Todesnachricht selbst gesetzt).
   Geprüft mit `paper_agent*.txt`, `paper_nacht2.txt`, `paper_nacht3.txt` (Diener 24 → 16 → 8 → 5, Spieler im Becken
   15,2 → 10,8 → 2,8). Autotest-Zeilen `server @/befehl` laufen als Konsole (Ausgabe im Serverprotokoll).
+- Danach (04:50): Haifalle (`block/Haifalle`: Knopf, Smart Home „haie“, Automatik bei Angriff auf Bewohner), Rutsche und
+  Goldmünzen (`block/Pool`: Münzen sind Strukturleere, das Plugin lässt langsam sinken, Leertaste = hoch, kein
+  Fallschaden). Wichtiger Fehler behoben: villa.py lässt Standardwerte weg (`haifalle` ohne open, Türen ohne powered);
+  `Blockdaten.vervollstaendigen` ergänzt sie beim Lesen des Bauplans (Wahr/Falsch = false), sonst galt der erste
+  Zustand aus bloecke.json (Glasboden offen und unsichtbar). `Zustand.mit` ändert nur vorhandene Eigenschaften,
+  `Zustand.ergaenzt` setzt auch fehlende. Tests: `paper_pool.txt`, `paper_haifalle_*.txt`.
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
   ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
 
@@ -481,6 +487,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin: Haifalle/Rutsche/Goldbad, Mitarbeiter und Butler-Aufträge, Straßen zwischen den Villen; Release 0.4.1
+Paper-Plugin: Mitarbeiter und Butler-Aufträge, Straßen zwischen den Villen; Release 0.4.1
 erst nach Philips „Release raus“; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
 Fortschrittsseite.
