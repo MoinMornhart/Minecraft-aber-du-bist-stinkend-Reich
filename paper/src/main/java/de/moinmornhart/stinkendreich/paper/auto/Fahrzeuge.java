@@ -533,6 +533,12 @@ public final class Fahrzeuge implements Listener {
                 // Neben dem Wagen absetzen, nicht darin
                 Location l = wer.getLocation();
                 wer.teleport(l.add(richtung(l.getYaw() + 90).multiply(1.5)).add(0, 0.3, 0));
+                // Aus dem fliegenden Hubschrauber: sanft zu Boden schweben statt abzustürzen
+                if (wer instanceof org.bukkit.entity.LivingEntity le
+                        && l.getY() - l.getWorld().getHighestBlockYAt(l) > 3) {
+                    le.addPotionEffect(new org.bukkit.potion.PotionEffect(org.bukkit.potion.PotionEffectType.SLOW_FALLING,
+                            20 * 30, 0, false, false, true));
+                }
             });
         }
     }

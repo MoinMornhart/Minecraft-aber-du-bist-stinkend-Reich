@@ -26,7 +26,7 @@ import java.util.UUID;
  * für Schritt, siehe {@code Fahrzeuge.steuern}).
  */
 final class Flug implements Auftrag {
-    private enum Phase { ABHOLEN, EINSTEIGEN, REISE, ANGEKOMMEN }
+    private enum Phase { ABHOLEN, EINSTEIGEN, REISE, LANDEN, ANGEKOMMEN }
 
     /** Tempo im Reiseflug (Blöcke je Tick, gut 60 km/h) und Steig- bzw. Sinkrate. */
     private static final double TEMPO = 0.9, STEIGEN = 0.35, SINKEN = 0.3;
@@ -89,6 +89,7 @@ final class Flug implements Auftrag {
             case ABHOLEN -> "fliegt mit dem Hubschrauber zu Ihnen";
             case EINSTEIGEN -> "wartet im Hubschrauber auf Sie";
             case REISE -> "fliegt Sie " + zielName;
+            case LANDEN -> "landet";
             case ANGEKOMMEN -> "ist gelandet";
         };
     }
@@ -124,8 +125,20 @@ final class Flug implements Auftrag {
                 }
             }
             case REISE -> {
-                if (fliegen(ziel)) {
+                if (!plugin.fahrzeuge().sitztDrin(heli, p)) {
+                    // Unterwegs ausgestiegen (er schwebt zu Boden): hier landen
+                    Butler.sagen(p, "Sie sind ausgestiegen – ich lande hier und warte auf Sie.");
+                    ziel.setX(heli.getLocation().getX());
+                    ziel.setZ(heli.getLocation().getZ());
+                    ziel.setY(heli.getWorld().getHighestBlockYAt(heli.getLocation()) + 1);
+                    phase(Phase.LANDEN);
+                } else if (fliegen(ziel)) {
                     Butler.sagen(p, "Wir sind da. Ich wünsche einen angenehmen Aufenthalt.");
+                    phase(Phase.ANGEKOMMEN);
+                }
+            }
+            case LANDEN -> {
+                if (fliegen(ziel)) {
                     phase(Phase.ANGEKOMMEN);
                 }
             }

@@ -61,6 +61,10 @@ public final class Butler implements Listener {
             w.getEntities().forEach(this::aufnehmen);
         }
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 1L, 1L);
+        // Das nächste Dorf schon eine Minute nach dem Start suchen (kostet einmal 2–4 s), damit der erste Flug nicht hakt
+        Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.villen().alle().stream()
+                .filter(v -> v.nr() == 0 && v.world() != null)
+                .forEach(v -> dorf(v.spawn(plugin.bauplan()))), 20L * 60);
     }
 
     /** Stellt James in der Halle einer frisch gebauten Villa auf. */
@@ -364,6 +368,10 @@ public final class Butler implements Listener {
      * Herrn ab und fliegt ihn hin.
      */
     public void fliegen(Player p, int nr, String satz) {
+        fliegen(p, nr, satz, true);
+    }
+
+    private void fliegen(Player p, int nr, String satz, boolean nochmal) {
         Mannequin puppe = puppen.get(nr);
         WanderingTrader k = koerper.get(nr);
         Villen.Villa eigene = plugin.villen().nr(nr);
@@ -406,6 +414,15 @@ public final class Butler implements Listener {
         }
         if (heli == null) {
             heli = plugin.fahrzeuge().hubschrauber(p.getLocation(), 64);
+        }
+        JsonArray padMarke = plugin.bauplan().ersteMarke("hubschrauber");
+        if (heli == null && nochmal && padMarke != null) {
+            // Der Landeplatz ist weit weg und nicht geladen: kurz laden, dann noch einmal suchen
+            org.bukkit.Chunk c = Ausstattung.ort(eigene, padMarke).getChunk();
+            c.addPluginChunkTicket(plugin);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> fliegen(p, nr, satz, false), 40L);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> c.removePluginChunkTicket(plugin), 20L * 15);
+            return;
         }
         if (heli == null) {
             sagen(p, "Verzeihung, der Hubschrauber ist nicht in der Nähe.");

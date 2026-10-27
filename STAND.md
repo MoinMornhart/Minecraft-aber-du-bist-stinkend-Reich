@@ -284,6 +284,10 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   neben dem Spieler (`Flug.landeplatzBei`: eben, kein Laub/Wasser). Dorf über `org.bukkit.StructureType.VILLAGE` (eine
   Suche, je Welt gemerkt; dauert beim ersten Mal 2–4 s). Test `paper_flug.txt`: abholen in 11 s, 1200 Blöcke ins Dorf
   in 90 s, zurück auf den Landeplatz. Testhilfe `/villa einsteigen`.
+- Flug-Sicherheit (07:25): Aussteigen in der Luft gibt 30 s Sinkflug (Slow Falling), der Hubschrauber landet dann dort
+  (Phase LANDEN). Liegt der Landeplatz in einem ungeladenen Chunk, wird er kurz geladen und die Suche wiederholt. Dorf
+  wird eine Minute nach dem Start vorab gesucht. Test `paper_flug2.txt` (aus 26 Blöcken Höhe ausgestiegen: 20/20 Leben).
+  Regression nach den Umbauten: `paper_auto.txt`, `paper_nacht1.txt` ohne Fehler.
 - Trailer (07:15, 11:35): neuer Paper-Teil 3 (1:53) am Ende: Haifalle, Rutsche, Münzbecken, Tunnel, Holz, Sortieren,
   Jagd, Mitarbeiter, Hubschrauber. Aufnahme in Stücken (`paper_trailer3.txt` a–g, `paper_trailer3h.txt` h–j, mit
   `CHAT_AUS=1`), Schnitt `tools/ingame/trailer3_schnitt.py` (Leerlauf raus), dann `video.py` und an `docs/trailer.mp4`
