@@ -621,6 +621,14 @@ In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt sein
 <td><img src="docs/bilder/paper_heli_abflug.jpg" alt="Hubschrauber startet auf Paper"><br><sub>„Butler, flieg mich ins Dorf“: James startet vom Dach</sub></td>
 <td><img src="docs/bilder/paper_heli_dorf.jpg" alt="Hubschrauber im Dorf auf Paper"><br><sub>Gelandet im Dorf, gut 1200 Blöcke weiter</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/paper_strasse.jpg" alt="Straße zur Nachbarvilla auf Paper"><br><sub>Straße zur Nachbarvilla: Mittellinie, Bordstein, Laternen</sub></td>
+<td><img src="docs/bilder/paper_strasse_berg.jpg" alt="Straße im Gebirge auf Paper"><br><sub>Im Gebirge am Hang entlang, durch Kuppen als Einschnitt</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/paper_limo.jpg" alt="James fährt die Limo auf Paper"><br><sub>„Butler, fahr mich zur Villa von Max“: James am Steuer der Limo</sub></td>
+<td><img src="docs/bilder/paper_strasse_einschnitt.jpg" alt="Einschnitt durch den Berg auf Paper"><br><sub>Offener Einschnitt durch den Berg</sub></td>
+</tr>
 </table>
 
 James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt einen Treppentunnel, baut die ganze Ader ab, schmilzt Metall im Hochofen der Villa und bringt es dir. „Butler, hol mir 16 Holz“ – er fällt echte Bäume (keine gebauten) und pflanzt an jeder Stelle einen neuen Setzling. „Butler, sortier die Truhen“ – er geht alle Truhen und Fässer um dich herum ab und räumt sie auf, jede Sorte in ihre Stammtruhe. „Butler, geh jagen“ – er jagt Kühe, Schweine, Schafe, Hühner und Kaninchen, schont aber Jungtiere, Tiere mit Namen und lässt von jeder Art mindestens zwei übrig (abschaltbar mit `butler.jagen: false`). Die Mitarbeiterkiste aus dem Handy bringt drei Mitarbeiter, die Diamanten, Eisen und Kohle in ihre Kiste schaffen.
