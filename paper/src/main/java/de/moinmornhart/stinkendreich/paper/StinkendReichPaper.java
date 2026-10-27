@@ -46,6 +46,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Zugang zugang;
     private de.moinmornhart.stinkendreich.paper.block.Tore tore;
     private de.moinmornhart.stinkendreich.paper.block.Sicherheit sicherheit;
+    private de.moinmornhart.stinkendreich.paper.block.Zugbruecke zugbruecke;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
     private Baustelle baustelle;
     private final Deque<Runnable> warteschlange = new ArrayDeque<>();
@@ -77,6 +78,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         tore = new de.moinmornhart.stinkendreich.paper.block.Tore(this, bloecke, mechanik);
         zugang = new de.moinmornhart.stinkendreich.paper.block.Zugang(this, bloecke, mechanik);
         sicherheit = new de.moinmornhart.stinkendreich.paper.block.Sicherheit(this, bloecke, mechanik, zugang, tore);
+        zugbruecke = new de.moinmornhart.stinkendreich.paper.block.Zugbruecke(this, mechanik);
+        getServer().getPluginManager().registerEvents(zugbruecke, this);
+        new de.moinmornhart.stinkendreich.paper.block.Geheimgang(this, bloecke, mechanik, tore);
+        new de.moinmornhart.stinkendreich.paper.block.Graben(this);
         new de.moinmornhart.stinkendreich.paper.block.Aufzug(this, bloecke, mechanik, zugang);
         getServer().getPluginManager().registerEvents(bloecke, this);
         getServer().getPluginManager().registerEvents(mechanik, this);
@@ -124,6 +129,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        if (zugbruecke != null) {
+            zugbruecke.stoppen();                       // laufende Fahrt fertig machen, keine Blöcke verlieren
+        }
         if (paket != null) {
             paket.stoppen();
         }
@@ -175,6 +183,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.block.Zugang zugang() {
         return zugang;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Zugbruecke zugbruecke() {
+        return zugbruecke;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Sicherheit sicherheit() {

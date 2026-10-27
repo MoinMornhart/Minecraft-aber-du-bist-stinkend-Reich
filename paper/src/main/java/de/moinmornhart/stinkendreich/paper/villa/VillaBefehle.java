@@ -81,6 +81,14 @@ public final class VillaBefehle implements TabExecutor {
                 Zustand z = b == null ? null : plugin.bloecke().zustand(b);
                 antwort(wer, b == null ? "Kein Block." : b.getType() + " " + (z == null ? "" : z + " " + plugin.bloecke().werte(b)));
             }
+            case "bruecke" -> {
+                Villen.Villa v = p == null ? null : plugin.villen().bei(p.getLocation(), 64);
+                if (v == null) {
+                    v = plugin.villen().nr(0);
+                }
+                boolean an = args.length < 2 || args[1].equals("ein");
+                antwort(wer, plugin.zugbruecke().sichern(v, an) ? (an ? "Zugbrücke gesichert." : "Zugbrücke offen.") : "Keine Zugbrücke.");
+            }
             case "zentrale", "code" -> {
                 // Testhilfe: Knopf der nächsten Zentrale bzw. Code am nächsten Tastenfeld (wie im Dialog)
                 Block b = p == null ? null : naechster(p, was.equals("code") ? "tastenfeld" : "sicherheitszentrale");
@@ -129,6 +137,6 @@ public final class VillaBefehle implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender wer, Command befehl, String name, String[] args) {
-        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "zentrale", "code", "info") : List.of();
+        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "bruecke", "zentrale", "code", "info") : List.of();
     }
 }

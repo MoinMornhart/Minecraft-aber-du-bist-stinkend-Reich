@@ -208,6 +208,9 @@ public final class SmartHome {
                 (s, a) -> schalten(s, "tor", an(nr, "tor_zu") ? "auf" : "zu")));
         k.add(Dialoge.Knopf.von(an(nr, "garage_zu") ? "Garagentor frei" : "Garagentor bleibt zu",
                 (s, a) -> schalten(s, "garage", an(nr, "garage_zu") ? "auf" : "zu")));
+        boolean bruecke = plugin.zugbruecke().gesichert(v);
+        k.add(Dialoge.Knopf.von(bruecke ? "Zugbrücke ausfahren" : "Zugbrücke einfahren (sichern)",
+                (s, a) -> plugin.zugbruecke().umschalten(s, v)));
         k.add(Dialoge.Knopf.von(an(nr, "automatik") ? "Automatik aus" : "Automatik an (abends Licht, Rollläden zu)",
                 (s, a) -> schalten(s, "automatik", an(nr, "automatik") ? "aus" : "an")));
         Dialoge.zeigen(p, "Smart Home", v == null ? "Du wohnst in keiner Villa." : v.name(), List.of(), k);

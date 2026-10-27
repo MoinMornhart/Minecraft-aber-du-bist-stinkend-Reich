@@ -1,0 +1,20 @@
+# Paper-Plugin: Lava-Graben im Lockdown (Stufe 2), danach wieder Wasser
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+server /villa ort 68 32 112 125 22
+warte 3
+bild pl_wasser
+merke
+server /villa zentrale stufe:2
+bis 10 Graben: Villa 0 Lava
+warte 2
+bild pl_lava
+merke
+server /villa zentrale stufe:1
+bis 10 Graben: Villa 0 Wasser
+warte 2
+bild pl_wasser_wieder

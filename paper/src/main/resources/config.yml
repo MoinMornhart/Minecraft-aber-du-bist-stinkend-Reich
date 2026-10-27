@@ -11,6 +11,12 @@ villa:
   mehrereVillen: true
   # Abstand der Villen im Raster (Blöcke, mindestens 240)
   abstand: 320
+  # Im Lockdown (Sicherheitsstufe 2 und 3) füllt sich der Wassergraben mit Lava
+  lavaGraben: true
+
+tresor:
+  # Anzahl versteckter Knöpfe, die zum Entschärfen der Tresorfallen nötig sind
+  knoepfe: 2
 
 ressourcenpaket:
   # Port des eingebauten Webservers, der das Paket an die Spieler ausliefert

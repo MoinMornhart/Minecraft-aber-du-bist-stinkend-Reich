@@ -315,7 +315,7 @@ public final class Sicherheit {
         if (z == null) {
             return;
         }
-        boolean an = alarmAktiv(villa(b)) && (tick / 10) % 2 == 0;
+        boolean an = (alarmAktiv(villa(b)) || plugin.zugbruecke().warnen(b)) && (tick / 10) % 2 == 0;
         if (!z.ist("lit", Boolean.toString(an))) {
             bloecke.setzen(b, z.mit("lit", Boolean.toString(an)));
         }
