@@ -8,6 +8,8 @@ server /gamerule advance_time false
 taste F1
 server /villa ort 55.5 26 84 180 0
 warte 2
+# Tänzerinnen aus früheren Läufen (gleiche Welt) entfernen, sonst stehen zwei übereinander
+server /execute as @p at @s run kill @e[type=stinkendreich:taenzerin,distance=..12]
 server /execute as @p at @s run summon stinkendreich:taenzerin ^-3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|0"}
 server /execute as @p at @s run summon stinkendreich:taenzerin ^-1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|1"}
 server /execute as @p at @s run summon stinkendreich:taenzerin ^1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|2"}
@@ -15,15 +17,17 @@ server /execute as @p at @s run summon stinkendreich:taenzerin ^3 ^ ^4 {NoAI:1b,
 # James vor dem Eingang, Blick nach Süden (Weltkoordinaten = Villa + (-56, 62, -56))
 server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
 server /tp @e[type=stinkendreich:butler,limit=1] -0.5 88 17 0 0
-server /villa ort 50.5 26.2 86.5 210 8
+server /villa ort 53.5 26.2 84 200 6
 warte 4
 video start trailer4a
 kapitel Neue Skins: Show-Tänzerinnen mit Haaren und Glitzer-Top
-server fahrt 7 | 50.5 26.2 86.5 210 8 | 55.5 26.3 87.5 180 8 | 60.5 26.2 86.5 150 8
+# vorn dicht an den Tänzerinnen entlang (die Laternenmasten stehen neben dem Teppich, also auf dem Teppich bleiben)
+server fahrt 7 | 53.5 26.2 84 200 6 | 55.5 26.2 83.2 180 6 | 57.5 26.2 84 160 6
 warte 8
 kapitel Lange Haare über den Rücken, Federschmuck
-server fahrt 6 | 60.5 26.2 86.5 150 8 | 62.5 26.2 80 90 6 | 59 26.2 75.5 25 6 | 55.5 26.2 75 0 6
-warte 7
+# über die Köpfe hinweg nach hinten
+server fahrt 8 | 57.5 26.2 84 160 6 | 55.5 29.5 80 90 80 | 55.5 26.4 75.6 0 8 | 55.8 26.3 75.2 0 6
+warte 9
 kapitel James im neuen Frack: Haare, Weste, Fliege, Frackschöße
 server fahrt 8 | 55.5 26.2 76.8 180 6 | 58.8 26.2 74.5 120 6 | 59 26.2 71.5 60 6 | 55.5 26.2 69.5 0 6
 warte 9
