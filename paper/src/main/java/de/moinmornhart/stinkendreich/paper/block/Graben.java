@@ -47,7 +47,8 @@ public final class Graben {
                 fuellen(r, r.fuellenMitLava);
                 continue;
             }
-            if (tick % PRUEFEN_ALLE != 0 || v.world() == null || plugin.bauplan().ersteMarke("graben") == null) {
+            if (tick % PRUEFEN_ALLE != 0 || v.world() == null || plugin.bauplan().ersteMarke("graben") == null
+                    || plugin.inkognito().aktiv(v)) {
                 continue;
             }
             if (r.felder == null) {

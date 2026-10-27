@@ -208,6 +208,12 @@ public final class SmartHome {
                 (s, a) -> schalten(s, "tor", an(nr, "tor_zu") ? "auf" : "zu")));
         k.add(Dialoge.Knopf.von(an(nr, "garage_zu") ? "Garagentor frei" : "Garagentor bleibt zu",
                 (s, a) -> schalten(s, "garage", an(nr, "garage_zu") ? "auf" : "zu")));
+        boolean versteckt = plugin.inkognito().versteckt(v);
+        k.add(Dialoge.Knopf.von(versteckt ? "Inkognito aus (Villa taucht auf)" : "Inkognito an (Villa verschwindet)", (s, a) -> {
+            if (v != null && plugin.zugang().istEigentuemer(s, v)) {
+                s.sendActionBar(Component.text(plugin.inkognito().schalten(v, !versteckt), NamedTextColor.DARK_AQUA));
+            }
+        }));
         boolean bruecke = plugin.zugbruecke().gesichert(v);
         k.add(Dialoge.Knopf.von(bruecke ? "Zugbrücke ausfahren" : "Zugbrücke einfahren (sichern)",
                 (s, a) -> plugin.zugbruecke().umschalten(s, v)));

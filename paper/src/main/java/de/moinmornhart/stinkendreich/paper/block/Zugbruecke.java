@@ -266,7 +266,7 @@ public final class Zugbruecke implements Listener {
     }
 
     private void pruefen(Villen.Villa v) {
-        if (lauf != null) {
+        if (lauf != null || plugin.inkognito().aktiv(v)) {
             return;
         }
         Ort o = ort(v);

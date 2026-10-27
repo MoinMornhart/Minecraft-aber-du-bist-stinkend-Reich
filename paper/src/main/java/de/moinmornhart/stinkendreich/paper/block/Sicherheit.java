@@ -130,6 +130,13 @@ public final class Sicherheit {
         return alarmBis.getOrDefault(nr(v), 0L) > tick;
     }
 
+    /** Vor dem Versenken (Inkognito): System aus, keine Laser, Minen oder Lava im Versteck. */
+    public void stufeFuerInkognito(Villen.Villa v) {
+        if (stufe(v) != 0) {
+            stufeSetzen(v, 0);
+        }
+    }
+
     /** Ticks seit dem Einschalten der Festung (groß, wenn sie schon vor dem Start an war). */
     public long festungTicks(Villen.Villa v) {
         Long seit = festungSeit.get(nr(v));

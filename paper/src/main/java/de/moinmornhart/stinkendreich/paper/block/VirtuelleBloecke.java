@@ -52,6 +52,8 @@ public final class VirtuelleBloecke implements Listener {
     private final Map<UUID, Map<Long, Interaction>> klickfelder = new HashMap<>();
     /** Welt → Blockposition → Kurzname des Blocks (für Steuerungen, die alle Blöcke einer Art brauchen). */
     private final Map<UUID, Map<Long, String>> namen = new HashMap<>();
+    /** Gesperrte Bereiche (Villa fährt gerade, siehe {@link Inkognito}): dort gibt es keine Zustände und nichts wird gesetzt. */
+    private final java.util.List<Map.Entry<UUID, org.bukkit.util.BoundingBox>> gesperrt = new java.util.ArrayList<>();
 
     public VirtuelleBloecke(StinkendReichPaper plugin, Blockdaten daten) {
         this.plugin = plugin;
@@ -85,6 +87,9 @@ public final class VirtuelleBloecke implements Listener {
 
     /** Zustand des virtuellen Blocks an dieser Stelle oder null. */
     public Zustand zustand(Block b) {
+        if (gesperrt(b)) {
+            return null;
+        }
         ItemDisplay figur = figur(b);
         if (figur == null) {
             return null;
@@ -114,6 +119,9 @@ public final class VirtuelleBloecke implements Listener {
 
     /** Setzt einen Block der Mod (Träger, Figur, Klickfeld). */
     public void setzen(Block b, Zustand zustand) {
+        if (gesperrt(b)) {
+            return;
+        }
         Blockdaten.Darstellung d = daten.darstellung(zustand);
         if (d.vorbild() != null) {
             entfernenFiguren(b);
@@ -227,6 +235,9 @@ public final class VirtuelleBloecke implements Listener {
 
     /** Entfernt einen Block der Mod ganz (Figur, Klickfeld) und setzt Luft. */
     public void entfernen(Block b) {
+        if (gesperrt(b)) {
+            return;
+        }
         entfernenFiguren(b);
         b.setType(Material.AIR, false);
     }
@@ -363,6 +374,59 @@ public final class VirtuelleBloecke implements Listener {
             }
         }
         return liste;
+    }
+
+    // ------------------------------------------------------------------
+    // Sperren und Verschieben (Inkognito)
+    // ------------------------------------------------------------------
+
+    private boolean gesperrt(Block b) {
+        if (gesperrt.isEmpty()) {
+            return false;
+        }
+        for (Map.Entry<UUID, org.bukkit.util.BoundingBox> e : gesperrt) {
+            if (e.getKey().equals(b.getWorld().getUID()) && e.getValue().contains(b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Sperrt einen Bereich (die Mechanik dort ruht, bis {@link #entsperren} kommt). */
+    public void sperren(World w, org.bukkit.util.BoundingBox bereich) {
+        gesperrt.add(Map.entry(w.getUID(), bereich.clone()));
+    }
+
+    public void entsperren(World w, org.bukkit.util.BoundingBox bereich) {
+        gesperrt.removeIf(e -> e.getKey().equals(w.getUID()) && e.getValue().equals(bereich));
+    }
+
+    /**
+     * Nach einer Fahrt um {@code dy}: Klickfelder kennen ihren neuen Block, das Verzeichnis wird für den Bereich (alte
+     * und neue Lage) neu aufgebaut.
+     */
+    public void verschoben(World w, org.bukkit.util.BoundingBox alt, int dy) {
+        org.bukkit.util.BoundingBox neu = alt.clone().shift(0, dy, 0);
+        org.bukkit.util.BoundingBox beide = alt.clone().union(neu);
+        UUID id = w.getUID();
+        for (Map<UUID, ? extends Map<Long, ?>> m : java.util.List.of(figuren, klickfelder, namen)) {
+            Map<Long, ?> karte = m.get(id);
+            if (karte != null) {
+                karte.keySet().removeIf(p -> {
+                    int x = (int) (p >> 38), z = (int) (p << 26 >> 38), y = (int) (p << 52 >> 52);
+                    return beide.contains(x + 0.5, y + 0.5, z + 0.5);
+                });
+            }
+        }
+        for (Entity e : w.getNearbyEntities(neu)) {
+            if (e instanceof Interaction i) {
+                long[] pos = i.getPersistentDataContainer().get(schluesselKlick, PersistentDataType.LONG_ARRAY);
+                if (pos != null && pos.length == 3) {
+                    i.getPersistentDataContainer().set(schluesselKlick, PersistentDataType.LONG_ARRAY, new long[]{pos[0], pos[1] + dy, pos[2]});
+                }
+            }
+            aufnehmen(e);
+        }
     }
 
     /** Für Fehlersuche: Anzahl der bekannten Figuren. */

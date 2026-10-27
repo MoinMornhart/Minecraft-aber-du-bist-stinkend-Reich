@@ -86,6 +86,13 @@ public final class VillaBefehle implements TabExecutor {
                 Zustand z = b == null ? null : plugin.bloecke().zustand(b);
                 antwort(wer, b == null ? "Kein Block." : b.getType() + " " + (z == null ? "" : z + " " + plugin.bloecke().werte(b)));
             }
+            case "inkognito" -> {
+                Villen.Villa v = p == null ? null : plugin.villen().bei(p.getLocation(), 64);
+                if (v == null) {
+                    v = plugin.villen().nr(0);
+                }
+                antwort(wer, plugin.inkognito().schalten(v, args.length < 2 || args[1].equals("an")));
+            }
             case "bruecke" -> {
                 Villen.Villa v = p == null ? null : plugin.villen().bei(p.getLocation(), 64);
                 if (v == null) {
@@ -141,7 +148,20 @@ public final class VillaBefehle implements TabExecutor {
                 }
             }
             default -> {
-                String text = plugin.villen().alle().size() + " Villen, " + plugin.bloecke().anzahl() + " Mod-Blöcke geladen. "
+                // Mod-Blöcke auf dem Grundstück der Spawn-Villa (über die ganze Tiefe, auch versteckt)
+                Villen.Villa v0 = plugin.villen().nr(0);
+                int innen = 0;
+                if (v0 != null && v0.world() != null) {
+                    org.bukkit.util.BoundingBox kasten = new org.bukkit.util.BoundingBox(v0.x(), v0.y() - 64, v0.z(),
+                            v0.x() + plugin.bauplan().breiteX, v0.y() + plugin.bauplan().hoehe + 8, v0.z() + plugin.bauplan().breiteZ);
+                    for (org.bukkit.entity.Entity e : v0.world().getNearbyEntities(kasten)) {
+                        if (e instanceof org.bukkit.entity.ItemDisplay d && plugin.bloecke().zustand(d.getLocation().getBlock()) != null) {
+                            innen++;
+                        }
+                    }
+                }
+                String text = plugin.villen().alle().size() + " Villen, " + plugin.bloecke().anzahl() + " Mod-Blöcke geladen, "
+                        + innen + " auf dem Grundstück. "
                         + plugin.butler().uebersicht();
                 antwort(wer, text);
                 plugin.getLogger().info("Info: " + text);
@@ -169,6 +189,6 @@ public final class VillaBefehle implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender wer, Command befehl, String name, String[] args) {
-        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "bruecke", "zentrale", "code", "klick", "kamera", "lied", "klaviatur", "platte", "info") : List.of();
+        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "inkognito", "bruecke", "zentrale", "code", "klick", "kamera", "lied", "klaviatur", "platte", "info") : List.of();
     }
 }

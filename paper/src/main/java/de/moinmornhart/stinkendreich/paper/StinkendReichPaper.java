@@ -49,6 +49,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Zugbruecke zugbruecke;
     private de.moinmornhart.stinkendreich.paper.block.Kameras kameras;
     private de.moinmornhart.stinkendreich.paper.block.Festung festung;
+    private de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
     private Baustelle baustelle;
@@ -86,6 +87,8 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         new de.moinmornhart.stinkendreich.paper.block.Geheimgang(this, bloecke, mechanik, tore);
         new de.moinmornhart.stinkendreich.paper.block.Graben(this);
         festung = new de.moinmornhart.stinkendreich.paper.block.Festung(this, bloecke, mechanik);
+        inkognito = new de.moinmornhart.stinkendreich.paper.block.Inkognito(this, bloecke);
+        getServer().getPluginManager().registerEvents(inkognito, this);
         getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Haushalt(this, bloecke, mechanik), this);
         unterhaltung = new de.moinmornhart.stinkendreich.paper.block.Unterhaltung(this, bloecke, mechanik);
         kameras = new de.moinmornhart.stinkendreich.paper.block.Kameras(this, bloecke, mechanik);
@@ -137,6 +140,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        if (inkognito != null) {
+            inkognito.stoppen();                        // laufende Fahrt ohne Animation fertig machen
+        }
         if (zugbruecke != null) {
             zugbruecke.stoppen();                       // laufende Fahrt fertig machen, keine Blöcke verlieren
         }
@@ -202,6 +208,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung() {
         return unterhaltung;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito() {
+        return inkognito;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Festung festung() {
