@@ -165,6 +165,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     tippe) xdotool type --delay 40 "$rest"; sleep 0.5 ;;
     bild) bild "$rest" ;;
     klick) xdotool click 3; sleep 1 ;;
+    schnellklick) xdotool click 3 ;;
     linksklick) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3; xdotool click 1; sleep 1 ;;
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;

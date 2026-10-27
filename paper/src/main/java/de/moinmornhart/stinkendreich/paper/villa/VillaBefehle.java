@@ -86,6 +86,23 @@ public final class VillaBefehle implements TabExecutor {
                 Zustand z = b == null ? null : plugin.bloecke().zustand(b);
                 antwort(wer, b == null ? "Kein Block." : b.getType() + " " + (z == null ? "" : z + " " + plugin.bloecke().werte(b)));
             }
+            case "agent" -> {
+                // Testhilfe: ganze Agenten-Ausrüstung ins Inventar
+                if (p != null && args.length > 1 && args[1].equals("an")) {
+                    plugin.agent().anziehen(p);                 // Anzug an, Waffen auf die ersten drei Plätze
+                    antwort(wer, "Agenten-Anzug angezogen.");
+                } else if (p != null) {
+                    plugin.agent().alles().forEach(p.getInventory()::addItem);
+                    antwort(wer, "Agenten-Ausrüstung im Inventar.");
+                }
+            }
+            case "hai" -> {
+                // Testhilfe: Hai an der eigenen Stelle aussetzen (im Wasser)
+                if (p != null) {
+                    plugin.haie().aussetzen(p.getLocation());
+                    antwort(wer, "Hai ausgesetzt (" + plugin.haie().anzahl() + " Haie).");
+                }
+            }
             case "fernseher" -> {
                 // Testhilfe: Fenster des nächsten Fernsehers bzw. /villa fernseher <link>
                 org.bukkit.entity.ItemDisplay tv = p == null ? null : plugin.fernseher().naechster(p.getLocation());
@@ -200,6 +217,6 @@ public final class VillaBefehle implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender wer, Command befehl, String name, String[] args) {
-        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "fernseher", "inkognito", "bruecke", "zentrale", "code", "klick", "kamera", "lied", "klaviatur", "platte", "info") : List.of();
+        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "agent", "hai", "fernseher", "inkognito", "bruecke", "zentrale", "code", "klick", "kamera", "lied", "klaviatur", "platte", "info") : List.of();
     }
 }

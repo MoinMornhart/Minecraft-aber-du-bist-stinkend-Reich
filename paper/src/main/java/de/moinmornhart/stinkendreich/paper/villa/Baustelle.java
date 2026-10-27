@@ -224,7 +224,10 @@ public final class Baustelle {
             ding.remove("Slot");
             ding.put("DataVersion", plan.datenVersion);
             try {
-                ItemStack stapel = ItemStack.deserializeBytes(Nbt.schreibenGzip(ding));
+                ItemStack stapel = modGegenstand(String.valueOf(ding.get("id")));
+                if (stapel == null) {
+                    stapel = ItemStack.deserializeBytes(Nbt.schreibenGzip(ding));
+                }
                 if (platz >= 0 && platz < behaelter.getInventory().getSize()) {
                     behaelter.getInventory().setItem(platz, stapel);
                 }
@@ -232,6 +235,25 @@ public final class Baustelle {
                 plugin.getLogger().fine("Truheninhalt übersprungen: " + ex.getMessage());
             }
         }
+    }
+
+    /**
+     * Gegenstände der Mod gibt es auf Paper nicht: Zugangskarten werden Karten dieser Villa, die Agenten-Ausrüstung
+     * kommt vom Plugin. {@code null} = Gegenstand aus dem Spiel.
+     */
+    private ItemStack modGegenstand(String id) {
+        if (!id.startsWith("stinkendreich:")) {
+            return null;
+        }
+        String name = id.substring("stinkendreich:".length());
+        if (name.equals("zugangskarte")) {
+            return plugin.zugang().karte(new Villen.Villa(welt.getUID(), x0, ursprungY(), z0, nr, besitzer, besitzerName));
+        }
+        ItemStack s = plugin.agent().item(name);
+        if (s == null) {
+            throw new IllegalArgumentException("unbekannt: " + id);
+        }
+        return s;
     }
 
     private void figuren() {

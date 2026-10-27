@@ -1,0 +1,61 @@
+# Paper-Plugin: Hai aus der Nähe, Pistole trifft (Lebenspunkte im Protokoll), Hai beißt
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+# Nahe an einen Hai im Becken (Blick auf ihn)
+server /villa ort 44 22.6 50.5 0 0
+warte 2
+server /execute at @e[type=dolphin,limit=1,sort=nearest] run tp @p ~3 ~0.5 ~3 facing ~ ~0.3 ~
+warte 1
+bild pn3_hai1
+warte 0.5
+bild pn3_hai2
+server /execute at @e[type=dolphin,limit=1,sort=nearest] run tp @p ~0 ~2.5 ~-3 facing ~ ~0.3 ~
+warte 1
+bild pn3_hai_oben
+server /execute at @e[type=dolphin,limit=1,sort=nearest] run tp @p ~-4 ~0.3 ~0 facing ~ ~0.3 ~
+warte 1
+bild pn3_hai_seite
+# Pistole auf einen Diener (nachts kein Brennen)
+server /time set 18000
+server /gamemode survival
+server /villa ort 55.5 26 86 180 0
+server /villa agent an
+server /difficulty easy
+server /execute positioned ~ ~ ~-6 run summon vindicator ~ ~ ~ {NoAI:1b,Tags:["ziel"]}
+warte 3
+taste F1
+linksklick 640 360
+warte 1
+server @/data get entity @e[tag=ziel,limit=1] Health
+schnellklick
+warte 0.1
+bild pn3_pistole
+warte 1
+server @/data get entity @e[tag=ziel,limit=1] Health
+schnellklick
+warte 1
+server @/data get entity @e[tag=ziel,limit=1] Health
+taste 3
+warte 0.5
+schnellklick
+warte 0.2
+bild pn3_geldkanone
+warte 1
+server @/data get entity @e[tag=ziel,limit=1] Health
+taste F1
+server /difficulty peaceful
+# Ins Haibecken: der Hai beißt (auch auf Friedlich)
+server /time set 6000
+server /villa ort 44 22.2 50.5 0 30
+warte 1
+server @/data get entity @p Health
+warte 4
+bild pn3_biss
+server @/data get entity @p Health
+warte 3
+server @/data get entity @p Health
+server /gamemode spectator

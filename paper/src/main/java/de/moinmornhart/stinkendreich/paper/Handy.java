@@ -66,9 +66,11 @@ public final class Handy implements Listener {
                 || (e.getAction() != Action.RIGHT_CLICK_AIR && e.getAction() != Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
-        // Ein Klick auf einen Mod-Block (Tür, Sofa …) geht vor
+        // Ein Klick auf einen Mod-Block (Tür, Sofa …) oder einen Block wie Truhe, Tür, Knopf geht vor (wie in der Mod;
+        // beim Schleichen öffnet sich das Handy trotzdem)
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock() != null
-                && plugin.bloecke().zustand(e.getClickedBlock()) != null) {
+                && (plugin.bloecke().zustand(e.getClickedBlock()) != null
+                || e.getClickedBlock().getType().isInteractable() && !e.getPlayer().isSneaking())) {
             return;
         }
         e.setCancelled(true);

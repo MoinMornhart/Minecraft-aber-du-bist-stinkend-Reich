@@ -83,6 +83,10 @@ public final class Ressourcenpaket implements Listener {
                             && pfad.substring(lack.length()).contains("/")) {
                         dateien.put("assets/stinkendreich/textures/item/polymer/fahrzeug/" + pfad.substring(lack.length()), inhalt);
                     }
+                    // Hai: Textur der Mod für die Hai-Modelle (zusatz/…/polymer/hai*.json aus tools/paper/hai_modell.py)
+                    if (pfad.equals(lack + "hai.png")) {
+                        dateien.put("assets/stinkendreich/textures/item/polymer/hai.png", inhalt);
+                    }
                 }
             }
         }

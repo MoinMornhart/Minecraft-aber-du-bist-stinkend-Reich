@@ -31,6 +31,7 @@ public final class FigurenUebersetzen {
         return ort.getWorld().spawn(ort, Mannequin.class, p -> {
             p.setPersistent(true);
             p.setImmovable(true);
+            p.setInvulnerable(true);                    // sonst ersticken Tänzerinnen an der Stange (Kopf im Block)
             p.setProfile(ResolvableProfile.resolvableProfile()
                     .skinPatch(s -> s.body(Key.key("stinkendreich", "entity/" + haut)).model(PlayerTextures.SkinModel.CLASSIC))
                     .build());
@@ -43,14 +44,21 @@ public final class FigurenUebersetzen {
         try {
             if (id.equals("stinkendreich:taenzerin")) {
                 String[] teile = Nbt.text(f.daten(), "stinkendreich", "laufen|0").split("\\|");
-                Mannequin p = puppe(ort, "taenzerin_" + (teile.length > 1 ? teile[1] : "0"));
+                String kostuem = teile.length > 1 ? teile[1] : "0";
+                Mannequin p = puppe(ort, "taenzerin_" + kostuem);
                 p.setPose(Pose.STANDING);
+                plugin.taenzerinnen().einrichten(p, teile[0] + "|" + kostuem);   // tanzt an der Stange oder läuft
                 return true;
             }
             if (id.equals("stinkendreich:hai")) {
                 Map<String, Object> delfin = new HashMap<>(f.daten());
                 delfin.put("id", "minecraft:dolphin");
-                return spawnen(delfin, ort) != null;
+                // Unsichtbarer Delfin als Körper, das Hai-Modell zeigt plugin.haie()
+                org.bukkit.entity.Entity hai = spawnen(delfin, ort);
+                if (hai instanceof org.bukkit.entity.Dolphin d) {
+                    plugin.haie().einrichten(d);
+                }
+                return hai != null;
             }
             if (id.startsWith("minecraft:")) {
                 String variante = Nbt.text(f.daten(), "variant", "minecraft:");

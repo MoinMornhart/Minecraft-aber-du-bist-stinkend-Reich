@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Testhilfe wie in der Mod (tools/ingame/test.sh): Ist {@code STINKENDREICH_AUTOTEST} gesetzt und enthält „befehle“,
  * führt das Plugin neue Zeilen aus {@code stinkendreich-befehle.txt} im Serverordner aus – mit „/“ als Befehl des
- * ersten Spielers, sonst als dessen Chatnachricht. Im normalen Betrieb tut diese Klasse nichts.
+ * ersten Spielers, mit „@/“ als Befehl der Konsole (Ausgabe im Protokoll), sonst als Chatnachricht des Spielers. Im normalen Betrieb tut diese Klasse nichts.
  */
 final class Autotest {
     private static int gelesen;
@@ -39,7 +39,10 @@ final class Autotest {
                         continue;
                     }
                     plugin.getLogger().info("Autotest-Befehl: " + zeile);
-                    if (zeile.startsWith("/")) {
+                    if (zeile.startsWith("@/")) {
+                        // Als Konsole: die Ausgabe landet im Serverprotokoll (z. B. Lebenspunkte prüfen)
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), zeile.substring(2));
+                    } else if (zeile.startsWith("/")) {
                         spieler.performCommand(zeile.substring(1));
                     } else {
                         spieler.chat(zeile);

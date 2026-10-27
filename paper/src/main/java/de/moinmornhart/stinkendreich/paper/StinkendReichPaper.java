@@ -51,6 +51,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Festung festung;
     private de.moinmornhart.stinkendreich.paper.block.Fernseher fernseher;
     private de.moinmornhart.stinkendreich.paper.butler.Bodyguards bodyguards;
+    private de.moinmornhart.stinkendreich.paper.ausruestung.Agent agent;
+    private de.moinmornhart.stinkendreich.paper.butler.Taenzerinnen taenzerinnen;
+    private de.moinmornhart.stinkendreich.paper.hai.Haie haie;
     private de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
@@ -92,6 +95,12 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         fernseher = new de.moinmornhart.stinkendreich.paper.block.Fernseher(this);
         bodyguards = new de.moinmornhart.stinkendreich.paper.butler.Bodyguards(this);
         getServer().getPluginManager().registerEvents(bodyguards, this);
+        agent = new de.moinmornhart.stinkendreich.paper.ausruestung.Agent(this);
+        getServer().getPluginManager().registerEvents(agent, this);
+        taenzerinnen = new de.moinmornhart.stinkendreich.paper.butler.Taenzerinnen(this);
+        getServer().getPluginManager().registerEvents(taenzerinnen, this);
+        haie = new de.moinmornhart.stinkendreich.paper.hai.Haie(this);
+        getServer().getPluginManager().registerEvents(haie, this);
         getServer().getPluginManager().registerEvents(fernseher, this);
         inkognito = new de.moinmornhart.stinkendreich.paper.block.Inkognito(this, bloecke);
         getServer().getPluginManager().registerEvents(inkognito, this);
@@ -230,6 +239,18 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.butler.Bodyguards bodyguards() {
         return bodyguards;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.ausruestung.Agent agent() {
+        return agent;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.butler.Taenzerinnen taenzerinnen() {
+        return taenzerinnen;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.hai.Haie haie() {
+        return haie;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Fernseher fernseher() {

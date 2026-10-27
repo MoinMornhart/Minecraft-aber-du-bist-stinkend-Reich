@@ -17,10 +17,11 @@ import org.joml.Vector3f;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import net.kyori.adventure.key.Key;
 import de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge;
+import de.moinmornhart.stinkendreich.paper.ausruestung.Waffenkammer;
 
 /**
  * Alles nach dem Setzen des Bauplans (wie {@code VillaPlatzierung.ausstatten} in der Mod): Zufahrt ins Gelände,
- * Weltspawn an der Haustür (Spawn-Villa), Butler, Fuhrpark und Hubschrauber.
+ * Weltspawn an der Haustür (Spawn-Villa), Butler, Fuhrpark, Hubschrauber und Waffenkammer.
  */
 public final class Ausstattung {
     /** Zufahrt vor der Brücke (Bauplan-Koordinaten): Fahrbahn x 51–58, Bordsteine bei 50 und 59. */
@@ -44,6 +45,9 @@ public final class Ausstattung {
         }
         fuhrpark(villa, plan);
         anzeigen(villa, plan);
+        for (JsonArray m : plan.marke("ruestung")) {       // Waffenkammer im Bunker
+            Waffenkammer.aufstellen(plugin.agent(), ort(villa, m), m.get(3).getAsFloat(), m.get(4).getAsInt());
+        }
         plugin.festung().bauen(villa);                  // Minengürtel und Notausgang im Gelände
         plugin.figurenNachDemBau(villa);
     }
