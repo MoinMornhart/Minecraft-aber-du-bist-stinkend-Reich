@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 00:15 Uhr (0.4.0 Nachbarschaft fertig, Trailer wird aufgenommen, dann Release)_
+_Zuletzt aktualisiert: 2026-10-27, 01:25 Uhr (0.4.0 veröffentlicht, Paper-Plugin erster Test bestanden)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -218,7 +218,30 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   (Server-Mods holen: `tools/ingame/server_mods_holen.sh 1.21.8`).
 - Offen: 1.21–1.21.5 (ohne Dialogfenster → Truhen-Menüs), Paper-Plugin (Philip fragen, ob nötig).
 
-## Version 0.4.0 (in Arbeit seit 26.10. abends: Nachbarschaft)
+## Paper-Plugin (in Arbeit seit 27.10. nachts, Ordner `paper/`)
+
+- Eigenes Gradle-Projekt: `./gradlew -p paper build` → `paper/build/libs/stinkendreich-paper-<version>+mc26.3.jar`
+  (paper-api 26.3.build.226, Java 25). Nimmt Bilder/Modelle/Töne/Texte und den Bauplan aus `../src/main/resources`
+  (Ordner `mod/` in der .jar), dazu `bloecke.json` und `paket/` (beide von `tools/paper/daten_holen.sh`: Fabric-Server
+  mit Polymer, `dev/PaperDaten` schreibt Kollision/Umriss/Licht/Klasse aller Mod-Blöcke, aus Polymers Paket kommen die
+  Fahrzeug-/Kabinen-/Fernseher-Modelle).
+- Aufbau: `Nbt` (eigener NBT-Leser/-Schreiber), `villa/Bauplan` (villa.nbt + villa.json), `villa/Baustelle` (Schritte wie
+  in der Mod, Chunks per `getChunkAtAsync` + Plugin-Tickets, 20 ms je Tick), `block/VirtuelleBloecke` (Träger Barriere/
+  Licht/Strukturleere bzw. Vorbild bei Deckenblöcken + ItemDisplay mit Item-Modell `stinkendreich:anzeige/<modell>` +
+  Interaction als Klickfeld; Zustand und Werte im PDC der Anzeige-Figur), `block/Mechanik` (Türen, Sitzen),
+  `block/Tore` (Torsteuerung), `block/Zugang` (Kartenleser, Sicherheits-/Bank-/Bunker-/Privattür, Zugangskarte),
+  `block/Aufzug` (Dialog mit Etagen), `butler/Butler` (Schaufensterpuppe + unsichtbarer Händler als Körper),
+  `Handy`, `Gaeste`, `Dialoge` (Paper-Dialog-API mit Rückrufen), `Ressourcenpaket` (baut Zip, eingebauter Webserver,
+  Port `ressourcenpaket.port` 25580).
+- Test: `tools/ingame/paper.sh <szenario>` (lädt Paper nach tools/ingame/server-mods/paper/, Server in build/paper-test,
+  normales Minecraft über vanilla_klient.py, Szenario-Zeilen wie test.sh, `bis` liest das Serverprotokoll).
+  Erster Test `paper_start.txt` (27.10. 01:15): Villa nach 16 s, Paket kommt an, Möbel/Türen/Kronleuchter sichtbar.
+  Offen: Autos, Fernseher, Hubschrauber, eigene Gemälde (10 von 63 Figuren fehlen), 3 unbekannte Blockzustände im
+  Bauplan (alte Namen aus DataVersion 3953, z. B. chain → iron_chain), Smart Home, Sicherheitssystem, Inkognito.
+- Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
+  ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
+
+## Version 0.4.0 (veröffentlicht 27.10. 01:08: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.0)
 
 - **Nachbarvilla im Hintergrund** (`villa/VillaBaustelle`): Schritte SUCHEN (flachster freier Platz der inneren
   Ringe, Höhe nur geschätzt über `ChunkGenerator.getBaseHeight`, ohne Chunks; Plätze mit Straße darauf fallen weg),
@@ -436,5 +459,5 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Trailer 0.4.0 schneiden (`ZEITLUPE=3 python3 tools/ingame/video.py …`), nach `docs/trailer.mp4`, Release 0.4.0
-(Version steht schon auf 0.4.0) pushen und prüfen. Danach das Paper-Plugin (Philip: „Rest des Tages“).
+Paper-Plugin weiter: Autos (Anzeige-Figur + Reittier), Fernseher, Hubschrauber, Gemälde, dann Smart Home,
+Sicherheitssystem, Inkognito; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die Fortschrittsseite.

@@ -24,6 +24,7 @@ public final class Ausstattung {
         this.plugin = plugin;
     }
 
+    @SuppressWarnings("removal")
     public void ausstatten(Villen.Villa villa, int y0, int rand) {
         Bauplan plan = plugin.bauplan();
         World welt = villa.world();

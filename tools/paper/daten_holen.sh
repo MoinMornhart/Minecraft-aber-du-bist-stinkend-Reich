@@ -24,6 +24,9 @@ ZIEL="$ROOT/paper/src/main/resources/paket"
 rm -rf "$ZIEL"
 mkdir -p "$ZIEL"
 # Nur das von der Mod Berechnete (Polymer selbst und die Blockmodelle braucht das Plugin nicht)
+# (die Lacktexturen der Fahrzeuge kopiert das Plugin beim Start selbst aus der Mod, Figuren sind auf Paper Schaufensterpuppen)
 unzip -q -o "$ZIP" 'assets/stinkendreich/models/item/polymer/*' 'assets/stinkendreich/textures/item/polymer/*' \
-  'assets/stinkendreich/items/polymer/fahrzeug/*' 'assets/stinkendreich/items/polymer/*.json' -d "$ZIEL"
+  'assets/stinkendreich/items/polymer/*' -d "$ZIEL" \
+  -x 'assets/stinkendreich/items/polymer/stinkendreich/*' 'assets/stinkendreich/textures/item/polymer/fahrzeug/*' '*/polymer/figur/*'
+
 echo "Paper-Daten aktualisiert: $(find "$ZIEL" -type f | wc -l) Dateien in paper/src/main/resources/paket"

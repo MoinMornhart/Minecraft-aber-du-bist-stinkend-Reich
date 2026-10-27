@@ -35,6 +35,8 @@ import java.util.zip.ZipOutputStream;
 public final class Ressourcenpaket implements Listener {
     /** Formatnummer der Ressourcenpakete von Minecraft 26.3. */
     private static final int FORMAT = 97;
+    /** Fahrzeuge der Mod (Ordner ihrer Lacktexturen). */
+    private static final Set<String> FAHRZEUGE = Set.of("bonzenauto", "gelaendewagen", "hubschrauber", "stretchlimo", "supersportwagen");
     private static final UUID PAKET_ID = UUID.nameUUIDFromBytes("stinkendreich-paket".getBytes(StandardCharsets.UTF_8));
 
     private final StinkendReichPaper plugin;
@@ -63,7 +65,15 @@ public final class Ressourcenpaket implements Listener {
                     continue;
                 }
                 try (InputStream ein = jar.getInputStream(e)) {
-                    dateien.put(name.substring(name.indexOf("assets/")), ein.readAllBytes());
+                    byte[] inhalt = ein.readAllBytes();
+                    String pfad = name.substring(name.indexOf("assets/"));
+                    dateien.put(pfad, inhalt);
+                    // Lack der Fahrzeuge: dieselbe Textur auch dort, wo die Fahrzeug-Modelle sie suchen
+                    String lack = "assets/stinkendreich/textures/entity/";
+                    if (pfad.startsWith(lack) && FAHRZEUGE.contains(pfad.substring(lack.length()).split("/")[0])
+                            && pfad.substring(lack.length()).contains("/")) {
+                        dateien.put("assets/stinkendreich/textures/item/polymer/fahrzeug/" + pfad.substring(lack.length()), inhalt);
+                    }
                 }
             }
         }

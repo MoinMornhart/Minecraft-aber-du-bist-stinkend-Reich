@@ -24,7 +24,7 @@ public final class Nbt {
     public static final class Liste extends ArrayList<Object> {
         public final int typ;
 
-        Liste(int typ) {
+        public Liste(int typ) {
             this.typ = typ;
         }
     }

@@ -3,9 +3,8 @@
 server /gamemode spectator
 server /time set 6000
 server /weather clear
-merke
-bis 400 Baustelle: Villa 0 fertig
 warte 15
+server /time set 6000
 taste F1
 server /villa ort 55.5 26 92 180 -6
 warte 10
