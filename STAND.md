@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 06:40 Uhr (Paper-Plugin Nachtschicht: Agent, Haie, Haifalle, Bergbau, Mitarbeiter, Holz, Sortieren, im Spiel getestet)_
+_Zuletzt aktualisiert: 2026-10-27, 08:00 Uhr (Nachtschicht fertig: Paper-Plugin mit James bei der Arbeit, Pilot, Straßen, Chauffeur; Trailer 12:00; Release 0.4.1 wartet)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -523,6 +523,7 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin: Feinschliff Straßen/Chauffeur (Bilder, Trailer); Trailer-Teil 3 (Haifalle, Rutsche, Erz, Mitarbeiter, Holz, Sortieren, Jagd); Release 0.4.1
-erst nach Philips „Release raus“; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
-Fortschrittsseite.
+Release 0.4.1 erst nach Philips „Release raus“ (dann `.github/release-version` auf 0.4.1). Offen: YouTube im Fernseher
+bei Philip bestätigen (Log-Zeilen mit „yt-dlp“), Server-Version ohne Mod für 1.21.6–1.21.8 im Spiel prüfen, danach
+1.21–1.21.5 (Truhen-Menüs). Fortschrittsseite am Morgen des 27.10. aufgeräumt (alte Punkte im Archiv, Paper-Plugin in
+vier Bereichen mit ausgewählten Bildern).
