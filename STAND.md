@@ -277,6 +277,7 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   Tests: `paper_holz.txt` (10 Holz, Setzlinge; drei Truhen genau richtig sortiert), Bilder `paper_holz_foto.txt` mit
   Testhilfe `/villa butlerblick` (freie Stelle mit Sicht auf James). Testskripte: Serverprotokoll jetzt UTF-8 (sonst
   „?“ statt „→“, `bis` mit Pfeil wartete ins Leere), `bis` ohne Dateinamen-Auflösung (`*` im Muster).
+  Jagd (`butler/Jaeger`, Config `butler.jagen`): Test `paper_jagd.txt` (drei Tiere, 6 Fleisch, geliefert).
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
   ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
 
@@ -498,6 +499,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin: Jagd, Chauffeur/Pilot, Straßen zwischen den Villen; Release 0.4.1
+Paper-Plugin: Chauffeur/Pilot, Straßen zwischen den Villen; Trailer-Teil 3 (Haifalle, Rutsche, Erz, Mitarbeiter, Holz, Sortieren, Jagd); Release 0.4.1
 erst nach Philips „Release raus“; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
 Fortschrittsseite.

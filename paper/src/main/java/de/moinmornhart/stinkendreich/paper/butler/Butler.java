@@ -280,6 +280,14 @@ public final class Butler implements Listener {
             auftragGeben(p, nr, Holzfaeller.HOLZ, menge(satz));
             return;
         }
+        if (satz.contains("jag") || satz.contains("fleisch") && holen) {
+            if (!plugin.getConfig().getBoolean("butler.jagen", true)) {
+                sagen(p, "Verzeihung, die Jagd ist auf diesem Server nicht erlaubt.");
+            } else {
+                auftragGeben(p, nr, Jaeger.FLEISCH, menge(satz, 8));
+            }
+            return;
+        }
         if (satz.contains("sortier") || satz.contains("räum") && satz.contains("truhe")) {
             sortieren(p, nr);
             return;
@@ -304,17 +312,21 @@ public final class Butler implements Listener {
             sagen(p, "Ich gehe zurück in die Villa.");
         } else {
             sagen(p, "Verzeihung, das habe ich nicht verstanden. Ich kann Ihnen folgen, warten, nach Hause gehen oder "
-                    + "Erz oder Holz holen (z. B. „hol mir 16 Eisen“) und die Truhen sortieren.");
+                    + "Erz oder Holz holen (z. B. „hol mir 16 Eisen“), jagen und die Truhen sortieren.");
         }
     }
 
     /** Erste Zahl im Satz (1–64), sonst 16. */
     private static int menge(String satz) {
-        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\d+").matcher(satz);
-        return m.find() ? Math.clamp(Integer.parseInt(m.group()), 1, 64) : 16;
+        return menge(satz, 16);
     }
 
-    /** „Hol mir 16 Eisen“ / „… 16 Holz“: abbauen bzw. Bäume fällen, bei Metallen schmelzen, bringen. */
+    private static int menge(String satz, int sonst) {
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\d+").matcher(satz);
+        return m.find() ? Math.clamp(Integer.parseInt(m.group()), 1, 64) : sonst;
+    }
+
+    /** „Hol mir 16 Eisen“ / „… 16 Holz“ / „geh jagen“: abbauen, Bäume fällen oder jagen, bei Metallen schmelzen, bringen. */
     private void auftragGeben(Player p, int nr, Bergbau.Rohstoff r, int menge) {
         Mannequin puppe = puppen.get(nr);
         WanderingTrader k = koerper.get(nr);
@@ -329,10 +341,13 @@ public final class Butler implements Listener {
         }
         k.getPathfinder().stopPathfinding();
         Location start = ButlerAuftrag.vorDerVilla(plugin, v);
-        Beschaffung b = r == Holzfaeller.HOLZ ? new Holzfaeller(plugin, k, puppe, menge, start) : new Bergbau(plugin, k, puppe, r, menge, start);
+        Beschaffung b = r == Holzfaeller.HOLZ ? new Holzfaeller(plugin, k, puppe, menge, start)
+                : r == Jaeger.FLEISCH ? new Jaeger(plugin, k, puppe, menge, start)
+                : new Bergbau(plugin, k, puppe, r, menge, start);
         auftraege.put(nr, new ButlerAuftrag(plugin, v, k, puppe, p.getUniqueId(), b));
         modusSetzen(nr, Modus.ARBEIT);
         sagen(p, r == Holzfaeller.HOLZ ? "Sehr wohl. Ich fälle " + menge + " Stämme und pflanze neue Bäume."
+                : r == Jaeger.FLEISCH ? "Sehr wohl. Ich gehe auf die Jagd und bringe Ihnen " + menge + " Fleisch."
                 : "Sehr wohl. Ich hole Ihnen " + menge + " " + r.anzeige() + (r.geschmolzen() != null ? " und schmelze es in der Villa." : "."));
         plugin.getLogger().info("Butler: Auftrag " + menge + " " + r.name() + " (Villa " + nr + ")");
     }
@@ -442,6 +457,7 @@ public final class Butler implements Listener {
                 Dialoge.Knopf.von("16 Kohle holen", (s, a) -> befehl(s, "hol mir 16 kohle")),
                 Dialoge.Knopf.von("8 Diamanten holen", (s, a) -> befehl(s, "hol mir 8 diamanten")),
                 Dialoge.Knopf.von("16 Holz holen", (s, a) -> befehl(s, "hol mir 16 holz")),
+                Dialoge.Knopf.von("Auf die Jagd gehen", (s, a) -> befehl(s, "jag mir 8 fleisch")),
                 Dialoge.Knopf.von("Truhen hier sortieren", (s, a) -> befehl(s, "sortier die truhen")),
                 Dialoge.Knopf.von("Was machst du gerade?", (s, a) -> befehl(s, "was machst du"))));
     }

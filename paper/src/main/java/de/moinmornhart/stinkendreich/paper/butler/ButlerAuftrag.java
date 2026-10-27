@@ -25,8 +25,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Ein Auftrag für James auf dem Paper-Server („Butler, hol mir 16 Eisen“, „… 16 Holz“), wie Planer + SammelAuftrag +
- * OfenAuftrag + LieferAuftrag in der Mod: erst beschaffen ({@link Bergbau} oder {@link Holzfaeller}), bei Eisen, Gold
+ * Ein Auftrag für James auf dem Paper-Server („Butler, hol mir 16 Eisen“, „… 16 Holz“, „geh jagen“), wie Planer +
+ * SammelAuftrag + OfenAuftrag + LieferAuftrag in der Mod: erst beschaffen ({@link Bergbau}, {@link Holzfaeller} oder
+ * {@link Jaeger}), bei Eisen, Gold
  * und Kupfer danach in den echten Öfen der Villa schmelzen (Brennstoff aus dem Fass daneben), zuletzt dem Herrn bringen.
  */
 final class ButlerAuftrag implements Auftrag {
@@ -108,6 +109,8 @@ final class ButlerAuftrag implements Auftrag {
                     if (p != null) {
                         Butler.sagen(p, bergbau.rohstoff() == Holzfaeller.HOLZ
                                 ? "Verzeihung, in der Nähe steht kein Baum, den ich fällen darf."
+                                : bergbau.rohstoff() == Jaeger.FLEISCH
+                                ? "Verzeihung, in der Nähe gibt es keine Tiere, die ich jagen darf."
                                 : "Verzeihung, ich habe in der Nähe kein " + bergbau.rohstoff().anzeige() + " gefunden.");
                     }
                     phase(Phase.LIEFERN);

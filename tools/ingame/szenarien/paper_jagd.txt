@@ -1,0 +1,33 @@
+# Paper-Plugin: James geht auf die Jagd (Kühe und Schweine vor der Villa)
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+server @/summon cow 14 87 72
+server @/summon cow 16 87 74
+server @/summon cow 13 87 76
+server @/summon cow 17 87 70
+server @/summon pig 20 87 68
+server @/summon pig 21 87 70
+server @/summon pig 19 87 72
+server /villa ort 55.5 26 86 180 0
+merke
+server /butler geh jagen, ich brauche 6 fleisch
+bis 60 SUCHEN → JAGEN
+warte 0.5
+server /gamemode spectator
+server /villa butlerblick
+warte 0.6
+bild pj_jagd1
+warte 1
+server /villa butlerblick
+warte 0.6
+bild pj_jagd2
+bis 120 Jagd: fertig
+server /gamemode survival
+bis 60 Fleisch an
+warte 1
+server @/execute as Philip run data get entity Philip Inventory
+bild pj_geliefert

@@ -619,9 +619,9 @@ In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt sein
 </tr>
 </table>
 
-James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt einen Treppentunnel, baut die ganze Ader ab, schmilzt Metall im Hochofen der Villa und bringt es dir. „Butler, hol mir 16 Holz“ – er fällt echte Bäume (keine gebauten) und pflanzt an jeder Stelle einen neuen Setzling. „Butler, sortier die Truhen“ – er geht alle Truhen und Fässer um dich herum ab und räumt sie auf, jede Sorte in ihre Stammtruhe. Die Mitarbeiterkiste aus dem Handy bringt drei Mitarbeiter, die Diamanten, Eisen und Kohle in ihre Kiste schaffen.
+James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt einen Treppentunnel, baut die ganze Ader ab, schmilzt Metall im Hochofen der Villa und bringt es dir. „Butler, hol mir 16 Holz“ – er fällt echte Bäume (keine gebauten) und pflanzt an jeder Stelle einen neuen Setzling. „Butler, sortier die Truhen“ – er geht alle Truhen und Fässer um dich herum ab und räumt sie auf, jede Sorte in ihre Stammtruhe. „Butler, geh jagen“ – er jagt Kühe, Schweine, Schafe, Hühner und Kaninchen, schont aber Jungtiere, Tiere mit Namen und lässt von jeder Art mindestens zwei übrig (abschaltbar mit `butler.jagen: false`). Die Mitarbeiterkiste aus dem Handy bringt drei Mitarbeiter, die Diamanten, Eisen und Kohle in ihre Kiste schaffen.
 
-Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser), eigene Musik und Spotify, Jagen, James als Chauffeur und Pilot sowie Straßen zwischen den Villen.
+Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser), eigene Musik und Spotify, James als Chauffeur und Pilot sowie Straßen zwischen den Villen.
 
 <br>
 

@@ -6,7 +6,7 @@
 - **Paper:** Türen, Haifallen-Boden und Abwehrgeschütze bekommen ihren richtigen Grundzustand (der Glasboden über dem Haibecken war vorher unsichtbar und offen).
 - **Kamin:** Der Schalter im Wohnzimmer löscht und zündet jetzt alle vier Feuer (das linke war 6 Blöcke entfernt und blieb an).
 - **James holt Erz auf Paper:** „Butler, hol mir 16 Eisen“ (auch Kohle, Gold, Diamanten, Kupfer, Smaragde, Redstone, Lapis): Treppentunnel, ganze Ader, Hochofen in der Villa, Lieferung. **Mitarbeiterkiste** im Handy: drei Mitarbeiter bauen Diamanten, Eisen und Kohle in ihre Kiste ab.
-- **James fällt Bäume und sortiert Truhen auf Paper:** „Butler, hol mir 16 Holz“ (nur natürliche Bäume, an jeder Stelle wächst ein neuer Setzling) und „Butler, sortier die Truhen“ (alle Truhen und Fässer um dich herum, jede Sorte in ihre Stammtruhe). Beides auch als Knopf im Butler-Menü.
+- **James fällt Bäume und sortiert Truhen auf Paper:** „Butler, hol mir 16 Holz“ (nur natürliche Bäume, an jeder Stelle wächst ein neuer Setzling) und „Butler, sortier die Truhen“ (alle Truhen und Fässer um dich herum, jede Sorte in ihre Stammtruhe). Dazu „Butler, geh jagen“ (Nutztiere, Jungtiere und benannte Tiere nie, von jeder Art bleiben zwei; abschaltbar). Alles auch als Knopf im Butler-Menü.
 - **Handy auf Paper:** Ein Rechtsklick auf Truhe, Tür oder Knopf öffnet diese (vorher ging das Handy auf).
 - **Trailer** mit neuem Kapitel „Paper-Server“.
 

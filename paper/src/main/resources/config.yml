@@ -14,6 +14,10 @@ villa:
   # Im Lockdown (Sicherheitsstufe 2 und 3) füllt sich der Wassergraben mit Lava
   lavaGraben: true
 
+butler:
+  # James darf auf Befehl Nutztiere jagen (Kühe, Schweine, Schafe, Hühner, Kaninchen; Jungtiere und benannte nie)
+  jagen: true
+
 tresor:
   # Anzahl versteckter Knöpfe, die zum Entschärfen der Tresorfallen nötig sind
   knoepfe: 2
