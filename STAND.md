@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 11:45 Uhr (Runde fertig: neue Skins, NoRisk/LAN, Server ohne Mod 1.21.6–1.21.8, README-Fotos und Trailer Teil 4; alle 17 Versionen übersetzen; Release 0.4.1 wartet auf Philips „Release raus“)_
+_Zuletzt aktualisiert: 2026-10-27, 12:10 Uhr (Release 0.4.1 veröffentlicht: 17 Mod-Dateien + Paper-Plugin)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -559,7 +559,7 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-**Release 0.4.1 angestoßen** (Philip 27.10. mittags: „Ja, Release 0.4.1 raus“; `.github/release-version` = 0.4.1). Vorher geprüft (27.10. 11:45):
+**Release 0.4.1 veröffentlicht** (27.10. 12:05, 17 Mod-Dateien + `stinkendreich_paper-0.4.1+paper26.3.jar`: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.1). Vorher geprüft (27.10. 11:45):
 alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
 bei Philip bestätigen (Log-Zeilen mit „yt-dlp“), Server-Version ohne Mod für 1.21.6–1.21.8 fertig prüfen (Bedienfelder,
 1.21.6/1.21.7; Figuren in 1.21.8 hell), neue Skins ohne Mod (Tänzerinnen) und im Paper-Plugin ansehen, danach
