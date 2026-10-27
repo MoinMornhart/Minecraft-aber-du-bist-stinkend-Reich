@@ -88,6 +88,7 @@ public final class Handy implements Listener {
         knoepfe.add(Dialoge.Knopf.von("Lieferservice", (s, a) -> lieferSeite(s)));
         knoepfe.add(Dialoge.Knopf.von("Bodyguards rufen", (s, a) -> plugin.bodyguards().rufen(s)));
         knoepfe.add(Dialoge.Knopf.von("Bodyguards heim", (s, a) -> plugin.bodyguards().entlassen(s)));
+        knoepfe.add(Dialoge.Knopf.von("Mitarbeiter bestellen", (s, a) -> plugin.mitarbeiter().bestellen(s)));
         Villen.Villa eigene = plugin.villen().vonBesitzer(p.getUniqueId());
         if (eigene != null) {
             knoepfe.add(Dialoge.Knopf.von("Zu meiner Villa", (s, a) -> s.teleport(eigene.spawn(plugin.bauplan()))));

@@ -1,0 +1,14 @@
+# Paper-Plugin: James holt Eisen (Rückweg, Ofen, Lieferung) – Ablauf im Protokoll
+server /gamemode survival
+server /time set 6000
+warte 20
+server /villa ort 55.5 26 86 180 0
+merke
+server /butler hol mir 3 eisen
+bis 300 ZUM_OFEN
+warte 5
+server @/execute as @e[type=wandering_trader] run data get entity @s Pos
+bis 200 Eisen an
+warte 2
+server @/execute as @e[type=wandering_trader] run data get entity @s Pos
+server @/data get entity @p Inventory

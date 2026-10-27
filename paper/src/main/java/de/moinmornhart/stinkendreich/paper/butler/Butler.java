@@ -39,7 +39,7 @@ import java.util.UUID;
  */
 public final class Butler implements Listener {
     /** Was James gerade tut. */
-    public enum Modus { FOLGEN, WARTEN, HEIM }
+    public enum Modus { FOLGEN, WARTEN, HEIM, ARBEIT }
 
     private final StinkendReichPaper plugin;
     private final NamespacedKey schluesselVilla, schluesselRolle, schluesselModus, schluesselHerr;
@@ -48,6 +48,8 @@ public final class Butler implements Listener {
     private final Map<Integer, WanderingTrader> koerper = new HashMap<>();
     private final Map<Integer, Location> letzteStelle = new HashMap<>();
     private final Map<Integer, Integer> stillstand = new HashMap<>();
+    /** Laufende Aufträge (Bergbau, Schmelzen, Liefern) je Villa. */
+    private final Map<Integer, ButlerAuftrag> auftraege = new HashMap<>();
 
     public Butler(StinkendReichPaper plugin) {
         this.plugin = plugin;
@@ -156,7 +158,13 @@ public final class Butler implements Listener {
                 continue;
             }
             int nr = e.getKey();
-            if (Bukkit.getCurrentTick() % 10 == 0) {
+            ButlerAuftrag a = auftraege.get(nr);
+            if (a != null) {
+                if (a.tick() == ButlerAuftrag.Stand.FERTIG) {
+                    auftraege.remove(nr);
+                    modusSetzen(nr, Modus.FOLGEN);
+                }
+            } else if (Bukkit.getCurrentTick() % 10 == 0) {
                 ziehen(nr, p, k);
             }
             // Die Puppe steht immer dort, wo der Körper ist, und schaut in seine Richtung
@@ -260,6 +268,21 @@ public final class Butler implements Listener {
             sagen(p, "Verzeihung, ich stehe nicht in Ihren Diensten.");
             return;
         }
+        Bergbau.Rohstoff rohstoff = Bergbau.erkennen(satz);
+        if (rohstoff != null && (satz.contains("hol") || satz.contains("bring") || satz.contains("besorg") || satz.contains("abbau")
+                || satz.contains("grab") || satz.contains("such"))) {
+            auftragGeben(p, nr, rohstoff, menge(satz));
+            return;
+        }
+        if (satz.contains("was machst") || satz.contains("status") || satz.contains("wie weit")) {
+            ButlerAuftrag a = auftraege.get(nr);
+            sagen(p, a == null ? "Ich stehe Ihnen zur Verfügung." : "Ich " + a.status() + ".");
+            return;
+        }
+        ButlerAuftrag alt = auftraege.remove(nr);
+        if (alt != null) {
+            alt.abbrechen();                                // neuer Befehl: Auftrag abbrechen
+        }
         if (satz.contains("komm") || satz.contains("folg") || satz.contains("hier") || satz.contains("ruf")) {
             modusSetzen(nr, Modus.FOLGEN);
             sagen(p, "Sehr wohl, ich komme.");
@@ -270,8 +293,36 @@ public final class Butler implements Listener {
             modusSetzen(nr, Modus.HEIM);
             sagen(p, "Ich gehe zurück in die Villa.");
         } else {
-            sagen(p, "Verzeihung, das habe ich nicht verstanden. Ich kann Ihnen folgen, warten oder nach Hause gehen.");
+            sagen(p, "Verzeihung, das habe ich nicht verstanden. Ich kann Ihnen folgen, warten, nach Hause gehen oder "
+                    + "Erz holen (z. B. „hol mir 16 Eisen“).");
         }
+    }
+
+    /** Erste Zahl im Satz (1–64), sonst 16. */
+    private static int menge(String satz) {
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\d+").matcher(satz);
+        return m.find() ? Math.clamp(Integer.parseInt(m.group()), 1, 64) : 16;
+    }
+
+    /** „Hol mir 16 Eisen“: abbauen, bei Metallen schmelzen, bringen. */
+    private void auftragGeben(Player p, int nr, Bergbau.Rohstoff r, int menge) {
+        Mannequin puppe = puppen.get(nr);
+        WanderingTrader k = koerper.get(nr);
+        Villen.Villa v = plugin.villen().nr(nr);
+        if (puppe == null || k == null || v == null) {
+            sagen(p, "Verzeihung, ich bin gerade nicht erreichbar.");
+            return;
+        }
+        ButlerAuftrag alt = auftraege.remove(nr);
+        if (alt != null) {
+            alt.abbrechen();
+        }
+        k.getPathfinder().stopPathfinding();
+        auftraege.put(nr, new ButlerAuftrag(plugin, v, k, puppe, p.getUniqueId(), r, menge));
+        modusSetzen(nr, Modus.ARBEIT);
+        sagen(p, "Sehr wohl. Ich hole Ihnen " + menge + " " + r.anzeige()
+                + (r.geschmolzen() != null ? " und schmelze es in der Villa." : "."));
+        plugin.getLogger().info("Butler: Auftrag " + menge + " " + r.name() + " (Villa " + nr + ")");
     }
 
     /** Für Fehlersuche: wo stehen die Butler und was tun sie? */
@@ -309,7 +360,11 @@ public final class Butler implements Listener {
         Dialoge.zeigen(p, "James", "Womit kann ich dienen?", List.of(), List.of(
                 Dialoge.Knopf.von("Folge mir", (s, a) -> befehl(s, "komm")),
                 Dialoge.Knopf.von("Warte hier", (s, a) -> befehl(s, "warte")),
-                Dialoge.Knopf.von("Geh nach Hause", (s, a) -> befehl(s, "nach hause"))));
+                Dialoge.Knopf.von("Geh nach Hause", (s, a) -> befehl(s, "nach hause")),
+                Dialoge.Knopf.von("16 Eisen holen", (s, a) -> befehl(s, "hol mir 16 eisen")),
+                Dialoge.Knopf.von("16 Kohle holen", (s, a) -> befehl(s, "hol mir 16 kohle")),
+                Dialoge.Knopf.von("8 Diamanten holen", (s, a) -> befehl(s, "hol mir 8 diamanten")),
+                Dialoge.Knopf.von("Was machst du gerade?", (s, a) -> befehl(s, "was machst du"))));
     }
 
     @EventHandler

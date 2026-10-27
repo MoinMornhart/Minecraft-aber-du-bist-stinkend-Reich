@@ -1,0 +1,31 @@
+# Paper-Plugin: James holt Erz (Tunnel, Abbau, Ofen, Lieferung)
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+merke
+server /butler hol mir 8 kohle
+warte 40
+server /gamemode spectator
+server /execute at @e[type=wandering_trader,limit=1] run tp @p ~2.5 ~1.2 ~2.5 facing entity @e[type=wandering_trader,limit=1] eyes
+warte 1
+bild pb_graben1
+warte 15
+server /execute at @e[type=wandering_trader,limit=1] run tp @p ~2.5 ~1.2 ~2.5 facing entity @e[type=wandering_trader,limit=1] eyes
+warte 1
+bild pb_graben2
+server @/execute as @e[type=wandering_trader] run data get entity @s Pos
+server /butler was machst du
+bis 400 Kohle an
+server /gamemode survival
+warte 2
+bild pb_kohle
+server @/clear @p coal 0
+merke
+server /butler hol mir 4 eisen
+bis 600 Eisen an
+warte 2
+bild pb_eisen
+server /gamemode spectator

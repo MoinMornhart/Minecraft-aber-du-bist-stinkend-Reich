@@ -55,6 +55,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.butler.Taenzerinnen taenzerinnen;
     private de.moinmornhart.stinkendreich.paper.hai.Haie haie;
     private de.moinmornhart.stinkendreich.paper.block.Haifalle haifalle;
+    private de.moinmornhart.stinkendreich.paper.butler.Mitarbeiter mitarbeiter;
     private de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
@@ -105,6 +106,8 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         haifalle = new de.moinmornhart.stinkendreich.paper.block.Haifalle(this, bloecke, mechanik);
         getServer().getPluginManager().registerEvents(haifalle, this);
         getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Pool(this, bloecke), this);
+        mitarbeiter = new de.moinmornhart.stinkendreich.paper.butler.Mitarbeiter(this);
+        getServer().getPluginManager().registerEvents(mitarbeiter, this);
         getServer().getPluginManager().registerEvents(fernseher, this);
         inkognito = new de.moinmornhart.stinkendreich.paper.block.Inkognito(this, bloecke);
         getServer().getPluginManager().registerEvents(inkognito, this);
@@ -128,6 +131,8 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
                     } else {
                         bodyguards.rufen(p);
                     }
+                } else if (args.length >= 1 && args[0].equals("mitarbeiter")) {
+                    mitarbeiter.bestellen(p);                          // wie der Knopf im Handy
                 } else if (args.length >= 2 && args[0].equals("liefer")) {
                     handy.bestellen(p, args[1]);                     // wie ein Knopf des Lieferservice
                 } else if (args.length >= 3 && args[0].equals("smart")) {
@@ -259,6 +264,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.block.Haifalle haifalle() {
         return haifalle;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.butler.Mitarbeiter mitarbeiter() {
+        return mitarbeiter;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Fernseher fernseher() {
