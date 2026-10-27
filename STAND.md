@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 01:25 Uhr (0.4.0 veröffentlicht, Paper-Plugin erster Test bestanden)_
+_Zuletzt aktualisiert: 2026-10-27, 03:05 Uhr (Paper-Plugin: fast alle Mechanismen der Mod laufen, im Spiel getestet)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -238,6 +238,17 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   Erster Test `paper_start.txt` (27.10. 01:15): Villa nach 16 s, Paket kommt an, Möbel/Türen/Kronleuchter sichtbar.
   Offen: Autos, Fernseher, Hubschrauber, eigene Gemälde (10 von 63 Figuren fehlen), 3 unbekannte Blockzustände im
   Bauplan (alte Namen aus DataVersion 3953, z. B. chain → iron_chain), Smart Home, Sicherheitssystem, Inkognito.
+- Stand 03:05 (alles mit `tools/ingame/paper.sh` im Spiel geprüft, Szenarien `paper_*.txt`): Fuhrpark (`auto/Fahrzeuge`,
+  W/A/S/D), Hubschrauber, Fernseher, Drehteller, eigene Gemälde (Item-Modell, Bild im Block-Atlas, Item-Anzeigen sind
+  um 180° gedreht), Smart Home (`SmartHome`, smarthome.json), Gästeliste, Sicherheitssystem (`block/Sicherheit`:
+  Stufen 0–4, Zentrale, Laser, Bewegungsmelder, Sirenen, Warnleuchten, Tastenfeld, Tresorfallen), Zugbrücke
+  (`block/Zugbruecke`, Block-Anzeigen), Geheimgang, Lava-Graben, Kameras am Monitor (`block/Kameras`, kurz
+  Zuschauer-Modus), Klingel/Kamin/Whirlpool/Toilette/Dusche/Schublade (`block/Haushalt`), Flügel und Musikanlage
+  (`block/Unterhaltung`, `Lieder.java` wird aus der Mod mitübersetzt), Festung (`block/Festung`: Minengürtel,
+  Geschütze, Notausgang mit Luke), Inkognito (`block/Inkognito`: Spalten aus Chunk-Abbildern im Zwischenspeicher,
+  `VirtuelleBloecke.sperren/verschoben`). Testhilfen: `/villa zentrale|code|klick|kamera|lied|klaviatur|platte|bruecke|
+  inkognito`, `/villa ort x boden+N z` (Höhe über Gelände). Testserver steht auf „friedlich“ (für Zombies
+  `/difficulty easy`). Kaminschalter suchte in der Mod nur 5 Blöcke weit (linkes Feuer blieb an) – jetzt 7.
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
   ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
 
@@ -459,5 +470,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin weiter: Autos (Anzeige-Figur + Reittier), Fernseher, Hubschrauber, Gemälde, dann Smart Home,
-Sicherheitssystem, Inkognito; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die Fortschrittsseite.
+Paper-Plugin: Nachbarvillen auf Paper prüfen (`/villa nachbar Max`), Haifalle/Rutsche/Goldbad, README-Abschnitt
+„Paper-Server“, Plugin-.jar im Release-Ablauf mitbauen; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
+Fortschrittsseite.
