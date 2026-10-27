@@ -76,10 +76,11 @@ public final class Bauplan {
             if (name.startsWith("minecraft:")) {
                 BlockData d;
                 try {
-                    d = Bukkit.createBlockData(text.toString());
+                    d = Bukkit.createBlockData(umbenannt(text.toString()));
                 } catch (IllegalArgumentException ex) {
                     d = Bukkit.createBlockData("minecraft:air");
                     unbekannt++;
+                    plugin.getLogger().warning("Bauplan: unbekannter Blockzustand " + text);
                 }
                 palette[i] = d;
             } else {
@@ -109,6 +110,17 @@ public final class Bauplan {
         }
         plugin.getLogger().info("Bauplan: " + breiteX + "×" + hoehe + "×" + breiteZ + ", " + bloecke.size() + " Blöcke, "
                 + figuren.size() + " Figuren" + (unbekannt > 0 ? ", " + unbekannt + " unbekannte Blockzustände" : ""));
+    }
+
+    /**
+     * Der Bauplan ist im Format von Minecraft 1.21 gespeichert; einige Blöcke heißen seitdem anders (z. B. die Kette ab
+     * 1.21.9 „iron_chain“). Minecraft selbst rechnet das beim Laden um, hier passiert es von Hand.
+     */
+    private static String umbenannt(String zustand) {
+        if (zustand.startsWith("minecraft:chain[") || zustand.equals("minecraft:chain")) {
+            return "minecraft:iron_chain" + zustand.substring("minecraft:chain".length());
+        }
+        return zustand;
     }
 
     /** Alle Marken einer Art (z. B. „stellplatz“): je eine Liste von Zahlen/Text. */

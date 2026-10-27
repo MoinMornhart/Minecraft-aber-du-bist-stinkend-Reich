@@ -1,0 +1,58 @@
+# Paper-Plugin: Fuhrpark, Fernseher, Hubschrauber, James, Auto fahren, Handy (normales Minecraft ohne Mod)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+server /villa ort 91.5 17 45.2 180 30
+warte 8
+bild pa_garage
+server /villa ort 63.5 39.6 41.6 0 10
+warte 6
+bild pa_penthouse_tv
+server /villa ort 66 47.5 60 135 18
+warte 6
+bild pa_hubschrauber
+server /villa ort 57.5 27.4 66 180 8
+warte 5
+bild pa_james
+server /villa ort 55 26.5 76 180 2
+warte 5
+bild pa_halle_tag
+server /villa ort 55.5 26 92 180 -6
+warte 5
+bild pa_haustuer_tag
+# Einsteigen in das goldene Bonzenauto (Stellplatz 0) und losfahren
+server /villa ort 64.5 17 66.2 180 22
+warte 3
+taste F1
+klick
+warte 2
+taste F1
+bild pa_im_auto
+taste F5
+warte 1
+bild pa_auto_hinten
+halte 1 w
+bild pa_auto_fahrt
+halte 1 w a
+bild pa_auto_kurve
+taste F5
+taste F5
+warte 2
+taste shift
+warte 2
+# James rufen: er kommt zum Spieler in die Halle
+server /villa ort 57.5 26 72 0 10
+warte 2
+server Butler, komm
+warte 6
+server /villa info
+bild pa_james_kommt
+server /handy
+warte 2
+bild pa_handy
+taste Escape
+server /villa info
+warte 2

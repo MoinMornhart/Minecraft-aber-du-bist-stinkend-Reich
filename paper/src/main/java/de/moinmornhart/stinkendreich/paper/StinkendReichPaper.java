@@ -41,6 +41,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Mechanik mechanik;
     private de.moinmornhart.stinkendreich.paper.butler.Butler butler;
     private Gaeste gaeste;
+    private de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge fahrzeuge;
     private de.moinmornhart.stinkendreich.paper.block.Zugang zugang;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
     private Baustelle baustelle;
@@ -76,7 +77,27 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(mechanik, this);
         butler = new de.moinmornhart.stinkendreich.paper.butler.Butler(this);
         getServer().getPluginManager().registerEvents(butler, this);
-        getServer().getPluginManager().registerEvents(new Handy(this), this);
+        Handy handy = new Handy(this);
+        getServer().getPluginManager().registerEvents(handy, this);
+        // /handy öffnet das Handy, /butler <Satz> spricht mit James (wie „Butler, …“ im Chat)
+        getCommand("handy").setExecutor((wer, befehl, name, args) -> {
+            if (wer instanceof Player p) {
+                handy.oeffnen(p);
+            }
+            return true;
+        });
+        getCommand("butler").setExecutor((wer, befehl, name, args) -> {
+            if (wer instanceof Player p) {
+                if (args.length == 0) {
+                    butler.menue(p, butler.butlerVon(p));
+                } else {
+                    butler.befehl(p, String.join(" ", args).toLowerCase(java.util.Locale.GERMAN));
+                }
+            }
+            return true;
+        });
+        fahrzeuge = new de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge(this);
+        getServer().getPluginManager().registerEvents(fahrzeuge, this);
         getServer().getPluginManager().registerEvents(paket, this);
         getServer().getPluginManager().registerEvents(this, this);
         VillaBefehle.registrieren(this);
@@ -131,6 +152,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.butler.Butler butler() {
         return butler;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge fahrzeuge() {
+        return fahrzeuge;
     }
 
     public Gaeste gaeste() {

@@ -81,7 +81,12 @@ public final class VillaBefehle implements TabExecutor {
                 Zustand z = b == null ? null : plugin.bloecke().zustand(b);
                 antwort(wer, b == null ? "Kein Block." : b.getType() + " " + (z == null ? "" : z + " " + plugin.bloecke().werte(b)));
             }
-            default -> antwort(wer, plugin.villen().alle().size() + " Villen, " + plugin.bloecke().anzahl() + " Mod-Blöcke geladen");
+            default -> {
+                String text = plugin.villen().alle().size() + " Villen, " + plugin.bloecke().anzahl() + " Mod-Blöcke geladen. "
+                        + plugin.butler().uebersicht();
+                antwort(wer, text);
+                plugin.getLogger().info("Info: " + text);
+            }
         }
         return true;
     }

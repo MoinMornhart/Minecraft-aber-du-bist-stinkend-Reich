@@ -9,6 +9,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Slab;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Transformation;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import net.kyori.adventure.key.Key;
+import de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge;
 
 /**
  * Alles nach dem Setzen des Bauplans (wie {@code VillaPlatzierung.ausstatten} in der Mod): Zufahrt ins Gelände,
@@ -34,6 +42,8 @@ public final class Ausstattung {
             welt.setSpawnLocation(spawn);
             welt.setGameRule(GameRule.SPAWN_RADIUS, 0);
         }
+        fuhrpark(villa, plan);
+        anzeigen(villa, plan);
         plugin.figurenNachDemBau(villa);
     }
 
@@ -89,6 +99,58 @@ public final class Ausstattung {
                 }
             }
         }
+    }
+
+    /** Belegung der Stellplätze 0–9 wie in der Mod (Typ, Lackfarbe): Süd-Reihe, dann Nord-Reihe. */
+    private static final Object[][] FUHRPARK = {
+            {Fahrzeuge.Art.BONZENAUTO, 4}, {Fahrzeuge.Art.SUPERSPORTWAGEN, 3}, {Fahrzeuge.Art.GELAENDEWAGEN, 0},
+            {Fahrzeuge.Art.SUPERSPORTWAGEN, 6}, {Fahrzeuge.Art.BONZENAUTO, 7}, {Fahrzeuge.Art.GELAENDEWAGEN, 1},
+            {Fahrzeuge.Art.SUPERSPORTWAGEN, 2}, {Fahrzeuge.Art.BONZENAUTO, 0}, {Fahrzeuge.Art.BONZENAUTO, 5},
+            {Fahrzeuge.Art.STRETCHLIMO, 0}};
+
+    /** Fuhrpark in der Tiefgarage und Hubschrauber auf dem Landeplatz. */
+    private void fuhrpark(Villen.Villa villa, Bauplan plan) {
+        for (JsonArray platz : plan.marke("stellplatz")) {
+            int stelle = platz.get(4).getAsInt();
+            if (stelle < FUHRPARK.length) {
+                plugin.fahrzeuge().abstellen((Fahrzeuge.Art) FUHRPARK[stelle][0], (Integer) FUHRPARK[stelle][1], ort(villa, platz),
+                        platz.get(3).getAsFloat());
+            }
+        }
+        for (JsonArray m : plan.marke("hubschrauber")) {
+            plugin.fahrzeuge().abstellen(Fahrzeuge.Art.HUBSCHRAUBER, 0, ort(villa, m), m.get(3).getAsFloat());
+        }
+    }
+
+    /** Fernseher (zeigen das Bild „aus“) und Drehteller als Anzeige-Figuren (wie die Server-Version der Mod). */
+    private void anzeigen(Villen.Villa villa, Bauplan plan) {
+        for (JsonArray m : plan.marke("fernseher")) {
+            float breite = m.size() >= 6 ? m.get(4).getAsFloat() : 5.0F, hoehe = m.size() >= 6 ? m.get(5).getAsFloat() : 2.8125F;
+            modellAufstellen(ort(villa, m), m.get(3).getAsFloat(), "polymer/fernseher",
+                    new Vector3f(breite / 5.0F, hoehe / 2.8125F, 1.0F));
+        }
+        for (JsonArray m : plan.marke("drehteller")) {
+            modellAufstellen(ort(villa, m), 0.0F, "polymer/drehteller", new Vector3f(1, 1, 1));
+        }
+    }
+
+    /** Ein feststehendes Modell aus dem Ressourcenpaket (Modellraum wie bei den Fahrzeugen). */
+    private static ItemDisplay modellAufstellen(Location ort, float blick, String modell, Vector3f dehnung) {
+        Location l = ort.clone();
+        l.setYaw(blick);
+        return l.getWorld().spawn(l, ItemDisplay.class, d -> {
+            ItemStack bild = ItemStack.of(Material.PAPER);
+            bild.setData(DataComponentTypes.ITEM_MODEL, Key.key("stinkendreich", modell));
+            d.setItemStack(bild);
+            d.setPersistent(true);
+            d.setItemDisplayTransform(ItemDisplay.ItemDisplayTransform.NONE);
+            d.setTransformation(new Transformation(new Vector3f(0, 1.5F * dehnung.y, 0), new Quaternionf().rotateZ((float) Math.PI),
+                    new Vector3f(4 * dehnung.x, 4 * dehnung.y, 4 * dehnung.z), new Quaternionf()));
+            // Licht der Mitte statt des Fußpunkts (der steckt beim Fernseher in der Wand)
+            Location mitte = l.clone().add(0, 1.5 * dehnung.y, 0);
+            d.setBrightness(new org.bukkit.entity.Display.Brightness(mitte.getBlock().getLightFromBlocks(), mitte.getBlock().getLightFromSky()));
+            d.setViewRange(2.0F);
+        });
     }
 
     /** Weltposition einer Marke (die ersten drei Zahlen). */

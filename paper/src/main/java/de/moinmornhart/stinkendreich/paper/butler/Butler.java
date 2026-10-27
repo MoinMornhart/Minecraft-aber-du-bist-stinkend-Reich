@@ -255,6 +255,7 @@ public final class Butler implements Listener {
     /** Versteht einfache Sätze wie in der Mod: „komm“, „warte“, „geh nach Hause“. */
     public void befehl(Player p, String satz) {
         int nr = butlerVon(p);
+        plugin.getLogger().info("Butler: „" + satz + "“ von " + p.getName() + " (Villa " + nr + ")");
         if (nr < 0) {
             sagen(p, "Verzeihung, ich stehe nicht in Ihren Diensten.");
             return;
@@ -271,6 +272,16 @@ public final class Butler implements Listener {
         } else {
             sagen(p, "Verzeihung, das habe ich nicht verstanden. Ich kann Ihnen folgen, warten oder nach Hause gehen.");
         }
+    }
+
+    /** Für Fehlersuche: wo stehen die Butler und was tun sie? */
+    public String uebersicht() {
+        StringBuilder sb = new StringBuilder();
+        puppen.forEach((nr, p) -> {
+            Location l = p.getLocation();
+            sb.append("James ").append(nr).append(": ").append(modus(p)).append(String.format(" bei %.1f %.1f %.1f; ", l.getX(), l.getY(), l.getZ()));
+        });
+        return sb.toString();
     }
 
     public static void sagen(Player p, String text) {

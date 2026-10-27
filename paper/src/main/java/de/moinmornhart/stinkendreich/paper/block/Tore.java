@@ -171,10 +171,10 @@ public final class Tore {
 
     /** Ein Flügel: gewünschten Zustand setzen und in Stufen hinfahren. */
     public boolean setzeOffen(Block b, Zustand z, boolean offen) {
-        if (z.ist("offen", Boolean.toString(offen))) {
+        if (z.ist("open", Boolean.toString(offen))) {
             return false;
         }
-        bloecke.setzen(b, z.mit("offen", Boolean.toString(offen)));
+        bloecke.setzen(b, z.mit("open", Boolean.toString(offen)));
         bewegen(b);
         return true;
     }
@@ -186,7 +186,7 @@ public final class Tore {
                 return;
             }
             int stufe = Integer.parseInt(z.wert("stufe"));
-            int ziel = z.ist("offen", "true") ? GANZ_OFFEN : 0;
+            int ziel = z.ist("open", "true") ? GANZ_OFFEN : 0;
             if (stufe == ziel) {
                 return;
             }
