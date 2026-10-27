@@ -44,6 +44,7 @@ public final class Ausstattung {
         }
         fuhrpark(villa, plan);
         anzeigen(villa, plan);
+        plugin.festung().bauen(villa);                  // Minengürtel und Notausgang im Gelände
         plugin.figurenNachDemBau(villa);
     }
 

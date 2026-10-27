@@ -65,8 +65,13 @@ public final class VillaBefehle implements TabExecutor {
                 if (p == null || v == null || args.length < 4) {
                     return false;
                 }
-                Location l = new Location(v.world(), v.x() + Double.parseDouble(args[1]), v.y() + Double.parseDouble(args[2]),
-                        v.z() + Double.parseDouble(args[3]));
+                // Höhe „boden+N“: N Blöcke über dem natürlichen Boden an dieser Stelle (für Bilder im Gelände)
+                double wx = v.x() + Double.parseDouble(args[1]), wz = v.z() + Double.parseDouble(args[3]);
+                double wy = args[2].startsWith("boden")
+                        ? Baustelle.bodenHoehe(v.world(), (int) Math.floor(wx), (int) Math.floor(wz))
+                        + (args[2].length() > 5 ? Double.parseDouble(args[2].substring(5)) : 0.0)
+                        : v.y() + Double.parseDouble(args[2]);
+                Location l = new Location(v.world(), wx, wy, wz);
                 if (args.length >= 6) {
                     l.setYaw(Float.parseFloat(args[4]));
                     l.setPitch(Float.parseFloat(args[5]));

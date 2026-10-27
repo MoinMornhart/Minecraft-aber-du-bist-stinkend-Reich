@@ -48,6 +48,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Sicherheit sicherheit;
     private de.moinmornhart.stinkendreich.paper.block.Zugbruecke zugbruecke;
     private de.moinmornhart.stinkendreich.paper.block.Kameras kameras;
+    private de.moinmornhart.stinkendreich.paper.block.Festung festung;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
     private Baustelle baustelle;
@@ -84,6 +85,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(zugbruecke, this);
         new de.moinmornhart.stinkendreich.paper.block.Geheimgang(this, bloecke, mechanik, tore);
         new de.moinmornhart.stinkendreich.paper.block.Graben(this);
+        festung = new de.moinmornhart.stinkendreich.paper.block.Festung(this, bloecke, mechanik);
         getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Haushalt(this, bloecke, mechanik), this);
         unterhaltung = new de.moinmornhart.stinkendreich.paper.block.Unterhaltung(this, bloecke, mechanik);
         kameras = new de.moinmornhart.stinkendreich.paper.block.Kameras(this, bloecke, mechanik);
@@ -200,6 +202,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung() {
         return unterhaltung;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Festung festung() {
+        return festung;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Kameras kameras() {

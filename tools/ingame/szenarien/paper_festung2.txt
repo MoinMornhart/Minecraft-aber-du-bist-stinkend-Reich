@@ -1,0 +1,33 @@
+# Paper-Plugin: Festung – Zombie vor dem Südzaun (Geschütze schießen, Mine explodiert), versteckte Luke
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 13000
+taste F1
+server /villa ort 47.5 7 39.5 180 20
+warte 2
+server /villa zentrale stufe:4
+warte 8
+server /difficulty easy
+server /villa ort 0.5 boden+3 120.5 0 0
+warte 1
+server /summon zombie ~ ~ ~
+server /villa ort 7 boden+6 128 135 35
+warte 1
+bild pf2_a
+warte 1
+bild pf2_b
+warte 1
+bild pf2_c
+warte 2
+bild pf2_d
+server /kill @e[type=zombie]
+server /difficulty peaceful
+# Notausgang: versteckte Falltür im Rasen (Struktur -50 / 60)
+server /villa ort -47 boden+3 63 135 40
+warte 2
+bild pf2_luke_zu
+server /villa klick geheimluke
+warte 2
+bild pf2_luke_offen

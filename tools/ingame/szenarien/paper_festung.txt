@@ -1,0 +1,46 @@
+# Paper-Plugin: Festung (Stufe 4) – Zentrale im Bunker, Geschütze und Himmelslaser als Welle, Minen, Notausgang
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 13000
+taste F1
+# Kommandozentrale im Bunker: Dialog mit Festung
+server /villa ort 47.5 7 39.5 180 20
+warte 2
+server /villa zentrale
+warte 2
+bild pf_zentrale
+taste Escape
+merke
+server /villa zentrale stufe:4
+bis 5 Festung
+# Von außen: Geschütze und Himmelslaser fahren hoch
+server /villa ort 66 38 122 160 18
+warte 1
+bild pf_welle
+warte 5
+bild pf_festung
+server /villa ort 120 45 120 135 25
+warte 2
+bild pf_von_oben
+# Zombie fällt auf eine Mine vor dem Zaun
+server /difficulty easy
+server /villa ort 6.5 12 -14.5 45 35
+warte 2
+server /execute positioned ~-6 ~-8 ~6 run summon zombie ~ ~ ~
+warte 3
+bild pf_mine
+warte 3
+bild pf_mine2
+server /kill @e[type=zombie]
+server /difficulty peaceful
+# Notausgang: versteckte Falltür im Rasen
+server /villa ort -47.5 6 63.5 135 40
+warte 3
+bild pf_luke_zu
+server /villa klick geheimluke
+warte 2
+bild pf_luke_offen
+server /villa zentrale stufe:1
+warte 3

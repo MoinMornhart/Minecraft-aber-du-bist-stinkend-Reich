@@ -278,7 +278,8 @@ public final class Zugbruecke implements Listener {
         if (jemand) {
             zuletztJemandDa.put(v.nr(), tick);
         }
-        boolean sollDrin = s.gesichert && !jemand && tick - zuletztJemandDa.getOrDefault(v.nr(), Long.MIN_VALUE / 2) >= WARTEN_TICKS;
+        boolean festung = plugin.sicherheit().stufe(v) >= Sicherheit.FESTUNG;
+        boolean sollDrin = (s.gesichert || festung) && !jemand && tick - zuletztJemandDa.getOrDefault(v.nr(), Long.MIN_VALUE / 2) >= WARTEN_TICKS;
         if (sollDrin != s.eingefahren) {
             starten(v, o, sollDrin, jemand);
         }

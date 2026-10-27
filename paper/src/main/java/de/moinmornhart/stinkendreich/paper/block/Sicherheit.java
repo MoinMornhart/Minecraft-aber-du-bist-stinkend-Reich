@@ -44,12 +44,16 @@ import java.util.UUID;
  *   <li>Stufe 1: Alarm bei Eindringlingen (Bewegungsmelder, Tastenfeld, Zentrale, Tresorfallen)</li>
  *   <li>Stufe 2: zusätzlich Lockdown (Rollläden zu, Schiebetüren nur für Berechtigte)</li>
  *   <li>Stufe 3: zusätzlich Laser</li>
+ *   <li>Stufe 4: Festung (Minen, Abwehrgeschütze, Himmelslaser, Zugbrücke bleibt für Fremde drin); nur an der Zentrale
+ *   in der Kommandozentrale im Bunker</li>
  * </ul>
  * Eindringlinge sind Monster und Spieler, die weder Bewohner noch Gast sind und keine Zugangskarte haben.
  */
 public final class Sicherheit {
-    public static final int MAX_STUFE = 3;
-    private static final String[] STUFEN = {"Stufe 0 – Aus", "Stufe 1 – Alarm", "Stufe 2 – Lockdown", "Stufe 3 – Laser"};
+    public static final int MAX_STUFE = 4;
+    /** Ab dieser Stufe ist die Villa eine Festung (siehe {@link Festung}). */
+    public static final int FESTUNG = 4;
+    private static final String[] STUFEN = {"Stufe 0 – Aus", "Stufe 1 – Alarm", "Stufe 2 – Lockdown", "Stufe 3 – Laser", "Festung"};
     private static final int LASER_REICHWEITE = 24, LASER_MAX = 64;
     private static final String STANDARD_CODE = "1234";
 
@@ -63,6 +67,8 @@ public final class Sicherheit {
     /** Alarm bis zu diesem Server-Tick, je Villa. */
     private final Map<Integer, Long> alarmBis = new HashMap<>();
     private final Map<Integer, Long> entschaerftBis = new HashMap<>();
+    /** Takt, zu dem die Festung eingeschaltet wurde (für die Welle; fehlt = schon lange an). */
+    private final Map<Integer, Long> festungSeit = new HashMap<>();
     /** Entschärfknöpfe: wann welcher zuletzt gedrückt wurde (je Villa, Schlüssel = Position). */
     private final Map<Integer, Map<String, Long>> druecke = new HashMap<>();
     /** Falsche Codes je Spieler (ab drei Alarm). */
@@ -124,7 +130,14 @@ public final class Sicherheit {
         return alarmBis.getOrDefault(nr(v), 0L) > tick;
     }
 
+    /** Ticks seit dem Einschalten der Festung (groß, wenn sie schon vor dem Start an war). */
+    public long festungTicks(Villen.Villa v) {
+        Long seit = festungSeit.get(nr(v));
+        return seit == null ? Long.MAX_VALUE / 2 : tick - seit;
+    }
+
     private void stufeSetzen(Villen.Villa v, int neu) {
+        boolean warFestung = stufe(v) >= FESTUNG;
         stufen.put(nr(v), Math.max(0, Math.min(MAX_STUFE, neu)));
         JsonObject j = new JsonObject();
         stufen.forEach((n, s) -> {
@@ -139,6 +152,13 @@ public final class Sicherheit {
             plugin.getLogger().warning("sicherheit.json konnte nicht gespeichert werden: " + e.getMessage());
         }
         plugin.getLogger().info("Sicherheit: Villa " + nr(v) + " auf " + STUFEN[stufe(v)]);
+        if (stufe(v) >= FESTUNG && !warFestung) {
+            // Festung: Sirenen und Warnleuchten, Geschütze, Laser und Minen fahren nacheinander hoch; nichts im Chat
+            festungSeit.put(nr(v), tick);
+            alarmBis.put(nr(v), tick + 20L * 12);
+            anBewohner(v, Component.text("FESTUNG: Die Villa ist uneinnehmbar.", NamedTextColor.GOLD).decorate(TextDecoration.BOLD), false);
+            return;
+        }
         anBewohner(v, Component.text("Sicherheitssystem: " + STUFEN[stufe(v)], NamedTextColor.AQUA), false);
     }
 
@@ -157,7 +177,7 @@ public final class Sicherheit {
         if (neu) {
             plugin.getLogger().info("Alarm bei " + ort.getX() + " " + ort.getY() + " " + ort.getZ() + ": " + grund);
             anBewohner(v, Component.text("ALARM! " + grund + " (bei " + ort.getX() + " " + ort.getY() + " " + ort.getZ() + ")",
-                    NamedTextColor.RED).decorate(TextDecoration.BOLD), true);
+                    NamedTextColor.RED).decorate(TextDecoration.BOLD), stufe(v) < FESTUNG);
         }
     }
 
@@ -220,7 +240,7 @@ public final class Sicherheit {
         }
         BlockFace richtung = BlockFace.valueOf(z.wert("facing") == null ? "NORTH" : z.wert("facing").toUpperCase(java.util.Locale.ROOT));
         Villen.Villa v = villa(sender);
-        boolean an = stufe(v) >= 3;
+        boolean an = stufe(v) >= 3 && (richtung != BlockFace.UP || stufe(v) < FESTUNG || plugin.festung().bereit(v, sender, true));
         int reichweite = Math.max(1, Math.min(LASER_MAX, zahl(bloecke.werte(sender).get("reichweite"), LASER_REICHWEITE)));
         String achse = switch (richtung) {
             case UP, DOWN -> "y";
@@ -360,7 +380,8 @@ public final class Sicherheit {
         String text = "Sicherheitssystem: " + STUFEN[stufe(v)] + " · Zustand: " + (alarmAktiv(v) ? "Alarm" : "ruhig")
                 + " · Bewohner: " + bewohner;
         List<Dialoge.Knopf> k = new ArrayList<>();
-        for (int i = 0; i <= MAX_STUFE; i++) {
+        boolean kommando = "ja".equals(bloecke.werte(b).get("kommando"));
+        for (int i = 0; i <= (kommando ? MAX_STUFE : MAX_STUFE - 1); i++) {
             int stufe = i;
             k.add(Dialoge.Knopf.von((stufe(v) == i ? "▶ " : "") + STUFEN[i], (s, a) -> zentraleKnopf(s, b, "stufe:" + stufe)));
         }
@@ -388,7 +409,13 @@ public final class Sicherheit {
                 ton(b, "piep_fehler", 0.8F, 1.0F);
                 return;
             }
-            stufeSetzen(v, zahl(wert.substring(6), stufe(v)));
+            int neu = zahl(wert.substring(6), stufe(v));
+            if (neu >= FESTUNG && !"ja".equals(bloecke.werte(b).get("kommando"))) {
+                p.sendActionBar(Component.text("Die Festung lässt sich nur in der Kommandozentrale im Bunker einschalten.", NamedTextColor.RED));
+                ton(b, "piep_fehler", 0.8F, 1.0F);
+                return;
+            }
+            stufeSetzen(v, neu);
             ton(b, "piep_ok", 0.8F, 1.0F);
         }
     }
