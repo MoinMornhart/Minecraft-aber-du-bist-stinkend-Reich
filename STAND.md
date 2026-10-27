@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 10:05 Uhr (NoRisk „Hosted Worlds“ geprüft und zwei Fehler behoben, neue Skins für James und Tänzerinnen, Standbilder 1.21.6–1.21.8 hell; Release 0.4.1 wartet)_
+_Zuletzt aktualisiert: 2026-10-27, 11:45 Uhr (Runde fertig: neue Skins, NoRisk/LAN, Server ohne Mod 1.21.6–1.21.8, README-Fotos und Trailer Teil 4; alle 17 Versionen übersetzen; Release 0.4.1 wartet auf Philips „Release raus“)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -559,7 +559,8 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Release 0.4.1 erst nach Philips „Release raus“ (dann `.github/release-version` auf 0.4.1). Offen: YouTube im Fernseher
+Release 0.4.1 erst nach Philips „Release raus“ (dann `.github/release-version` auf 0.4.1). Vorher geprüft (27.10. 11:45):
+alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
 bei Philip bestätigen (Log-Zeilen mit „yt-dlp“), Server-Version ohne Mod für 1.21.6–1.21.8 fertig prüfen (Bedienfelder,
 1.21.6/1.21.7; Figuren in 1.21.8 hell), neue Skins ohne Mod (Tänzerinnen) und im Paper-Plugin ansehen, danach
 1.21–1.21.5 (Truhen-Menüs). Fortschrittsseite am Morgen des 27.10. aufgeräumt (alte Punkte im Archiv, Paper-Plugin in
