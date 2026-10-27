@@ -96,7 +96,8 @@ public final class Mechanik implements Listener {
         }
     }
 
-    private boolean benutzen(Player p, Block b, Zustand z) {
+    /** Ein Rechtsklick auf einen Mod-Block (auch für Tests); true, wenn etwas passiert ist. */
+    public boolean benutzen(Player p, Block b, Zustand z) {
         Handlung h = handlungen.get(z.name());
         if (h != null && h.benutzen(p, b, z)) {
             return true;

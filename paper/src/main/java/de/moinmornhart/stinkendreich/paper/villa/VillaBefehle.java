@@ -89,6 +89,20 @@ public final class VillaBefehle implements TabExecutor {
                 boolean an = args.length < 2 || args[1].equals("ein");
                 antwort(wer, plugin.zugbruecke().sichern(v, an) ? (an ? "Zugbrücke gesichert." : "Zugbrücke offen.") : "Keine Zugbrücke.");
             }
+            case "klick", "kamera" -> {
+                // Testhilfe: Rechtsklick auf den nächsten Mod-Block dieser Art (/villa klick tuerklingel) bzw. Blick
+                // durch Kamera n am nächsten Monitor (/villa kamera 2)
+                Block b = p == null ? null : naechster(p, was.equals("kamera") ? "monitor" : args.length > 1 ? args[1] : "");
+                if (b == null) {
+                    antwort(wer, "Nichts in der Nähe.");
+                    return true;
+                }
+                if (was.equals("kamera")) {
+                    plugin.kameras().startenAmMonitor(p, b, args.length > 1 ? Integer.parseInt(args[1]) - 1 : 0);
+                } else {
+                    plugin.mechanik().benutzen(p, b, plugin.bloecke().zustand(b));
+                }
+            }
             case "zentrale", "code" -> {
                 // Testhilfe: Knopf der nächsten Zentrale bzw. Code am nächsten Tastenfeld (wie im Dialog)
                 Block b = p == null ? null : naechster(p, was.equals("code") ? "tastenfeld" : "sicherheitszentrale");
@@ -137,6 +151,6 @@ public final class VillaBefehle implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender wer, Command befehl, String name, String[] args) {
-        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "bruecke", "zentrale", "code", "info") : List.of();
+        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "bruecke", "zentrale", "code", "klick", "kamera", "info") : List.of();
     }
 }

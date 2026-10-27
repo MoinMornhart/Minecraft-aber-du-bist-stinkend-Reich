@@ -47,6 +47,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.block.Tore tore;
     private de.moinmornhart.stinkendreich.paper.block.Sicherheit sicherheit;
     private de.moinmornhart.stinkendreich.paper.block.Zugbruecke zugbruecke;
+    private de.moinmornhart.stinkendreich.paper.block.Kameras kameras;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
     private Baustelle baustelle;
     private final Deque<Runnable> warteschlange = new ArrayDeque<>();
@@ -82,6 +83,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(zugbruecke, this);
         new de.moinmornhart.stinkendreich.paper.block.Geheimgang(this, bloecke, mechanik, tore);
         new de.moinmornhart.stinkendreich.paper.block.Graben(this);
+        getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Haushalt(this, bloecke, mechanik), this);
+        kameras = new de.moinmornhart.stinkendreich.paper.block.Kameras(this, bloecke, mechanik);
+        getServer().getPluginManager().registerEvents(kameras, this);
         new de.moinmornhart.stinkendreich.paper.block.Aufzug(this, bloecke, mechanik, zugang);
         getServer().getPluginManager().registerEvents(bloecke, this);
         getServer().getPluginManager().registerEvents(mechanik, this);
@@ -131,6 +135,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     public void onDisable() {
         if (zugbruecke != null) {
             zugbruecke.stoppen();                       // laufende Fahrt fertig machen, keine Blöcke verlieren
+        }
+        if (kameras != null) {
+            kameras.stoppen();                          // Spieler aus dem Kamerablick zurückholen
         }
         if (paket != null) {
             paket.stoppen();
@@ -187,6 +194,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public de.moinmornhart.stinkendreich.paper.block.Zugbruecke zugbruecke() {
         return zugbruecke;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Kameras kameras() {
+        return kameras;
     }
 
     public de.moinmornhart.stinkendreich.paper.block.Sicherheit sicherheit() {
