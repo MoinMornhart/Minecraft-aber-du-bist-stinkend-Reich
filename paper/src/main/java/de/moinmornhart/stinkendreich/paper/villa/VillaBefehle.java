@@ -96,6 +96,15 @@ public final class VillaBefehle implements TabExecutor {
                     antwort(wer, "Agenten-Ausrüstung im Inventar.");
                 }
             }
+            case "butlerblick" -> {
+                // Testhilfe für Bilder: freie Stelle mit Blick auf den eigenen Butler
+                Location c = p == null ? null : plugin.butler().kamera(Math.max(0, plugin.butler().butlerVon(p)));
+                if (c != null) {
+                    p.teleport(c);
+                } else {
+                    antwort(wer, "Keine freie Stelle mit Blick auf James.");
+                }
+            }
             case "hai" -> {
                 // Testhilfe: Hai an der eigenen Stelle aussetzen (im Wasser)
                 if (p != null) {

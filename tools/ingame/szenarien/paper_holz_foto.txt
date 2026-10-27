@@ -1,0 +1,65 @@
+# Paper-Plugin: Bilder – James fällt einen Baum, gräbt im Tunnel; Truhe nach dem Sortieren
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+server /villa ort 55.5 26 86 180 0
+merke
+server /butler hol mir 12 holz
+bis 60 HIN → FAELLEN
+server /gamemode spectator
+server /villa butlerblick
+warte 0.8
+bild pb_holz1
+server /villa butlerblick
+warte 0.8
+bild pb_holz2
+merke
+bis 30 PFLANZEN → HIN
+warte 0.3
+server /villa butlerblick
+warte 0.8
+bild pb_gepflanzt
+bis 200 Holz an
+# Truhen
+server /gamemode survival
+server @/clear Philip
+server /time set 6000
+server /villa ort 75.5 boden 124.5 0 70
+warte 1
+server @/execute at Philip run setblock ~2 ~ ~2 chest{Items:[{Slot:0b,id:"minecraft:dirt",count:10},{Slot:3b,id:"minecraft:bread",count:5},{Slot:7b,id:"minecraft:coal",count:3},{Slot:12b,id:"minecraft:iron_pickaxe",count:1},{Slot:20b,id:"minecraft:oak_log",count:9},{Slot:22b,id:"minecraft:apple",count:2}]}
+server @/execute at Philip run setblock ~4 ~ ~2 chest{Items:[{Slot:1b,id:"minecraft:dirt",count:20},{Slot:5b,id:"minecraft:coal",count:2},{Slot:9b,id:"minecraft:apple",count:4},{Slot:14b,id:"minecraft:oak_log",count:3}]}
+warte 1
+server /villa ort 77.5 boden+0.2 124.5 0 30
+warte 1
+klick
+warte 1.5
+bild pb_truhe_vorher
+taste Escape
+warte 0.5
+merke
+server /butler sortier die truhen
+bis 60 Sortieren: 2 Truhen,
+warte 1
+server /villa ort 77.5 boden+0.2 124.5 0 30
+warte 1
+klick
+warte 1.5
+bild pb_truhe_nachher
+taste Escape
+# Tunnel
+server /time set 6000
+merke
+server /butler hol mir 4 eisen
+bis 120 TUNNEL → ABBAUEN
+server /gamemode spectator
+server /effect give @p night_vision infinite 0 true
+server /villa butlerblick
+warte 0.8
+bild pb_tunnel1
+warte 1.5
+server /villa butlerblick
+warte 0.8
+bild pb_tunnel2

@@ -1,0 +1,54 @@
+# Paper-Plugin: Bilder – James im Tunnel, Mitarbeiter an ihrer Kiste
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+server /villa ort 55.5 26 86 180 0
+merke
+server /butler hol mir 6 kohle
+bis 60 SUCHEN → TUNNEL
+merke
+warte 3
+server /gamemode spectator
+server /effect give @p night_vision infinite 0 true
+server /execute as @e[type=wandering_trader,limit=1] at @s run tp @p ^ ^1.6 ^-2.4 facing entity @s eyes
+warte 1.5
+bild pf_tunnel1
+bis 90 TUNNEL → ABBAUEN
+warte 0.5
+server /execute as @e[type=wandering_trader,limit=1] at @s run tp @p ^ ^1.8 ^-2.2 facing entity @s eyes
+warte 1
+bild pf_abbau1
+warte 1
+bild pf_abbau2
+bis 240 Kohle an
+server /gamemode survival
+server /effect clear @p
+server @/clear @p
+server /time set 6000
+# Mitarbeiter
+server /villa ort 75.5 boden 124.5 0 70
+server /handy mitarbeiter
+warte 1
+taste 1
+warte 0.5
+merke
+klick
+bis 10 Mitarbeiter: drei eingestellt
+warte 2
+server /gamemode spectator
+server /villa ort 75.5 boden+2.5 120.5 0 25
+warte 1
+bild pf_mitarbeiter
+merke
+bis 300 in die Kiste
+server /time set 6000
+server /gamemode survival
+server /villa ort 75.5 boden 124.5 0 70
+warte 1
+klick
+warte 1.5
+bild pf_kiste
+taste Escape

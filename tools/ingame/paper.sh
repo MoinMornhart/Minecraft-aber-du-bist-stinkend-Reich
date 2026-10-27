@@ -60,7 +60,7 @@ PY
 
 # ---------- 2. Server starten ----------
 melde "Paper-Server startet …"
-( cd "$RUN" && STINKENDREICH_AUTOTEST=befehle exec /usr/lib/jvm/java-25-openjdk-amd64/bin/java -Xmx3G -jar "$PAPER" --nogui ) \
+( cd "$RUN" && STINKENDREICH_AUTOTEST=befehle exec /usr/lib/jvm/java-25-openjdk-amd64/bin/java -Xmx3G -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8 -jar "$PAPER" --nogui ) \
   > "$LOGS/server.log" 2>&1 </dev/null &
 SERVER=$!
 for _ in $(seq 1 600); do
@@ -172,7 +172,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;
     merke) MARKE=$(wc -l < "$CHATLOG") ;;
-    bis) set -- $rest; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$CHATLOG")}"; MARKE=""; ende=$((SECONDS + frist))
+    bis) set -f; set -- $rest; set +f; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$CHATLOG")}"; MARKE=""; ende=$((SECONDS + frist))
          until tail -n +"$((ab + 1))" "$CHATLOG" | grep -qaE "$muster"; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi
            sleep 2

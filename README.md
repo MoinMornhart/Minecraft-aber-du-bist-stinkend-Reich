@@ -609,9 +609,19 @@ In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt sein
 <td><img src="docs/bilder/paper_hai.jpg" alt="Hai auf Paper"><br><sub>Echte Haie im Becken</sub></td>
 <td><img src="docs/bilder/paper_haibiss.jpg" alt="Haibiss auf Paper"><br><sub>Wer ins Becken fällt, wird gebissen – auch auf „Friedlich“</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/paper_tunnel.jpg" alt="James gräbt auf Paper"><br><sub>„Butler, hol mir 4 Eisen“: James im Treppentunnel</sub></td>
+<td><img src="docs/bilder/paper_mitarbeiter.jpg" alt="Mitarbeiter auf Paper"><br><sub>Mitarbeiter graben vor der Villa, daneben ihre Kiste</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/paper_sortiert.jpg" alt="Sortierte Truhe auf Paper"><br><sub>„Butler, sortier die Truhen“: jede Sorte in ihrer Stammtruhe</sub></td>
+<td><img src="docs/bilder/paper_kiste.jpg" alt="Mitarbeiterkiste auf Paper"><br><sub>Die erste Ladung: 16 Kohle in der Mitarbeiterkiste</sub></td>
+</tr>
 </table>
 
-Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser), eigene Musik und Spotify, die Aufträge des Butlers (Bergbau, Holz, Chauffeur …) und die Mitarbeiter sowie Straßen zwischen den Villen.
+James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt einen Treppentunnel, baut die ganze Ader ab, schmilzt Metall im Hochofen der Villa und bringt es dir. „Butler, hol mir 16 Holz“ – er fällt echte Bäume (keine gebauten) und pflanzt an jeder Stelle einen neuen Setzling. „Butler, sortier die Truhen“ – er geht alle Truhen und Fässer um dich herum ab und räumt sie auf, jede Sorte in ihre Stammtruhe. Die Mitarbeiterkiste aus dem Handy bringt drei Mitarbeiter, die Diamanten, Eisen und Kohle in ihre Kiste schaffen.
+
+Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser), eigene Musik und Spotify, Jagen, James als Chauffeur und Pilot sowie Straßen zwischen den Villen.
 
 <br>
 

@@ -25,13 +25,11 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Ein Auftrag für James auf dem Paper-Server („Butler, hol mir 16 Eisen“), wie Planer + SammelAuftrag + OfenAuftrag +
- * LieferAuftrag in der Mod: erst abbauen ({@link Bergbau}), bei Eisen, Gold und Kupfer danach in den echten Öfen der
- * Villa schmelzen (Brennstoff aus dem Fass daneben), zuletzt dem Herrn bringen.
+ * Ein Auftrag für James auf dem Paper-Server („Butler, hol mir 16 Eisen“, „… 16 Holz“), wie Planer + SammelAuftrag +
+ * OfenAuftrag + LieferAuftrag in der Mod: erst beschaffen ({@link Bergbau} oder {@link Holzfaeller}), bei Eisen, Gold
+ * und Kupfer danach in den echten Öfen der Villa schmelzen (Brennstoff aus dem Fass daneben), zuletzt dem Herrn bringen.
  */
-final class ButlerAuftrag {
-    enum Stand { LAEUFT, FERTIG }
-
+final class ButlerAuftrag implements Auftrag {
     private enum Phase { ABBAU, ZUM_OFEN, SCHMELZEN, LIEFERN }
 
     private final StinkendReichPaper plugin;
@@ -39,7 +37,7 @@ final class ButlerAuftrag {
     private final Mob koerper;
     private final Mannequin puppe;
     private final UUID herr;
-    private final Bergbau bergbau;
+    private final Beschaffung bergbau;
     private Phase phase = Phase.ABBAU;
 
     private void phase(Phase neu) {
@@ -53,14 +51,13 @@ final class ButlerAuftrag {
     private int warten, steckt, unterwegs;
     private Location letzte;
 
-    ButlerAuftrag(StinkendReichPaper plugin, Villen.Villa villa, Mob koerper, Mannequin puppe, UUID herr,
-                  Bergbau.Rohstoff rohstoff, int menge) {
+    ButlerAuftrag(StinkendReichPaper plugin, Villen.Villa villa, Mob koerper, Mannequin puppe, UUID herr, Beschaffung beschaffung) {
         this.plugin = plugin;
         this.villa = villa;
         this.koerper = koerper;
         this.puppe = puppe;
         this.herr = herr;
-        this.bergbau = new Bergbau(plugin, koerper, puppe, rohstoff, menge, vorDerVilla(plugin, villa));
+        this.bergbau = beschaffung;
     }
 
     /**
@@ -82,19 +79,22 @@ final class ButlerAuftrag {
         return new Location(w, x + 0.5, w.getHighestBlockYAt(x, z) + 1, z + 0.5);
     }
 
-    String status() {
+    @Override
+    public String status() {
         return switch (phase) {
-            case ABBAU -> bergbau.status();
+            case ABBAU -> bergbau.status();      // „gräbt einen Tunnel …“, „fällt Bäume …“
             case ZUM_OFEN, SCHMELZEN -> "schmilzt " + bergbau.rohstoff().anzeige() + " in der Villa";
             case LIEFERN -> "bringt Ihnen " + bergbau.rohstoff().anzeige();
         };
     }
 
-    void abbrechen() {
+    @Override
+    public void abbrechen() {
         bergbau.abbrechen();
     }
 
-    Stand tick() {
+    @Override
+    public Stand tick() {
         switch (phase) {
             case ABBAU -> {
                 Bergbau.Stand s = bergbau.tick();
@@ -106,7 +106,9 @@ final class ButlerAuftrag {
                 Player p = herr();
                 if (s == Bergbau.Stand.NICHTS || bergbau.gesammelt() == 0) {
                     if (p != null) {
-                        Butler.sagen(p, "Verzeihung, ich habe in der Nähe kein " + bergbau.rohstoff().anzeige() + " gefunden.");
+                        Butler.sagen(p, bergbau.rohstoff() == Holzfaeller.HOLZ
+                                ? "Verzeihung, in der Nähe steht kein Baum, den ich fällen darf."
+                                : "Verzeihung, ich habe in der Nähe kein " + bergbau.rohstoff().anzeige() + " gefunden.");
                     }
                     phase(Phase.LIEFERN);
                 } else if (bergbau.rohstoff().geschmolzen() != null && ofenSuchen()) {

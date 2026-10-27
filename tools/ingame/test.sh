@@ -268,7 +268,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;   # Befehl ohne Tippen (Autotest-Modus)
     klient) printf '%s\n' "$rest" >> "$RUN/stinkendreich-klient.txt"; sleep 1 ;;   # schliessen | butlermenue
     merke) MARKE=$(wc -l < "$CHATLOG") ;;
-    bis) set -- $rest; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$CHATLOG")}"; MARKE=""; ende=$((SECONDS + frist))
+    bis) set -f; set -- $rest; set +f; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$CHATLOG")}"; MARKE=""; ende=$((SECONDS + frist))
          until tail -n +"$((ab + 1))" "$CHATLOG" | grep -qaE "$muster"; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi
            sleep 2

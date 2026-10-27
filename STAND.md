@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 04:15 Uhr (Paper-Plugin Nachtschicht: Agent, Waffenkammer, Tänzerinnen, Haie, im Spiel getestet)_
+_Zuletzt aktualisiert: 2026-10-27, 06:40 Uhr (Paper-Plugin Nachtschicht: Agent, Haie, Haifalle, Bergbau, Mitarbeiter, Holz, Sortieren, im Spiel getestet)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -266,6 +266,17 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   `Blockdaten.vervollstaendigen` ergänzt sie beim Lesen des Bauplans (Wahr/Falsch = false), sonst galt der erste
   Zustand aus bloecke.json (Glasboden offen und unsichtbar). `Zustand.mit` ändert nur vorhandene Eigenschaften,
   `Zustand.ergaenzt` setzt auch fehlende. Tests: `paper_pool.txt`, `paper_haifalle_*.txt`.
+- Danach (06:10): Bergbau auf Paper (`butler/Bergbau`: Start neben der Zufahrt – die Zufahrt selbst ist kein natürlicher
+  Block –, Suche 32 Blöcke, Treppentunnel, Ader, Abdichten, Rückweg; `butler/ButlerAuftrag`: Hochofen/Ofen der Villa –
+  der Räucherofen schmilzt kein Erz –, Kohle aus den Fässern „brennstoff“, Lieferung; Wege höchstens 20 s, danach
+  Sprung; Wegfinder beim Sprung/Ankommen stoppen, sonst läuft der Körper den alten Pfad zurück). Mitarbeiter
+  (`butler/Mitarbeiter`, Kiste per Handy/`/handy mitarbeiter`). Tests: `paper_butler_kohle.txt`,
+  `paper_butler_eisen.txt` (3 Eisenbarren geliefert), `paper_arbeit.txt` (16 Kohle in der Kiste).
+- Danach (06:40): Holz und Truhen sortieren auf Paper (`butler/Holzfaeller` als `Beschaffung` wie `Bergbau`, beide
+  liefert `ButlerAuftrag`; `butler/Sortierer` und `ButlerAuftrag` sind `Auftrag`; `butler/Laufen` = Wegfinder mit Sprung).
+  Tests: `paper_holz.txt` (10 Holz, Setzlinge; drei Truhen genau richtig sortiert), Bilder `paper_holz_foto.txt` mit
+  Testhilfe `/villa butlerblick` (freie Stelle mit Sicht auf James). Testskripte: Serverprotokoll jetzt UTF-8 (sonst
+  „?“ statt „→“, `bis` mit Pfeil wartete ins Leere), `bis` ohne Dateinamen-Auflösung (`*` im Muster).
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
   ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
 
@@ -487,6 +498,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin: Mitarbeiter und Butler-Aufträge, Straßen zwischen den Villen; Release 0.4.1
+Paper-Plugin: Jagd, Chauffeur/Pilot, Straßen zwischen den Villen; Release 0.4.1
 erst nach Philips „Release raus“; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
 Fortschrittsseite.

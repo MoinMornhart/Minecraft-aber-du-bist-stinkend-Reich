@@ -36,7 +36,7 @@ import java.util.Set;
  * bleiben unberührt. Bevor eine Wand zu Wasser oder Lava aufgeht, wird sie mit Bruchstein abgedichtet. Den Körper
  * bewegt der Wegfinder (ein unsichtbarer Händler), die sichtbare Figur holt mit dem Werkzeug aus.</p>
  */
-public final class Bergbau {
+public final class Bergbau implements Beschaffung {
     public enum Stand { LAEUFT, FERTIG, NICHTS }
 
     private enum Phase { RAUS, SUCHEN, TUNNEL, ABBAUEN, ZURUECK }
@@ -424,10 +424,7 @@ public final class Bergbau {
                 beute.add(s);                               // Funde wie Feuerstein behält er
             }
         }
-        World w = b.getWorld();
-        w.playSound(b.getLocation(), b.getBlockData().getSoundGroup().getBreakSound(), SoundCategory.BLOCKS, 1.0F, 0.8F);
-        w.spawnParticle(Particle.BLOCK, b.getLocation().add(0.5, 0.5, 0.5), 20, 0.3, 0.3, 0.3, 0.1, b.getBlockData());
-        b.setType(Material.AIR);
+        zerbrechen(b);
         arbeit = null;
         return true;
     }
@@ -439,14 +436,26 @@ public final class Bergbau {
         }
     }
 
-    /** Risse im Block für alle Spieler in der Nähe (wie beim Abbauen eines Spielers). */
     private void risse(Block b, float stand) {
+        risse(b, stand, koerper.getEntityId());
+    }
+
+    /** Risse im Block für alle Spieler in der Nähe (wie beim Abbauen eines Spielers); {@code id} = wer abbaut. */
+    static void risse(Block b, float stand, int id) {
         Location l = b.getLocation();
         for (Player p : b.getWorld().getPlayers()) {
             if (p.getLocation().distanceSquared(l) < 48 * 48) {
-                p.sendBlockDamage(l, stand, koerper.getEntityId());
+                p.sendBlockDamage(l, stand, id);
             }
         }
+    }
+
+    /** Block mit Geräusch und Staub entfernen (der Ertrag ist schon eingepackt). */
+    static void zerbrechen(Block b) {
+        World w = b.getWorld();
+        w.playSound(b.getLocation(), b.getBlockData().getSoundGroup().getBreakSound(), SoundCategory.BLOCKS, 1.0F, 0.8F);
+        w.spawnParticle(Particle.BLOCK, b.getLocation().add(0.5, 0.5, 0.5), 20, 0.3, 0.3, 0.3, 0.1, b.getBlockData());
+        b.setType(Material.AIR);
     }
 
     /** Abbaudauer in Ticks wie bei einem Spieler mit diesem Werkzeug. */
