@@ -243,7 +243,7 @@ James wartet in der Halle, folgt dir auf Wunsch oder bleibt zu Hause. Er **erled
 
 <table>
 <tr>
-<td width="33%"><img src="docs/bilder/butler.jpg" alt="Butler James"><br><sub><b>James</b> in der Halle</sub></td>
+<td width="33%"><img src="docs/bilder/butler.jpg" alt="Butler James"><br><sub><b>James</b> im Frack mit Fliege und Einstecktuch vor der Villa</sub></td>
 <td width="33%"><img src="docs/bilder/butler_menue.jpg" alt="Butler-Menü"><br><sub><b>Rechtsklick:</b> Menü mit Knöpfen und Textfeld</sub></td>
 <td width="33%"><img src="docs/bilder/butler_unterwegs.jpg" alt="James unterwegs"><br><sub><b>Unterwegs</b> zum nächsten Erz</sub></td>
 </tr>
