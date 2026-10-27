@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 03:05 Uhr (Paper-Plugin: fast alle Mechanismen der Mod laufen, im Spiel getestet)_
+_Zuletzt aktualisiert: 2026-10-27, 04:15 Uhr (Paper-Plugin Nachtschicht: Agent, Waffenkammer, Tänzerinnen, Haie, im Spiel getestet)_
 
 **Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -249,6 +249,17 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   `VirtuelleBloecke.sperren/verschoben`). Testhilfen: `/villa zentrale|code|klick|kamera|lied|klaviatur|platte|bruecke|
   inkognito`, `/villa ort x boden+N z` (Höhe über Gelände). Testserver steht auf „friedlich“ (für Zombies
   `/difficulty easy`). Kaminschalter suchte in der Mod nur 5 Blöcke weit (linkes Feuer blieb an) – jetzt 7.
+- Nachtschicht 27.10. (Philip schläft, Release 0.4.1 erst nach seinem „Release raus“): Fernseher-Fenster mit
+  Video-Link (`block/Fernseher`, Bild „Video bereit“ = eigenes Modell `zusatz/…/fernseher_youtube`), Lieferservice und
+  Bodyguards (`butler/Bodyguards`: Eisengolem + Puppe im Smoking, schießen mit der goldenen Pistole), Agenten-Ausrüstung
+  (`ausruestung/Agent`: Netherit-Rüstung mit Ausrüstungsmodell `stinkendreich:agent`, Waffen = Papier mit Item-Modell und
+  `USE_COOLDOWN`, Kennung im PDC `agent`; Kräfte wie `AgentKraefte`), Waffenkammer (`ausruestung/Waffenkammer`, Marken
+  „ruestung“), Truhen-Inhalte der Mod (`Baustelle.modGegenstand`: Zugangskarte der eigenen Villa, Agenten-Teile),
+  Tänzerinnen (`butler/Taenzerinnen`: Puppe wird jeden Tick bewegt; Puppen sind unverwundbar, sonst erstickten sie an der
+  Stange), Haie (`hai/Haie`: unsichtbarer Delfin + zwei Anzeigen `polymer/hai` und `polymer/hai_schwanz` aus
+  `tools/paper/hai_modell.py`, Biss ohne Verursacher = wirkt auch auf Friedlich, Todesnachricht selbst gesetzt).
+  Geprüft mit `paper_agent*.txt`, `paper_nacht2.txt`, `paper_nacht3.txt` (Diener 24 → 16 → 8 → 5, Spieler im Becken
+  15,2 → 10,8 → 2,8). Autotest-Zeilen `server @/befehl` laufen als Konsole (Ausgabe im Serverprotokoll).
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
   ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
 
@@ -470,6 +481,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin: Nachbarvillen auf Paper prüfen (`/villa nachbar Max`), Haifalle/Rutsche/Goldbad, README-Abschnitt
-„Paper-Server“, Plugin-.jar im Release-Ablauf mitbauen; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
+Paper-Plugin: Haifalle/Rutsche/Goldbad, Mitarbeiter und Butler-Aufträge, Straßen zwischen den Villen; Release 0.4.1
+erst nach Philips „Release raus“; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
 Fortschrittsseite.

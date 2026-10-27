@@ -30,7 +30,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (gut 8 Minuten, echtes Minecraft, am Ende der Paper-Server)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (knapp 10 Minuten, echtes Minecraft, am Ende der Paper-Server)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
@@ -582,7 +582,7 @@ Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die
 
 Läuft dein Server mit [Paper](https://papermc.io/), nimm statt der Mod das Plugin `stinkendreich_paper-…+paper26.3.jar` aus dem [neuesten Release](https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/latest) und leg es in den `plugins`-Ordner. Mehr braucht es nicht – auch keine weiteren Plugins. Der Server liefert das Ressourcenpaket selbst aus (eingebauter Webserver auf Port 25580, einstellbar in `plugins/StinkendReich/config.yml`); Spieler nehmen es beim Betreten an und spielen mit ganz normalem Minecraft.
 
-In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt seine eigene Villa in der Nachbarschaft (im Hintergrund gebaut, ohne Hänger) samt Zugangskarte. Mit dabei sind fast alle Mechanismen der Mod: Türen, Tore und Rollläden, Kartenleser und Tastenfeld, Aufzug, Zugbrücke mit Animation, Sicherheitssystem mit Laser, Bewegungsmeldern, Sirenen und Tresorfallen, die Festung mit Minen und Abwehrgeschützen, der Inkognito-Modus, Smart Home mit Lichtfarben und Disco, Überwachungskameras, Konzertflügel und Musikanlage, Kamin, Whirlpool, Dusche und Schublade, Gemälde, Fuhrpark mit fahrbaren Autos, Hubschrauber, Fernseher und Butler James. Handy, Zentrale, Aufzug, Tastenfeld und Co. öffnen sich als Fenster.
+In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt seine eigene Villa in der Nachbarschaft (im Hintergrund gebaut, ohne Hänger) samt Zugangskarte. Mit dabei sind fast alle Mechanismen der Mod: Türen, Tore und Rollläden, Kartenleser und Tastenfeld, Aufzug, Zugbrücke mit Animation, Sicherheitssystem mit Laser, Bewegungsmeldern, Sirenen und Tresorfallen, die Festung mit Minen und Abwehrgeschützen, der Inkognito-Modus, Smart Home mit Lichtfarben und Disco, Überwachungskameras, Konzertflügel und Musikanlage, Kamin, Whirlpool, Dusche und Schublade, Gemälde, Fuhrpark mit fahrbaren Autos, Hubschrauber, Fernseher (Video-Link im Fenster, abspielen im Browser) und Butler James. Dazu der Agenten-Anzug mit allen Kräften, goldene Pistole, Laseruhr und Geldkanone, die Waffenkammer im Bunker, Bodyguards und Lieferservice per Handy, tanzende Tänzerinnen im Geheimclub und echte Haie im Becken, die auch auf „Friedlich“ zubeißen. Handy, Zentrale, Aufzug, Tastenfeld und Co. öffnen sich als Fenster.
 
 <table>
 <tr>
@@ -597,9 +597,21 @@ In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt sein
 <td><img src="docs/bilder/paper_kamera.jpg" alt="Überwachungskamera auf Paper"><br><sub>Monitor: Blick durch die Überwachungskamera</sub></td>
 <td><img src="docs/bilder/paper_klaviatur.jpg" alt="Klaviatur auf Paper"><br><sub>Konzertflügel: selbst spielen im Fenster</sub></td>
 </tr>
+<tr>
+<td><img src="docs/bilder/paper_waffenkammer.jpg" alt="Waffenkammer auf Paper"><br><sub>Waffenkammer im Bunker</sub></td>
+<td><img src="docs/bilder/paper_pistole.jpg" alt="Goldene Pistole auf Paper"><br><sub>Agenten-Anzug: goldene Pistole, oben die Kräfte des Anzugs</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/paper_bodyguards.jpg" alt="Bodyguards auf Paper"><br><sub>Per Handy: Bodyguards und ein gelieferter Hund</sub></td>
+<td><img src="docs/bilder/paper_taenzerinnen.jpg" alt="Tänzerinnen auf Paper"><br><sub>Geheimclub: die Tänzerinnen kreisen um die Stangen</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/paper_hai.jpg" alt="Hai auf Paper"><br><sub>Echte Haie im Becken</sub></td>
+<td><img src="docs/bilder/paper_haibiss.jpg" alt="Haibiss auf Paper"><br><sub>Wer ins Becken fällt, wird gebissen – auch auf „Friedlich“</sub></td>
+</tr>
 </table>
 
-Was auf Paper (noch) fehlt: Videos im Fernseher (er steht nur als Bild da), eigene Musik und Spotify, die Aufträge des Butlers (Bergbau, Holz …), Bodyguards, tanzende Tänzerinnen, echte Haie (dort Delfine), Straßen zwischen den Villen und die Agenten-Ausrüstung.
+Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser), eigene Musik und Spotify, die Aufträge des Butlers (Bergbau, Holz, Chauffeur …) und die Mitarbeiter, Straßen zwischen den Villen sowie Haifalle, Wasserrutsche und Goldmünzen-Becken.
 
 <br>
 
@@ -621,7 +633,7 @@ Beim Start schaut die Mod in den Releases dieses Projekts nach einer neueren Ver
 ./gradlew :1.21.4:buildAndCollect  # nur eine Version
 ```
 
-Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, Spieltest mit `tools/ingame/paper.sh`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
+Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt` und `paper_trailer2.txt`, Spieltest mit `tools/ingame/paper.sh`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
 
 **Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
 

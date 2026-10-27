@@ -87,6 +87,8 @@ joinedFirstServer:true
 narrator:0
 lang:de_de
 EOF
+# Für Trailer: CHAT_AUS=1 blendet den Chat aus (Rückmeldungen der Testbefehle stören im Bild)
+[[ "${CHAT_AUS:-0}" == 1 ]] && echo "chatVisibility:2" >> "$KLIENT/options.txt"
 python3 - "$KLIENT/servers.dat" "localhost:$PORT" <<'PY'
 import struct, sys
 def s(t): b = t.encode(); return struct.pack(">H", len(b)) + b
