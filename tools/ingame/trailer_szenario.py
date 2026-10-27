@@ -195,7 +195,9 @@ z("server /execute as @p run handy gast|rein|Aircrafter", "server /execute as @p
 titel("Bodyguards im Sakko, mit goldener Pistole")
 z("merke", "linksklick 640 440", "bis 10 Bodyguards sind da", "warte 1", "server /gamemode spectator",
   "server /execute at @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] run tp @p ^ ^1.6 ^5 facing entity "
-  "@e[type=stinkendreich:bodyguard,limit=1,sort=nearest] eyes", "warte 3")
+  "@e[type=stinkendreich:bodyguard,limit=1,sort=nearest] eyes", "warte 3",
+  # Die Bodyguards folgen dem Spieler sonst bis in die Nachbarvilla und schieben dort den Wagen aus dem Bild
+  "server /kill @e[type=stinkendreich:bodyguard]")
 
 titel("Agenten-Anzug, goldene Pistole, Geldkanone")
 z("server /gamemode survival", "server /difficulty normal",

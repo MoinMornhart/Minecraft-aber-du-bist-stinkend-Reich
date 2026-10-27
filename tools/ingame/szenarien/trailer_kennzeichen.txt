@@ -1,0 +1,31 @@
+# Ersatzszene für den Trailer: Nummernschild der Nachbarvilla (ohne Bodyguards vor dem Wagen), in Zeitlupe
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /difficulty peaceful
+merke
+server /villa nachbar Aircrafter
+bis 600 Baustelle: Villa 1 fertig
+warte 5
+server /villa hin 1
+warte 2
+server /villa ort 55.5 26 94 180 0
+server /execute at @p run summon stinkendreich:gelaendewagen ~ ~ ~ {Rotation:[180f,0f]}
+warte 8
+server /clear @p
+taste F1
+server /villa ort 55.5 26.3 99.5 180 12
+warte 8
+server /tick rate 6.667
+warte 3
+video start kennzeichen
+server /time set 6000
+kapitel … mit Straße und ihrem Namen auf dem Nummernschild
+server /villa ort 55.5 26.3 99.5 180 12
+warte 3
+merke
+server fahrt 5 | 55.50 26.30 99.50 180.0 12.0 | 55.50 26.30 98.40 180.0 14.0
+bis 105 Fahrt fertig
+warte 3
+video stopp
+server /tick rate 20

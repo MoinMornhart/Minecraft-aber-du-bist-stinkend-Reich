@@ -337,6 +337,7 @@ warte 3
 server /gamemode spectator
 server /execute at @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] run tp @p ^ ^1.6 ^5 facing entity @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] eyes
 warte 9
+server /kill @e[type=stinkendreich:bodyguard]
 server /time set 6000
 kapitel Agenten-Anzug, goldene Pistole, Geldkanone
 server /gamemode survival
@@ -366,17 +367,17 @@ server /time set 6000
 kapitel Inkognito: Die Villa fährt in die Erde
 server /villa ort 118 58 128 139 19
 warte 3
-server /villa inkognito an
 merke
+server /villa inkognito an
 server fahrt 11 | 118.00 58.00 128.00 139.0 19.0 | 90.00 52.00 140.00 160.0 18.0 | 56.00 46.00 150.00 180.0 16.0
-bis 159 Fahrt fertig
+warte 34.5
 bis 360 Inkognito: Villa 0 ist unten
 server /time set 6000
 kapitel … und taucht wieder auf
-server /villa inkognito aus
 merke
+server /villa inkognito aus
 server fahrt 11 | 56.00 46.00 150.00 180.0 16.0 | 90.00 52.00 140.00 160.0 18.0 | 118.00 58.00 128.00 139.0 19.0
-bis 159 Fahrt fertig
+warte 34.5
 bis 360 Inkognito: Villa 0 ist oben
 server /time set 6000
 kapitel Neue Freunde bekommen ihre eigene Villa
