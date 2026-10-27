@@ -287,6 +287,10 @@ public final class Butler implements Listener {
             auftragGeben(p, nr, Holzfaeller.HOLZ, menge(satz));
             return;
         }
+        if (satz.contains("fahr") && !satz.contains("flieg")) {
+            fahren(p, nr, satz);
+            return;
+        }
         if (satz.contains("flieg") || satz.contains("hubschrauber") || satz.contains("heli")) {
             fliegen(p, nr, satz);
             return;
@@ -439,6 +443,94 @@ public final class Butler implements Listener {
                 : "Sehr wohl. Ich hole Sie mit dem Hubschrauber ab und fliege Sie " + name + ".");
     }
 
+    /**
+     * „Fahr mich zur Villa von Max“ / „fahr mich nach Hause“: James fährt die Limo ans Ende der Zufahrt und den Herrn
+     * über die Straßen zwischen den Villen hin (von einer Nachbarvilla zur anderen über die Spawn-Villa).
+     */
+    private void fahren(Player p, int nr, String satz) {
+        Mannequin puppe = puppen.get(nr);
+        WanderingTrader k = koerper.get(nr);
+        Villen.Villa eigene = plugin.villen().nr(nr);
+        var strassen = plugin.strassen();
+        if (puppe == null || k == null || eigene == null) {
+            sagen(p, "Verzeihung, ich bin gerade nicht erreichbar.");
+            return;
+        }
+        // Ziel: Villa eines Nachbarn oder nach Hause
+        Villen.Villa ziel = null;
+        for (Villen.Villa v : plugin.villen().alle()) {
+            String herrName = v.besitzerName() == null ? "" : v.besitzerName().toLowerCase(Locale.GERMAN);
+            if (!herrName.isEmpty() && satz.contains(herrName) && !v.equals(eigene)) {
+                ziel = v;
+            }
+        }
+        if (ziel == null && (satz.contains("hause") || satz.contains("heim") || satz.contains("meine villa") || satz.contains("zurück"))) {
+            ziel = eigene;
+        }
+        if (ziel == null) {
+            sagen(p, "Wohin darf ich Sie fahren? Nach Hause oder zur Villa eines Nachbarn. Ins Dorf fliege ich Sie gern.");
+            return;
+        }
+        // Wo steht der Herr? An der Spawn-Villa (Anfang aller Straßen) oder am Ende einer Straße?
+        int von = -1;
+        double beste = 120 * 120;
+        for (Villen.Villa v : plugin.villen().alle()) {
+            Location vor = strassen.villaZiel(v);
+            if (vor.getWorld().equals(p.getWorld()) && vor.distanceSquared(p.getLocation()) < beste) {
+                beste = vor.distanceSquared(p.getLocation());
+                von = v.nr();
+            }
+        }
+        if (von < 0) {
+            sagen(p, "Bitte gehen Sie zuerst zu einer Villa – ich fahre nur auf den Straßen zwischen den Villen.");
+            return;
+        }
+        if (von == ziel.nr()) {
+            sagen(p, "Wir sind schon da.");
+            return;
+        }
+        // Weg: zurück zur Spawn-Villa (umgekehrte Straße), dann hin zur Zielvilla
+        List<int[]> weg = new java.util.ArrayList<>();
+        if (von != 0) {
+            var zurueck = strassen.zur(von);
+            if (zurueck == null) {
+                sagen(p, "Verzeihung, von hier führt noch keine Straße weg.");
+                return;
+            }
+            List<int[]> r = new java.util.ArrayList<>(zurueck.punkte());
+            java.util.Collections.reverse(r);
+            weg.addAll(r);
+        }
+        if (ziel.nr() != 0) {
+            var hin = strassen.zur(ziel.nr());
+            if (hin == null) {
+                sagen(p, "Verzeihung, zur " + ziel.name() + " gibt es noch keine Straße. Soll ich Sie fliegen?");
+                return;
+            }
+            weg.addAll(hin.punkte());
+        }
+        if (weg.size() < 2) {
+            sagen(p, "Verzeihung, dorthin finde ich keinen Weg.");
+            return;
+        }
+        // Wagen: die Limo in der Nähe, sonst eine aus der Garage der Villa, sonst eine neue
+        int[] a = weg.getFirst();
+        Location start = new Location(p.getWorld(), a[0] + 0.5, a[1] + 1, a[2] + 0.5);
+        org.bukkit.entity.ArmorStand limo = plugin.fahrzeuge().fahrzeug(de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO, start, 200);
+        if (limo == null) {
+            limo = plugin.fahrzeuge().abstellen(de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO, 0, start, 0);
+        }
+        Auftrag alt = auftraege.remove(nr);
+        if (alt != null) {
+            alt.abbrechen();
+        }
+        k.getPathfinder().stopPathfinding();
+        String name = ziel == eigene ? "nach Hause" : "zur " + ziel.name();
+        auftraege.put(nr, new Chauffeur(plugin, k, puppe, p, limo, weg, name));
+        modusSetzen(nr, Modus.ARBEIT);
+        sagen(p, "Sehr wohl, ich fahre Sie " + name + ".");
+    }
+
     /** Gefundene Dörfer je Welt (die Suche kostet den Server spürbar Zeit, Dörfer wandern nicht). */
     private final Map<UUID, Location> doerfer = new HashMap<>();
 
@@ -565,6 +657,7 @@ public final class Butler implements Listener {
                 Dialoge.Knopf.von("16 Holz holen", (s, a) -> befehl(s, "hol mir 16 holz")),
                 Dialoge.Knopf.von("Auf die Jagd gehen", (s, a) -> befehl(s, "jag mir 8 fleisch")),
                 Dialoge.Knopf.von("Truhen hier sortieren", (s, a) -> befehl(s, "sortier die truhen")),
+                Dialoge.Knopf.von("Limo: nach Hause", (s, a) -> befehl(s, "fahr mich nach hause")),
                 Dialoge.Knopf.von("Hubschrauber: nach Hause", (s, a) -> befehl(s, "flieg mich nach hause")),
                 Dialoge.Knopf.von("Hubschrauber: ins Dorf", (s, a) -> befehl(s, "flieg mich ins dorf")),
                 Dialoge.Knopf.von("Was machst du gerade?", (s, a) -> befehl(s, "was machst du"))));

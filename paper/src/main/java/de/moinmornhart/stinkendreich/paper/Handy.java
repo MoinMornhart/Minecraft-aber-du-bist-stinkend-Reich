@@ -105,6 +105,10 @@ public final class Handy implements Listener {
             if (v != eigene && v.besitzerName() != null && !v.besitzerName().isEmpty()) {
                 knoepfe.add(Dialoge.Knopf.von("Hubschrauber: " + v.name(), (s, a) -> butler.befehl(s,
                         "flieg mich zur villa von " + v.besitzerName().toLowerCase(java.util.Locale.GERMAN))));
+                if (plugin.strassen().zur(v.nr()) != null) {
+                    knoepfe.add(Dialoge.Knopf.von("Limo: " + v.name(), (s, a) -> butler.befehl(s,
+                            "fahr mich zur villa von " + v.besitzerName().toLowerCase(java.util.Locale.GERMAN))));
+                }
             }
         }
         Dialoge.zeigen(p, "Goldenes Handy", "Was darf es sein?", List.of(), knoepfe);

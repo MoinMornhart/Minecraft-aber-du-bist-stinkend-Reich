@@ -130,8 +130,8 @@ public final class Fahrzeuge implements Listener {
     // Aufstellen
     // ------------------------------------------------------------------
 
-    /** Stellt ein Fahrzeug ab (Fuhrpark, Landeplatz). */
-    public void abstellen(Art art, int farbe, Location ort, float blick) {
+    /** Stellt ein Fahrzeug ab (Fuhrpark, Landeplatz) und gibt seinen Körper zurück. */
+    public ArmorStand abstellen(Art art, int farbe, Location ort, float blick) {
         Location l = ort.clone();
         l.setYaw(blick);
         l.setPitch(0);
@@ -150,6 +150,7 @@ public final class Fahrzeuge implements Listener {
             }
         });
         aufnehmen(k);
+        return k;
     }
 
     private void aufnehmen(Entity e) {
@@ -385,16 +386,29 @@ public final class Fahrzeuge implements Listener {
 
     /** Der nächste Hubschrauber im Umkreis, an dessen Steuer kein Spieler sitzt, oder null. */
     public ArmorStand hubschrauber(Location nahe, double radius) {
+        return fahrzeug(Art.HUBSCHRAUBER, nahe, radius);
+    }
+
+    /** Das nächste Fahrzeug dieser Art im Umkreis, an dessen Steuer kein Spieler sitzt, oder null. */
+    public ArmorStand fahrzeug(Art art, Location nahe, double radius) {
         ArmorStand beste = null;
         for (Wagen w : wagen.values()) {
             Location l = w.koerper.getLocation();
-            if (w.art.fliegt() && w.koerper.isValid() && fahrer(w) == null && l.getWorld().equals(nahe.getWorld())
+            if (w.art == art && w.koerper.isValid() && fahrer(w) == null && l.getWorld().equals(nahe.getWorld())
                     && l.distanceSquared(nahe) < radius * radius
                     && (beste == null || l.distanceSquared(nahe) < beste.getLocation().distanceSquared(nahe))) {
                 beste = w.koerper;
             }
         }
         return beste;
+    }
+
+    /** Stellt ein Fahrzeug an eine andere Stelle (James fährt vor), ohne Schwerkraft, solange der Autopilot fährt. */
+    public void vorfahren(ArmorStand fahrzeug, Location ort, boolean autopilot) {
+        fahrzeug.setGravity(!autopilot && !Art.von(fahrzeug.getPersistentDataContainer()
+                .getOrDefault(schluesselArt, PersistentDataType.STRING, "")).fliegt());
+        fahrzeug.setVelocity(new Vector());
+        fahrzeug.teleport(ort, io.papermc.paper.entity.TeleportFlag.EntityState.RETAIN_PASSENGERS);
     }
 
     /** Setzt jemanden (James) auf den Pilotensitz; false, wenn der besetzt ist. */

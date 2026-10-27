@@ -96,6 +96,32 @@ public final class VillaBefehle implements TabExecutor {
                     antwort(wer, "Agenten-Ausrüstung im Inventar.");
                 }
             }
+            case "strassen" -> antwort(wer, "Straßen: " + plugin.strassen().uebersicht());
+            case "strasse" -> {
+                // Testhilfe: Straße zu einer Villa (neu) bauen
+                Villen.Villa v = args.length > 1 ? plugin.villen().nr(Integer.parseInt(args[1])) : null;
+                if (v == null) {
+                    antwort(wer, "Welche Villa? /villa strasse <nummer>");
+                } else {
+                    plugin.strassen().neu(v);
+                    antwort(wer, "Straße zur " + v.name() + " vorgemerkt.");
+                }
+            }
+            case "strassenblick" -> {
+                // Testhilfe für Bilder: über der ersten Straße an Stelle <anteil> (0–1), Blick die Straße entlang
+                var liste = plugin.strassen().alle();
+                if (p == null || liste.isEmpty()) {
+                    antwort(wer, "Noch keine Straße.");
+                } else {
+                    var punkte = liste.getFirst().punkte();
+                    double anteil = args.length > 1 ? Double.parseDouble(args[1]) : 0.5;
+                    int i = (int) Math.clamp(anteil * (punkte.size() - 1), 0, punkte.size() - 1);
+                    int[] a = punkte.get(Math.max(0, i - 14)), b = punkte.get(Math.min(punkte.size() - 1, i + 6));
+                    Location l = new Location(p.getWorld(), a[0] + 0.5, a[1] + (args.length > 2 ? Double.parseDouble(args[2]) : 14), a[2] + 0.5);
+                    l.setDirection(new org.bukkit.util.Vector(b[0] - a[0], b[1] + 1 - l.getY(), b[2] - a[2]));
+                    p.teleport(l);
+                }
+            }
             case "einsteigen" -> {
                 // Testhilfe: ins nächste Fahrzeug einsteigen (wie Rechtsklick)
                 if (p != null && !plugin.fahrzeuge().einsteigen(p)) {

@@ -58,6 +58,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private de.moinmornhart.stinkendreich.paper.butler.Mitarbeiter mitarbeiter;
     private de.moinmornhart.stinkendreich.paper.block.Inkognito inkognito;
     private de.moinmornhart.stinkendreich.paper.block.Unterhaltung unterhaltung;
+    private de.moinmornhart.stinkendreich.paper.strasse.Strassen strassen;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
     private Baustelle baustelle;
     private final Deque<Runnable> warteschlange = new ArrayDeque<>();
@@ -157,6 +158,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         });
         fahrzeuge = new de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge(this);
         getServer().getPluginManager().registerEvents(fahrzeuge, this);
+        strassen = new de.moinmornhart.stinkendreich.paper.strasse.Strassen(this);
         getServer().getPluginManager().registerEvents(paket, this);
         getServer().getPluginManager().registerEvents(this, this);
         VillaBefehle.registrieren(this);
@@ -183,6 +185,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         }
         if (paket != null) {
             paket.stoppen();
+        }
+        if (strassen != null) {
+            strassen.beenden();                         // Lade-Tickets des Straßenbaus zurückgeben
         }
     }
 
@@ -270,6 +275,10 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         return mitarbeiter;
     }
 
+    public de.moinmornhart.stinkendreich.paper.strasse.Strassen strassen() {
+        return strassen;
+    }
+
     public de.moinmornhart.stinkendreich.paper.block.Fernseher fernseher() {
         return fernseher;
     }
@@ -321,6 +330,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         wartende.add(besitzer);
         bauen(new Baustelle(this, spawnVilla.world(), platz[0], platz[1], villen.naechsteNummer(), besitzer, name, villa -> {
             wartende.remove(besitzer);
+            strassen.zurVilla(villa);                   // Straße von der Spawn-Villa bis vor die Tür
             Player p = Bukkit.getPlayer(besitzer);
             if (p != null) {
                 p.teleport(villa.spawn(bauplan));

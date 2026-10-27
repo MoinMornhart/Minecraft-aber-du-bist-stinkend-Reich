@@ -288,6 +288,16 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   (Phase LANDEN). Liegt der Landeplatz in einem ungeladenen Chunk, wird er kurz geladen und die Suche wiederholt. Dorf
   wird eine Minute nach dem Start vorab gesucht. Test `paper_flug2.txt` (aus 26 Blöcken Höhe ausgestiegen: 20/20 Leben).
   Regression nach den Umbauten: `paper_auto.txt`, `paper_nacht1.txt` ohne Fehler.
+- Straßen und Chauffeur auf Paper (07:50): `strasse/StrassenBau` (Port aus der Mod: 7 breit, Mittellinie, Bordstein,
+  Laternen, Stufen, offener Einschnitt, Brücken; Chunks per `getChunkAtAsync` + Plugin-Ticket; Natürliches über
+  `strasse/Natur`; Landminen der Festung werden überbaut), `strasse/Strassen` (Warteschlange, `strassen.json`, Straße
+  von der Zufahrt der Spawn-Villa zur Zufahrt jeder Nachbarvilla, seitliche Wegpunkte, wenn das Ziel hinter einer Villa
+  liegt; Villen ohne Straße werden 30 s nach dem Start nachgeholt). Im Gebirge wird die Straße mit der Zeit „geduldiger“
+  (`strenge`: weniger Umwege, mehr Einschnitt) – vorher kreiste sie und brach ab. `butler/Chauffeur`: Limo fährt ans Ende
+  der Zufahrt, James am Steuer, Fahrt „auf Schienen“ über die Mittellinie (bis 0,75 Blöcke/Tick, vor Kurven langsamer).
+  Befehle „fahr mich zur Villa von Max“ / „nach Hause“ (über die Spawn-Villa), Handy-Knopf „Limo: Villa von …“.
+  Testhilfen `/villa strassen`, `/villa strasse <nr>`, `/villa strassenblick <anteil> [höhe]`. Tests `paper_strasse.txt`
+  (714 Schritte bis ans Ziel), `paper_chauffeur.txt` (ganze Straße gefahren).
 - Trailer (07:15, 11:35): neuer Paper-Teil 3 (1:53) am Ende: Haifalle, Rutsche, Münzbecken, Tunnel, Holz, Sortieren,
   Jagd, Mitarbeiter, Hubschrauber. Aufnahme in Stücken (`paper_trailer3.txt` a–g, `paper_trailer3h.txt` h–j, mit
   `CHAT_AUS=1`), Schnitt `tools/ingame/trailer3_schnitt.py` (Leerlauf raus), dann `video.py` und an `docs/trailer.mp4`
@@ -513,6 +523,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin: Chauffeur im Auto, Straßen zwischen den Villen; Trailer-Teil 3 (Haifalle, Rutsche, Erz, Mitarbeiter, Holz, Sortieren, Jagd); Release 0.4.1
+Paper-Plugin: Feinschliff Straßen/Chauffeur (Bilder, Trailer); Trailer-Teil 3 (Haifalle, Rutsche, Erz, Mitarbeiter, Holz, Sortieren, Jagd); Release 0.4.1
 erst nach Philips „Release raus“; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
 Fortschrittsseite.

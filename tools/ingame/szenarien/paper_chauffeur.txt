@@ -1,0 +1,39 @@
+# Paper-Plugin: Straße zur Nachbarvilla, dann James als Chauffeur in der Limo dorthin
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+merke
+server /villa nachbar Max
+bis 120 Straßen: baue
+merke
+bis 300 Straßen: Straße zur Villa von Max fertig
+server /villa strassen
+server /time set 6000
+server /villa ort 54.5 boden 126 0 0
+warte 2
+merke
+server /butler fahr mich zur villa von max
+bis 20 Chauffeur: Start
+server /villa strassenblick 0 2.5
+warte 2
+bild pc_limo
+server /villa einsteigen
+merke
+bis 10 Chauffeur: losgefahren
+taste F5
+warte 5
+bild pc_fahrt1
+warte 10
+bild pc_fahrt2
+warte 10
+bild pc_fahrt3
+merke
+bis 240 Chauffeur: angekommen
+warte 2
+bild pc_ziel
+taste F5
+taste F5
+server @/execute as Philip run data get entity Philip Pos
