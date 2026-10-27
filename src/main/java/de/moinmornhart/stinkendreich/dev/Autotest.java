@@ -79,6 +79,10 @@ public final class Autotest {
                 StinkendReich.LOGGER.info("Autotest-Befehl: {}", zeile);
                 if (zeile.startsWith("fahrt ")) {
                     fahrtStarten(zeile.substring(6));
+                } else if (zeile.equals("offline")) {
+                    // Geöffnete Einzelspielerwelt ohne Anmeldung bei Mojang (Test wie NoRisk „Hosted Worlds“/LAN:
+                    // in der Testumgebung gibt es keine echten Konten); danach „/publish …“
+                    server.setUsesAuthentication(false);
                 }
                 //? if >=1.21.2 {
                 else if (zeile.startsWith("eingabe")) {

@@ -1,0 +1,38 @@
+# Neue Häute (Spieler-Layout mit zweiter Schicht): vier Tänzerinnen und James, von vorn, hinten und der Seite.
+# Tänzerinnen werden für das Foto vor der Villa aufgestellt (ohne KI, „laufen|Kostüm“ = steht frei).
+warte 30
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+taste F1
+server /villa ort 55.5 26 84 180 0
+warte 2
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|0"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|1"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|2"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|3"}
+warte 3
+bild s01_taenzerinnen_vorn
+server /execute as @p at @s run tp @s ^ ^ ^8 ~180 0
+warte 3
+bild s02_taenzerinnen_hinten
+server /execute as @e[type=stinkendreich:taenzerin,limit=1,sort=nearest] at @s run tp @p ^1.8 ^ ^0.4 facing entity @s
+warte 3
+bild s03_taenzerin_seite
+server /execute as @e[type=stinkendreich:taenzerin,limit=1,sort=nearest] at @s run tp @p ^ ^ ^1.8 facing entity @s eyes
+warte 3
+bild s04_taenzerin_nah
+# James
+server /villa ort 55.5 26 70 0 0
+warte 2
+server /data merge entity @e[type=stinkendreich:butler,limit=1] {NoAI:1b}
+server /execute as @p at @s run tp @e[type=stinkendreich:butler,limit=1,sort=nearest] ^ ^ ^2.4 facing entity @s
+warte 3
+bild s05_james_vorn
+server /execute as @e[type=stinkendreich:butler,limit=1,sort=nearest] at @s run tp @p ^ ^ ^-2.4 facing entity @s
+warte 3
+bild s06_james_hinten
+server /execute as @e[type=stinkendreich:butler,limit=1,sort=nearest] at @s run tp @p ^2.2 ^ ^0.6 facing entity @s
+warte 3
+bild s07_james_seite

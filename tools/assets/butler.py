@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Erzeugt Textur, Glöckchen-Item und Texte für den Butler.
 
-Textur (64x64): oben die Menschengestalt im klassischen Layout (Kopf, Körper, ein Arm, ein Bein,
-linke Seite gespiegelt), unten die Zusatzteile des eigenen Modells (Frackschöße, Fliege, Haar),
-siehe ButlerModell.java.
+Textur (64x64) im Layout einer Spieler-Haut mit beiden Schichten (tools/assets/spielerhaut.py), damit James auch als
+Schaufensterpuppe (Server ohne Mod, Paper) vollständig aussieht. Die zweite Schicht trägt das gekämmte Haar mit
+Seitenscheitel und grauen Schläfen (Hut-Schicht), Frack mit Revers und Einstecktuch (Jacke), Ärmel und Schuhe. In
+freien Ecken liegen die Zusatzteile des eigenen Modells (ButlerModell): Fliege (24,0) und Frackschöße (56,16).
 
 Aufruf: python3 tools/assets/butler.py
 """
@@ -11,9 +12,14 @@ from __future__ import annotations
 
 import json
 import random
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from spielerhaut import (AERMEL_R, ARM_R, BEIN_R, HOSE_R, HUT, JACKE, KOERPER, KOPF,  # noqa: E402
+                         linke_seite, wuerfel)
 
 WURZEL = Path(__file__).resolve().parents[2]
 ASSETS = WURZEL / "src/main/resources/assets/stinkendreich"
@@ -22,10 +28,11 @@ ASSETS = WURZEL / "src/main/resources/assets/stinkendreich"
 HAUT = (222, 176, 140)
 HAUT_DUNKEL = (196, 148, 114)
 HAAR = (58, 52, 48)
-HAAR_GRAU = (150, 150, 152)
+HAAR_HELL = (84, 76, 70)
+HAAR_GRAU = (158, 158, 160)
 FRACK = (22, 22, 28)
 FRACK_HELL = (38, 38, 48)
-REVERS = (44, 44, 56)
+REVERS = (52, 52, 66)
 HEMD = (238, 238, 232)
 HEMD_SCHATTEN = (208, 208, 202)
 WESTE = (70, 70, 82)
@@ -34,149 +41,178 @@ FLIEGE = (12, 12, 14)
 HOSE = (26, 26, 32)
 STREIFEN = (46, 46, 56)
 SCHUH = (8, 8, 10)
-SCHUH_GLANZ = (60, 60, 66)
+SCHUH_GLANZ = (70, 70, 78)
 HANDSCHUH = (244, 244, 240)
 AUGE = (40, 60, 110)
+TUCH = (196, 160, 60)
 
 
-def flaeche(img: Image.Image, x0: int, y0: int, b: int, h: int, farbe, rauschen: int = 6, saat: int = 0) -> None:
-    """Füllt ein Rechteck mit leicht verrauschter Farbe (wirkt wie Stoff)."""
-    r = random.Random(saat * 1000 + x0 * 31 + y0)
-    for x in range(x0, x0 + b):
-        for y in range(y0, y0 + h):
-            d = r.randint(-rauschen, rauschen)
-            img.putpixel((x, y), tuple(max(0, min(255, c + d)) for c in farbe) + (255,))
-
-
-def quader(img, u, v, b, h, t, oben, unten, rechts, vorne, links, hinten, saat=0):
-    """Malt die sechs Seiten eines Modellquaders (Minecraft-Aufteilung ab u, v)."""
-    flaeche(img, u + t, v, b, t, oben, saat=saat)
-    flaeche(img, u + t + b, v, b, t, unten, saat=saat + 1)
-    flaeche(img, u, v + t, t, h, rechts, saat=saat + 2)
-    flaeche(img, u + t, v + t, b, h, vorne, saat=saat + 3)
-    flaeche(img, u + t + b, v + t, t, h, links, saat=saat + 4)
-    flaeche(img, u + 2 * t + b, v + t, b, h, hinten, saat=saat + 5)
-
-
-def kopf(img: Image.Image) -> None:
-    quader(img, 0, 0, 8, 8, 8, HAAR, HAUT_DUNKEL, HAUT, HAUT, HAUT, HAAR, saat=1)
-    p = img.putpixel
-    # Haar seitlich und hinten, graue Schläfen
-    for x in range(0, 8):
-        for y in range(8, 11):
-            p((x, y), HAAR + (255,))          # rechte Seite oben
-            p((16 + x, y), HAAR + (255,))     # linke Seite oben
-    for y in range(11, 13):
-        for x in (5, 6, 7):
-            p((x, y), HAAR_GRAU + (255,))
-        for x in (16, 17, 18):
-            p((x, y), HAAR_GRAU + (255,))
-    for x in range(24, 32):
-        for y in range(8, 14):
-            p((x, y), HAAR + (255,))
-    # Gesicht (vorne: x 8..15, y 8..15)
-    for x in range(8, 16):
-        p((x, 8), HAAR + (255,))               # Haaransatz
-    p((8, 9), HAAR + (255,))
-    p((15, 9), HAAR + (255,))
-    for x in (9, 10, 13, 14):
-        p((x, 10), HAAR_GRAU + (255,))         # Augenbrauen
-    p((9, 11), (250, 250, 250, 255))
-    p((10, 11), AUGE + (255,))
-    p((13, 11), AUGE + (255,))
-    p((14, 11), (250, 250, 250, 255))
-    p((11, 12), HAUT_DUNKEL + (255,))          # Nase
-    p((12, 12), HAUT_DUNKEL + (255,))
-    for x in range(10, 14):
-        p((x, 13), HAAR_GRAU + (255,))         # gepflegter Schnurrbart
-    p((9, 13), HAAR_GRAU + (255,))
-    p((14, 13), HAAR_GRAU + (255,))
-    for x in (11, 12):
-        p((x, 14), (170, 100, 90, 255))        # Mund
-    # Hutschicht (32..63 oben) bleibt durchsichtig
-
-
-def koerper(img: Image.Image) -> None:
-    # Körper: u=16 v=16, 8 breit, 12 hoch, 4 tief
-    quader(img, 16, 16, 8, 12, 4, FRACK, FRACK, FRACK, FRACK, FRACK, FRACK, saat=2)
-    p = img.putpixel
-    vx, vy = 20, 20  # Vorderseite
-    for y in range(12):
-        for x in range(8):
-            mitte = 2 <= x <= 5
-            if mitte and y < 9:
-                farbe = HEMD if (x in (3, 4) or y < 2) else WESTE
-                if y >= 2 and x in (2, 5):
-                    farbe = WESTE
-                if y < 2:
-                    farbe = HEMD
-                p((vx + x, vy + y), farbe + (255,))
-            elif x in (1, 6) and y < 7:
-                p((vx + x, vy + y), REVERS + (255,))   # Revers
-    # Fliege und Knöpfe
-    for x in (2, 3, 4, 5):
-        p((vx + x, vy + 0), FLIEGE + (255,))
-    p((vx + 3, vy + 1), FLIEGE + (255,))
-    p((vx + 4, vy + 1), FLIEGE + (255,))
-    for y in (4, 6, 8):
-        p((vx + 3, vy + y), KNOPF + (255,))
-    for x in range(8):
-        p((vx + x, vy + 11), FRACK_HELL + (255,))  # Saum
-    # Rücken: Naht in der Mitte
-    for y in range(4, 12):
-        p((32 + 3, 20 + y), FRACK_HELL + (255,))
-        p((32 + 4, 20 + y), FRACK_HELL + (255,))
-
-
-def arm(img: Image.Image) -> None:
-    # Arm: u=40 v=16, 4x12x4 – schwarzer Ärmel, weiße Manschette, weiße Handschuhe
-    quader(img, 40, 16, 4, 12, 4, FRACK, HANDSCHUH, FRACK, FRACK, FRACK, FRACK, saat=3)
-    for seite_u in (40, 44, 48, 52):
-        for x in range(seite_u, seite_u + 4):
-            img.putpixel((x, 20 + 8), HEMD_SCHATTEN + (255,))
-            for y in (29, 30, 31):
-                img.putpixel((x, 20 + y - 20), HANDSCHUH + (255,))
-
-
-def bein(img: Image.Image) -> None:
-    # Bein: u=0 v=16, 4x12x4 – Hose mit Seitenstreifen, polierte Schuhe
-    quader(img, 0, 16, 4, 12, 4, HOSE, SCHUH, HOSE, HOSE, HOSE, HOSE, saat=4)
-    for y in range(20, 30):
-        img.putpixel((1, y), STREIFEN + (255,))    # rechte Außenseite
-        img.putpixel((10, y), STREIFEN + (255,))   # linke Außenseite
-    for seite_u in (0, 4, 8, 12):
-        for x in range(seite_u, seite_u + 4):
-            for y in (30, 31):
-                img.putpixel((x, y), SCHUH + (255,))
-    img.putpixel((5, 30), SCHUH_GLANZ + (255,))
-    img.putpixel((6, 30), SCHUH_GLANZ + (255,))
-
-
-def zusatzteile(img: Image.Image) -> None:
-    # Frackschöße (0,32) und (12,32): je ca. 9x9 Pixel Fläche
-    flaeche(img, 0, 32, 10, 10, FRACK, saat=5)
-    flaeche(img, 12, 32, 10, 10, FRACK, saat=6)
-    for x in range(0, 10):
-        img.putpixel((x, 41), FRACK_HELL + (255,))
-    for x in range(12, 22):
-        img.putpixel((x, 41), FRACK_HELL + (255,))
-    # Fliege (24,32): Satin mit Glanz
-    flaeche(img, 24, 32, 11, 3, FLIEGE, rauschen=2, saat=7)
-    for x in (26, 31):
-        img.putpixel((x, 33), (48, 48, 56, 255))
-    # Haar oben (0,42): 34x10
-    flaeche(img, 0, 42, 35, 10, HAAR, rauschen=8, saat=8)
-    for x in range(0, 35, 3):
-        img.putpixel((x, 46), (74, 68, 62, 255))   # Kammspuren
+def stoff(farbe, x, y, saat=0, staerke=5):
+    """Farbe mit leichtem Rauschen (wirkt wie Stoff), an jeder Stelle immer gleich."""
+    d = random.Random(saat * 7919 + x * 131 + y).randint(-staerke, staerke)
+    return tuple(max(0, min(255, c + d)) for c in farbe)
 
 
 def textur() -> Image.Image:
     img = Image.new("RGBA", (64, 64), (0, 0, 0, 0))
-    kopf(img)
-    koerper(img)
-    arm(img)
-    bein(img)
-    zusatzteile(img)
+
+    # Kopf: Gesicht mit grauen Brauen, blauen Augen, gepflegtem Schnurrbart; Haar oben, hinten und an den Seiten
+    def kopf(s, x, y, w, h):
+        if s == "oben":
+            return stoff(HAAR, x, y, 1)
+        if s == "unten":
+            return HAUT_DUNKEL
+        if s == "hinten":
+            return stoff(HAAR, x, y, 2) if y < 6 else HAUT
+        if s in ("rechts", "links"):
+            hinten = (s == "rechts" and x < 3) or (s == "links" and x > 4)
+            if y < 2 or (hinten and y < 6):
+                return stoff(HAAR, x, y, 3)
+            if y in (2, 3) and not hinten:
+                return HAAR_GRAU                                   # graue Schläfen
+            if y == 4 and ((s == "rechts" and x == 4) or (s == "links" and x == 3)):
+                return HAUT_DUNKEL                                 # Ohr
+            return HAUT
+        # vorn
+        if y == 0:
+            return HAAR
+        if y == 1 and x in (0, 7):
+            return HAAR_GRAU
+        if y == 2 and x in (1, 2, 5, 6):
+            return HAAR_GRAU                                       # Augenbrauen
+        if y == 3:
+            return {1: (250, 250, 250), 2: AUGE, 5: AUGE, 6: (250, 250, 250)}.get(x, HAUT)
+        if y == 4 and x in (3, 4):
+            return HAUT_DUNKEL                                     # Nase
+        if y == 5 and 1 <= x <= 6:
+            return HAAR_GRAU if x not in (3, 4) else (176, 176, 178)   # Schnurrbart
+        if y == 6 and x in (3, 4):
+            return (170, 100, 90)                                  # Mund
+        return HAUT
+    wuerfel(img, *KOPF, 8, 8, 8, kopf)
+
+    # Haar-Schicht: glatt nach hinten gekämmt, Seitenscheitel links, graue Schläfen, hinten bis zum Nacken
+    def haar(s, x, y, w, h):
+        if s == "unten":
+            return None
+        if s == "oben":
+            if x == 2:
+                return HAAR_HELL if y % 2 else HAAR                # Scheitel
+            return HAAR_HELL if (x + y) % 4 == 0 else stoff(HAAR, x, y, 4)
+        if s == "hinten":
+            return stoff(HAAR, x, y, 5) if y < 5 else None
+        if s in ("rechts", "links"):
+            hinten = (s == "rechts" and x < 4) or (s == "links" and x > 3)
+            if y < 2:
+                return stoff(HAAR, x, y, 6)
+            if y < 4 and hinten:
+                return stoff(HAAR, x, y, 6)
+            if y < 4:
+                return HAAR_GRAU if (x + y) % 2 else (176, 176, 178)
+            return None
+        # vorn: Haaransatz, links etwas Schwung vom Scheitel
+        if y == 0 or (y == 1 and x >= 4):
+            return stoff(HAAR, x, y, 7)
+        return None
+    wuerfel(img, *HUT, 8, 8, 8, haar)
+
+    # Körper: Hemd mit Kragen, graue Weste mit Goldknöpfen und Uhrkette, Frack an den Seiten und hinten
+    def koerper(s, x, y, w, h):
+        if s in ("oben", "unten"):
+            return FRACK
+        if s == "vorn":
+            if y == 0 and 2 <= x <= 5:
+                return FLIEGE                                      # Fliege (in der Mod zusätzlich als eigenes Teil)
+            if 2 <= x <= 5 and y < 9:
+                if y < 2 or x in (3, 4) and y < 3:
+                    return HEMD
+                if x in (3, 4):
+                    return KNOPF if y in (4, 6, 8) and x == 3 else WESTE
+                if y == 5 and x == 5:
+                    return KNOPF                                   # Uhrkette
+                return WESTE
+            if y >= 11:
+                return FRACK_HELL
+            return stoff(FRACK, x, y, 8)
+        if s == "hinten" and x in (3, 4) and y >= 4:
+            return FRACK_HELL                                      # Naht
+        return stoff(FRACK, x, y, 9)
+    wuerfel(img, *KOERPER, 8, 12, 4, koerper)
+
+    # Jacken-Schicht: Frackvorderteile mit glänzendem Revers, Einstecktuch, Schultern und Rücken
+    def jacke(s, x, y, w, h):
+        if s == "unten":
+            return None
+        if s == "oben":
+            return stoff(FRACK, x, y, 10)
+        if s == "vorn":
+            if y >= 9:
+                return None                                        # Frack ist vorn kurz (Weste sichtbar)
+            if x in (0, 7):
+                return stoff(FRACK, x, y, 11)
+            if x in (1, 6) and y < 7:
+                return REVERS                                      # Revers
+            if x in (1, 6):
+                return stoff(FRACK, x, y, 11)
+            if x == 5 and y == 3:
+                return TUCH                                        # Einstecktuch (links auf der Brust)
+            return None
+        if s == "hinten":
+            if y >= 9 and x in (3, 4):
+                return None
+            if y == 9 and x in (2, 5):
+                return KNOPF                                       # Taillenknöpfe
+            return stoff(FRACK, x, y, 12) if (x not in (3, 4) or y < 4) else FRACK_HELL
+        return stoff(FRACK, x, y, 13) if y < 11 else None
+    wuerfel(img, *JACKE, 8, 12, 4, jacke)
+
+    # Arm: Frackärmel, weiße Manschette, weiße Handschuhe; Ärmel-Schicht: Ärmel mit Knopf am Aufschlag
+    def arm(s, x, y, w, h):
+        if s == "oben":
+            return FRACK
+        if s == "unten":
+            return HANDSCHUH
+        if y == 9:
+            return HEMD_SCHATTEN
+        if y >= 10:
+            return HANDSCHUH
+        return stoff(FRACK, x, y, 14)
+    wuerfel(img, *ARM_R, 4, 12, 4, arm)
+
+    def aermel(s, x, y, w, h):
+        if s in ("oben", "unten") or y >= 9:
+            return None
+        if y == 8:
+            return KNOPF if (s == "vorn" and x == 1) else FRACK_HELL
+        return stoff(FRACK, x, y, 15)
+    wuerfel(img, *AERMEL_R, 4, 12, 4, aermel)
+
+    # Bein: Frackhose mit Galonstreifen; Hosen-Schicht: polierte Schuhe
+    def bein(s, x, y, w, h):
+        if s == "oben":
+            return HOSE
+        if s == "unten" or y >= 10:
+            return SCHUH
+        if s == "rechts" and x == 2:
+            return STREIFEN
+        return stoff(HOSE, x, y, 16)
+    wuerfel(img, *BEIN_R, 4, 12, 4, bein)
+
+    def schuh(s, x, y, w, h):
+        if s in ("oben", "unten") or y < 10:
+            return None
+        if s == "vorn" and y == 10 and x in (1, 2):
+            return SCHUH_GLANZ
+        return SCHUH
+    wuerfel(img, *HOSE_R, 4, 12, 4, schuh)
+    linke_seite(img)
+
+    # Zusatzteile des eigenen Modells: Fliege (3 × 1,5 × 0,5) und Frackschöße (3,5 × 8 × 0,5)
+    wuerfel(img, 24, 0, 3, 2, 1, lambda s, x, y, w, h: (48, 48, 56) if (s == "vorn" and x == 1) else FLIEGE)
+    # Schöße: die Flächen eines 3,5 × 8 × 0,5-Teils füllen genau den Bereich 56–64 × 16–25 (unten etwas heller)
+    for x in range(56, 64):
+        for y in range(16, 25):
+            img.putpixel((x, y), (FRACK_HELL if y == 24 else stoff(FRACK, x, y, 17)) + (255,))
     return img
 
 

@@ -31,6 +31,11 @@ public final class Konfig {
     public boolean mehrereVillen = true;
     /** Abstand der Villen in der Nachbarschaft (Blöcke von Mitte zu Mitte). */
     public int villenAbstand = 320;
+    /**
+     * Server-Version mit Polymer: das Ressourcenpaket für Spieler ohne Mod selbst bereitstellen (schaltet Polymers
+     * „AutoHost“ ein, der ist sonst aus). Gilt auch für eine geöffnete Einzelspielerwelt (LAN, NoRisk „Hosted Worlds“).
+     */
+    public boolean serverRessourcenpaket = true;
 
     /** Wie viele versteckte Entschärfknöpfe kurz hintereinander gedrückt werden müssen. */
     public int tresorKnoepfe = 2;
@@ -141,6 +146,7 @@ public final class Konfig {
         erklaerung.put("villaAnblendung", "Breite des Übergangs vom ebenen Grundstück ins Gelände in Blöcken");
         erklaerung.put("mehrereVillen", "Jeder neue Spieler bekommt seine eigene Villa (true/false)");
         erklaerung.put("villenAbstand", "Abstand der Villen in Blöcken (mindestens 240)");
+        erklaerung.put("serverRessourcenpaket", "Mit Polymer: Ressourcenpaket für Spieler ohne Mod automatisch bereitstellen (true/false)");
         erklaerung.put("villaSpawnSetzen", "Spieler beim ersten Betreten vor die Villa stellen");
         erklaerung.put("tresorKnoepfe", "Anzahl versteckter Knöpfe, die zum Entschärfen der Tresorfallen nötig sind");
         erklaerung.put("butlerName", "Name des Butlers");

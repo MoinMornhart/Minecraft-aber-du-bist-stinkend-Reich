@@ -68,6 +68,9 @@ public final class ServerPaket {
         StinkendReich.LOGGER.info("Polymer gefunden: Server-Version für Spieler ohne Mod ist aktiv");
         PolymerResourcePackUtils.addModAssets(StinkendReich.MOD_ID);
         PolymerResourcePackUtils.markAsRequired();
+        if (de.moinmornhart.stinkendreich.Konfig.get().serverRessourcenpaket) {
+            autoHostEinschalten();
+        }
 
         int bloecke = 0, items = 0, figuren = 0, toene = 0;
         for (Block block : eigene(BuiltInRegistries.BLOCK)) {
@@ -213,6 +216,31 @@ public final class ServerPaket {
     }
 
     /**
+     * Schaltet Polymers „AutoHost“ ein (config/polymer/auto-host.json, {@code "enabled": true}): Erst dann schickt der
+     * Server Spielern ohne Mod das Ressourcenpaket über denselben Port wie das Spiel. Von Haus aus ist er nur in der
+     * Entwicklungsumgebung an; ohne Paket sähen Freunde ohne Mod statt Möbeln und Figuren nur Papier und Barrieren.
+     * Polymer liest die Datei bei jedem Serverstart (auch beim Öffnen einer Einzelspielerwelt), die übrigen Werte
+     * ergänzt es selbst.
+     */
+    private static void autoHostEinschalten() {
+        java.nio.file.Path datei = net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve("polymer/auto-host.json");
+        try {
+            com.google.gson.JsonObject json = java.nio.file.Files.exists(datei)
+                    ? com.google.gson.JsonParser.parseString(java.nio.file.Files.readString(datei)).getAsJsonObject()
+                    : new com.google.gson.JsonObject();
+            if (json.has("enabled") && json.get("enabled").getAsBoolean()) {
+                return;
+            }
+            json.addProperty("enabled", true);
+            java.nio.file.Files.createDirectories(datei.getParent());
+            java.nio.file.Files.writeString(datei, new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(json));
+            StinkendReich.LOGGER.info("Polymer-AutoHost eingeschaltet: Spieler ohne Mod bekommen das Ressourcenpaket ({})", datei);
+        } catch (Exception e) {
+            StinkendReich.LOGGER.warn("Polymer-AutoHost ließ sich nicht einschalten ({}): bitte in {} \"enabled\": true setzen", e.getMessage(), datei);
+        }
+    }
+
+    /**
      * Entfernt die Datenfelder der echten Figur ab Nummer {@code ab}. Polymer reicht ein Feld an den Ersatz weiter,
      * wenn dieser an derselben Stelle ein Feld desselben Typs hat; so würde aus „ohne KI“ (Mob) bei einer
      * Anzeige-Figur „dreht sich immer zum Spieler“ und aus einer Zahl des Autos die Helligkeit.
@@ -233,12 +261,13 @@ public final class ServerPaket {
     //? if >=1.21.9 {
     /**
      * Die Haut einer Figur (Textur aus dem Ressourcenpaket, Tänzerinnen je nach Kostüm). Gebaut über das Datenformat
-     * von Minecraft ({@code {"texture": …, "model": "wide"}}), das gibt es ab 1.21.9 überall gleich.
+     * von Minecraft ({@code {"texture": …, "model": "wide"}}), das gibt es ab 1.21.9 überall gleich. Tänzerinnen haben
+     * schmale Arme („slim“).
      */
     private static ResolvableProfile haut(Entity e) {
         com.google.gson.JsonObject json = new com.google.gson.JsonObject();
         json.addProperty("texture", StinkendReich.id("entity/" + FahrzeugAnzeige.haut(e)).toString());
-        json.addProperty("model", "wide");
+        json.addProperty("model", FahrzeugAnzeige.schmal(e) ? "slim" : "wide");
         return ResolvableProfile.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, json).getOrThrow();
     }
 

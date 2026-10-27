@@ -1,0 +1,25 @@
+# NoRisk „Hosted Worlds“ / LAN (tools/ingame/lan.sh): Philip hat seine Einzelspielerwelt geöffnet, Max tritt bei.
+# Erwartet: Max bekommt eine eigene Villa (Nachbarschaft) und wird hingebracht; Straße, Handy, James sichtbar.
+warte 5
+bild l01_ankunft
+server /time set 6000
+server /weather clear
+bis 300 Baustelle: Villa 1 fertig
+warte 25
+bild l02_eigene_villa
+# Von oben (als Zuschauer, sonst fällt Max), danach zurück auf den Weg
+server /gamemode spectator Max
+server /execute as Max at @s rotated ~ 0 run tp @s ^ ^25 ^-14 ~ 45
+warte 8
+bild l03_von_oben
+server /execute as Max at @s rotated ~ 0 run tp @s ^ ^-25 ^14 ~ 0
+server /gamemode creative Max
+warte 3
+server /execute as Max run butler rufen
+warte 6
+server /execute as Max at @s run tp @e[type=stinkendreich:butler,limit=1,sort=nearest] ^ ^ ^2.5 facing entity @s
+warte 2
+bild l04_james
+server /execute as Max run handy bodyguards|rufen
+warte 8
+bild l05_bodyguards

@@ -5,13 +5,16 @@ server /gamemode creative
 server /time set 6000
 server /weather clear
 server /gamerule advance_time false
+server /gamerule doDaylightCycle false
 server /villa ort 55.5 26 84 180 5
 warte 2
 server /execute as @p run handy bodyguards|rufen
 warte 8
 server /execute as @e[type=stinkendreich:bodyguard] run data merge entity @s {NoAI:1b}
-server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=nearest] ^-1.2 ^ ^3.5 facing entity @s
-server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,limit=1,sort=furthest] ^1.2 ^ ^3.5 facing entity @s
+# Mit Marke, sonst erwischt „furthest“ nach dem ersten Versetzen wieder denselben (der zweite stünde vor der Kamera)
+server /tag @e[type=stinkendreich:bodyguard,limit=1] add bg1
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,tag=bg1,limit=1] ^-1.2 ^ ^3.5 facing entity @s
+server /execute as @p at @s run tp @e[type=stinkendreich:bodyguard,tag=!bg1,limit=1] ^1.2 ^ ^3.5 facing entity @s
 warte 2
 bild f01_bodyguards
 # James: Rechtsklick öffnet das Butler-Menü
@@ -26,3 +29,15 @@ server /dialog clear @a
 server /villa ort 13 8.5 72 -110 8
 warte 3
 bild f03_geheimclub
+# Tänzerinnen in der neuen Haut (schmale Arme, zweite Schicht) vor der Villa aufgestellt, von vorn und hinten
+server /villa ort 55.5 26 84 180 0
+warte 2
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|0"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^-1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|1"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^1 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|2"}
+server /execute as @p at @s run summon stinkendreich:taenzerin ^3 ^ ^4 {NoAI:1b,Rotation:[0f,0f],stinkendreich:"laufen|3"}
+warte 3
+bild f04_taenzerinnen
+server /execute as @p at @s run tp @s ^ ^ ^8 ~180 0
+warte 3
+bild f05_taenzerinnen_hinten

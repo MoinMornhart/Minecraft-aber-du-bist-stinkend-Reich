@@ -12,9 +12,13 @@ from __future__ import annotations
 
 import json
 import random
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from spielerhaut import linke_seite  # noqa: E402
 
 WURZEL = Path(__file__).resolve().parents[2]
 ASSETS = WURZEL / "src/main/resources/assets/stinkendreich"
@@ -741,7 +745,8 @@ def main() -> dict:
         schreibe_json(ASSETS / "models/item" / f"{name}.json",
                       {"parent": "minecraft:item/generated", "textures": {"layer0": f"{NS}:item/{name}"}})
         schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
-    mitarbeiter().save(ASSETS / "textures/entity/mitarbeiter.png")
+    # Linke Seite als Spiegelbild: so ist der Mitarbeiter auch als Schaufensterpuppe (Server ohne Mod) vollständig
+    linke_seite(mitarbeiter()).save(ASSETS / "textures/entity/mitarbeiter.png")
     bodyguard_smoking().save(ASSETS / "textures/entity/bodyguard_smoking.png")
     bodyguard_mensch().save(ASSETS / "textures/entity/bodyguard_mensch.png")
     return {"de": TEXTE_DE, "en": TEXTE_EN}

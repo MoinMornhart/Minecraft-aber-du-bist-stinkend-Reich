@@ -33,7 +33,9 @@ public final class FigurenUebersetzen {
             p.setImmovable(true);
             p.setInvulnerable(true);                    // sonst ersticken Tänzerinnen an der Stange (Kopf im Block)
             p.setProfile(ResolvableProfile.resolvableProfile()
-                    .skinPatch(s -> s.body(Key.key("stinkendreich", "entity/" + haut)).model(PlayerTextures.SkinModel.CLASSIC))
+                    .skinPatch(s -> s.body(Key.key("stinkendreich", "entity/" + haut))
+                            // Tänzerinnen haben schmale Arme (Haut aus tools/assets/taenzerin.py)
+                            .model(haut.startsWith("taenzerin") ? PlayerTextures.SkinModel.SLIM : PlayerTextures.SkinModel.CLASSIC))
                     .build());
             p.setDescription(null);
         });

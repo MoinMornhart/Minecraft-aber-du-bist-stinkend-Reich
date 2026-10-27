@@ -1,12 +1,12 @@
 package de.moinmornhart.stinkendreich.client.club;
 
 import de.moinmornhart.stinkendreich.StinkendReich;
+import de.moinmornhart.stinkendreich.client.MenschenNetz;
 import de.moinmornhart.stinkendreich.club.TaenzerinEntity;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeDeformation;
 import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
@@ -14,10 +14,11 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
 /**
- * Modell der Show-Tänzerin: Menschengestalt mit schmalen Armen (3 Pixel), langen Haaren über den Rücken und
+ * Modell der Show-Tänzerin: Menschengestalt im Layout einer Spieler-Haut mit schmalen Armen ({@link MenschenNetz};
+ * die zweite Schicht trägt die langen Haare und das Glitzer-Top), dazu ein Oberteil vorn, das etwas absteht, und
  * Federschmuck auf dem Kopf. Beim Tanzen bewegen sich Arme, Beine und Hüfte im Takt:
  * an der Stange hält die rechte Hand die Stange über dem Kopf, frei tanzt sie mit beiden Armen in der Luft.
- * Textur 64×64, Aufteilung siehe tools/assets/taenzerin.py.
+ * Textur 64×64, Aufteilung siehe tools/assets/taenzerin.py (dieselbe Haut nutzt auch die Schaufensterpuppe ohne Mod).
  */
 //? if >=1.21.2 {
 public class TaenzerinModell extends HumanoidModel<TaenzerinZustand> {
@@ -30,19 +31,13 @@ public class TaenzerinModell extends HumanoidModel<TaenzerinZustand> {
     }
 
     public static LayerDefinition schicht() {
-        MeshDefinition netz = HumanoidModel.createMesh(CubeDeformation.NONE, 0.0F);
+        MeshDefinition netz = MenschenNetz.erstellen(true);
         PartDefinition wurzel = netz.getRoot();
-        // Schmale Arme wie beim Spieler-Skin „Alex“, die linke Seite gespiegelt
-        wurzel.addOrReplaceChild("right_arm", CubeListBuilder.create().texOffs(40, 16)
-                .addBox(-2.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F), PartPose.offset(-5.0F, 2.5F, 0.0F));
-        wurzel.addOrReplaceChild("left_arm", CubeListBuilder.create().texOffs(40, 16).mirror()
-                .addBox(-1.0F, -2.0F, -2.0F, 3.0F, 12.0F, 4.0F), PartPose.offset(5.0F, 2.5F, 0.0F));
-        PartDefinition kopf = wurzel.getChild("head");
-        // Lange Haare: vom Scheitel hinten bis auf die Schultern
-        kopf.addOrReplaceChild("haar_lang", CubeListBuilder.create().texOffs(0, 32)
-                .addBox(-4.0F, -8.2F, 3.3F, 8.0F, 13.0F, 1.0F), PartPose.ZERO);
-        // Federschmuck oben auf dem Kopf
-        kopf.addOrReplaceChild("feder", CubeListBuilder.create().texOffs(20, 32)
+        // Oberteil vorn: steht unten etwas weiter ab als oben (Fläche 24,0 der Haut, ganz aus Pailletten)
+        wurzel.getChild("body").addOrReplaceChild("oberteil", CubeListBuilder.create().texOffs(24, 0)
+                .addBox(-3.0F, 0.0F, -1.0F, 6.0F, 3.0F, 1.0F), PartPose.offsetAndRotation(0.0F, 2.6F, -1.9F, -0.22F, 0.0F, 0.0F));
+        // Federschmuck oben auf dem Kopf (Fläche 56,16)
+        wurzel.getChild("head").addOrReplaceChild("feder", CubeListBuilder.create().texOffs(56, 16)
                 .addBox(-1.0F, -13.0F, -1.0F, 2.0F, 5.0F, 1.0F), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.15F, 0.0F, 0.0F));
         return LayerDefinition.create(netz, 64, 64);
     }

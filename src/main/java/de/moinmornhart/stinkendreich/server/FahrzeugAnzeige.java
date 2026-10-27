@@ -89,7 +89,7 @@ final class FahrzeugAnzeige {
             ItemStack modell = new ItemStack(Items.PAPER);
             modell.set(DataComponents.ITEM_MODEL, itemModell(auto.art, AutoEntity.FARBEN[auto.farbe()]));
             return modell;
-        }, null, null);
+        }, null, null, null);
     }
 
     /**
@@ -105,19 +105,20 @@ final class FahrzeugAnzeige {
                 ? () -> new Vector3f(tv.breite() / de.moinmornhart.stinkendreich.fernseher.FernseherEntity.STANDARD_BREITE,
                         tv.hoehe() / de.moinmornhart.stinkendreich.fernseher.FernseherEntity.STANDARD_HOEHE, 1.0F)
                 : null;
-        return uebersetzung(echt, () -> 1.0F, () -> modell, e instanceof AufzugKabine ? null : () -> licht(e), dehnung);
+        return uebersetzung(echt, () -> 1.0F, () -> modell, e instanceof AufzugKabine ? null : () -> licht(e), dehnung, null);
     }
 
     /**
      * James, Mitarbeiter, Tänzerinnen und Bodyguards in Versionen ohne Schaufensterpuppe (bis 1.21.8): ein Standbild
-     * (Spielermodell mit ihrer Haut), das mit der echten Figur mitläuft.
+     * (Spielermodell mit ihrer Haut), das mit der echten Figur mitläuft. Das Licht kommt wie bei den stehenden Modellen
+     * aus Fuß und Mitte (steht die Figur ein Stück im Boden, wäre sie sonst schwarz) und wird beim Laufen nachgeführt.
      */
     static PolymerEntity figur(net.minecraft.world.entity.Entity e, EntityType<?> echt, float massstab) {
         return uebersetzung(echt, () -> massstab, () -> {
             ItemStack modell = new ItemStack(Items.PAPER);
             modell.set(DataComponents.ITEM_MODEL, StinkendReich.id("polymer/figur/" + haut(e)));
             return modell;
-        }, null, null);
+        }, () -> licht(e), null, e);
     }
 
     /** Name der Haut einer Menschenfigur ({@code textures/entity/<haut>.png}). */
@@ -127,6 +128,11 @@ final class FahrzeugAnzeige {
         }
         String name = BuiltInRegistries.ENTITY_TYPE.getKey(e.getType()).getPath();
         return name.equals("bodyguard") ? "bodyguard_mensch" : name;
+    }
+
+    /** Haut mit schmalen Armen (3 Pixel, wie „Alex“): die Tänzerinnen. */
+    static boolean schmal(net.minecraft.world.entity.Entity e) {
+        return e instanceof de.moinmornhart.stinkendreich.club.TaenzerinEntity;
     }
 
     /** Alle Häute, für die ein Standbild ins Ressourcenpaket kommt. */
@@ -148,13 +154,37 @@ final class FahrzeugAnzeige {
     /**
      * Anzeige-Figur mit einem Modell im Entity-Modellraum (y nach unten, Boden bei y = 24 Pixel); {@code licht} ist
      * {@code null}, wenn das Licht am Fußpunkt gelten soll (Fahrzeuge, die sich bewegen). {@code dehnung} streckt das
-     * Modell je Achse (Breite, Höhe, Tiefe), {@code null} = gar nicht.
+     * Modell je Achse (Breite, Höhe, Tiefe), {@code null} = gar nicht. Bei {@code nachfuehren} (eine Figur, die herumläuft)
+     * wird das Licht alle halbe Sekunde neu gemeldet, wenn es sich geändert hat.
      */
     private static PolymerEntity uebersetzung(EntityType<?> echt, java.util.function.Supplier<Float> massstab,
                                               java.util.function.Supplier<ItemStack> modell,
                                               java.util.function.Supplier<Integer> licht,
-                                              java.util.function.Supplier<Vector3f> dehnung) {
+                                              java.util.function.Supplier<Vector3f> dehnung,
+                                              net.minecraft.world.entity.Entity nachfuehren) {
         return new PolymerEntity() {
+            /** Zuletzt nachgemeldete Helligkeit. */
+            private int gemeldet = -1;
+
+            @Override
+            public void onEntityTrackerTick(java.util.Set<net.minecraft.server.network.ServerPlayerConnection> zuschauer) {
+                if (nachfuehren == null || licht == null || nachfuehren.tickCount % 10 != 0) {
+                    return;
+                }
+                int jetzt = licht.get();
+                if (jetzt == gemeldet) {
+                    return;
+                }
+                gemeldet = jetzt;
+                var paket = new net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket(nachfuehren.getId(),
+                        List.of(PolymerKompat.helligkeit(jetzt)));
+                for (var z : zuschauer) {
+                    if (!ModErkennung.hatMod(z.getPlayer())) {
+                        z.send(paket);
+                    }
+                }
+            }
+
             @Override
             public EntityType<?> getPolymerEntityType(PacketContext kontext) {
                 return ServerPaket.mitMod(kontext) ? echt : ITEM_DISPLAY_TYP;
@@ -311,12 +341,13 @@ final class FahrzeugAnzeige {
         if (textur == null) {
             return;
         }
-        // Teil: Drehpunkt x, y, z; Kästen: u, v, x, y, z, Breite, Höhe, Tiefe, Dehnung
+        // Teil: Drehpunkt x, y, z; Kästen: u, v, x, y, z, Breite, Höhe, Tiefe, Dehnung (Tänzerinnen: schmale Arme)
+        float b = haut.startsWith("taenzerin") ? 3 : 4, armY = b == 3 ? 2.5F : 2;
         Object[][] teile = {
                 {"kopf", new float[]{0, 0, 0}, new float[][]{{0, 0, -4, -8, -4, 8, 8, 8, 0}, {32, 0, -4, -8, -4, 8, 8, 8, 0.5F}}},
                 {"koerper", new float[]{0, 0, 0}, new float[][]{{16, 16, -4, 0, -2, 8, 12, 4, 0}, {16, 32, -4, 0, -2, 8, 12, 4, 0.25F}}},
-                {"arm_r", new float[]{-5, 2, 0}, new float[][]{{40, 16, -3, -2, -2, 4, 12, 4, 0}, {40, 32, -3, -2, -2, 4, 12, 4, 0.25F}}},
-                {"arm_l", new float[]{5, 2, 0}, new float[][]{{32, 48, -1, -2, -2, 4, 12, 4, 0}, {48, 48, -1, -2, -2, 4, 12, 4, 0.25F}}},
+                {"arm_r", new float[]{-5, armY, 0}, new float[][]{{40, 16, 1 - b, -2, -2, b, 12, 4, 0}, {40, 32, 1 - b, -2, -2, b, 12, 4, 0.25F}}},
+                {"arm_l", new float[]{5, armY, 0}, new float[][]{{32, 48, -1, -2, -2, b, 12, 4, 0}, {48, 48, -1, -2, -2, b, 12, 4, 0.25F}}},
                 {"bein_r", new float[]{-1.9F, 12, 0}, new float[][]{{0, 16, -2, 0, -2, 4, 12, 4, 0}, {0, 32, -2, 0, -2, 4, 12, 4, 0.25F}}},
                 {"bein_l", new float[]{1.9F, 12, 0}, new float[][]{{16, 48, -2, 0, -2, 4, 12, 4, 0}, {0, 48, -2, 0, -2, 4, 12, 4, 0.25F}}},
         };

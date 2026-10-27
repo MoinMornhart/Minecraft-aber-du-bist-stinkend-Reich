@@ -67,9 +67,13 @@ public final class ModErkennung {
         /*return handler.getOwner().getId();*/
     }
 
-    /** Hat dieser Spieler die Mod? */
+    /**
+     * Hat dieser Spieler die Mod? Im reinen Einzelspiel immer. Eine geöffnete Einzelspielerwelt (LAN, NoRisk „Hosted
+     * Worlds“) ist ein Server wie jeder andere: Freunde ohne Mod brauchen dort die Übersetzung genauso.
+     */
     public static boolean hatMod(net.minecraft.server.level.ServerPlayer spieler) {
-        if (spieler.level().getServer().isSingleplayer()) {
+        net.minecraft.server.MinecraftServer server = spieler.level().getServer();
+        if (server.isSingleplayer() && !server.isPublished()) {
             return true;
         }
         Boolean gemerkt = MIT_MOD.get(spieler.getUUID());

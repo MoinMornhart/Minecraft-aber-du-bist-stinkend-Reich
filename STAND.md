@@ -1,8 +1,8 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 08:00 Uhr (Nachtschicht fertig: Paper-Plugin mit James bei der Arbeit, Pilot, Straßen, Chauffeur; Trailer 12:00; Release 0.4.1 wartet)_
+_Zuletzt aktualisiert: 2026-10-27, 10:05 Uhr (NoRisk „Hosted Worlds“ geprüft und zwei Fehler behoben, neue Skins für James und Tänzerinnen, Standbilder 1.21.6–1.21.8 hell; Release 0.4.1 wartet)_
 
-**Philips feste Regel (26.10., mehrfach gesagt):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
+**Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
 Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`, dann Artifact mit derselben Datei.
 
@@ -521,9 +521,32 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 - Feinschliff: Innenräume heller; Kamera im Butler-Spieltest im Tunnel zu nah.
 - Zweiter Arbeitsordner `/home/user/sr-test` (Git-Worktree) für parallele Spieltests; kann weg, wenn er nicht mehr gebraucht wird.
 
+## Vormittag 27.10. (nach der Nachtschicht)
+
+- **Server ohne Mod 1.21.6–1.21.8:** Standbilder (`FahrzeugAnzeige.figur`) waren schwarz, sobald die Figur etwas im Boden
+  stand (Licht kam vom Fußblock). Jetzt Licht aus Fuß und Mitte (`licht(e)`), beim Laufen alle 10 Ticks nachgemeldet
+  (`onEntityTrackerTick`, eigenes `ClientboundSetEntityDataPacket`). Der „fehlende“ Bodyguard war ein Szenario-Fehler
+  (`sort=furthest` traf denselben zweimal) → `vanilla_figuren.txt` mit Marke `bg1`. Bedienfelder und 1.21.6/1.21.7 noch offen.
+- **NoRisk „Hosted Worlds“ / LAN** (= geöffnete Einzelspielerwelt): Test `tools/ingame/lan.sh` (GAST=mit|ohne, zwei
+  Bildschirme, Freund „Max“, Autotest-Zeile `offline` + `/publish true <port>`; Syntax ab 26.x ohne Spielmodus),
+  Szenario `lan_nachbar.txt`. Beide Fälle bestanden (eigene Villa, James, Straße). Behoben: `ModErkennung.hatMod`
+  hielt im Einzelspiel jeden für einen Mod-Spieler (jetzt nur, wenn die Welt nicht geöffnet ist: `isPublished`) – Freunde
+  ohne Mod flogen mit „container_set_content“ raus. Polymer-AutoHost ist außerhalb der Entwicklungsumgebung aus
+  (`enabled = DEV_ENV`) → `ServerPaket.autoHostEinschalten` setzt `config/polymer/auto-host.json` auf `enabled: true`
+  (Konfig `serverRessourcenpaket`, Standard an). README-Abschnitt dazu.
+- **Neue Skins** (Philip: Haare, Anzug, bei den Ladys etwas Oberweite, mit zweiter Schicht): Alle Menschen-Häute im
+  Spieler-Layout (`tools/assets/spielerhaut.py`: `wuerfel`, `linke_seite` spiegelt rechts nach links). Modelle der Mod
+  über `client/MenschenNetz` (Überzüge 0,25, linke Glieder eigen). James (`butler.py`): Haar-Schicht, Frack mit Revers
+  und Einstecktuch, Fliege (Teil, 24,0), Frackschöße (56,16). Tänzerinnen (`taenzerin.py`, schmal): Haare mit Volumen,
+  Haare über den Rücken (Jacke hinten), Top mit Tiefe + Teil „oberteil“ (24,0, angewinkelt), Feder (56,16); angezogen
+  wie bisher. Mitarbeiter: linke Seite gespiegelt. Schaufensterpuppen: Tänzerinnen „slim“ (Mod und Paper), Standbild
+  mit schmalen Armen. Vorher fehlten ohne Mod allen dreien linker Arm und linkes Bein.
+- `test.sh` setzt den Port jetzt auch bei `WELT_BEHALTEN=1` (sonst wartete der Client auf dem falschen Port).
+
 ## Nächster Schritt
 
 Release 0.4.1 erst nach Philips „Release raus“ (dann `.github/release-version` auf 0.4.1). Offen: YouTube im Fernseher
-bei Philip bestätigen (Log-Zeilen mit „yt-dlp“), Server-Version ohne Mod für 1.21.6–1.21.8 im Spiel prüfen, danach
+bei Philip bestätigen (Log-Zeilen mit „yt-dlp“), Server-Version ohne Mod für 1.21.6–1.21.8 fertig prüfen (Bedienfelder,
+1.21.6/1.21.7; Figuren in 1.21.8 hell), neue Skins ohne Mod (Tänzerinnen) und im Paper-Plugin ansehen, danach
 1.21–1.21.5 (Truhen-Menüs). Fortschrittsseite am Morgen des 27.10. aufgeräumt (alte Punkte im Archiv, Paper-Plugin in
 vier Bereichen mit ausgewählten Bildern).

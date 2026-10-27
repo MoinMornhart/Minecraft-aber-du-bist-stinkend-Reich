@@ -6,6 +6,7 @@ server /gamemode creative
 server /time set 6000
 server /weather clear
 server /gamerule advance_time false
+server /gamerule doDaylightCycle false
 # Sicherheitszentrale im Büro
 server /villa ort 71.5 32 59.3 0 10
 warte 3

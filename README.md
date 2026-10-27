@@ -559,7 +559,9 @@ Auf einem Fabric-Server mit dieser Mod und der Bibliothek [Polymer](https://modr
 
 1. Fabric-Server aufsetzen, [Fabric API](https://modrinth.com/mod/fabric-api) und die passende Datei dieser Mod in `mods` legen.
 2. `polymer-bundled` für dieselbe Minecraft-Version ebenfalls in `mods` legen (für 26.3 z. B. `polymer-bundled-0.18.5+26.3.jar`, für 1.21.11 `0.15.2+1.21.11`, für 1.21.9 `0.14.2+1.21.9`).
-3. Server starten. Wer ohne Mod beitritt, bekommt automatisch ein Ressourcenpaket (annehmen).
+3. Server starten. Wer ohne Mod beitritt, bekommt automatisch ein Ressourcenpaket (annehmen). Den Versand schaltet die Mod bei Polymer selbst ein (Einstellung `serverRessourcenpaket` in `config/stinkendreich.json`).
+
+**Eigene Welt für Freunde öffnen (LAN oder NoRisk Client „Hosted Worlds“):** Das geht genauso. Deine Einzelspielerwelt ist dann der Server: Jeder Freund bekommt beim ersten Beitreten seine eigene Villa (im Hintergrund gebaut, du spielst weiter), eine Straße zu deiner Villa und seinen eigenen James. Am einfachsten teilst du dein NoRisk-Profil, dann haben alle die Mod. Sollen Freunde mit normalem Minecraft mitspielen, muss `polymer-bundled` in deinem Profil sein.
 
 Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die Bodyguards (als große Türsteher im Smoking), Autos, Hubschrauber, Drehteller und Fernseher. Handy, Butler-Menü, Sicherheitszentrale, Tastenfeld, Aufzug, Flügel, Musikanlage, Fernseher und Überwachungskameras öffnen sich als Fenster. Autos fahren mit W/A/S/D, der Hubschrauber steigt mit der Leertaste und sinkt mit Strg. Die Fernbedienung öffnet ohne Mod das Fenster des Fernsehers, und im Handy-Navi lassen sich auch ohne Mod eigene Orte speichern. Eigene Musik, Spotify und Videos im Fernseher gehen nur mit der Mod; ohne Mod zeigt der Fernseher kein Vorschaubild, das Video öffnet sich dann im Browser. Wer die Mod hat, sieht alles wie gewohnt und kann mit Freunden ohne Mod zusammen spielen (Polymer braucht man dafür nur auf dem Server).
 

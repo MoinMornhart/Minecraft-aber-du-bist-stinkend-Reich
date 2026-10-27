@@ -60,6 +60,12 @@ if [[ ! -f "$RUN/testwelt/level.dat" ]]; then
   melde "FEHLER: Server hat keine Welt erzeugt"; tail -40 "$LOGS/server.log"; exit 1
 fi
 fi
+# Auch mit behaltener Welt den Port dieses Laufs setzen (sonst hört der Server auf dem Port eines früheren Laufs)
+if grep -q "^server-port=" "$RUN/server.properties" 2>/dev/null; then
+  sed -i "s/^server-port=.*/server-port=${PORT:-25565}/" "$RUN/server.properties"
+else
+  echo "server-port=${PORT:-25565}" >> "$RUN/server.properties"
+fi
 
 # ---------- 2. Welt als Einzelspieler-Spielstand vorbereiten ----------
 # (bei VANILLA=1 spielt der normale Client in einem eigenen Ordner auf dem Server)
