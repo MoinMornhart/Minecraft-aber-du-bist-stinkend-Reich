@@ -96,6 +96,12 @@ public final class VillaBefehle implements TabExecutor {
                     antwort(wer, "Agenten-Ausrüstung im Inventar.");
                 }
             }
+            case "einsteigen" -> {
+                // Testhilfe: ins nächste Fahrzeug einsteigen (wie Rechtsklick)
+                if (p != null && !plugin.fahrzeuge().einsteigen(p)) {
+                    antwort(wer, "Kein Fahrzeug in der Nähe.");
+                }
+            }
             case "butlerblick" -> {
                 // Testhilfe für Bilder: freie Stelle mit Blick auf den eigenen Butler
                 Location c = p == null ? null : plugin.butler().kamera(Math.max(0, plugin.butler().butlerVon(p)));

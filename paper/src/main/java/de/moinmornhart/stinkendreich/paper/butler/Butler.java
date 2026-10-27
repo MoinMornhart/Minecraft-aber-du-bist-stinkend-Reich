@@ -167,6 +167,9 @@ public final class Butler implements Listener {
             } else if (Bukkit.getCurrentTick() % 10 == 0) {
                 ziehen(nr, p, k);
             }
+            if (p.isInsideVehicle()) {
+                continue;                                   // sitzt am Steuer (Flug): der Körper reist mit
+            }
             // Die Puppe steht immer dort, wo der Körper ist, und schaut in seine Richtung
             Location ziel = k.getLocation();
             if (p.getLocation().distanceSquared(ziel) > 0.0001 || Math.abs(p.getYaw() - ziel.getYaw()) > 1) {
@@ -280,6 +283,10 @@ public final class Butler implements Listener {
             auftragGeben(p, nr, Holzfaeller.HOLZ, menge(satz));
             return;
         }
+        if (satz.contains("flieg") || satz.contains("hubschrauber") || satz.contains("heli")) {
+            fliegen(p, nr, satz);
+            return;
+        }
         if (satz.contains("jag") || satz.contains("fleisch") && holen) {
             if (!plugin.getConfig().getBoolean("butler.jagen", true)) {
                 sagen(p, "Verzeihung, die Jagd ist auf diesem Server nicht erlaubt.");
@@ -312,7 +319,7 @@ public final class Butler implements Listener {
             sagen(p, "Ich gehe zurück in die Villa.");
         } else {
             sagen(p, "Verzeihung, das habe ich nicht verstanden. Ich kann Ihnen folgen, warten, nach Hause gehen oder "
-                    + "Erz oder Holz holen (z. B. „hol mir 16 Eisen“), jagen und die Truhen sortieren.");
+                    + "Erz oder Holz holen (z. B. „hol mir 16 Eisen“), jagen, die Truhen sortieren und Sie mit dem Hubschrauber fliegen.");
         }
     }
 
@@ -352,6 +359,88 @@ public final class Butler implements Listener {
         plugin.getLogger().info("Butler: Auftrag " + menge + " " + r.name() + " (Villa " + nr + ")");
     }
 
+    /**
+     * „Flieg mich nach Hause / ins Dorf / zur Villa von Max“: James setzt sich in den Hubschrauber der Villa, holt den
+     * Herrn ab und fliegt ihn hin.
+     */
+    public void fliegen(Player p, int nr, String satz) {
+        Mannequin puppe = puppen.get(nr);
+        WanderingTrader k = koerper.get(nr);
+        Villen.Villa eigene = plugin.villen().nr(nr);
+        if (puppe == null || k == null || eigene == null) {
+            sagen(p, "Verzeihung, ich bin gerade nicht erreichbar.");
+            return;
+        }
+        // Ziel
+        Location ziel = null;
+        String name = null;
+        for (Villen.Villa v : plugin.villen().alle()) {
+            String herrName = v.besitzerName() == null ? "" : v.besitzerName().toLowerCase(Locale.GERMAN);
+            if (v != eigene && !herrName.isEmpty() && satz.contains(herrName)) {
+                ziel = Flug.landeplatzBei(v.spawn(plugin.bauplan()));
+                name = "zur " + v.name();
+            }
+        }
+        if (ziel == null && (satz.contains("hause") || satz.contains("heim") || satz.contains("meine villa") || satz.contains("zurück"))) {
+            JsonArray pad = plugin.bauplan().ersteMarke("hubschrauber");
+            ziel = pad != null ? Ausstattung.ort(eigene, pad) : eigene.spawn(plugin.bauplan());
+            name = "nach Hause";
+        }
+        if (ziel == null && satz.contains("dorf")) {
+            ziel = dorf(p.getLocation());
+            name = "ins Dorf";
+            if (ziel == null) {
+                sagen(p, "Verzeihung, in der Nähe gibt es kein Dorf.");
+                return;
+            }
+        }
+        if (ziel == null) {
+            sagen(p, "Wohin darf ich Sie fliegen? Nach Hause, ins Dorf oder zur Villa eines Nachbarn?");
+            return;
+        }
+        // Hubschrauber: der, in dem der Herr sitzt, sonst der der Villa
+        org.bukkit.entity.ArmorStand heli = p.getVehicle() != null ? plugin.fahrzeuge().hubschrauber(p.getLocation(), 6) : null;
+        if (heli == null) {
+            JsonArray pad = plugin.bauplan().ersteMarke("hubschrauber");
+            heli = pad == null ? null : plugin.fahrzeuge().hubschrauber(Ausstattung.ort(eigene, pad), 64);
+        }
+        if (heli == null) {
+            heli = plugin.fahrzeuge().hubschrauber(p.getLocation(), 64);
+        }
+        if (heli == null) {
+            sagen(p, "Verzeihung, der Hubschrauber ist nicht in der Nähe.");
+            return;
+        }
+        Auftrag alt = auftraege.remove(nr);
+        if (alt != null) {
+            alt.abbrechen();
+        }
+        k.getPathfinder().stopPathfinding();
+        auftraege.put(nr, new Flug(plugin, k, puppe, p, heli, ziel, name));
+        modusSetzen(nr, Modus.ARBEIT);
+        sagen(p, plugin.fahrzeuge().sitztDrin(heli, p) ? "Sehr wohl, wir fliegen " + name + "."
+                : "Sehr wohl. Ich hole Sie mit dem Hubschrauber ab und fliege Sie " + name + ".");
+    }
+
+    /** Gefundene Dörfer je Welt (die Suche kostet den Server spürbar Zeit, Dörfer wandern nicht). */
+    private final Map<UUID, Location> doerfer = new HashMap<>();
+
+    /** Landeplatz am nächsten Dorf (bis gut 700 Blöcke weit); null, wenn keins da ist. */
+    @SuppressWarnings("deprecation")       // org.bukkit.StructureType.VILLAGE sucht alle Dorfarten auf einmal
+    private Location dorf(Location bei) {
+        Location mitte = doerfer.get(bei.getWorld().getUID());
+        if (mitte == null || mitte.distanceSquared(bei) > 800 * 800) {
+            mitte = bei.getWorld().locateNearestStructure(bei, org.bukkit.StructureType.VILLAGE, 44, false);
+            if (mitte == null) {
+                return null;
+            }
+            doerfer.put(bei.getWorld().getUID(), mitte);
+            plugin.getLogger().info("Flug: Dorf bei " + mitte.getBlockX() + " " + mitte.getBlockZ());
+        }
+        mitte.getWorld().getChunkAt(mitte).load();
+        return Flug.landeplatzBei(new Location(mitte.getWorld(), mitte.getX(), mitte.getWorld().getHighestBlockYAt(mitte) + 1, mitte.getZ()));
+    }
+
     /** „Sortier die Truhen“: alle Truhen und Fässer um den Herrn herum aufräumen. */
     private void sortieren(Player p, int nr) {
         Mannequin puppe = puppen.get(nr);
@@ -379,7 +468,7 @@ public final class Butler implements Listener {
     }
 
     /**
-     * Testhilfe für Bilder: eine freie Stelle 2–5 Blöcke neben James, von der aus man ihn ohne Hindernis sieht (im
+     * Testhilfe für Bilder: eine freie Stelle 3–5 Blöcke neben James, von der aus man ihn ohne Hindernis sieht (im
      * Tunnel hinter ihm, im Wald zwischen den Bäumen), Blick auf ihn. Null, wenn es keine gibt.
      */
     public Location kamera(int nr) {
@@ -392,7 +481,7 @@ public final class Butler implements Listener {
         vorn = vorn.lengthSquared() < 1.0E-6 ? new org.bukkit.util.Vector(0, 0, 1) : vorn.normalize();
         Location beste = null;
         double besteWert = -99;
-        for (double r : new double[]{3.5, 2.5, 4.5, 1.8}) {
+        for (double r : new double[]{3.5, 4.5, 2.8}) {
             for (int i = 0; i < 16; i++) {
                 for (double dy : new double[]{0.4, 1.0, -0.2}) {
                     double w = i * Math.PI / 8;
@@ -459,6 +548,8 @@ public final class Butler implements Listener {
                 Dialoge.Knopf.von("16 Holz holen", (s, a) -> befehl(s, "hol mir 16 holz")),
                 Dialoge.Knopf.von("Auf die Jagd gehen", (s, a) -> befehl(s, "jag mir 8 fleisch")),
                 Dialoge.Knopf.von("Truhen hier sortieren", (s, a) -> befehl(s, "sortier die truhen")),
+                Dialoge.Knopf.von("Hubschrauber: nach Hause", (s, a) -> befehl(s, "flieg mich nach hause")),
+                Dialoge.Knopf.von("Hubschrauber: ins Dorf", (s, a) -> befehl(s, "flieg mich ins dorf")),
                 Dialoge.Knopf.von("Was machst du gerade?", (s, a) -> befehl(s, "was machst du"))));
     }
 

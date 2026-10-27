@@ -380,6 +380,71 @@ public final class Fahrzeuge implements Listener {
     }
 
     // ------------------------------------------------------------------
+    // Autopilot (James als Pilot, siehe butler/Flug)
+    // ------------------------------------------------------------------
+
+    /** Der nächste Hubschrauber im Umkreis, an dessen Steuer kein Spieler sitzt, oder null. */
+    public ArmorStand hubschrauber(Location nahe, double radius) {
+        ArmorStand beste = null;
+        for (Wagen w : wagen.values()) {
+            Location l = w.koerper.getLocation();
+            if (w.art.fliegt() && w.koerper.isValid() && fahrer(w) == null && l.getWorld().equals(nahe.getWorld())
+                    && l.distanceSquared(nahe) < radius * radius
+                    && (beste == null || l.distanceSquared(nahe) < beste.getLocation().distanceSquared(nahe))) {
+                beste = w.koerper;
+            }
+        }
+        return beste;
+    }
+
+    /** Setzt jemanden (James) auf den Pilotensitz; false, wenn der besetzt ist. */
+    public boolean pilotSetzen(ArmorStand heli, Entity pilot) {
+        Wagen w = wagen.get(heli.getUniqueId());
+        if (w == null) {
+            return false;
+        }
+        ItemDisplay alt = w.sitze.get(0);
+        if (alt != null && alt.isValid() && !alt.getPassengers().isEmpty()) {
+            return alt.getPassengers().contains(pilot);
+        }
+        ItemDisplay sitz = teil(w, ItemDisplay.class, "sitz", d -> {
+            d.getPersistentDataContainer().set(schluesselPlatz, PersistentDataType.INTEGER, 0);
+            d.setTeleportDuration(2);
+        });
+        sitz.teleport(sitzOrt(w, 0));
+        pilot.teleport(sitz.getLocation());
+        sitz.addPassenger(pilot);
+        w.sitze.put(0, sitz);
+        return true;
+    }
+
+    /** Sitzt jemand in diesem Fahrzeug (egal auf welchem Platz)? */
+    public boolean sitztDrin(ArmorStand fahrzeug, Entity wer) {
+        Wagen w = wagen.get(fahrzeug.getUniqueId());
+        return w != null && w.sitze.values().stream().anyMatch(s -> s.isValid() && s.getPassengers().contains(wer));
+    }
+
+    /**
+     * Ein Tick Autopilot (nur ohne Spieler am Steuer): der Hubschrauber rückt um {@code schritt} weiter und schaut in
+     * Richtung {@code gier}. Er wird versetzt statt angeschoben, weil Figuren außerhalb der Simulationsweite der
+     * Spieler stillstehen (der Landeplatz auf dem Dach ist oft weiter weg); Modell und Sitze gleiten hinterher.
+     */
+    public void steuern(ArmorStand heli, Vector schritt, float gier) {
+        Wagen w = wagen.get(heli.getUniqueId());
+        if (w == null || fahrer(w) != null) {
+            return;
+        }
+        Location l = heli.getLocation().add(schritt);
+        l.setYaw(gier);
+        l.setPitch(0);
+        heli.setVelocity(new Vector());
+        heli.teleport(l, io.papermc.paper.entity.TeleportFlag.EntityState.RETAIN_PASSENGERS);
+        if (Bukkit.getCurrentTick() % 10 == 0 && schritt.lengthSquared() > 1.0E-4) {
+            heli.getWorld().playSound(l, Sound.ENTITY_BREEZE_WIND_BURST, 0.5F, 0.6F);
+        }
+    }
+
+    // ------------------------------------------------------------------
     // Ein- und Aussteigen
     // ------------------------------------------------------------------
 
@@ -392,9 +457,31 @@ public final class Fahrzeuge implements Listener {
         e.setCancelled(true);
         String von = ziel.getPersistentDataContainer().get(schluesselWagen, PersistentDataType.STRING);
         Wagen w = von == null ? null : wagen.get(UUID.fromString(von));
-        if (w == null || e.getPlayer().isInsideVehicle()) {
-            return;
+        if (w != null && !e.getPlayer().isInsideVehicle()) {
+            einsteigen(w, e.getPlayer());
         }
+    }
+
+    /** Testhilfe: in das nächste Fahrzeug (bis 10 Blöcke) einsteigen, als wäre es angeklickt. */
+    public boolean einsteigen(Player p) {
+        Wagen beste = null;
+        for (Wagen w : wagen.values()) {
+            if (w.koerper.isValid() && w.koerper.getWorld().equals(p.getWorld())
+                    && w.koerper.getLocation().distanceSquared(p.getLocation()) < 100
+                    && (beste == null || w.koerper.getLocation().distanceSquared(p.getLocation())
+                    < beste.koerper.getLocation().distanceSquared(p.getLocation()))) {
+                beste = w;
+            }
+        }
+        if (beste == null || p.isInsideVehicle()) {
+            return false;
+        }
+        einsteigen(beste, p);
+        return true;
+    }
+
+    /** Setzt den Spieler auf den ersten freien Platz (Platz 0 = Fahrer). */
+    private void einsteigen(Wagen w, Player spieler) {
         for (int platz = 0; platz < w.art.sitze.length; platz++) {
             ItemDisplay sitz = w.sitze.get(platz);
             if (sitz == null || !sitz.isValid() || sitz.getPassengers().isEmpty()) {
@@ -404,10 +491,10 @@ public final class Fahrzeuge implements Listener {
                     d.setTeleportDuration(2);
                 });
                 neu.teleport(sitzOrt(w, platz));
-                neu.addPassenger(e.getPlayer());
+                neu.addPassenger(spieler);
                 w.sitze.put(platz, neu);
                 if (platz == 0) {
-                    e.getPlayer().sendActionBar(net.kyori.adventure.text.Component.text(w.art.fliegt()
+                    spieler.sendActionBar(net.kyori.adventure.text.Component.text(w.art.fliegt()
                             ? "W/S: vor/zurück · A/D: drehen · Leertaste: steigen · Sprinten: sinken · Schleichen: aussteigen"
                             : "W/S: Gas/Bremse · A/D: lenken · Leertaste: Handbremse · Schleichen: aussteigen"));
                 }

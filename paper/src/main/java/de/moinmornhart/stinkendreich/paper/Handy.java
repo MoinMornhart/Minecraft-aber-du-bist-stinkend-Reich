@@ -98,6 +98,15 @@ public final class Handy implements Listener {
                 knoepfe.add(Dialoge.Knopf.von(v.name(), (s, a) -> s.teleport(v.spawn(plugin.bauplan()))));
             }
         }
+        // James als Pilot
+        knoepfe.add(Dialoge.Knopf.von("Hubschrauber: nach Hause", (s, a) -> butler.befehl(s, "flieg mich nach hause")));
+        knoepfe.add(Dialoge.Knopf.von("Hubschrauber: ins Dorf", (s, a) -> butler.befehl(s, "flieg mich ins dorf")));
+        for (Villen.Villa v : plugin.villen().alle()) {
+            if (v != eigene && v.besitzerName() != null && !v.besitzerName().isEmpty()) {
+                knoepfe.add(Dialoge.Knopf.von("Hubschrauber: " + v.name(), (s, a) -> butler.befehl(s,
+                        "flieg mich zur villa von " + v.besitzerName().toLowerCase(java.util.Locale.GERMAN))));
+            }
+        }
         Dialoge.zeigen(p, "Goldenes Handy", "Was darf es sein?", List.of(), knoepfe);
     }
 

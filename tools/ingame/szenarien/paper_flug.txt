@@ -1,0 +1,48 @@
+# Paper-Plugin: James als Pilot – Hubschrauber holt den Spieler ab und fliegt ihn ins Dorf, danach nach Hause
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+server /villa ort 75.5 boden 124.5 0 0
+merke
+server /butler flieg mich ins dorf
+bis 20 Flug: Start
+server /gamemode spectator
+server /villa butlerblick
+warte 1
+bild pfl_abflug
+merke
+bis 90 Phase EINSTEIGEN
+server /villa butlerblick
+warte 1
+bild pfl_gelandet
+server /gamemode survival
+server /villa ort 75.5 boden 124.5 0 0
+warte 1
+server /villa einsteigen
+bis 10 Phase REISE
+taste F5
+warte 4
+bild pfl_start
+warte 6
+bild pfl_flug
+bis 240 Phase ANGEKOMMEN
+warte 2
+bild pfl_dorf
+server @/execute as Philip run data get entity Philip Pos
+taste F5
+taste F5
+warte 3
+# Zurück nach Hause (er sitzt schon drin; James steigt nach der Landung aus, also wieder einsteigen)
+server /villa einsteigen
+merke
+server /butler flieg mich nach hause
+bis 20 Phase REISE
+bis 240 Phase ANGEKOMMEN
+taste F5
+warte 2
+bild pfl_heim
+taste F5
+taste F5

@@ -278,6 +278,12 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   Testhilfe `/villa butlerblick` (freie Stelle mit Sicht auf James). Testskripte: Serverprotokoll jetzt UTF-8 (sonst
   „?“ statt „→“, `bis` mit Pfeil wartete ins Leere), `bis` ohne Dateinamen-Auflösung (`*` im Muster).
   Jagd (`butler/Jaeger`, Config `butler.jagen`): Test `paper_jagd.txt` (drei Tiere, 6 Fleisch, geliefert).
+- Pilot (07:10): `butler/Flug` (ABHOLEN → EINSTEIGEN → REISE → ANGEKOMMEN), `Fahrzeuge.hubschrauber/pilotSetzen/sitztDrin/
+  steuern/einsteigen`. Der Autopilot versetzt den Hubschrauber per Teleport (mit Geschwindigkeit stand er still, weil der
+  Landeplatz außerhalb der Simulationsweite lag). Reiseflughöhe 18 über dem höchsten Punkt unter/vor ihm, Landeplatz
+  neben dem Spieler (`Flug.landeplatzBei`: eben, kein Laub/Wasser). Dorf über `org.bukkit.StructureType.VILLAGE` (eine
+  Suche, je Welt gemerkt; dauert beim ersten Mal 2–4 s). Test `paper_flug.txt`: abholen in 11 s, 1200 Blöcke ins Dorf
+  in 90 s, zurück auf den Landeplatz. Testhilfe `/villa einsteigen`.
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch
   ungeklärt); im Trailer 0.4.0 ist die Nummernschild-Szene deshalb das Spielbild aus `nachbarn041.txt` mit Zoom.
 
@@ -499,6 +505,6 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-Paper-Plugin: Chauffeur/Pilot, Straßen zwischen den Villen; Trailer-Teil 3 (Haifalle, Rutsche, Erz, Mitarbeiter, Holz, Sortieren, Jagd); Release 0.4.1
+Paper-Plugin: Chauffeur im Auto, Straßen zwischen den Villen; Trailer-Teil 3 (Haifalle, Rutsche, Erz, Mitarbeiter, Holz, Sortieren, Jagd); Release 0.4.1
 erst nach Philips „Release raus“; nach jedem Schritt `tools/ingame/paper.sh` und Bilder auf die
 Fortschrittsseite.

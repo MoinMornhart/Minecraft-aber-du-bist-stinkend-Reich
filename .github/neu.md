@@ -7,6 +7,7 @@
 - **Kamin:** Der Schalter im Wohnzimmer löscht und zündet jetzt alle vier Feuer (das linke war 6 Blöcke entfernt und blieb an).
 - **James holt Erz auf Paper:** „Butler, hol mir 16 Eisen“ (auch Kohle, Gold, Diamanten, Kupfer, Smaragde, Redstone, Lapis): Treppentunnel, ganze Ader, Hochofen in der Villa, Lieferung. **Mitarbeiterkiste** im Handy: drei Mitarbeiter bauen Diamanten, Eisen und Kohle in ihre Kiste ab.
 - **James fällt Bäume und sortiert Truhen auf Paper:** „Butler, hol mir 16 Holz“ (nur natürliche Bäume, an jeder Stelle wächst ein neuer Setzling) und „Butler, sortier die Truhen“ (alle Truhen und Fässer um dich herum, jede Sorte in ihre Stammtruhe). Dazu „Butler, geh jagen“ (Nutztiere, Jungtiere und benannte Tiere nie, von jeder Art bleiben zwei; abschaltbar). Alles auch als Knopf im Butler-Menü.
+- **James als Pilot auf Paper:** „Butler, flieg mich ins Dorf“ (oder nach Hause, zur Villa eines Nachbarn; auch im Handy): Der Hubschrauber holt dich ab, landet neben dir und fliegt dich über alles hinweg zum Ziel.
 - **Handy auf Paper:** Ein Rechtsklick auf Truhe, Tür oder Knopf öffnet diese (vorher ging das Handy auf).
 - **Trailer** mit neuem Kapitel „Paper-Server“.
 
