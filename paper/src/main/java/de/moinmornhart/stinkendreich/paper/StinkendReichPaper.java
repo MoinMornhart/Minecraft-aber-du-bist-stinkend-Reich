@@ -44,6 +44,8 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private SmartHome smartHome;
     private de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge fahrzeuge;
     private de.moinmornhart.stinkendreich.paper.block.Zugang zugang;
+    private de.moinmornhart.stinkendreich.paper.block.Tore tore;
+    private de.moinmornhart.stinkendreich.paper.block.Sicherheit sicherheit;
     /** Laufende Baustelle (immer nur eine) und wartende Aufträge. */
     private Baustelle baustelle;
     private final Deque<Runnable> warteschlange = new ArrayDeque<>();
@@ -72,8 +74,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         gaeste = new Gaeste(this);
         smartHome = new SmartHome(this);
         mechanik = new de.moinmornhart.stinkendreich.paper.block.Mechanik(this, bloecke);
-        new de.moinmornhart.stinkendreich.paper.block.Tore(this, bloecke, mechanik);
+        tore = new de.moinmornhart.stinkendreich.paper.block.Tore(this, bloecke, mechanik);
         zugang = new de.moinmornhart.stinkendreich.paper.block.Zugang(this, bloecke, mechanik);
+        sicherheit = new de.moinmornhart.stinkendreich.paper.block.Sicherheit(this, bloecke, mechanik, zugang, tore);
         new de.moinmornhart.stinkendreich.paper.block.Aufzug(this, bloecke, mechanik, zugang);
         getServer().getPluginManager().registerEvents(bloecke, this);
         getServer().getPluginManager().registerEvents(mechanik, this);
@@ -168,6 +171,14 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     public SmartHome smartHome() {
         return smartHome;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Zugang zugang() {
+        return zugang;
+    }
+
+    public de.moinmornhart.stinkendreich.paper.block.Sicherheit sicherheit() {
+        return sicherheit;
     }
 
     public Gaeste gaeste() {

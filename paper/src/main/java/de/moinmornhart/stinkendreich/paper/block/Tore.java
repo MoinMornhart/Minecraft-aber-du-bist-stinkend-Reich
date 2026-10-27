@@ -13,7 +13,6 @@ import org.bukkit.entity.WanderingTrader;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Tore, Haustür, Garagentor, Schiebetüren und Rollläden (wie TorsteuerungBlock und TorfluegelBlock der Mod): Jede
@@ -37,6 +36,9 @@ public final class Tore {
     private final Map<String, Integer> pruefung = new HashMap<>();
     private final Map<String, Boolean> schalter = new HashMap<>();
     private final Map<String, Boolean> signal = new HashMap<>();
+    /** Impuls (wie Redstone vom Tastenfeld) bis zu diesem Takt, je Steuerung. */
+    private final Map<String, Long> impulsBis = new HashMap<>();
+    private long takt;
 
     public Tore(StinkendReichPaper plugin, VirtuelleBloecke bloecke, Mechanik mechanik) {
         this.plugin = plugin;
@@ -56,20 +58,30 @@ public final class Tore {
         return b.getWorld().getUID() + ":" + b.getX() + ":" + b.getY() + ":" + b.getZ();
     }
 
+    /** Gibt der Steuerung für einige Ticks ein Signal (Tastenfeld mit richtigem Code). */
+    public void impuls(Block steuerung, int ticks) {
+        impulsBis.put(schluessel(steuerung), takt + ticks);
+    }
+
     private void takt() {
+        takt += 5;
         for (Block b : bloecke.alle("torsteuerung")) {
             Map<String, String> w = bloecke.werte(b);
             String modus = w.getOrDefault("modus", "schalter");
             int radius = zahl(w.get("radius"), 6);
             String k = schluessel(b);
+            int stufe = plugin.sicherheit().stufe(b);
+            boolean strom = b.isBlockIndirectlyPowered() || impulsBis.getOrDefault(k, 0L) > takt;
             boolean offen = switch (modus) {
-                case "tor" -> !plugin.smartHome().zuGehalten(b, w.getOrDefault("ziel", "").endsWith("garagentor")) && amTor(b);
-                case "rollladen" -> !plugin.smartHome().rolllaedenZu(b);
-                case "redstone" -> b.isBlockIndirectlyPowered();
-                case "redstone_invers" -> !b.isBlockIndirectlyPowered();
-                case "schiebetuer" -> jemandNah(b.getLocation().add(0.5, 0.5, 0.5), radius);
+                // Stufe 0: Tor steht offen; Smart Home „bleibt zu“ gilt immer
+                case "tor" -> !plugin.smartHome().zuGehalten(b, w.getOrDefault("ziel", "").endsWith("garagentor")) && (stufe == 0 || amTor(b));
+                case "rollladen" -> stufe < 2 && !plugin.smartHome().rolllaedenZu(b);       // Lockdown oder Smart Home
+                case "redstone" -> strom;
+                case "redstone_invers" -> !strom;
+                case "schiebetuer" -> stufe < 2 ? jemandNah(b.getLocation().add(0.5, 0.5, 0.5), radius)
+                        : berechtigteNah(b, radius);
                 default -> {
-                    boolean an = b.isBlockIndirectlyPowered();
+                    boolean an = strom;
                     if (an && !signal.getOrDefault(k, false)) {
                         schalter.put(k, !schalter.getOrDefault(k, false));
                     }
@@ -125,11 +137,22 @@ public final class Tore {
         return false;
     }
 
-    /** Bewohner (Besitzer der Villa) – bei einer Villa ohne Besitzer jeder. */
+    /** Bewohner, Kartenbesitzer und Gäste. */
     private boolean darfRein(Player p, Block b) {
+        return plugin.zugang().darfRein(p, plugin.villen().bei(b.getLocation(), 16));
+    }
+
+    /** Im Lockdown öffnen Schiebetüren nur für Bewohner, Kartenbesitzer und Gäste. */
+    private boolean berechtigteNah(Block b, int radius) {
+        Location mitte = b.getLocation().add(0.5, 0.5, 0.5);
         Villen.Villa v = plugin.villen().bei(b.getLocation(), 16);
-        UUID herr = v == null ? null : v.besitzer();
-        return herr == null || herr.equals(p.getUniqueId()) || plugin.gaeste().darfRein(v, p);
+        for (Player p : mitte.getWorld().getPlayers()) {
+            if (p.getGameMode() != GameMode.SPECTATOR && p.getLocation().distanceSquared(mitte) <= (radius + 0.5) * (radius + 0.5)
+                    && plugin.zugang().darfRein(p, v)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean jemandNah(Location mitte, int radius) {

@@ -81,6 +81,25 @@ public final class VillaBefehle implements TabExecutor {
                 Zustand z = b == null ? null : plugin.bloecke().zustand(b);
                 antwort(wer, b == null ? "Kein Block." : b.getType() + " " + (z == null ? "" : z + " " + plugin.bloecke().werte(b)));
             }
+            case "zentrale", "code" -> {
+                // Testhilfe: Knopf der nächsten Zentrale bzw. Code am nächsten Tastenfeld (wie im Dialog)
+                Block b = p == null ? null : naechster(p, was.equals("code") ? "tastenfeld" : "sicherheitszentrale");
+                if (b == null) {
+                    antwort(wer, "Nichts in der Nähe.");
+                    return true;
+                }
+                if (args.length < 2) {
+                    if (was.equals("code")) {
+                        plugin.sicherheit().tastenfeld(p, b, "");
+                    } else {
+                        plugin.sicherheit().zentrale(p, b);
+                    }
+                } else if (was.equals("code")) {
+                    plugin.sicherheit().codeEingeben(p, b, args[1]);
+                } else {
+                    plugin.sicherheit().zentraleKnopf(p, b, args[1]);
+                }
+            }
             default -> {
                 String text = plugin.villen().alle().size() + " Villen, " + plugin.bloecke().anzahl() + " Mod-Blöcke geladen. "
                         + plugin.butler().uebersicht();
@@ -91,12 +110,25 @@ public final class VillaBefehle implements TabExecutor {
         return true;
     }
 
+    /** Nächster Mod-Block dieser Art in derselben Welt (höchstens 200 Blöcke weit). */
+    private Block naechster(Player p, String name) {
+        Block best = null;
+        double d = 200 * 200;
+        for (Block b : plugin.bloecke().alle(name)) {
+            if (b.getWorld().equals(p.getWorld()) && b.getLocation().distanceSquared(p.getLocation()) < d) {
+                d = b.getLocation().distanceSquared(p.getLocation());
+                best = b;
+            }
+        }
+        return best;
+    }
+
     private static void antwort(CommandSender wer, String text) {
         wer.sendMessage(Component.text(text, NamedTextColor.GOLD));
     }
 
     @Override
     public List<String> onTabComplete(CommandSender wer, Command befehl, String name, String[] args) {
-        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "info") : List.of();
+        return args.length == 1 ? List.of("bauen", "nachbar", "hin", "ort", "block", "zentrale", "code", "info") : List.of();
     }
 }

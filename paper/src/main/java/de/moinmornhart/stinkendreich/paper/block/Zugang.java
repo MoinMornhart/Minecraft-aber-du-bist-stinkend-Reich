@@ -76,7 +76,8 @@ public final class Zugang {
         return s;
     }
 
-    private boolean hatKarte(Player p, int villa) {
+    /** Hat der Spieler eine Zugangskarte dieser Villa dabei? */
+    public boolean hatKarte(Player p, int villa) {
         for (ItemStack s : p.getInventory().getContents()) {
             Integer nr = s == null || s.isEmpty() ? null : s.getPersistentDataContainer().get(schluesselKarte, PersistentDataType.INTEGER);
             if (nr != null && nr == villa) {
@@ -92,12 +93,31 @@ public final class Zugang {
         return v == null || v.besitzer() == null || v.besitzer().equals(p.getUniqueId()) || plugin.gaeste().darfRein(v, p);
     }
 
+    /** Bewohner wie in der Mod: Besitzer (bei einer Villa ohne Besitzer jeder) oder wer eine Zugangskarte hat. */
+    public boolean istBewohner(Player p, Villen.Villa v) {
+        return v == null || v.besitzer() == null || v.besitzer().equals(p.getUniqueId()) || hatKarte(p, v.nr());
+    }
+
+    /** Eigentümer: nur er stellt die Alarmstufe ein. */
+    public boolean istEigentuemer(Player p, Villen.Villa v) {
+        return v == null || v.besitzer() == null || v.besitzer().equals(p.getUniqueId());
+    }
+
+    /** Darf herein (Türen, Tore, Kartenleser): Bewohner, Kartenbesitzer und Gäste. */
+    public boolean darfRein(Player p, Villen.Villa v) {
+        return istBewohner(p, v) || plugin.gaeste().darfRein(v, p);
+    }
+
     private boolean kartenleser(Player p, Block leser, Zustand z) {
         Villen.Villa v = plugin.villen().bei(leser.getLocation(), 16);
-        boolean darf = bewohner(p, leser) || (v != null && hatKarte(p, v.nr()));
+        // Stufe 0 (System aus): jeder kommt durch
+        boolean darf = plugin.sicherheit().stufe(v) == 0 || darfRein(p, v);
         if (!darf) {
             leser.getWorld().playSound(leser.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1.0F, 0.6F);
             hinweis(p, "Keine Zugangskarte für diese Villa.", NamedTextColor.RED);
+            if (plugin.sicherheit().stufe(v) >= 1) {
+                plugin.sicherheit().alarm(v, leser, p.getName() + " hat ohne Karte versucht, eine Tür zu öffnen");
+            }
             return true;
         }
         leser.getWorld().playSound(leser.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0F, 1.6F);
