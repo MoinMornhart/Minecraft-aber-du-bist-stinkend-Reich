@@ -298,8 +298,8 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   Befehle „fahr mich zur Villa von Max“ / „nach Hause“ (über die Spawn-Villa), Handy-Knopf „Limo: Villa von …“.
   Testhilfen `/villa strassen`, `/villa strasse <nr>`, `/villa strassenblick <anteil> [höhe]`. Tests `paper_strasse.txt`
   (714 Schritte bis ans Ziel), `paper_chauffeur.txt` (ganze Straße gefahren).
-- Trailer (07:15, 11:35): neuer Paper-Teil 3 (1:53) am Ende: Haifalle, Rutsche, Münzbecken, Tunnel, Holz, Sortieren,
-  Jagd, Mitarbeiter, Hubschrauber. Aufnahme in Stücken (`paper_trailer3.txt` a–g, `paper_trailer3h.txt` h–j, mit
+- Trailer (07:55, 12:00): neuer Paper-Teil 3 (2:17) am Ende: Haifalle, Rutsche, Münzbecken, Tunnel, Holz, Sortieren,
+  Jagd, Mitarbeiter, Hubschrauber, Straße und Limo. Aufnahme in Stücken (`paper_trailer3.txt` a–g, `paper_trailer3h.txt` h–j, `paper_trailer3k.txt` k–l, mit
   `CHAT_AUS=1`), Schnitt `tools/ingame/trailer3_schnitt.py` (Leerlauf raus), dann `video.py` und an `docs/trailer.mp4`
   gehängt (ffmpeg concat).
 - Trailer-Nachdreh: In `trailer_kennzeichen.txt` verschwindet der Geländewagen nach etwa 20 s vor dem Tor (noch

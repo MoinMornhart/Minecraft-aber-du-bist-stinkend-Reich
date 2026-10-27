@@ -1,4 +1,4 @@
-"""Setzt die Stücke von paper_trailer3a … j zu einer Rohaufnahme mit Kapiteldatei zusammen (Wartezeiten fehlen)."""
+"""Setzt die Stücke von paper_trailer3a … l zu einer Rohaufnahme mit Kapiteldatei zusammen (Wartezeiten fehlen)."""
 import subprocess
 from pathlib import Path
 
@@ -16,7 +16,7 @@ SCHNITTE = {"e": [(0.0, 4.0), (12.0, None)], "h": [(3.0, 12.0), (15.0, None)], "
 EXTRA = {"e": [(10.0, "Erledigt: jede Sorte liegt in ihrer Stammtruhe")]}
 
 liste, kapitel, versatz = [], [], 0.0
-for buchstabe in "abcdefghij":
+for buchstabe in "abcdefghijkl":
     roh = B / f"paper_trailer3{buchstabe}_roh.mp4"
     if not roh.exists():
         print("fehlt:", roh.name)

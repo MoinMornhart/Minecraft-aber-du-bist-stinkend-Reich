@@ -1,0 +1,43 @@
+# Trailer-Kapitel „Paper-Server“, Teil 3, Nachtrag 2: Straße zur Nachbarvilla und Limo-Fahrt (Stücke k, l)
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+merke
+server /villa nachbar Max
+bis 120 Straßen: baue
+merke
+bis 300 Straßen: Straße zur Villa von Max fertig
+server /time set 6000
+server /gamemode spectator
+server /villa strassenblick 0.3 12
+warte 4
+video start paper_trailer3k
+kapitel Neue Villa für Max: der Server baut die Straße dorthin
+warte 4
+server /villa strassenblick 0.62 14
+warte 3.5
+server /villa strassenblick 0.5 45
+warte 3.5
+video stopp
+server /gamemode survival
+server /villa ort 54.5 boden 126 0 0
+warte 2
+merke
+server /butler fahr mich zur villa von max
+bis 20 Chauffeur: Start
+server /villa strassenblick 0 2.5
+warte 1
+server /villa einsteigen
+merke
+bis 10 Chauffeur: losgefahren
+taste F5
+warte 1
+video start paper_trailer3l
+kapitel „Butler, fahr mich zur Villa von Max“: James fährt die Limo
+warte 12
+video stopp
+taste F5
+taste F5
