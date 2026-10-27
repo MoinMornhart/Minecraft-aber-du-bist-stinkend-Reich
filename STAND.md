@@ -220,7 +220,7 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Paper-Plugin (in Arbeit seit 27.10. nachts, Ordner `paper/`)
 
-- Eigenes Gradle-Projekt: `./gradlew -p paper build` → `paper/build/libs/stinkendreich-paper-<version>+mc26.3.jar`
+- Eigenes Gradle-Projekt: `./gradlew -p paper build` → `paper/build/libs/stinkendreich_paper-<version>+paper26.3.jar` (Name bewusst ohne „stinkendreich-…+mc“, sonst hält die Update-Funktion der Mod das Plugin für ein Mod-Update)
   (paper-api 26.3.build.226, Java 25). Nimmt Bilder/Modelle/Töne/Texte und den Bauplan aus `../src/main/resources`
   (Ordner `mod/` in der .jar), dazu `bloecke.json` und `paket/` (beide von `tools/paper/daten_holen.sh`: Fabric-Server
   mit Polymer, `dev/PaperDaten` schreibt Kollision/Umriss/Licht/Klasse aller Mod-Blöcke, aus Polymers Paket kommen die

@@ -1,0 +1,25 @@
+# Paper-Plugin: Nachbarvilla für „Max“ (im Hintergrund gebaut), Handy zeigt sie, Besuch dort
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+server /time set 6000
+taste F1
+merke
+server /villa nachbar Max
+bis 240 Baustelle: Villa 1 fertig
+warte 3
+server /villa hin 1
+warte 8
+bild pn_ankunft
+server /villa ort 135 60 140 135 22
+warte 6
+bild pn_von_oben
+server /villa ort 55.5 26 80 0 5
+warte 4
+bild pn_james
+server /handy
+warte 2
+bild pn_handy
+taste Escape
+server /villa info

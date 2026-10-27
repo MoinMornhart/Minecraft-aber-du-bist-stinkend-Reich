@@ -55,6 +55,13 @@ jobs:
           ./gradlew buildAndCollect --no-daemon --stacktrace
           -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64,JAVA_HOME_25_X64
 
+      # Paper-Plugin (Server ohne Mod beim Spieler, Paper 26.3)
+      - name: Paper-Plugin bauen
+        run: |
+          ./gradlew -p paper build --no-daemon --stacktrace -Porg.gradle.java.installations.fromEnv=JAVA_HOME_21_X64,JAVA_HOME_25_X64
+          mkdir -p build/plugin
+          cp paper/build/libs/stinkendreich_paper-*.jar build/plugin/
+
       - name: Release-Text
         run: |
           {
@@ -76,6 +83,10 @@ jobs:
               echo "| ${mc} | \`${n}\` |"
             done
             echo
+            for f in build/plugin/*.jar; do
+              echo "**Paper-Server** (Spieler brauchen keine Mod): \`$(basename "$f")\` in den \`plugins\`-Ordner eines Paper-Servers für Minecraft 26.3 legen."
+            done
+            echo
             echo "Verfasst mit Claude 🤖"
           } > release.md
 
@@ -85,5 +96,7 @@ jobs:
           name: Stinkend Reich ${{ env.VERSION }}
           target_commitish: ${{ github.sha }}
           body_path: release.md
-          files: build/libs/*/*.jar
+          files: |
+            build/libs/*/*.jar
+            build/plugin/*.jar
           fail_on_unmatched_files: true

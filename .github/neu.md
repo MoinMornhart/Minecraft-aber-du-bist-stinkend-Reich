@@ -1,3 +1,10 @@
+### Neu in 0.4.1 – Paper-Server
+
+- **Paper-Plugin:** Für Server mit [Paper](https://papermc.io/) (Minecraft 26.3) gibt es jetzt `stinkendreich_paper-0.4.1+paper26.3.jar` für den `plugins`-Ordner. Die Spieler brauchen keine Mod: Der Server liefert das Ressourcenpaket selbst aus, alles öffnet sich als Fenster.
+- **Auf Paper dabei:** Villa am Spawn und eine eigene Villa für jeden weiteren Spieler (im Hintergrund gebaut, im Test in 13 Sekunden, längster Tick 0,06 s), Türen, Tore, Rollläden, Kartenleser, Tastenfeld, Aufzug, Zugbrücke mit Animation, Sicherheitssystem mit Laser, Bewegungsmeldern, Sirenen, Warnleuchten und Tresorfallen, Festung mit Minengürtel, Abwehrgeschützen und Notausgang, Lava-Graben, Inkognito-Modus, Smart Home mit Lichtfarben und Disco, Gästeliste, Überwachungskameras, Konzertflügel mit Klaviatur, Musikanlage, Kamin, Whirlpool, Dusche, Toilette, Schublade, Gemälde, fahrbare Autos, Hubschrauber, Fernseher und Butler James.
+- **Kamin:** Der Schalter im Wohnzimmer löscht und zündet jetzt alle vier Feuer (das linke war 6 Blöcke entfernt und blieb an).
+- **Trailer** mit neuem Kapitel „Paper-Server“.
+
 ### Neu in 0.4.0 – Nachbarschaft
 
 - **Jeder bekommt seine eigene Villa:** Kommt auf einem Server ein neuer Spieler dazu, entsteht für ihn eine eigene Villa mit Butler, Fuhrpark, Hubschrauber, Bunker und Festung – mit großem Abstand im Raster rund um die erste (Standard 320 Blöcke, in der Config `villenAbstand`, abschaltbar mit `mehrereVillen`).

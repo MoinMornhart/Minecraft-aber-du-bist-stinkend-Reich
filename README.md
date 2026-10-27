@@ -30,7 +30,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (gut 6 Minuten, echtes Minecraft)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (gut 8 Minuten, echtes Minecraft, am Ende der Paper-Server)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards und Agenten-Ausrüstung</sub></p>
 
 ## 🏛️ Die Villa
@@ -578,6 +578,29 @@ Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die
 </tr>
 </table>
 
+### 🧱 Paper-Server: das Plugin (Minecraft 26.3, Spieler ohne Mod)
+
+Läuft dein Server mit [Paper](https://papermc.io/), nimm statt der Mod das Plugin `stinkendreich_paper-…+paper26.3.jar` aus dem [neuesten Release](https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/latest) und leg es in den `plugins`-Ordner. Mehr braucht es nicht – auch keine weiteren Plugins. Der Server liefert das Ressourcenpaket selbst aus (eingebauter Webserver auf Port 25580, einstellbar in `plugins/StinkendReich/config.yml`); Spieler nehmen es beim Betreten an und spielen mit ganz normalem Minecraft.
+
+In einer neuen Welt steht die Villa am Spawn, jeder weitere Spieler bekommt seine eigene Villa in der Nachbarschaft (im Hintergrund gebaut, ohne Hänger) samt Zugangskarte. Mit dabei sind fast alle Mechanismen der Mod: Türen, Tore und Rollläden, Kartenleser und Tastenfeld, Aufzug, Zugbrücke mit Animation, Sicherheitssystem mit Laser, Bewegungsmeldern, Sirenen und Tresorfallen, die Festung mit Minen und Abwehrgeschützen, der Inkognito-Modus, Smart Home mit Lichtfarben und Disco, Überwachungskameras, Konzertflügel und Musikanlage, Kamin, Whirlpool, Dusche und Schublade, Gemälde, Fuhrpark mit fahrbaren Autos, Hubschrauber, Fernseher und Butler James. Handy, Zentrale, Aufzug, Tastenfeld und Co. öffnen sich als Fenster.
+
+<table>
+<tr>
+<td><img src="docs/bilder/paper_zugbruecke.jpg" alt="Zugbrücke auf Paper"><br><sub>Zugbrücke gleitet unter das Tor</sub></td>
+<td><img src="docs/bilder/paper_inkognito.jpg" alt="Inkognito auf Paper"><br><sub>Inkognito: die Villa ist unter der Wiese verschwunden</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/paper_disco.jpg" alt="Disco auf Paper"><br><sub>Smart Home: Disco im Ballsaal</sub></td>
+<td><img src="docs/bilder/paper_laser.jpg" alt="Laser auf Paper"><br><sub>Stufe 3: Laser im Garten</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/paper_kamera.jpg" alt="Überwachungskamera auf Paper"><br><sub>Monitor: Blick durch die Überwachungskamera</sub></td>
+<td><img src="docs/bilder/paper_klaviatur.jpg" alt="Klaviatur auf Paper"><br><sub>Konzertflügel: selbst spielen im Fenster</sub></td>
+</tr>
+</table>
+
+Was auf Paper (noch) fehlt: Videos im Fernseher (er steht nur als Bild da), eigene Musik und Spotify, die Aufträge des Butlers (Bergbau, Holz …), Bodyguards, tanzende Tänzerinnen, echte Haie (dort Delfine), Straßen zwischen den Villen und die Agenten-Ausrüstung.
+
 <br>
 
 ## ⚙️ Einstellungen
@@ -598,7 +621,7 @@ Beim Start schaut die Mod in den Releases dieses Projekts nach einer neueren Ver
 ./gradlew :1.21.4:buildAndCollect  # nur eine Version
 ```
 
-Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py`.
+Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, Spieltest mit `tools/ingame/paper.sh`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
 
 **Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
 

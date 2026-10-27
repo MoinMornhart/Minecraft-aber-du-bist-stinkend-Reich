@@ -1,0 +1,11 @@
+# Nachdreh für das Paper-Kapitel: Tiefgarage mit Fuhrpark
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 20
+taste F1
+server /villa ort 91.5 17 45.2 180 30
+warte 8
+video start paper_garage
+warte 7
+video stopp

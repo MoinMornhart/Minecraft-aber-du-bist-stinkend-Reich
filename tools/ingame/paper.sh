@@ -32,12 +32,12 @@ if [[ ! -f "$PAPER" ]]; then
   melde "Lade Paper $V Build $BUILD …"
   curl -fsSL -o "$PAPER" "$URL" || { melde "FEHLER: Paper nicht geladen"; exit 1; }
 fi
-PLUGIN="$(ls -t "$ROOT"/paper/build/libs/stinkendreich-paper-*.jar 2>/dev/null | head -1)"
+PLUGIN="$(ls -t "$ROOT"/paper/build/libs/stinkendreich_paper-*.jar 2>/dev/null | head -1)"
 [[ -n "$PLUGIN" ]] || { melde "FEHLER: erst ./gradlew -p paper build"; exit 1; }
 
 rm -rf "$RUN/world" "$RUN/world_nether" "$RUN/world_the_end" "$RUN/plugins/StinkendReich" "$RUN/stinkendreich-befehle.txt"
 mkdir -p "$RUN/plugins"
-rm -f "$RUN/plugins/"stinkendreich-paper-*.jar
+rm -f "$RUN/plugins/"stinkendreich-paper-*.jar "$RUN/plugins/"stinkendreich_paper-*.jar
 cp "$PLUGIN" "$RUN/plugins/"
 echo "eula=true" > "$RUN/eula.txt"
 cat > "$RUN/server.properties" <<EOF
@@ -140,6 +140,22 @@ bild() {
     melde "WARNUNG: kein Bild für $name"
   fi
 }
+# Video wie in test.sh: „video start <name>“ … „kapitel <text>“ … „video stopp“
+VIDEO_PID=""
+video() {
+  case "$1" in
+    start)
+      VIDEO_NAME="$2"; : > "$AUS/${VIDEO_NAME}_kapitel.txt"
+      ffmpeg -y -loglevel error -f x11grab -framerate "${VIDEO_FPS:-25}" -video_size 1280x720 -draw_mouse 0 -i "$DISPLAY" \
+        -c:v libx264 -preset ultrafast -crf 18 -pix_fmt yuv420p "$AUS/${VIDEO_NAME}_roh.mp4" </dev/null &
+      VIDEO_PID=$!; VIDEO_START=$(date +%s.%N); melde "Video läuft: $AUS/${VIDEO_NAME}_roh.mp4" ;;
+    stopp)
+      if [[ -n "$VIDEO_PID" ]]; then kill -INT "$VIDEO_PID" 2>/dev/null; wait "$VIDEO_PID" 2>/dev/null; VIDEO_PID=""; melde "Video gespeichert"; fi ;;
+  esac
+}
+kapitel() {
+  [[ -n "$VIDEO_PID" ]] && printf '%.1f|%s\n' "$(echo "$(date +%s.%N) - $VIDEO_START" | bc)" "$1" >> "$AUS/${VIDEO_NAME}_kapitel.txt"
+}
 cp "$SZENARIO" "$RUN/szenario.txt"
 while read -r wort rest || [[ -n "$wort" ]]; do
   case "$wort" in
@@ -161,7 +177,10 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     druecke) xdotool keydown --window "$FENSTER" $rest ;;
     loslassen) xdotool keyup --window "$FENSTER" $rest; sleep 0.3 ;;
     halte) set -- $rest; dauer="$1"; shift; xdotool keydown --window "$FENSTER" "$@"; sleep "$dauer"; xdotool keyup --window "$FENSTER" "$@"; sleep 0.3 ;;
+    video) video $rest ;;
+    kapitel) kapitel "$rest" ;;
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac
 done < "$RUN/szenario.txt"
+video stopp
 melde "Fertig"

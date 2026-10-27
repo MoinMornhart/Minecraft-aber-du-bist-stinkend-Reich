@@ -57,5 +57,7 @@ tasks.processResources {
 }
 
 tasks.jar {
-    archiveFileName.set("stinkendreich-paper-$modVersion+mc26.3.jar")
+    // Bewusst nicht „stinkendreich-…+mc26.3.jar“: so heißen die Dateien der Mod, und die Update-Funktion der Mod
+    // würde sonst das Plugin als Update anbieten
+    archiveFileName.set("stinkendreich_paper-$modVersion+paper26.3.jar")
 }
