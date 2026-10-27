@@ -653,6 +653,11 @@ public class ButlerEntity extends PathfinderMob {
         }
 
         @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;   // gehZu prüft „tickCount % 20“ – sonst nie dran bei ungerader Nummer (Goals laufen nur jeden 2. Tick)
+        }
+
+        @Override
         public void tick() {
             ServerPlayer p = besitzerOnline();
             if (p == null) {
@@ -686,6 +691,11 @@ public class ButlerEntity extends PathfinderMob {
         @Override
         public boolean canContinueToUse() {
             return untaetig() && !folgt() && !nahAmZuhause(2);
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;   // gehZu prüft „tickCount % 20“ – sonst nie dran bei ungerader Nummer (Goals laufen nur jeden 2. Tick)
         }
 
         @Override

@@ -588,7 +588,16 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   `paper_altwelt.txt` (Spawn verworfen, Villa 184 Blöcke daneben, Max/Anna gleichzeitig an zwei Plätzen),
   `STINKENDREICH_BAUZEIT_MS=1 WELT_BEHALTEN=1 … paper_neustart_a.txt` + `WELT_BEHALTEN=1 … paper_neustart_b.txt`
   (fortgesetzt, Zählung gleich: 2699 Anzeigen, 658 Klickfelder, 7 Puppen). `paper.sh` kennt jetzt `merke anfang`.
-- Tests (Mod): `bodyguard_ziel.txt`, `nachbar_bebaut.txt` (Haus auf allen acht Plätzen des inneren Rings).
+- **Falle in Minecraft-Goals (Ursache für „ein Bodyguard macht alles, der andere nichts“):** `GoalSelector` fragt `canUse`
+  und `tick` nur jeden zweiten Tick ab, je nach `(tickCount + getId()) % 2`. Ein `tickCount % 10` darin kommt bei
+  ungerader Nummer NIE dran. Deshalb: Zielwahl der Bodyguards im eigenen `tick()` (`zielSuchen`), Goals mit
+  `tickCount %` brauchen `requiresUpdateEveryTick()` (Bodyguard-Folgen, Butler-Folgen/-Heim), Hai-Jagd zählt eigene Abfragen.
+- Bodyguards jetzt wie Personenschützer (Mod und Plugin): bleiben beim Chef und schießen (4,5–24 Blöcke), Nahkampf nur, wenn
+  ein Gegner näher als 5,5 kommt (bleiben dran bis 8); Ziel wird behalten, teilen sich zwei eins, wechselt der mit der
+  größeren Nummer. Plugin: Minecrafts Golem-KI abgeschaltet (`Bodyguards.kiAnpassen`, Paper `MobGoals`/`VanillaGoal`),
+  eigener Nahkampf (`nahkampf`, `g.attack`). Testprotokoll je Sekunde: „Autotest: Bodyguard <id> bei … Ziel … Abstand …“.
+- Tests (Mod): `bodyguard_ziel.txt` (Diener mit Resistenz V für die Fotos), `nachbar_bebaut.txt` (Haus auf dem Platz, den
+  die Suche in der Welt mit Saat „stinkendreich“ wählt: 584 -696 → verworfen, Villa bei 264 -376).
 - `mod.version` = 0.4.2, `.github/neu.md` hat den Abschnitt 0.4.2; `.github/release-version` bleibt 0.4.1 bis Philips OK.
 - Philip (27.10. abends, mehrfach): Auf der Fortschrittsseite auch „Läuft gerade“ und „Als Nächstes“ immer aktuell halten –
   `seite_neu.py` zeigt dort jetzt Mod- und Server-Punkte zusammen.

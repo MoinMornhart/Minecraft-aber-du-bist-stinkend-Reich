@@ -5,7 +5,9 @@
 - **Kein Doppelbau mehr:** Kamen zwei Spieler gleichzeitig dazu, bekamen beide auf Paper dieselbe Nummer und denselben Platz. Jetzt bekommt jeder seinen eigenen.
 - **Neustart mitten im Bau:** Der Bau geht danach an derselben Stelle weiter (Plugin sofort, Mod beim nächsten Betreten des Besitzers) – keine halbe Villa mehr in der Landschaft.
 - **Herr der ersten Villa ohne Neu-Verbinden:** Wer auf die erste Villa wartet, wird nach dem Bau ihr Herr, bekommt die Zugangskarte und wird vor die Tür gebracht. `/villa bauen` macht den, der den Befehl gibt, zum Herrn; `/villa auftraege` zeigt, was gerade gebaut wird.
-- **Bodyguards zielen:** Sie drehen sich zum Gegner und heben die goldene Pistole (Mod: Arm des Golems; Paper und Freunde ohne Mod: Zielhaltung mit beiden Armen). Bei mehreren Gegnern nimmt jeder Bodyguard einen anderen, statt dass einer alles macht.
+- **Bodyguards zielen:** Sie drehen sich zum Gegner und heben die goldene Pistole (Mod: Arm des Golems; Paper und Freunde ohne Mod: Zielhaltung mit beiden Armen), das Mündungsfeuer sitzt vorn an der Pistole. Wie echte Personenschützer bleiben sie bei dir und schießen; in den Nahkampf gehen sie erst, wenn ein Gegner nah herankommt.
+- **Beide Bodyguards arbeiten:** Einer der beiden kam bisher nie dazu, sich ein Ziel zu suchen oder hinterherzulaufen (Minecraft fragt die KI eines Wesens nur jeden zweiten Tick ab – je nach gerader oder ungerader Nummer). Jetzt sucht jeder selbst, und bei mehreren Gegnern nimmt jeder einen anderen. Auf Paper hat außerdem die eingebaute Golem-KI beide auf denselben Gegner geschickt – die ist jetzt abgeschaltet.
+- **Haie** mit ungerader Nummer haben aus demselben Grund nie gejagt – behoben. James erkennt jetzt auch beim Hinterherlaufen zuverlässig, wenn er festhängt.
 - **Bodyguards stecken nicht mehr fest:** Sie erscheinen nur auf freien Stellen (vorher manchmal in einer Wand) und stehen gleich wieder neben dir, wenn sie in einer Wand stecken oder nicht hinterherkommen.
 
 ### Neu in 0.4.1 – Paper-Server

@@ -45,15 +45,18 @@ import java.util.UUID;
 /**
  * Bodyguard: ein Eisengolem im Smoking mit Sonnenbrille und goldener Pistole. Er folgt seinem Chef, kann nie
  * sterben (nur /kill) und beschützt nur: Er greift Monster in der Nähe des Chefs an und jeden, der den Chef angreift.
- * Aus der Ferne schießt er mit der Pistole (Sofort-Treffer, ohne Blockschaden), aus der Nähe schlägt er zu wie ein
- * Eisengolem (wirft Gegner in die Luft). Spieler und Tiere lässt er in Ruhe. Beim Schießen zielt er: Er dreht sich
- * zum Gegner und hebt den Arm mit der Pistole (der Client liest dafür {@link #zielt()}). Zwei Bodyguards teilen sich
- * die Gegner auf, und wer in einer Wand steckt oder nicht hinterherkommt, steht gleich wieder neben dem Chef.
+ * Wie ein echter Personenschützer bleibt er beim Chef und schießt von dort mit der Pistole (Sofort-Treffer, ohne
+ * Blockschaden); erst wenn ein Gegner nah herankommt, geht er hin und schlägt zu wie ein Eisengolem (wirft Gegner in
+ * die Luft). Spieler und Tiere lässt er in Ruhe. Beim Schießen zielt er: Er dreht sich zum Gegner und hebt den Arm mit
+ * der Pistole (der Client liest dafür {@link #zielt()}). Zwei Bodyguards teilen sich die Gegner auf, und wer in einer
+ * Wand steckt oder nicht hinterherkommt, steht gleich wieder neben dem Chef.
  */
 public class BodyguardEntity extends IronGolem {
     private static final String SCHLUESSEL = "stinkendreich";
     /** Ab diesem Abstand schießt er statt zuzuschlagen (Blöcke). */
     private static final double SCHUSS_AB = 4.5, SCHUSS_BIS = 24.0;
+    /** Näher als das kommt ein Gegner, dann geht er zum Nahkampf hin (und bleibt dran, bis der Gegner weiter weg ist). */
+    private static final double NAHKAMPF_AB = 5.5, NAHKAMPF_BIS = 8.0;
     private static final int NACHLADEN = 18;
     /** Zielt gerade auf einen Gegner (für den Arm auf dem Client). */
     private static final EntityDataAccessor<Boolean> ZIELT = SynchedEntityData.defineId(BodyguardEntity.class, EntityDataSerializers.BOOLEAN);
@@ -87,22 +90,25 @@ public class BodyguardEntity extends IronGolem {
 
     @Override
     protected void registerGoals() {
-        // Nahkampf wie ein Eisengolem, nur nicht gegen Creeper (die erledigt er aus der Ferne mit der Pistole)
+        // Nahkampf wie ein Eisengolem, aber nur gegen Gegner in der Nähe und nie gegen Creeper (die erledigt er aus der
+        // Ferne mit der Pistole); weiter weg bleibt er beim Chef und schießt
         goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.1, true) {
             @Override
             public boolean canUse() {
-                return !(getTarget() instanceof Creeper) && super.canUse();
+                LivingEntity z = getTarget();
+                return z != null && !(z instanceof Creeper) && distanceTo(z) < NAHKAMPF_AB && super.canUse();
             }
 
             @Override
             public boolean canContinueToUse() {
-                return !(getTarget() instanceof Creeper) && super.canContinueToUse();
+                LivingEntity z = getTarget();
+                return z != null && !(z instanceof Creeper) && distanceTo(z) < NAHKAMPF_BIS && super.canContinueToUse();
             }
         });
         goalSelector.addGoal(2, new FolgenZiel());
+        goalSelector.addGoal(3, new ZielenZiel());
         goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(8, new RandomLookAroundGoal(this));
-        targetSelector.addGoal(1, new BeschuetzenZiel());
     }
 
     public void setzeChef(Player p) {
@@ -145,6 +151,16 @@ public class BodyguardEntity extends IronGolem {
         if (nachladen > 0) {
             nachladen--;
         }
+        if (tickCount % 10 == 0) {
+            // Zielwahl im eigenen Tick, nicht als Ziel-Goal: Minecraft fragt Goals nur jeden zweiten Tick (je nach
+            // gerader oder ungerader Nummer) – mit „tickCount % 10“ darin kam ein Bodyguard mit ungerader Nummer nie
+            // dran und stand nur herum, während der andere alles machte. Auch null: Ist kein Gegner mehr beim Chef,
+            // lässt er ab (statt einem weggelaufenen hinterherzuzielen).
+            LivingEntity neu = zielSuchen();
+            if (neu != getTarget()) {
+                setTarget(neu);
+            }
+        }
         LivingEntity ziel = getTarget();
         boolean zielen = false;
         if (ziel != null && ziel.isAlive()) {
@@ -178,6 +194,16 @@ public class BodyguardEntity extends IronGolem {
         }
         if (tickCount % 40 == 0) {
             feststeckenPruefen();
+        }
+        if (tickCount % 20 == 0 && de.moinmornhart.stinkendreich.dev.Autotest.aktiv()) {
+            // Testprotokoll: was jeder Bodyguard gerade tut
+            ServerPlayer c = chefOnline();
+            StringBuilder ziele = new StringBuilder();
+            goalSelector.getAvailableGoals().stream().filter(net.minecraft.world.entity.ai.goal.WrappedGoal::isRunning)
+                    .forEach(g -> ziele.append(g.getGoal().getClass().getSimpleName()).append(' '));
+            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Autotest: Bodyguard {} bei {} {} {} Ziel {} Abstand {} Chef {} läuft {}",
+                    getId(), (int) getX(), (int) getY(), (int) getZ(), ziel == null ? "-" : ziel.getId(),
+                    ziel == null ? "-" : String.format("%.1f", distanceTo(ziel)), c == null ? "-" : String.format("%.1f", distanceTo(c)), ziele);
         }
     }
 
@@ -230,8 +256,11 @@ public class BodyguardEntity extends IronGolem {
     private void schiessen(ServerLevel welt, LivingEntity ziel) {
         nachladen = NACHLADEN;
         getLookControl().setLookAt(ziel, 90, 90);
-        Vec3 von = position().add(0, 2.0, 0).add(getLookAngle().scale(0.8));
+        // Mündung: vom rechten Schultergelenk (der gehobene Arm) eine Armlänge mit Pistole Richtung Gegner
+        double gier = Math.toRadians(yBodyRot);
+        Vec3 schulter = position().add(-Math.cos(gier) * 0.7, 2.35, -Math.sin(gier) * 0.7);
         Vec3 nach = ziel.position().add(0, ziel.getBbHeight() * 0.6, 0);
+        Vec3 von = schulter.add(nach.subtract(schulter).normalize().scale(2.0));
         Vec3 schritt = nach.subtract(von).normalize().scale(0.6);
         Vec3 p = von;
         for (int i = 0; i < 48 && p.distanceToSqr(nach) > 0.5; i++) {
@@ -247,7 +276,10 @@ public class BodyguardEntity extends IronGolem {
     // Ziele
     // ------------------------------------------------------------------
 
-    /** Bleibt beim Chef: über 6 Blöcke läuft er hinterher, über 28 Blöcke springt er zu ihm. */
+    /**
+     * Bleibt beim Chef: über 6 Blöcke läuft er hinterher (beim Zielen erst über 12, damit er in Ruhe schießen kann),
+     * über 28 Blöcke springt er zu ihm.
+     */
     private class FolgenZiel extends Goal {
         FolgenZiel() {
             setFlags(EnumSet.of(Flag.MOVE));
@@ -256,7 +288,13 @@ public class BodyguardEntity extends IronGolem {
         @Override
         public boolean canUse() {
             ServerPlayer c = chefOnline();
-            return c != null && c.level() == level() && getTarget() == null && distanceToSqr(c) > 36;
+            double weit = zielt() ? 12 : 6;
+            return c != null && c.level() == level() && distanceToSqr(c) > weit * weit;
+        }
+
+        @Override
+        public boolean requiresUpdateEveryTick() {
+            return true;   // sonst käme „tickCount % 10“ unten bei ungerader Nummer nie dran
         }
 
         @Override
@@ -280,58 +318,70 @@ public class BodyguardEntity extends IronGolem {
         }
     }
 
-    /**
-     * Wer den Chef angreift oder vom Chef angegriffen wird, und Monster in seiner Nähe (Creeper zuerst). Bei mehreren
-     * Monstern nimmt jeder Bodyguard ein anderes, damit nicht einer alles macht und der andere zuschaut.
-     */
-    private class BeschuetzenZiel extends Goal {
-        BeschuetzenZiel() {
-            setFlags(EnumSet.of(Flag.TARGET));
+    /** Beim Zielen schaut er den Gegner an (geht vor dem Umherschauen, damit der Arm wirklich auf den Gegner zeigt). */
+    private class ZielenZiel extends Goal {
+        ZielenZiel() {
+            setFlags(EnumSet.of(Flag.LOOK));
         }
 
         @Override
         public boolean canUse() {
-            if (tickCount % 10 != 0) {
-                return false;
-            }
-            LivingEntity neu = suchen();
-            if (neu != null && neu != getTarget()) {
-                setTarget(neu);
-            }
-            return false;
+            return zielt() && getTarget() != null;
         }
 
-        private LivingEntity suchen() {
-            ServerPlayer c = chefOnline();
-            if (c == null || c.level() != level()) {
-                return null;
+        @Override
+        public void tick() {
+            LivingEntity z = getTarget();
+            if (z != null) {
+                getLookControl().setLookAt(z, 60.0F, 60.0F);
             }
-            LivingEntity angreifer = c.getLastHurtByMob();
-            if (angreifer != null && angreifer.isAlive() && angreifer != BodyguardEntity.this && angreifer.distanceToSqr(c) < 32 * 32
-                    && !(angreifer instanceof BodyguardEntity)) {
-                return angreifer;
-            }
-            LivingEntity angegriffen = c.getLastHurtMob();
-            if (angegriffen != null && angegriffen.isAlive() && angegriffen instanceof Enemy && angegriffen.distanceToSqr(c) < 32 * 32) {
-                return angegriffen;
-            }
-            List<LivingEntity> monster = new ArrayList<>(level().getEntitiesOfClass(LivingEntity.class,
-                    c.getBoundingBox().inflate(16), e -> e instanceof Enemy && e.isAlive() && e.distanceToSqr(c) < 16 * 16));
-            // Creeper zählen näher, damit sie weg sind, bevor sie zischen
-            monster.sort(Comparator.comparingDouble(e -> e.distanceToSqr(c) * (e instanceof Creeper ? 0.25 : 1.0)));
-            if (monster.isEmpty()) {
-                return null;
-            }
-            // Was die anderen Bodyguards des Chefs schon im Visier haben, kommt erst danach an die Reihe
-            List<LivingEntity> belegt = new ArrayList<>();
-            for (BodyguardEntity b : level().getEntitiesOfClass(BodyguardEntity.class, c.getBoundingBox().inflate(48),
-                    b -> b != BodyguardEntity.this && c.getUUID().equals(b.chef()))) {
-                if (b.getTarget() != null) {
-                    belegt.add(b.getTarget());
-                }
-            }
-            return monster.stream().filter(e -> !belegt.contains(e)).findFirst().orElse(monster.getFirst());
         }
+    }
+
+    /**
+     * Wer den Chef angreift oder vom Chef angegriffen wird, und Monster in seiner Nähe (Creeper zuerst). Bei mehreren
+     * Monstern nimmt jeder Bodyguard ein anderes, damit nicht einer alles macht und der andere zuschaut.
+     */
+    private LivingEntity zielSuchen() {
+        ServerPlayer c = chefOnline();
+        if (c == null || c.level() != level()) {
+            return null;
+        }
+        LivingEntity angreifer = c.getLastHurtByMob();
+        if (angreifer != null && angreifer.isAlive() && angreifer != BodyguardEntity.this && angreifer.distanceToSqr(c) < 32 * 32
+                && !(angreifer instanceof BodyguardEntity)) {
+            return angreifer;
+        }
+        LivingEntity angegriffen = c.getLastHurtMob();
+        if (angegriffen != null && angegriffen.isAlive() && angegriffen instanceof Enemy && angegriffen.distanceToSqr(c) < 32 * 32) {
+            return angegriffen;
+        }
+        List<LivingEntity> monster = new ArrayList<>(level().getEntitiesOfClass(LivingEntity.class,
+                c.getBoundingBox().inflate(16), e -> e instanceof Enemy && e.isAlive() && e.distanceToSqr(c) < 16 * 16));
+        // Creeper zählen näher, damit sie weg sind, bevor sie zischen
+        monster.sort(Comparator.comparingDouble(e -> e.distanceToSqr(c) * (e instanceof Creeper ? 0.25 : 1.0)));
+        if (monster.isEmpty()) {
+            return null;
+        }
+        // Was die anderen Bodyguards des Chefs schon im Visier haben, kommt erst danach an die Reihe
+        List<LivingEntity> belegt = new ArrayList<>();
+        boolean geteilt = false;
+        LivingEntity jetzt = getTarget();
+        for (BodyguardEntity b : level().getEntitiesOfClass(BodyguardEntity.class, c.getBoundingBox().inflate(48),
+                b -> b != BodyguardEntity.this && c.getUUID().equals(b.chef()))) {
+            if (b.getTarget() != null) {
+                belegt.add(b.getTarget());
+                // Haben zwei dasselbe Ziel, sucht sich nur einer (der mit der größeren Nummer) ein anderes
+                geteilt |= b.getTarget() == jetzt && getId() > b.getId();
+            }
+        }
+        LivingEntity frei = monster.stream().filter(e -> !belegt.contains(e)).findFirst().orElse(null);
+        // Das bisherige Ziel behalten, solange es noch da ist (kein Hin und Her), außer ein anderes ist frei und
+        // der andere Bodyguard kümmert sich schon um dieses
+        if (jetzt != null && jetzt.isAlive() && monster.contains(jetzt) && !(geteilt && frei != null)) {
+            return jetzt;
+        }
+        return frei != null ? frei : monster.getFirst();
     }
 
     // ------------------------------------------------------------------

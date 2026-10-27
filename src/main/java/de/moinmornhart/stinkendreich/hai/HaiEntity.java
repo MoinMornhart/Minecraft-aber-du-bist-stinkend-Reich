@@ -169,6 +169,8 @@ public class HaiEntity extends Dolphin {
     private class Jagd extends Goal {
         private LivingEntity beute;
         private int pause;
+        /** Zählt die Abfragen: Minecraft fragt Goals nur jeden zweiten Tick (je nach gerader oder ungerader Nummer). */
+        private int abfragen;
 
         Jagd() {
             setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -189,7 +191,8 @@ public class HaiEntity extends Dolphin {
 
         @Override
         public boolean canUse() {
-            if (tickCount % 10 != 0 || !isInWater()) {
+            // Etwa alle halbe Sekunde (nicht „tickCount % 10“: das käme bei ungerader Nummer nie dran)
+            if (++abfragen % 5 != 0 || !isInWater()) {
                 return false;
             }
             beute = suchen();
