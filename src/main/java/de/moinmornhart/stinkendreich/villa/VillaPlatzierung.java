@@ -144,6 +144,22 @@ public final class VillaPlatzierung {
         return null;
     }
 
+    /**
+     * Nachbarvillen von vor 0.4.6: Die Karten in ihren Truhen tragen noch keine Nummer und öffnen deshalb die Spawn-Villa.
+     * Einmal je Villa ausstellen (merkt sich die Villa im Smart-Home-Speicher).
+     */
+    private static void truhenkartenNachholen(MinecraftServer server) {
+        for (VillaInfo v : VILLEN) {
+            var z = de.moinmornhart.stinkendreich.mechanik.VillaZustand.get(server, v.nr());
+            if (v.nr() == 0 || z.smart("karten_ausgestellt", false)) {
+                continue;
+            }
+            int n = de.moinmornhart.stinkendreich.mechanik.Zugang.truhenkartenAusstellen(server.overworld(), v, herrName(server, v));
+            z.setzeSmart("karten_ausgestellt", true);
+            StinkendReich.LOGGER.info("Villa {}: {} Zugangskarten in den Truhen nachträglich ausgestellt", v.nr(), n);
+        }
+    }
+
     private static void beimStart(MinecraftServer server) {
         Path datei = server.getWorldPath(LevelResource.ROOT).resolve(DATEI);
         merkdatei = datei;
@@ -171,6 +187,7 @@ public final class VillaPlatzierung {
                         }
                     }
                 }
+                truhenkartenNachholen(server);
                 return;
             }
             ServerLevel welt = server.overworld();
@@ -212,6 +229,7 @@ public final class VillaPlatzierung {
             }
             return;
         }
+        de.moinmornhart.stinkendreich.mechanik.Zugang.namenNachtragen(spieler, server);
         // Das goldene Handy bekommt jeder Bewohner einmal, auch wer schon vor 0.3 hier wohnte
         if (!Kompat.tags(spieler).contains(TAG_HANDY)) {
             spieler.addTag(TAG_HANDY);
@@ -233,7 +251,7 @@ public final class VillaPlatzierung {
         spieler.addTag(TAG_ANGEKOMMEN);
         VillaInfo ziel = VILLEN.get(0);
         // Willkommensgeschenk: eine Zugangskarte für Tore und Kartenleser der eigenen Villa
-        spieler.getInventory().add(de.moinmornhart.stinkendreich.mechanik.Zugang.karte(ziel));
+        spieler.getInventory().add(de.moinmornhart.stinkendreich.mechanik.Zugang.karte(server, ziel));
         BlockPos p = ziel.spawn();
         Kompat.befehl(server, String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f %.1f 0",
                 spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, ziel.spawnBlick()));
@@ -307,7 +325,7 @@ public final class VillaPlatzierung {
         }
         spieler.addTag(TAG_EIGENE_VILLA);
         spieler.addTag(TAG_ANGEKOMMEN);
-        spieler.getInventory().add(de.moinmornhart.stinkendreich.mechanik.Zugang.karte(villa));
+        spieler.getInventory().add(de.moinmornhart.stinkendreich.mechanik.Zugang.karte(server, villa));
         BlockPos p = villa.spawn();
         Kompat.befehl(server, String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f %.1f 0",
                 spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, villa.spawnBlick()));
@@ -569,6 +587,8 @@ public final class VillaPlatzierung {
             Kompat.setzeSpawnPunkt(welt, villa.spawn(), villa.spawnBlick());
             Kompat.befehl(server, Kompat.spawnRadiusBefehl(0));
         }
+        int karten = de.moinmornhart.stinkendreich.mechanik.Zugang.truhenkartenAusstellen(welt, villa, villa.besitzerName());
+        StinkendReich.LOGGER.info("Villa {}: {} Zugangskarten in den Truhen ausgestellt", nr, karten);
         // Der Butler wartet in der Halle auf seinen Herrn
         JsonArray b = plan.ersteMarke("butler");
         ButlerVerwaltung.villaButlerErzeugen(welt, villa.weltPos(b.get(0).getAsDouble(), b.get(1).getAsDouble(), b.get(2).getAsDouble()),

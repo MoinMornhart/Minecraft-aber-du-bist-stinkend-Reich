@@ -2,6 +2,7 @@ package de.moinmornhart.stinkendreich.mechanik;
 
 import de.moinmornhart.stinkendreich.register.ModItems;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
@@ -50,16 +51,77 @@ public final class Zugang {
 
     /** Eine neue Zugangskarte für diese Villa; bei Nachbarvillen steht der Besitzer im Namen. */
     public static ItemStack karte(de.moinmornhart.stinkendreich.villa.VillaPlatzierung.VillaInfo villa) {
+        return karte(null, villa);
+    }
+
+    /**
+     * Eine neue Zugangskarte für diese Villa, personalisiert (Philip: „die Zutrittskarte ist noch nicht personalisiert auf
+     * das Haus“): Nummer der Villa in den Daten, im Namen „Villa von …“ – bei Nachbarvillen der Besitzer, bei der
+     * Spawn-Villa ihr erster Bewohner (dafür braucht es den Server; ohne ihn nur der Besitzer).
+     */
+    public static ItemStack karte(net.minecraft.server.MinecraftServer server, de.moinmornhart.stinkendreich.villa.VillaPlatzierung.VillaInfo villa) {
         ItemStack karte = new ItemStack(ModItems.ZUGANGSKARTE);
+        personalisieren(karte, villa.nr(), server == null ? villa.besitzerName()
+                : de.moinmornhart.stinkendreich.villa.VillaPlatzierung.herrName(server, villa));
+        return karte;
+    }
+
+    /** Nummer und Namen in eine Karte schreiben (Name nur, wenn er bekannt ist). */
+    private static void personalisieren(ItemStack karte, int nr, String herr) {
         net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
-        tag.putInt("stinkendreich_villa", villa.nr());
+        tag.putInt("stinkendreich_villa", nr);
         karte.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
-        if (!villa.besitzerName().isEmpty()) {
+        if (herr != null && !herr.isEmpty()) {
             karte.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,
-                    net.minecraft.network.chat.Component.translatable("stinkendreich.karte.von", villa.besitzerName())
+                    net.minecraft.network.chat.Component.translatable("stinkendreich.karte.von", herr)
                             .withStyle(s -> s.withItalic(false).withColor(net.minecraft.ChatFormatting.GOLD)));
         }
-        return karte;
+    }
+
+    /**
+     * Zugangskarten in den Truhen, Fässern und Schubladen einer frisch gebauten Villa auf sie ausstellen. Aus dem Bauplan
+     * kommen sie ohne Nummer – und Karten ohne Nummer gelten für die Spawn-Villa: Auf einem Server öffnete eine Karte aus
+     * der Truhe einer Nachbarvilla bisher die Villa des ersten Spielers.
+     */
+    public static int truhenkartenAusstellen(net.minecraft.server.level.ServerLevel welt,
+                                             de.moinmornhart.stinkendreich.villa.VillaPlatzierung.VillaInfo villa, String herr) {
+        int anzahl = 0;
+        BlockPos u = villa.ursprung();
+        for (int cx = u.getX() >> 4; cx <= (u.getX() + villa.plan().breiteX) >> 4; cx++) {
+            for (int cz = u.getZ() >> 4; cz <= (u.getZ() + villa.plan().breiteZ) >> 4; cz++) {
+                for (var be : welt.getChunk(cx, cz).getBlockEntities().values()) {
+                    if (be instanceof net.minecraft.world.Container behaelter && villa.inDerNaehe(be.getBlockPos(), 0)) {
+                        for (int i = 0; i < behaelter.getContainerSize(); i++) {
+                            ItemStack s = behaelter.getItem(i);
+                            if (!s.isEmpty() && s.is(ModItems.ZUGANGSKARTE)) {
+                                personalisieren(s, villa.nr(), herr);
+                                anzahl++;
+                            }
+                        }
+                        be.setChanged();
+                    }
+                }
+            }
+        }
+        return anzahl;
+    }
+
+    /**
+     * Beim Betreten: Karten im Inventar, die noch keinen Namen haben, bekommen den Namen des Herrn ihrer Villa (die
+     * Karte der Spawn-Villa entstand, bevor sie einen Bewohner hatte).
+     */
+    public static void namenNachtragen(net.minecraft.server.level.ServerPlayer spieler, net.minecraft.server.MinecraftServer server) {
+        var inv = spieler.getInventory();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            ItemStack s = inv.getItem(i);
+            if (s.isEmpty() || !s.is(ModItems.ZUGANGSKARTE) || s.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME)) {
+                continue;
+            }
+            var villa = de.moinmornhart.stinkendreich.villa.VillaPlatzierung.nr(villaDerKarte(s));
+            if (villa != null) {
+                personalisieren(s, villa.nr(), de.moinmornhart.stinkendreich.villa.VillaPlatzierung.herrName(server, villa));
+            }
+        }
     }
 
     /**
