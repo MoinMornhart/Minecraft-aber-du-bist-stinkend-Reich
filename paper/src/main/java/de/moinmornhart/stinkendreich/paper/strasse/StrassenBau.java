@@ -202,7 +202,8 @@ final class StrassenBau {
         double[] ziel = ziele.getFirst();
         double rest = Math.hypot(ziel[0] - x, ziel[1] - z);
         boolean vorbei = ziel.length >= 5 && z >= ziel[2] && (ziel[4] < 0 ? x <= ziel[3] : x >= ziel[3]);
-        boolean nah = ziel.length == 3 && rest < ziel[2];           // Anfahrtspunkt: erreicht im Umkreis
+        // Anfahrtspunkt: erreicht im Umkreis oder sobald die Straße auf Höhe des Ziels ist (schon vor der Zufahrt)
+        boolean nah = ziel.length == 3 && (rest < ziel[2] || z >= ziele.getLast()[1] - 2);
         if ((rest < 5 || vorbei || nah) && ziele.size() > 1) {
             ziele.removeFirst();                            // Wegpunkt erreicht: weiter zum nächsten
             plugin.getLogger().info(String.format(Locale.ROOT, "Straße %s: Wegpunkt erreicht bei %d %d %d", name, (int) x, y, (int) z));

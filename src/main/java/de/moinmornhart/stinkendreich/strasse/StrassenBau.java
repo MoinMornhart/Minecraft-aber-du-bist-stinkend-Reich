@@ -226,8 +226,9 @@ public final class StrassenBau {
             ende(rest < 5 ? "am Ziel" : "zu viele Schritte");
             return;
         }
-        // Erst zum Anfahrtspunkt (falls es einen gibt), dann zum Ziel
-        if (anfahrt != null && Math.hypot(anfahrt.x - x, anfahrt.z - z) < 6) {
+        // Erst zum Anfahrtspunkt (falls es einen gibt), dann zum Ziel; ist die Straße schon auf Höhe des Ziels (vor der
+        // Zufahrt), direkt hin – sonst kurvte sie dicht vor dem Ziel noch zum Anfahrtspunkt dahinter
+        if (anfahrt != null && (Math.hypot(anfahrt.x - x, anfahrt.z - z) < 6 || z >= ziel.z - 2)) {
             anfahrt = null;
         }
         Vec3 lenk = anfahrt != null ? anfahrt : ziel;
