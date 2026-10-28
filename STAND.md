@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-28, 08:12 Uhr (0.4.2 erweitert: Villa auch in bestehenden Welten der Mod, feste Plätze frei, Straßen robuster, James bleibt erreichbar, Trailer Teil 6; Release erst nach Philips OK)_
+_Zuletzt aktualisiert: 2026-10-28, 09:17 Uhr (0.4.2 fertig, Release nach Philips OK; Bedrock über Geyser im Paper-Plugin im Test fertig)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -667,6 +667,33 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   `docs/trailer.mp4` jetzt 14:21 und 92 MB (GitHub-Grenze 100 MB → beim nächsten Teil den ganzen Trailer neu kodieren).
 - Platte war voll (alte Rohvideos in `build/ingame/26.3` und im Scratchpad gelöscht). Die Worktrees `/home/user/sr-test`,
   `sr-dusche`, `sr-hai` belegen zusammen mehrere GB; `sr-test` hat alte, nicht committete Änderungen (nicht ungeprüft löschen).
+
+## Bedrock-Spieler über Geyser (28.10., 0.4.3 geplant, Philip: „auch bei Bedrockspielern mit dem Geyser-Plugin“)
+
+- Geyser 2.12 (Java 26.3): Dialoge → Bedrock-Formulare, Schaufensterpuppen ok, aber **keine Anzeige-Figuren** (item/block
+  display) → alle Möbel, Türen, Autos, Mod-Blöcke fehlten. Lösung im Paper-Plugin, Paket `paper/.../bedrock/`:
+  `Bedrock` (Start nur mit Plugin „Geyser-Spigot“ und Config `bedrock.an`), `BedrockPaket` (baut beim Start aus dem Java-Paket
+  `plugins/StinkendReich/bedrock/stinkendreich.mcpack`: 839 Modelle als Geometrie je Textur-Teil, eine Figur
+  `stinkendreich:anzeige` mit Render-Regeln je Teil-Platz/Material, Variante = Modell; Animation `lage` legt Drehung/
+  Verschiebung/Maßstab aus Eigenschaften `stinkendreich:rx…sz` auf Knochen sr_y > sr_x > sr_z; Gegenstands-Bilder
+  `item_texture.json`; Töne `sound_definitions.json` unter Java-Namen; `sr_varianten.json` für Werkzeuge), `Modellwandler`
+  (Achsen wie Blockbench: x gespiegelt, Drehung (−x, −y, z), oben/unten Ausschnitt umgedreht; die 180°-Drehung der
+  Bedrock-Figur und die der Java-Item-Anzeige heben sich auf), `Grundmodelle` (cube, Türen, item/generated selbst nachgebaut),
+  `Lage` (Ry(−Gier)·Rx(Neigung)·Linksdrehung → YXZ-Euler, Bedrock-Werte x: b, y: −a, z: −c, Verschiebung (x, y, −z)·16),
+  `Zwillinge` (leere TextDisplay je Anzeige-Figur, nur für Bedrock-Spieler sichtbar, nur solange einer online ist, ziehen mit),
+  `GeyserAnbindung` (einzige Klasse mit Geyser-API: Paket, Figur, Eigenschaften, `ServerSpawnEntityEvent` → eigene Figur,
+  eigene Gegenstände (Papier/Armbrust/Truhe/Netherit + item_model), `SessionSkinApplyEvent`).
+- Häute: Geyser feuert das Haut-Ereignis nur bei Profilen mit Mojang-Haut-Verweis → Puppen bekommen zusätzlich einen
+  Verweis auf eine Standardhaut (Java nutzt weiter den Haut-Aufsatz), das Plugin setzt dann die echte Haut.
+- Test: `tools/ingame/bedrock/einrichten.sh` (bedrock-protocol, raknet-native-Bibliothek für den Kernel freigeben), dann
+  `GEYSER=1 tools/ingame/paper.sh tools/ingame/szenarien/bedrock_start.txt` (Geyser von Modrinth, RakNet, ohne Xbox-Anmeldung,
+  Test-Client „Bob“, Protokoll `build/ingame/paper/logs/bedrock.log`, Zeilen `bedrock <befehl>` / `bbis`). Ergebnis 09:10: Paket
+  kommt an, ~2350 Ersatzfiguren mit Variante/Lage, Handy- und James-Formular, `stinkendreich:sr_handy` im Inventar, Häute
+  butler/taenzerin_0–3. Vorschau `tools/paper/bedrock_vorschau.py <mcpack> <png>` (Java links, Bedrock rechts: gleich).
+- Paper 26.3 hat standardmäßig eine Whitelist (Testserver jetzt `white-list=false`); Bedrock-Spieler heißen „.Name“.
+- Offen: Philips Test auf echtem Bedrock (Ausrichtung, Licht, Leistung bei ~2500 Figuren), Töne im Spiel, Fabric-Server-Version.
+- GitHub meldet beim Push: Repo liegt jetzt unter `pmornhart/Minecraft-aber-du-bist-stinkend-Reich` (Umleitung klappt, auch für
+  die Update-Funktion).
 
 ## Nächster Schritt
 
