@@ -645,7 +645,7 @@ James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt eine
 
 „Butler, flieg mich ins Dorf“ (oder „nach Hause“, „zur Villa von Max“, auch per Handy) – James setzt sich ans Steuer des Hubschraubers, holt dich ab, wartet, bis du eingestiegen bist (Rechtsklick), und fliegt dich über alles hinweg zum Ziel.
 
-**Straßen zwischen den Villen:** Sobald ein neuer Spieler seine Villa bekommt, baut der Server eine Straße von der Spawn-Villa bis vor seine Zufahrt – mit Mittellinie, Bordstein und Laternen, durch Hügel als offener Einschnitt, über Wasser als Brücke. „Butler, fahr mich zur Villa von Max“ (oder „nach Hause“, auch im Handy): James fährt die Limo vor und dich die Straße entlang hin.
+**Straßen zwischen den Villen:** Sobald ein neuer Spieler seine Villa bekommt, baut der Server eine Straße bis vor seine Zufahrt – sie zweigt von der nächsten Straße des Netzes ab, mit Mittellinie, Bordstein und Laternen, durch Hügel als offener Einschnitt, über Wasser als Brücke, um freie Plätze und Grundstücke herum und von vorn auf die Höhe der Zufahrt. „Butler, fahr mich zur Villa von Max“ (oder „nach Hause“, auch im Handy): James fährt die Limo vor und dich über die Abzweige auf direktem Weg hin – auch nach einem Neustart des Servers, wenn gerade niemand bei seiner Villa ist.
 
 Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser) sowie eigene Musik und Spotify.
 
