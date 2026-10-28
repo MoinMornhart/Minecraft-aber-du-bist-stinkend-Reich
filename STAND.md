@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-28, 09:36 Uhr (Release 0.4.2 veröffentlicht, mit Bedrock-Vorschau im Plugin)_
+_Zuletzt aktualisiert: 2026-10-28, 18:20 Uhr (Release 0.4.3: neue Limo und Supersportwagen, Fernbedienung, kein Eis, kein Fallschaden)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -695,9 +695,25 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 - GitHub meldet beim Push: Repo liegt jetzt unter `pmornhart/Minecraft-aber-du-bist-stinkend-Reich` (Umleitung klappt, auch für
   die Update-Funktion).
 
+## Runde 0.4.3 (28.10. nachmittags, Release 18:07 nach Philips „Release raus“)
+
+- Limo zweiter Entwurf nach echten Stretch-Limos (`stretchlimo()` in fahrzeuge.py: lange Haube, flache Zelle mit getöntem Band
+  `glas_getoent`, kurzes Heck, Frontscheibe ab z −44 mit −0,75 rad, Dach −29..41, Vordersitze z −31); Sitze in `Autotyp`
+  und Paper `Fahrzeuge` {±0.41, 0.27, 1.72}, hinten {±0.59, 0.36, 0.5/−1.0}. AutoRenderer zeichnet durchscheinend
+  (entityTranslucent, drei Versionsvarianten). Philip: „Limo passt“. Supersportwagen im Lamborghini-Stil.
+- Kein Fallschaden im Auto (`AutoEntity.tick` → `resetFallDistance` für Wagen und Mitfahrer; Paper `Fahrzeuge.beimSchaden`).
+- Navi nach „Limo rufen“ nimmt den vorhandenen Wagen (`Handy` „fahr“, `FahrAuftrag.wagenFinden`, Paper `Butler`).
+- Fernbedienung vom Tisch in die Hand (`FernbedienungBlock.nehmen`, `UseBlockCallback` für Klicks auf den Tisch darunter),
+  steuert den angeschauten Fernseher; Paper `block/Fernbedienung`. Kein Eis auf Villengrundstücken (`KeinEisMixin`,
+  `Graben.enteisen`, Paper `Graben.beimFrieren`). Bodyguards: Arm immer gehoben, Nahkampf ohne Pistole. Wand neben der
+  Personalküchentür (villa.py Zeile ~457).
+- Paper-Ressourcenpaket nach Fahrzeugänderungen mit `tools/paper/daten_holen.sh` neu holen (sonst alte Modelle).
+- Trailer Teil 7 (`trailer7.txt`, `trailer7_schnitt.py`), ganzer Trailer neu kodiert (crf 28, maxrate 700k, Ton 96k):
+  15:18, 60 MB. Tests: `runde043*.txt`.
+
 ## Nächster Schritt
 
-**Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
+**Release 0.4.3 angestoßen** (28.10. 18:07, Lauf 40742187650). **Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
 
 **Release 0.4.1 veröffentlicht** (27.10. 12:05, 17 Mod-Dateien + `stinkendreich_paper-0.4.1+paper26.3.jar`: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.1). Vorher geprüft (27.10. 11:45):
 alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
