@@ -23,7 +23,7 @@ public enum Autotyp {
             {0.41, 0.42, 0.16}, {-0.41, 0.42, 0.16}}),
     /** Stretch-Limousine, 8 Blöcke lang und flach: Fahrer vorn, hinten zwei Ledersofas für vier Gäste; die Sitze liegen tief, damit der Kopf unter das flache Dach passt. */
     STRETCHLIMO("stretchlimo", 0.75, 0.7, 2.9, 1.8, 1.0F, new double[][]{
-            {0.41, 0.31, 2.16}, {-0.41, 0.31, 2.16}, {-0.59, 0.36, 0.5}, {0.59, 0.36, 0.5}, {-0.59, 0.36, -1.0}, {0.59, 0.36, -1.0}}),
+            {0.41, 0.27, 1.72}, {-0.41, 0.27, 1.72}, {-0.59, 0.36, 0.5}, {0.59, 0.36, 0.5}, {-0.59, 0.36, -1.0}, {0.59, 0.36, -1.0}}),
     /** Luxus-Hubschrauber: Pilot vorn rechts, vier Plätze; fliegt (siehe {@link HubschrauberEntity}). */
     HUBSCHRAUBER("hubschrauber", 1.0, 1.0, 0.0, 1.571, 1.4F, new double[][]{
             {0.375, 0.55, 0.557}, {-0.375, 0.55, 0.557}, {0.375, 0.55, -0.221}, {-0.375, 0.55, -0.221}});

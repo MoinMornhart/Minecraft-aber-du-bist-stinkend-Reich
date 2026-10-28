@@ -282,7 +282,7 @@ Außerdem: `/butler rufen` holt ihn herbei (oder stellt dir einen eigenen ein), 
 
 <img src="docs/bilder/auto_held.jpg" alt="Das goldene Bonzenauto vor der Villa" width="100%">
 
-In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit vier Sitzen), ein **Luxus-Geländewagen**, ein **Supersportwagen** im Stil der italienischen Keile (flach, Y-Lichter, riesige Lufteinlässe, Lamellen-Motorhaube, Heckflügel) und die **Stretch-Limo** mit durchgehend getönten Scheiben, Chromleisten, Chromgrill und Sternenhimmel innen. Alle mit Goldfelgen, in allen passt man mit dem Kopf unter das Dach. Über die Rampe geht es nach draußen, und der **Drehteller** am Fuß der Rampe wendet dich samt Auto um 180 Grad. Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
+In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit vier Sitzen), ein **Luxus-Geländewagen**, ein **Supersportwagen** im Stil der italienischen Keile (flach, Y-Lichter, riesige Lufteinlässe, Lamellen-Motorhaube, Heckflügel) und die **Stretch-Limo** nach echtem Vorbild (lange Haube, flache Fahrgastzelle mit getöntem Fensterband, kurzes Heck, Chromgrill, Sternenhimmel, Ledersofas und Bar innen). Alle mit Goldfelgen, in allen passt man mit dem Kopf unter das Dach, und fällt ein Wagen eine Kante hinunter, bekommt niemand darin Fallschaden. Über die Rampe geht es nach draußen, und der **Drehteller** am Fuß der Rampe wendet dich samt Auto um 180 Grad. Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
 
 <table>
 <tr>

@@ -706,33 +706,33 @@ def stretchlimo() -> Modell:
     k.kasten((-15.5, -5, 63.5), (31, 1.5, 2), "chrom")
     k.kasten((-4, -8.5, 64), (8, 2, 1), "kennzeichen")
     # Frontscheibe (klar) schräg nach hinten, mit dunklen A-Säulen
-    m.teil("scheibe", (0, -13, -40), (-0.85, 0, 0), eltern="karosserie").kasten((-13.5, -21, 0), (27, 21, 1), "glas") \
-        .kasten((-15, -21, -0.5), (1.5, 21, 1.5), "lack_dunkel").kasten((13.5, -21, -0.5), (1.5, 21, 1.5), "lack_dunkel")
+    m.teil("scheibe", (0, -13, -44), (-0.75, 0, 0), eltern="karosserie").kasten((-13.5, -22, 0), (27, 22, 1), "glas") \
+        .kasten((-15, -22, -0.5), (1.5, 22, 1.5), "lack_dunkel").kasten((13.5, -22, -0.5), (1.5, 22, 1.5), "lack_dunkel")
     # Seitenfenster: schmales Band aus getönten Scheiben, vorn unter der schrägen Säule abgestuft
     for x in (-14.6, 13.6):
         k.kasten((x, -27, -24), (1, 14, 64), "glas_getoent")
-        k.kasten((x, -23, -31), (1, 10, 7), "glas_getoent").kasten((x, -18, -37), (1, 5, 6), "glas_getoent")
+        k.kasten((x, -24, -33), (1, 11, 9), "glas_getoent").kasten((x, -18, -40), (1, 5, 7), "glas_getoent")
     # Säulen: B-Säule hinter dem Fahrer, zwei schmale Säulen im Fahrgastraum (schwarz wie das Glas, nur glänzend)
     for z, breite in ((-22, 1.5), (0, 1), (20, 1)):
         k.kasten((-14.9, -27, z), (1.4, 14, breite), "schwarz").kasten((13.5, -27, z), (1.4, 14, breite), "schwarz")
     # Dach: flach, Chromkante, innen Sternenhimmel
-    k.kasten((-14.5, -29, -25), (29, 2, 66), "lack", unten="sterne", seite="chrom")
+    k.kasten((-14.5, -29, -29), (29, 2, 70), "lack", unten="sterne", seite="chrom")
     # Heck: C-Säule (Lack, zum Kofferraum abgestuft) und schräge, getönte Heckscheibe
     for z0, oben, tiefe in ((40, 27, 3), (43, 23, 3), (46, 18, 3)):
         k.kasten((-15, -oben, z0), (1.5, oben - 13, tiefe), "lack").kasten((13.5, -oben, z0), (1.5, oben - 13, tiefe), "lack")
     m.teil("heckscheibe", (0, -13, 50), (0.62, 0, 0), eltern="karosserie").kasten((-13.5, -17.2, -1), (27, 17.2, 1), "glas_getoent")
-    k.kasten((-17.5, -16, -35), (2.5, 2, 1.5), "lack").kasten((15, -16, -35), (2.5, 2, 1.5), "lack")   # Spiegel
+    k.kasten((-17.5, -16, -39), (2.5, 2, 1.5), "lack").kasten((15, -16, -39), (2.5, 2, 1.5), "lack")   # Spiegel
     # Innenraum: Boden, Armaturenbrett, Fahrersitze, zwei Ledersofas längs, Bar mit Champagner
     k.kasten((-13.5, -6, -40), (27, 1, 90), "innen")
-    k.kasten((-13, -14, -39), (26, 3, 5), "schwarz", oben="innen")
+    k.kasten((-13, -14, -43), (26, 3, 5), "schwarz", oben="innen")
     s = m.teil("sitze")
-    sitz(s, -11, -8, -38, mat="leder")                                                # Fahrer
-    sitz(s, 2, -8, -38, mat="leder")
+    sitz(s, -11, -8, -31, mat="leder")                                                # Fahrer
+    sitz(s, 2, -8, -31, mat="leder")
     s.kasten((-13, -9, -14), (5, 3, 58), "leder_knoepfe").kasten((-13.5, -15, -14), (1.5, 6, 58), "leder_knoepfe")
     s.kasten((8, -9, -14), (5, 3, 58), "leder_knoepfe").kasten((12, -15, -14), (1.5, 6, 58), "leder_knoepfe")
     s.kasten((-3, -9, 2), (6, 3, 12), "bar", oben="gold")
     s.kasten((-1, -14, 5), (2, 5, 2), "schwarz").kasten((-1, -15, 5), (2, 1, 2), "gold")       # Champagner
-    m.teil("lenkrad").kasten((4, -15, -35), (5, 4, 1), "schwarz")
+    m.teil("lenkrad").kasten((4, -15, -34), (5, 4, 1), "schwarz")
     raeder(m, 14, 19, -46, 44)
     return m
 
