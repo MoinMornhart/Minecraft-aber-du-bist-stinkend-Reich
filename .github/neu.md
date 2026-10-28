@@ -14,7 +14,8 @@
 - **Paper: Bodyguards gleiten nicht mehr davon.** Schaufensterpuppe und unsichtbarer Golem schoben sich gegenseitig an, so dass ein Bodyguard, der einmal losgelaufen war, langsam weiterglitt – auch beim Zielen.
 - **Haie** mit ungerader Nummer haben aus demselben Grund nie gejagt – behoben. James erkennt jetzt auch beim Hinterherlaufen zuverlässig, wenn er festhängt.
 - **Bodyguards stecken nicht mehr fest:** Sie erscheinen nur auf freien Stellen (vorher manchmal in einer Wand) und stehen gleich wieder neben dir, wenn sie in einer Wand stecken oder nicht hinterherkommen.
-- **Trailer** mit neuem Teil „Neu in 0.4.2 – Bodyguards im Einsatz“ (Mod und Paper-Server).
+- **Paper: Bedrock-Spieler über Geyser (Vorschau).** Ist auf dem Server das Plugin [Geyser](https://geysermc.org/) installiert, baut das Plugin beim Start ein eigenes Bedrock-Ressourcenpaket und gibt es Geyser mit: Möbel, Türen, Autos und alle eigenen Blöcke erscheinen auch für Bedrock-Spieler (Handy, Konsole, Windows), Handy und Butler-Menü kommen als Bedrock-Formulare, James, Personal und Tänzerinnen haben ihre Haut. Im Test mit einem Bedrock-Testclient geprüft, auf einem echten Bedrock-Gerät noch nicht – Rückmeldungen willkommen. Abschaltbar in der Config (`bedrock.an`).
+- **Trailer** mit zwei neuen Teilen: „Neu in 0.4.2 – Bodyguards im Einsatz“ (Mod und Paper-Server) und „Straßen zu allen Freunden“ (James fährt über die Abzweige von Villa zu Villa).
 
 ### Neu in 0.4.1 – Paper-Server
 
