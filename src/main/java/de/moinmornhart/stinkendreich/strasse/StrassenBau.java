@@ -276,7 +276,10 @@ public final class StrassenBau {
             return;
         }
         // Große Ausweichschwenks nur schrittweise fahren (weite Kurven, die der Wagen sauber schafft)
-        richtung = richtung + clamp((float) Strassennetz.wrap(frei - richtung), -1.5F * KURVE, 1.5F * KURVE);
+        float neu = richtung + clamp((float) Strassennetz.wrap(frei - richtung), -1.5F * KURVE, 1.5F * KURVE);
+        // Geprüft ist die gewählte Richtung, gefahren wird die gedrosselte: Wäre die versperrt, sofort die geprüfte
+        // nehmen (sonst rutschte die Straße in der weiten Kurve in eine Sperre, etwa an die Kante eines freien Platzes)
+        richtung = frei(neu) ? neu : frei;
         x += -Math.sin(Math.toRadians(richtung));
         z += Math.cos(Math.toRadians(richtung));
 

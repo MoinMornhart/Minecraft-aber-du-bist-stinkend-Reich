@@ -249,7 +249,10 @@ final class StrassenBau {
             ende("kein freier Weg (Rest " + (int) rest + ", Sperre " + letzteSperre + ")");
             return;
         }
-        richtung = richtung + clamp(wrap(frei - richtung), -1.5F * KURVE, 1.5F * KURVE);
+        float neu = richtung + clamp(wrap(frei - richtung), -1.5F * KURVE, 1.5F * KURVE);
+        // Geprüft ist die gewählte Richtung, gefahren wird die gedrosselte: Wäre die versperrt, sofort die geprüfte
+        // nehmen (sonst rutschte die Straße in der weiten Kurve in eine Sperre, etwa an die Kante eines freien Platzes)
+        richtung = frei(neu) ? neu : frei;
         x += -Math.sin(Math.toRadians(richtung));
         z += Math.cos(Math.toRadians(richtung));
 
