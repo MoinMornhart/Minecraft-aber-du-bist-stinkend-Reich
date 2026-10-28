@@ -226,6 +226,7 @@ public final class Inkognito {
                             draussen.clear();
                             laden(welt, villa, false);
                             StinkendReich.LOGGER.info("Inkognito: Villa {} ist oben", nr);
+                            stufeZurueck(welt.getServer(), nr);
                             phase = null;
                             welt.playSound(null, mitte(villa, villa.plan().bodenY), SoundEvents.BEACON_ACTIVATE,
                                     SoundSource.BLOCKS, 4.0F, 1.0F);
@@ -278,6 +279,28 @@ public final class Inkognito {
         return villa.plan().hoehe - villa.plan().bodenY + DECKE - 1;
     }
 
+    private static final String STUFE_VORHER = "stufe_vor_inkognito";
+
+    /**
+     * Sicherheitsstufe von vor dem Abtauchen wiederherstellen. Vorher blieb sie auf 0 („aus“) – und bei Stufe 0 stehen
+     * Tor und Garagentor immer offen (Philip: „dann bleiben die einfach offen“). Ohne gemerkte Stufe (Villa vor 0.4.4
+     * versteckt) gilt die Grundstufe 1.
+     */
+    private static void stufeZurueck(MinecraftServer server, int nr) {
+        VillaZustand z = VillaZustand.get(server, nr);
+        String vorher = z.smartText(STUFE_VORHER, "");
+        int stufe = 1;
+        try {
+            stufe = vorher.isEmpty() ? (z.stufe() == 0 ? 1 : z.stufe()) : Integer.parseInt(vorher);
+        } catch (NumberFormatException ignoriert) {
+            // kaputter Eintrag: Grundstufe
+        }
+        z.setzeSmart(STUFE_VORHER, "");
+        if (stufe != z.stufe()) {
+            z.setzeStufe(stufe);
+        }
+    }
+
     /** Befehl für die Spawn-Villa (z. B. /villa inkognito). */
     public static String schalten(MinecraftServer server, boolean an) {
         return schalten(server, 0, an);
@@ -307,7 +330,9 @@ public final class Inkognito {
         // Das ganze Grundstück bleibt während der Fahrt geladen (sonst fehlten Figuren in entfernten Chunks)
         laden(welt, villa, true);
         if (an) {
-            z.setzeStufe(0);                                     // keine Laser, Minen oder Lava im Versteck
+            // Keine Laser, Minen oder Lava im Versteck; die Stufe von vorher kommt beim Auftauchen zurück
+            z.setzeSmart(STUFE_VORHER, String.valueOf(z.stufe()));
+            z.setzeStufe(0);
             FAHRTEN.put(nr, new Fahrt(nr, Phase.LADEN_RUNTER));
         } else {
             FAHRTEN.put(nr, new Fahrt(nr, Phase.BAEUME_WEG));    // gespeichert wird erst, wenn die Wiese offen ist

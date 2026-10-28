@@ -137,6 +137,13 @@ public final class Sicherheit {
         }
     }
 
+    /** Nach dem Auftauchen: Stufe von vor dem Abtauchen wiederherstellen. */
+    public void stufeNachInkognito(Villen.Villa v, int vorher) {
+        if (stufe(v) == 0 && vorher != 0) {
+            stufeSetzen(v, vorher);
+        }
+    }
+
     /** Ticks seit dem Einschalten der Festung (groß, wenn sie schon vor dem Start an war). */
     public long festungTicks(Villen.Villa v) {
         Long seit = festungSeit.get(nr(v));

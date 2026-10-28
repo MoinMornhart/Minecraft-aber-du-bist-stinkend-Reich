@@ -110,6 +110,8 @@ public final class Inkognito implements Listener {
     private final Path datei;
     /** Versteckte Villen (Nummer → true). */
     private final Map<Integer, Boolean> unten = new HashMap<>();
+    /** Sicherheitsstufe von vor dem Abtauchen (kommt beim Auftauchen zurück; bei Stufe 0 stünden die Tore immer offen). */
+    private final Map<Integer, Integer> stufeVorher = new HashMap<>();
     private final Map<Integer, Fahrt> fahrten = new HashMap<>();
     private final Map<Integer, Boolean> wunsch = new HashMap<>();
     /** Blöcke, die Inhalte tragen (Truhen, Schilder, Banner …), einmal ermittelt. */
@@ -124,7 +126,13 @@ public final class Inkognito implements Listener {
         try {
             if (Files.exists(datei)) {
                 JsonObject j = JsonParser.parseString(Files.readString(datei, StandardCharsets.UTF_8)).getAsJsonObject();
-                j.entrySet().forEach(e -> unten.put(Integer.parseInt(e.getKey()), e.getValue().getAsBoolean()));
+                j.entrySet().forEach(e -> {
+                    if (e.getKey().startsWith("stufe_")) {
+                        stufeVorher.put(Integer.parseInt(e.getKey().substring(6)), e.getValue().getAsInt());
+                    } else {
+                        unten.put(Integer.parseInt(e.getKey()), e.getValue().getAsBoolean());
+                    }
+                });
             }
         } catch (Exception e) {
             plugin.getLogger().warning("inkognito.json konnte nicht gelesen werden: " + e.getMessage());
@@ -159,6 +167,7 @@ public final class Inkognito implements Listener {
     private void speichern() {
         JsonObject j = new JsonObject();
         unten.forEach((n, b) -> j.addProperty(Integer.toString(n), b));
+        stufeVorher.forEach((n, s) -> j.addProperty("stufe_" + n, s));
         try {
             Files.createDirectories(datei.getParent());
             Files.writeString(datei, new GsonBuilder().setPrettyPrinting().create().toJson(j), StandardCharsets.UTF_8);
@@ -190,6 +199,7 @@ public final class Inkognito implements Listener {
         plugin.getLogger().info("Inkognito: Villa " + v.nr() + " fährt " + (an ? "runter" : "hoch") + " (Tiefe " + tiefe() + ")");
         laden(v, true);
         if (an) {
+            stufeVorher.put(v.nr(), plugin.sicherheit().stufe(v));
             plugin.sicherheit().stufeFuerInkognito(v);   // keine Laser, Minen oder Lava im Versteck
         }
         fahrten.put(v.nr(), new Fahrt(v, an ? Phase.LADEN_RUNTER : Phase.BAEUME_WEG));
@@ -374,6 +384,10 @@ public final class Inkognito implements Listener {
                         f.draussen.clear();
                         laden(f.v, false);
                         plugin.getLogger().info("Inkognito: Villa " + f.v.nr() + " ist oben");
+                        // Stufe von vorher zurück (ohne gemerkte Stufe: Grundstufe 1) – sonst blieben Tor und Garagentor offen
+                        Integer vorher = stufeVorher.remove(f.v.nr());
+                        plugin.sicherheit().stufeNachInkognito(f.v, vorher != null ? vorher : 1);
+                        speichern();
                         melden(f.v, "Die Villa ist wieder da.");
                         f.phase = null;
                         f.w.playSound(mitte(f.v, plugin.bauplan().bodenY), Sound.BLOCK_BEACON_ACTIVATE, SoundCategory.BLOCKS, 4.0F, 1.0F);
