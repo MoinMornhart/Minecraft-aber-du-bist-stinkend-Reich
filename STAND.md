@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-27, 23:10 Uhr (Nachtschicht 0.4.2 fertig: Villen jederzeit auf Paper, nie über Spielerbauten, Bodyguards zielen und arbeiten beide, README und Trailer neu; Release erst nach Philips OK)_
+_Zuletzt aktualisiert: 2026-10-28, 07:35 Uhr (0.4.2 erweitert: Villa auch in bestehenden Welten der Mod, feste Plätze frei, Straßen robuster, James bleibt erreichbar; Release erst nach Philips OK)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -628,7 +628,35 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   an, die vierte lief neben der dritten her und blieb mit „andere Straße darüber“ hängen. `strassen.json` speichert `eltern`
   (Villa-Nummer der Elternstraße, -1 = Spawn-Villa) und `abzweig`; `Strassen.strecke(nr)` = ganze Strecke ab Spawn-Villa,
   `fahrweg(von, nach)` = zurück bis zur Gabelung, dann hin (James als Chauffeur). Baustelle nennt im Protokoll den Block, der
-  einen Platz sperrt („z. B. … bei x y z“). Test: `CHAT_AUS=1 paper.sh paper_plaetze.txt` (vier Freunde nacheinander).
+  einen Platz sperrt („z. B. … bei x y z“). Test: `CHAT_AUS=1 paper.sh paper_plaetze.txt` (vier Freunde nacheinander),
+  danach in derselben Welt `WELT_BEHALTEN=1 CHAT_AUS=1 paper.sh paper_plaetze_fahrt.txt` (James fährt Otto → Max über zwei
+  Abzweige, 964 Punkte, 104 s) und `paper_plaetze_bilder.txt` (Abzweige schräg von oben, `/villa strassenblick <anteil>
+  <höhe> <villa>`). Der Platz -56 -376 in dieser Testwelt hat einen Plünderer-Außenposten (Zaun aus Schwarzeiche) → wird zu
+  Recht verworfen.
+- **Straßenbau robuster (Mod `strasse/StrassenBau`, Plugin `strasse/StrassenBau`, gleiche Regeln):**
+  1. Keine Schleifen: erst nur Richtungen bis 100° vom Ziel weg; zweiter Durchgang (nur wenn alles zu ist) auch ±105/135°.
+  2. Weitblick `fernGesperrt`: 12–48 Blöcke voraus über die ganze Breite (Mitte und ±(HALB+2)) auf freie Plätze und
+     Grundstücke (+25 Kosten) – vorher fuhr die Straße frontal oder an der Kante auf einen freien Platz und kam nicht herum.
+  3. Gefahrene Richtung prüfen: gewählt wird `frei`, gefahren gedrosselt 6°/Schritt; wäre die gedrosselte versperrt, sofort
+     `frei` nehmen (sonst rutschte sie in weiten Kurven in eine Sperre).
+  4. Zielhöhe: Straßen zu Villen kennen die Fahrbahnhöhe am Ende der Zufahrt (`zielY`/`zielHoehe`, gelesen am Zufahrtsende,
+     nicht 3 Blöcke dahinter!) und gehen rechtzeitig darauf (ein Block auf drei); dort sperrt die Zufahrt nicht als
+     „andere Straße darüber“. Vorher kreisten Straßen um ein Ziel in anderer Höhe.
+  5. Anfahrt von vorn: Wegpunkt 10 Blöcke südlich des Ziels (Plugin: Wegpunkt mit Umkreis, Mod: `anfahrt`), entfällt,
+     sobald die Straße auf Höhe des Ziels ist. Bis 8 Blöcke vor dem Ziel gilt „kein freier Weg“ als „am Ziel“.
+  6. Abzweige nicht dicht (12 Blöcke) an freien Plätzen (`naheFreiemPlatz` / `abzweigErlaubt`).
+  Mod-Test `tools/ingame/test.sh 26.3 mod_plaetze.txt` (neue Welt, vier Freunde, wartet auf alle vier Villen-Straßen):
+  Lauf 6 (07:29) Dorf (bis Dorfrand), Mine, Netherportal, Endportal, Lena, Otto, Anna am Ziel, Max 6 Blöcke davor (jetzt
+  „am Ziel“). Plugin-Lauf 6 (07:32): alle vier am Ziel. Achtung: `WELT_BEHALTEN=1 test.sh` startet von der Ausgangswelt
+  `run/testwelt`, nicht vom letzten Spielstand (`run/saves/testwelt`).
+- **Plugin: James bleibt erreichbar** (`butler/Butler`): Sein Chunk bleibt per Plugin-Ticket geladen, Ort in
+  `plugins/StinkendReich/butler_orte.json` (ohne Eintrag: Halle). Vorher nach einem Neustart „nicht erreichbar“, solange
+  niemand bei seiner Villa war. Fahrzeugsitze sind nicht persistent: Wer beim Stoppen darauf sitzt, verschwindet → beim
+  Stoppen steigt James aus (`Butler.beenden` in `onDisable`), und fehlt seine Figur 30 s bei vorhandenem Körper, entsteht
+  sie neu (Doppelte werden entfernt). Im Spieltest schreibt `Butler.sagen` „Autotest: James zu …“ ins Protokoll.
+- Testfallen: Ein Spieler, der im Überlebensmodus nach `/tp` stirbt, bleibt in der Paper-Testwelt tot gespeichert
+  („Attempt to teleport removed player“) → Spielerdatei in `build/paper-test/world/players/data/` löschen. In Szenarien
+  erst Kreativmodus, dann teleportieren.
 
 ## Nächster Schritt
 
