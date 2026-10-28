@@ -676,6 +676,8 @@
   "stinkendreich.update.laedt": "Downloading the update …",
   "stinkendreich.update.neu": "Version %s of Filthy Rich for Minecraft %s is available.",
   "stinkendreich.villa.baubeginn": "You're getting your own villa! It's being built in the neighbourhood, this takes about a minute.",
+  "stinkendreich.villa.erstevilla": "There is no villa in this world yet – it is being built for you now on a free spot near spawn. Your buildings stay as they are. This takes about a minute.",
+  "stinkendreich.villa.erstewarten": "The first villa of this world is being built right now. Once it stands, you will get your own.",
   "stinkendreich.villa.baustelle": "🏗 Building your villa … %s %%",
   "stinkendreich.villa.info": "Villa: corner %s %s %s, entrance %s %s %s",
   "stinkendreich.villa.keine": "There is no villa in this world.",

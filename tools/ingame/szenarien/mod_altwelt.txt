@@ -1,0 +1,26 @@
+# Welt von vorher ohne Villa (Mod), Teil 2: Beim ersten Betreten entsteht die erste Villa im Hintergrund auf einem freien
+# Platz; der Platz mitten auf dem Spawn hat das Holzhaus und wird verworfen. Der Spieler wird Herr und vor die Tür
+# gebracht. Danach bekommt ein Freund (Max, erfunden) seine Villa im Raster um die erste.
+# Aufruf über scratchpad/mod_altwelt.sh (WELT_BEHALTEN=1, Config "villaBauen": true)
+merke anfang
+bis 240 Baustelle: Villa 0 fertig
+warte 8
+taste F1
+bild altwelt_mod_villa
+taste F1
+server /forceload add 0 0
+warte 3
+server /execute positioned 0 0 0 positioned over world_surface run tp @p ~16 ~8 ~16 facing ~ ~-4 ~
+warte 8
+taste F1
+bild altwelt_mod_haus_steht
+taste F1
+server /forceload remove all
+merke
+server /villa nachbar Max
+bis 600 Baustelle: Villa 1 fertig
+warte 5
+server /villa hin 1
+warte 10
+taste F1
+bild altwelt_mod_max

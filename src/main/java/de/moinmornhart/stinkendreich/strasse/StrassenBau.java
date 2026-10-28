@@ -535,6 +535,11 @@ public final class StrassenBau {
         if (welt.getBlockState(p).is(de.moinmornhart.stinkendreich.register.ModBloecke.LANDMINE)) {
             return false;
         }
+        // Freigehaltene Plätze für künftige Villen: drumherum (außer die Straße will genau dorthin, etwa in ein Dorf)
+        int[] platz = VillaPlatzierung.reservierterPlatz(p.getX(), p.getZ());
+        if (platz != null && !zielBei(platz)) {
+            return true;
+        }
         VillaPlatzierung.VillaInfo villa = VillaPlatzierung.bei(p);           // jede Villa, nicht nur die am Spawn
         if ((villa != null && villa.enthaelt(p)) || SpielerBloecke.istGesetzt(welt, p)
                 || welt.getBlockEntity(p) != null) {
@@ -542,6 +547,12 @@ public final class StrassenBau {
         }
         BlockState s = welt.getBlockState(p);
         return !s.isAir() && s.getFluidState().isEmpty() && !Schutz.istNatuerlich(s) && !istStrasse(s);
+    }
+
+    /** Liegt das Ziel dieser Straße auf (oder dicht an) einem freigehaltenen Platz? Dann darf sie hinein. */
+    private boolean zielBei(int[] platz) {
+        int rand = 48;
+        return ziel.x >= platz[0] - rand && ziel.x < platz[2] + rand && ziel.z >= platz[1] - rand && ziel.z < platz[3] + rand;
     }
 
     /** Fahrbahn, Bordstein oder Unterbau einer Straße (nicht Stufen, Geländer, Laternen). */

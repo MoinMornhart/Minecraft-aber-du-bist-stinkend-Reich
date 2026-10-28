@@ -608,6 +608,28 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 - Philip (27.10. abends, mehrfach): Auf der Fortschrittsseite auch „Läuft gerade“ und „Als Nächstes“ immer aktuell halten –
   `seite_neu.py` zeigt dort jetzt Mod- und Server-Punkte zusammen.
 
+## Morgen 28.10. (0.4.2, Philip: „Mach das, dass es überall geht“ + feste Plätze für weitere Villen)
+
+- **Mod: erste Villa auch in bestehenden Welten** (Konfig `villaInBestehendenWelten`, Standard an): `VillaPlatzierung.beimStart`
+  merkt sich `ersteVillaOffen`, wenn die Welt keine Villa hat (alte Welt oder Merkdatei mit `gebaut:false`); beim ersten
+  Betreten bestellt `ersteVillaBestellen` sie bei `VillaBaustelle` (Auslöser wird Herr, `ausstatten(nr==0)` setzt den
+  Weltspawn). Platzwahl `ersteVillaPlaetze`: Ring 0 am Weltspawn, dann Raster mit Schritt max(breite) + 2·Anblendung + 48;
+  Prüfung auf Spielerbauten wie bei Nachbarvillen. Wer während des Baus kommt, bekommt „erstewarten“ und danach die eigene
+  (`ersteVillaFertig` → `beimBetreten` für alle, Straßen-Automatik startet erst dann: `Strassennetz.automatikStarten`).
+  Test: `scratchpad/mod_altwelt.sh` (Konfig `villaBauen` aus → `mod_altwelt_vorbereiten.txt` baut ein Haus am Spawn → Welt
+  kopieren → `villaBauen` an → `WELT_BEHALTEN=1 test.sh 26.3 mod_altwelt.txt`): Villa 0 bei -264 -56 nach 31 s, Haus unberührt,
+  Villa 1 (Max) im Raster. `test.sh` kennt jetzt `merke anfang` (Chat ab Zeile 0).
+- **Feste Plätze freihalten** (Mod `VillaPlatzierung.reservierterPlatz`, Plugin `Bauleitung.reservierterPlatz`): Rasterplätze
+  der Ringe 1–2 um Villa 0 (samt Rand für Anblendung und Zufahrt) sind für Straßen gesperrt (`StrassenBau.geschuetzt`), außer
+  das Ziel der Straße liegt dort (`zielBei`, 48 Blöcke). Plätze mit Straße werden bei der Suche schon mit diesem Rand verworfen.
+  Mod geprüft: Dorfstraße führte am Platz von Max vorbei, Max' Villa entstand genau dort.
+- **Plugin: Straßen zweigen ab** (`Strassen.starten`): vom nächsten Punkt einer fertigen Straße (nicht auf Grundstücken/freien
+  Plätzen), wenn er 50 Blöcke näher am Ziel liegt als der Anfang an der Spawn-Villa. Vorher fingen alle Straßen am selben Punkt
+  an, die vierte lief neben der dritten her und blieb mit „andere Straße darüber“ hängen. `strassen.json` speichert `eltern`
+  (Villa-Nummer der Elternstraße, -1 = Spawn-Villa) und `abzweig`; `Strassen.strecke(nr)` = ganze Strecke ab Spawn-Villa,
+  `fahrweg(von, nach)` = zurück bis zur Gabelung, dann hin (James als Chauffeur). Baustelle nennt im Protokoll den Block, der
+  einen Platz sperrt („z. B. … bei x y z“). Test: `CHAT_AUS=1 paper.sh paper_plaetze.txt` (vier Freunde nacheinander).
+
 ## Nächster Schritt
 
 **0.4.2 ist fertig** (27.10. 23:10): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards; Mod: Nachbarvilla auf bebautem Platz, Bodyguards), README und Trailer (Teil 5) neu. **Release erst nach Philips „Release raus“:** dann `.github/release-version` auf 0.4.2. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).

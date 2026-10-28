@@ -192,6 +192,41 @@ public final class Bauleitung {
         return plugin.villen().alle().stream().filter(v -> v.nr() == 0).findFirst().orElse(null);
     }
 
+    /**
+     * Freigehaltener Platz für eine künftige Villa (Grundstück x0, z0, x1, z1), in dessen Fläche diese Stelle liegt,
+     * sonst null: die beiden inneren Ringe des Rasters um die erste Villa – die Plätze, die neue Spieler der Reihe nach
+     * bekommen –, solange dort keine Villa steht oder entsteht und der Platz nicht wegen Spielerbauten verworfen wurde.
+     * Rundum Anblendung + 8 Blöcke Rand, nach Süden zusätzlich die Zufahrt. Straßen fahren darum herum: eine Straße über
+     * einem Platz machte ihn bisher unbrauchbar (die Prüfung hielt sie für Spielerbauten).
+     */
+    public int[] reservierterPlatz(World w, int x, int z) {
+        Villen.Villa erste = ersteVilla();
+        if (erste == null || !erste.welt().equals(w.getUID()) || !plugin.getConfig().getBoolean("villa.mehrereVillen", true)) {
+            return null;
+        }
+        Bauplan plan = plugin.bauplan();
+        int abstand = Math.max(240, plugin.getConfig().getInt("villa.abstand", 320));
+        int rand = Math.max(4, plugin.getConfig().getInt("villa.anblendung", 12)) + 8;
+        int i = Math.round((float) (x - erste.x() - plan.breiteX / 2) / abstand);
+        int j = Math.round((float) (z - erste.z() - plan.breiteZ / 2) / abstand);
+        int ring = Math.max(Math.abs(i), Math.abs(j));
+        if (ring < 1 || ring > 2) {
+            return null;
+        }
+        int x0 = erste.x() + i * abstand, z0 = erste.z() + j * abstand;
+        if (x < x0 - rand || x >= x0 + plan.breiteX + rand || z < z0 - rand || z >= z0 + plan.breiteZ + rand + 40) {
+            return null;
+        }
+        boolean villa = plugin.villen().alle().stream().anyMatch(v -> v.welt().equals(erste.welt())
+                && Math.max(Math.abs(v.x() - x0), Math.abs(v.z() - z0)) < abstand / 2);
+        boolean auftrag = auftraege.stream().anyMatch(b -> b.welt.equals(erste.welt())
+                && Math.max(Math.abs(b.x0 - x0), Math.abs(b.z0 - z0)) < abstand / 2);
+        if (villa || auftrag || bebaut.contains(schluessel(erste.welt(), x0, z0))) {
+            return null;
+        }
+        return new int[]{x0, z0, x0 + plan.breiteX, z0 + plan.breiteZ};
+    }
+
     /** Nächste freie Nummer: auch die Villen, die noch gebaut werden, zählen mit. */
     public int naechsteNummer() {
         int villen = plugin.villen().alle().stream().mapToInt(Villen.Villa::nr).max().orElse(-1);

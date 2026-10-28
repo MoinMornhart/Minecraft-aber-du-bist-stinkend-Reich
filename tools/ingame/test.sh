@@ -21,7 +21,7 @@
 #                   klient schliessen|butlermenue      (Bildschirm schließen / Butler-Menü öffnen)
 #                   klient fernsehermenue | klient fernseher <befehl>   (nächster Fernseher: Menü / Befehl wie !abspielen|Link)
 #                   tippe <text>         (tippt in ein offenes Eingabefeld, z. B. im Handy)
-#                   merke                (merkt sich die Stelle im Client-Log für das nächste „bis“)
+#                   merke [anfang]       (merkt sich die Stelle im Client-Log für das nächste „bis“; „anfang“ = ab Spielstart)
 #                   bis <sek> <muster>   (wartet, bis eine Zeile im Client-Log nach „merke“ – sonst ab jetzt –
 #                                         zum Muster passt, höchstens <sek>)
 set -uo pipefail
@@ -273,7 +273,7 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     maus) set -- $rest; xdotool mousemove "$1" "$2"; sleep 0.3 ;;
     server) printf '%s\n' "$rest" >> "$RUN/stinkendreich-befehle.txt"; sleep 1 ;;   # Befehl ohne Tippen (Autotest-Modus)
     klient) printf '%s\n' "$rest" >> "$RUN/stinkendreich-klient.txt"; sleep 1 ;;   # schliessen | butlermenue
-    merke) MARKE=$(wc -l < "$CHATLOG") ;;
+    merke) if [[ "$rest" == anfang ]]; then MARKE=0; else MARKE=$(wc -l < "$CHATLOG"); fi ;;   # „merke anfang“: ab Spielstart
     bis) set -f; set -- $rest; set +f; frist="$1"; shift; muster="$*"; ab="${MARKE:-$(wc -l < "$CHATLOG")}"; MARKE=""; ende=$((SECONDS + frist))
          until tail -n +"$((ab + 1))" "$CHATLOG" | grep -qaE "$muster"; do
            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam nicht innerhalb von $frist s"; break; fi

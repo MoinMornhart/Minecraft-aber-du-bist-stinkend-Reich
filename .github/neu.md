@@ -1,6 +1,8 @@
 ### Neu in 0.4.2 – Villen jederzeit, Bodyguards zielen
 
 - **Paper: Villen jederzeit.** Das Plugin baut die erste Villa jetzt auch in einer Welt, die es schon vor dem Plugin gab (vorher nur in ganz neuen Welten – auf einem bestehenden Server gab es deshalb weder Villa noch James). Jeder Spieler, der irgendwann dazukommt, bekommt seine eigene Villa, auch wenn gerade eine andere gebaut wird.
+- **Mod: Villa auch in bestehenden Welten.** Hast du die Welt schon vor der Mod gespielt, entsteht die erste Villa jetzt beim ersten Betreten – im Hintergrund, ohne Hänger, auf einem freien Platz am Spawn. Wer sie auslöst, wird ihr Herr; wer dazukommt, bekommt wie gewohnt seine eigene. Abschaltbar in der Config (`villaInBestehendenWelten`).
+- **Feste Plätze für weitere Villen bleiben frei** (Mod und Plugin): Die Plätze der beiden inneren Ringe um die erste Villa sind reserviert, Straßen zu Dorf, Mine und den anderen Villen fahren um sie herum. Vorher konnte eine Straße einen Platz unbrauchbar machen, und die nächste Villa landete weiter draußen.
 - **Nie über Spielerbauten:** Bevor eine Villa gebaut wird, prüft das Plugin (und die Mod für die Villen der Freunde) den Platz. Stehen dort Häuser, ein Dorf oder Spuren unter der Erde (Fackeln, Werkbank …), nimmt es den nächsten freien Platz. Landminen der Festung liegen nur noch auf natürlichem Boden.
 - **Kein Doppelbau mehr:** Kamen zwei Spieler gleichzeitig dazu, bekamen beide auf Paper dieselbe Nummer und denselben Platz. Jetzt bekommt jeder seinen eigenen.
 - **Neustart mitten im Bau:** Der Bau geht danach an derselben Stelle weiter (Plugin sofort, Mod beim nächsten Betreten des Besitzers) – keine halbe Villa mehr in der Landschaft.

@@ -489,25 +489,18 @@ public final class Butler implements Listener {
             sagen(p, "Wir sind schon da.");
             return;
         }
-        // Weg: zurück zur Spawn-Villa (umgekehrte Straße), dann hin zur Zielvilla
-        List<int[]> weg = new java.util.ArrayList<>();
-        if (von != 0) {
-            var zurueck = strassen.zur(von);
-            if (zurueck == null) {
-                sagen(p, "Verzeihung, von hier führt noch keine Straße weg.");
-                return;
-            }
-            List<int[]> r = new java.util.ArrayList<>(zurueck.punkte());
-            java.util.Collections.reverse(r);
-            weg.addAll(r);
+        // Weg übers Netz: zurück bis zur Gabelung (bzw. zur Spawn-Villa), dann hin zur Zielvilla
+        if (von != 0 && strassen.zur(von) == null) {
+            sagen(p, "Verzeihung, von hier führt noch keine Straße weg.");
+            return;
         }
-        if (ziel.nr() != 0) {
-            var hin = strassen.zur(ziel.nr());
-            if (hin == null) {
-                sagen(p, "Verzeihung, zur " + ziel.name() + " gibt es noch keine Straße. Soll ich Sie fliegen?");
-                return;
-            }
-            weg.addAll(hin.punkte());
+        if (ziel.nr() != 0 && strassen.zur(ziel.nr()) == null) {
+            sagen(p, "Verzeihung, zur " + ziel.name() + " gibt es noch keine Straße. Soll ich Sie fliegen?");
+            return;
+        }
+        List<int[]> weg = strassen.fahrweg(von, ziel.nr());
+        if (weg == null) {
+            weg = List.of();
         }
         if (weg.size() < 2) {
             sagen(p, "Verzeihung, dorthin finde ich keinen Weg.");

@@ -44,7 +44,9 @@ import java.util.Optional;
 /**
  * Baut die Villa beim ersten Start einer neuen Welt am Spawn:
  * Gelände ebnen, Übergang ins natürliche Gelände anblenden, Strukturdatei setzen,
- * Spawnpunkt vor den Eingang legen. Bestehende Welten bleiben unberührt.
+ * Spawnpunkt vor den Eingang legen. In einer Welt von vorher (ohne Villa) entsteht die erste Villa beim ersten Betreten
+ * im Hintergrund ({@link VillaBaustelle}) auf dem nächsten Platz ohne Spielerbauten rund um den Spawn; wer sie auslöst,
+ * wird ihr Herr.
  */
 public final class VillaPlatzierung {
     /** Merkdatei im Weltordner: ob und wo die Villa gebaut wurde. */
@@ -60,6 +62,10 @@ public final class VillaPlatzierung {
     private static final List<VillaInfo> VILLEN = new java.util.concurrent.CopyOnWriteArrayList<>();
     /** Merkdatei der laufenden Welt. */
     private static Path merkdatei;
+    /** Welt von vorher ohne Villa: Die erste Villa entsteht beim ersten Betreten (sofern die Config es erlaubt). */
+    private static boolean ersteVillaOffen;
+    /** Weltspawn beim Start: Mitte der Plätze für die erste Villa in einer Welt von vorher. */
+    private static BlockPos weltspawn = BlockPos.ZERO;
     /** In den ersten 10 Spielminuten einer Villa-Welt werden Reste zerfallender Blätter weggeräumt. */
     private static final long AUFRAEUMEN_BIS = 20L * 60 * 10;
 
@@ -142,10 +148,18 @@ public final class VillaPlatzierung {
         Path datei = server.getWorldPath(LevelResource.ROOT).resolve(DATEI);
         merkdatei = datei;
         VILLEN.clear();
+        ersteVillaOffen = false;
+        weltspawn = Kompat.spawnPunkt(server.overworld());
+        boolean nachholenErlaubt = Konfig.get().villaBauen && Konfig.get().villaInBestehendenWelten;
         try {
             if (Files.exists(datei)) {
                 JsonObject j = GSON.fromJson(Files.readString(datei, StandardCharsets.UTF_8), JsonObject.class);
                 VillaInfo haupt = VillaInfo.ausJson(j, 0);
+                if (haupt == null && nachholenErlaubt) {
+                    // Welt ohne Villa (von vorher oder damals abgeschaltet): die erste Villa beim ersten Betreten bauen
+                    ersteVillaOffen = true;
+                    StinkendReich.LOGGER.info("Welt ohne Villa: die erste Villa entsteht beim ersten Betreten");
+                }
                 if (haupt != null) {
                     VILLEN.add(haupt);
                     if (j.has("nachbarn")) {
@@ -162,10 +176,13 @@ public final class VillaPlatzierung {
             ServerLevel welt = server.overworld();
             JsonObject info = new JsonObject();
             if (welt.getGameTime() > 0 || !Konfig.get().villaBauen) {
-                // Bestehende Welt (oder abgeschaltet): nichts verändern, nur merken
+                // Bestehende Welt (oder abgeschaltet): jetzt nichts verändern, nur merken; in einer Welt von vorher
+                // entsteht die erste Villa beim ersten Betreten im Hintergrund auf einem freien Platz
                 info.addProperty("gebaut", false);
                 info.addProperty("grund", welt.getGameTime() > 0 ? "bestehende Welt" : "in der Config abgeschaltet");
-                StinkendReich.LOGGER.info("Villa wird nicht gebaut ({})", info.get("grund").getAsString());
+                ersteVillaOffen = nachholenErlaubt;
+                StinkendReich.LOGGER.info("Villa wird jetzt nicht gebaut ({}){}", info.get("grund").getAsString(),
+                        ersteVillaOffen ? ", sie entsteht beim ersten Betreten" : "");
             } else {
                 long start = System.currentTimeMillis();
                 VillaInfo haupt = bauen(server, welt);
@@ -179,9 +196,20 @@ public final class VillaPlatzierung {
         }
     }
 
+    /**
+     * Steht in dieser Welt (von vorher) noch keine Villa, soll aber eine entstehen? Dann baut die Baustelle die erste
+     * Villa rund um den Spawn statt einer Nachbarvilla.
+     */
+    public static boolean ersteVillaOffen() {
+        return ersteVillaOffen && VILLEN.isEmpty();
+    }
+
     /** Beim allerersten Betreten einer Welt mit Villa: Spieler vor den Eingang stellen. */
     private static void beimBetreten(ServerPlayer spieler, MinecraftServer server) {
         if (VILLEN.isEmpty()) {
+            if (ersteVillaOffen()) {
+                ersteVillaBestellen(spieler, server);
+            }
             return;
         }
         // Das goldene Handy bekommt jeder Bewohner einmal, auch wer schon vor 0.3 hier wohnte
@@ -209,6 +237,34 @@ public final class VillaPlatzierung {
         BlockPos p = ziel.spawn();
         Kompat.befehl(server, String.format(java.util.Locale.ROOT, "tp %s %.1f %d %.1f %.1f 0",
                 spieler.getScoreboardName(), p.getX() + 0.5, p.getY(), p.getZ() + 0.5, ziel.spawnBlick()));
+    }
+
+    /**
+     * Welt von vorher ohne Villa: Wer sie als Erster betritt, bekommt die erste Villa (Nummer 0, setzt den Weltspawn) und
+     * wird ihr Herr. Wer dazukommt, während sie entsteht, wartet; danach bekommt er wie gewohnt seine eigene.
+     */
+    private static void ersteVillaBestellen(ServerPlayer spieler, MinecraftServer server) {
+        if (VillaBaustelle.ersteVillaImBau()) {
+            if (!VillaBaustelle.wartet(spieler.getUUID())) {
+                Kompat.nachricht(spieler, net.minecraft.network.chat.Component.translatable("stinkendreich.villa.erstewarten")
+                        .withStyle(net.minecraft.ChatFormatting.GOLD), false);
+            }
+            return;
+        }
+        VillaBaustelle.bestellen(spieler.getUUID(), spieler.getScoreboardName(), villa -> ersteVillaFertig(server));
+        Kompat.nachricht(spieler, net.minecraft.network.chat.Component.translatable("stinkendreich.villa.erstevilla")
+                .withStyle(net.minecraft.ChatFormatting.GOLD), false);
+    }
+
+    /**
+     * Die erste Villa steht: Straßen zu Dorf, Mine & Co. starten, und jeder, der gerade da ist, wird behandelt wie beim
+     * Betreten – der Herr zieht ein (Handy, Karte, vor die Tür), die anderen bekommen ihre eigene Villa.
+     */
+    private static void ersteVillaFertig(MinecraftServer server) {
+        de.moinmornhart.stinkendreich.strasse.Strassennetz.automatikStarten(server);
+        for (ServerPlayer p : new java.util.ArrayList<>(server.getPlayerList().getPlayers())) {
+            beimBetreten(p, server);
+        }
     }
 
     /** Neu hier, mehrere Villen erlaubt und die Spawn-Villa gehört schon einem anderen? */
@@ -294,9 +350,13 @@ public final class VillaPlatzierung {
 
     /**
      * Freie Plätze im Raster um die Spawn-Villa (Nordwest-Ecke x, z und Ring), von innen nach außen. Belegt ist ein
-     * Platz, wenn dort schon eine Villa steht (näher als der halbe Villenabstand).
+     * Platz, wenn dort schon eine Villa steht (näher als der halbe Villenabstand). Gibt es noch keine Villa (Welt von
+     * vorher), sind es die Plätze für die erste: der Spawn selbst und Ringe darum, dicht an dicht.
      */
     static List<int[]> freiePlaetze(int anzahl) {
+        if (VILLEN.isEmpty()) {
+            return ersteVillaPlaetze(anzahl);
+        }
         int abstand = Math.max(240, Konfig.get().villenAbstand);
         BlockPos spawnVilla = VILLEN.get(0).ursprung();
         List<int[]> frei = new java.util.ArrayList<>();
@@ -310,6 +370,64 @@ public final class VillaPlatzierung {
             }
         }
         return frei;
+    }
+
+    /**
+     * Plätze für die erste Villa in einer Welt von vorher: zuerst mitten auf dem Spawn, dann Ringe darum, so dicht, dass
+     * Grundstück samt Anblendung zweier Nachbarplätze sich nicht berühren (Ring als dritter Wert, für die Wertung).
+     */
+    private static List<int[]> ersteVillaPlaetze(int anzahl) {
+        VillaDaten plan = VillaDaten.get();
+        int schritt = Math.max(plan.breiteX, plan.breiteZ) + 2 * anblendung() + 48;
+        int x0 = weltspawn.getX() - plan.breiteX / 2, z0 = weltspawn.getZ() - plan.breiteZ / 2;
+        List<int[]> plaetze = new java.util.ArrayList<>();
+        plaetze.add(new int[]{x0, z0, 0});
+        for (int k = 1; plaetze.size() < anzahl; k++) {
+            int[] p = platz(k);
+            plaetze.add(new int[]{x0 + p[0] * schritt, z0 + p[1] * schritt, Math.max(Math.abs(p[0]), Math.abs(p[1]))});
+        }
+        return plaetze;
+    }
+
+    /** Freigehalten wird ein Platz rundum mit Anblendung + 8 Blöcken Rand, nach Süden zusätzlich für die Zufahrt. */
+    static int reserveRand() {
+        return anblendung() + 8;
+    }
+
+    static int reserveSued() {
+        return anblendung() + 48;
+    }
+
+    /**
+     * Der freigehaltene Platz für eine künftige Villa (Grundstück x0, z0, x1, z1), in dessen Fläche diese Stelle liegt, sonst
+     * null. Freigehalten werden die beiden inneren Ringe des Rasters um die Spawn-Villa – genau die Plätze, unter denen
+     * die Baustelle für jeden neuen Spieler wählt –, solange dort keine Villa steht und der Platz nicht wegen
+     * Spielerbauten verworfen wurde. Straßen fahren darum herum (eine Straße über einem Platz machte ihn unbrauchbar).
+     */
+    public static int[] reservierterPlatz(int x, int z) {
+        if (VILLEN.isEmpty() || !Konfig.get().mehrereVillen) {
+            return null;
+        }
+        VillaDaten plan = VillaDaten.get();
+        int abstand = Math.max(240, Konfig.get().villenAbstand);
+        BlockPos u = VILLEN.get(0).ursprung();
+        int i = Math.round((float) (x - u.getX() - plan.breiteX / 2) / abstand);
+        int j = Math.round((float) (z - u.getZ() - plan.breiteZ / 2) / abstand);
+        int ring = Math.max(Math.abs(i), Math.abs(j));
+        if (ring < 1 || ring > 2) {
+            return null;
+        }
+        int x0 = u.getX() + i * abstand, z0 = u.getZ() + j * abstand;
+        int rand = reserveRand();
+        if (x < x0 - rand || x >= x0 + plan.breiteX + rand || z < z0 - rand || z >= z0 + plan.breiteZ + reserveSued()) {
+            return null;
+        }
+        for (VillaInfo v : VILLEN) {
+            if (Math.max(Math.abs(v.ursprung().getX() - x0), Math.abs(v.ursprung().getZ() - z0)) < abstand / 2) {
+                return null;                                // dort steht schon eine Villa (die schützt sich selbst)
+            }
+        }
+        return VillaBaustelle.verworfen(x0, z0) ? null : new int[]{x0, z0, x0 + plan.breiteX, z0 + plan.breiteZ};
     }
 
     /** Die Baustelle meldet eine fertige Villa: in die Liste, in die Merkdatei, 3 Minuten Pflanzenreste wegräumen. */

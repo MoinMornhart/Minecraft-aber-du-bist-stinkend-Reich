@@ -23,6 +23,11 @@ public final class Konfig {
     // ---------- Villa ----------
     /** Villa in jeder neuen Welt am Spawn bauen. */
     public boolean villaBauen = true;
+    /**
+     * Auch in einer Welt von vorher (ohne Villa) die erste Villa bauen: beim ersten Betreten, im Hintergrund, auf dem
+     * nächsten Platz ohne Spielerbauten rund um den Spawn.
+     */
+    public boolean villaInBestehendenWelten = true;
     /** Breite des Übergangs vom ebenen Grundstück ins natürliche Gelände (Blöcke). */
     public int villaAnblendung = 24;
     /** Spieler beim allerersten Betreten einer Welt vor die Villa stellen. */
@@ -143,6 +148,7 @@ public final class Konfig {
         JsonObject json = GSON.toJsonTree(aktuell).getAsJsonObject();
         Map<String, String> erklaerung = new LinkedHashMap<>();
         erklaerung.put("villaBauen", "Villa in jeder neuen Welt am Spawn bauen (true/false)");
+        erklaerung.put("villaInBestehendenWelten", "Auch in einer Welt von vorher die erste Villa bauen, auf einem freien Platz ohne Spielerbauten (true/false)");
         erklaerung.put("villaAnblendung", "Breite des Übergangs vom ebenen Grundstück ins Gelände in Blöcken");
         erklaerung.put("mehrereVillen", "Jeder neue Spieler bekommt seine eigene Villa (true/false)");
         erklaerung.put("villenAbstand", "Abstand der Villen in Blöcken (mindestens 240)");

@@ -59,6 +59,8 @@ public final class Baustelle {
     private int[] hoehen;
     /** Prüfung: Spalten mit gebauten Blöcken über dem Boden, Spielerblöcke darunter. */
     private int bebautOben, bebautUnten;
+    /** Erster gefundener gebauter Block (fürs Protokoll). */
+    private Block beispiel;
     private long laengsterTick;
     private BukkitTask aufgabe;
 
@@ -206,14 +208,22 @@ public final class Baustelle {
         while (zeiger < breite && System.nanoTime() < ende) {
             int x = x0 - rand + zeiger;
             for (int z = z0 - rand; z < z0 + plan.breiteZ + rand + 40; z++) {
-                if (spalteBebaut(x, z)) {
+                Block fund = spalteBebaut(x, z);
+                if (fund != null) {
                     bebautOben++;
+                    if (beispiel == null) {
+                        beispiel = fund;
+                    }
                 }
                 boolean grundstueck = x >= x0 && x < x0 + plan.breiteX && z >= z0 && z < z0 + plan.breiteZ;
                 if (grundstueck) {
                     for (int y = ursprungY(); y < y0 - 1; y++) {
-                        if (Natur.spielerSpur(welt.getBlockAt(x, y, z).getType())) {
+                        Block b = welt.getBlockAt(x, y, z);
+                        if (Natur.spielerSpur(b.getType())) {
                             bebautUnten++;
+                            if (beispiel == null) {
+                                beispiel = b;
+                            }
                         }
                     }
                 }
@@ -222,7 +232,10 @@ public final class Baustelle {
             if (bebautOben >= BEBAUT_SPALTEN || bebautUnten >= BEBAUT_UNTEN) {
                 freigeben();
                 schritt = Schritt.FERTIG;
-                leitung.platzBebaut(auftrag, bebautOben >= BEBAUT_SPALTEN ? "Bauten über dem Boden" : "Spuren unter dem Boden");
+                // Ein Beispiel ins Protokoll (welcher Block den Platz sperrt), damit man es im Spiel nachsehen kann
+                String wo = beispiel == null ? "" : ", z. B. " + beispiel.getType().getKey().getKey() + " bei "
+                        + beispiel.getX() + " " + beispiel.getY() + " " + beispiel.getZ();
+                leitung.platzBebaut(auftrag, (bebautOben >= BEBAUT_SPALTEN ? "Bauten über dem Boden" : "Spuren unter dem Boden") + wo);
                 return;
             }
         }
@@ -232,16 +245,17 @@ public final class Baustelle {
         }
     }
 
-    /** Steht in dieser Spalte zwischen Boden und Himmel etwas Gebautes? */
-    private boolean spalteBebaut(int x, int z) {
+    /** Der oberste gebaute Block dieser Spalte zwischen Boden und Himmel, oder null. */
+    private Block spalteBebaut(int x, int z) {
         int oben = welt.getHighestBlockYAt(x, z, HeightMap.WORLD_SURFACE);
         int unten = Math.max(bodenHoehe(welt, x, z) - 1, oben - 32);
         for (int y = oben; y >= unten; y--) {
-            if (Natur.gebaut(welt.getBlockAt(x, y, z).getType())) {
-                return true;
+            Block b = welt.getBlockAt(x, y, z);
+            if (Natur.gebaut(b.getType())) {
+                return b;
             }
         }
-        return false;
+        return null;
     }
 
     /** Ab hier wird die Welt verändert: Bodenhöhe bei der Bauleitung merken (Neustart geht hier weiter). */

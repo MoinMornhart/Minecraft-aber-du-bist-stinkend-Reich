@@ -676,6 +676,8 @@
   "stinkendreich.update.laedt": "Lade das Update herunter …",
   "stinkendreich.update.neu": "Neue Version %s von Stinkend Reich für Minecraft %s ist da.",
   "stinkendreich.villa.baubeginn": "Du bekommst deine eigene Villa! Sie entsteht gerade in der Nachbarschaft, das dauert etwa eine Minute.",
+  "stinkendreich.villa.erstevilla": "In dieser Welt steht noch keine Villa – sie entsteht jetzt für dich auf einem freien Platz am Spawn. Deine Bauten bleiben, wie sie sind. Das dauert etwa eine Minute.",
+  "stinkendreich.villa.erstewarten": "Gerade entsteht die erste Villa dieser Welt. Sobald sie steht, bekommst du deine eigene.",
   "stinkendreich.villa.baustelle": "🏗 Deine Villa wird gebaut … %s %%",
   "stinkendreich.villa.info": "Villa: Ecke %s %s %s, Eingang %s %s %s",
   "stinkendreich.villa.keine": "In dieser Welt gibt es keine Villa.",

@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
- * Baut eine Nachbarvilla über viele Server-Ticks verteilt, damit der Server dabei nicht hängt (in einem Rutsch dauerte
+ * Baut eine Nachbarvilla (oder in einer Welt von vorher die erste Villa rund um den Spawn) über viele Server-Ticks verteilt, damit der Server dabei nicht hängt (in einem Rutsch dauerte
  * das gut 18 Sekunden, in denen niemand spielen konnte).
  * <p>
  * Ablauf: den flachsten freien Platz in den inneren Ringen suchen (nur geschätzt, ohne Chunks), Chunks im Hintergrund erzeugen lassen (Lade-Ticket; Minecraft erzeugt sie auf seinen eigenen Threads),
@@ -185,7 +185,8 @@ public final class VillaBaustelle {
         // Mit mehreren Villen gleich nach dem Start vorladen, dann wartet der erste Neue nicht darauf
         ServerLifecycleEvents.SERVER_STARTED.register(s -> {
             laden(s);                                      // angefangene Bauten (gehen beim Betreten des Besitzers weiter)
-            if (de.moinmornhart.stinkendreich.Konfig.get().mehrereVillen && !VillaPlatzierung.alle().isEmpty()) {
+            if ((de.moinmornhart.stinkendreich.Konfig.get().mehrereVillen && !VillaPlatzierung.alle().isEmpty())
+                    || VillaPlatzierung.ersteVillaOffen()) {
                 vorlageLaden(s);
             }
         });
@@ -211,6 +212,16 @@ public final class VillaBaustelle {
         SCHLANGE.add(new Auftrag(besitzer, name, fertig));
     }
 
+    /** Wurde dieser Platz (Nordwest-Ecke) wegen Spielerbauten verworfen? */
+    static boolean verworfen(int x0, int z0) {
+        return BEBAUT.contains(x0 + ":" + z0);
+    }
+
+    /** Entsteht gerade die erste Villa einer Welt von vorher (oder wartet ihr Auftrag)? */
+    public static boolean ersteVillaImBau() {
+        return VillaPlatzierung.alle().isEmpty() && (aktuell != null || !SCHLANGE.isEmpty());
+    }
+
     /** Wird für diesen Spieler gerade gebaut oder wartet sein Auftrag noch? */
     public static boolean wartet(UUID besitzer) {
         if (aktuell != null && besitzer.equals(aktuell.auftrag.besitzer())) {
@@ -229,8 +240,12 @@ public final class VillaBaustelle {
             anzeigen(server);
         }
         if (aktuell == null) {
+            // Ohne Villa nur, wenn die erste in einer Welt von vorher entstehen soll (Nachbarn brauchen die erste)
+            if (VillaPlatzierung.alle().isEmpty() && !VillaPlatzierung.ersteVillaOffen()) {
+                return;
+            }
             Auftrag a = SCHLANGE.poll();
-            if (a == null || VillaPlatzierung.alle().isEmpty()) {
+            if (a == null) {
                 return;
             }
             aktuell = new VillaBaustelle(server, a);
@@ -288,8 +303,10 @@ public final class VillaBaustelle {
                             zeiger++;
                             return false;
                         }
-                        if (punkt == 0 && de.moinmornhart.stinkendreich.strasse.Strassennetz.get(server).strasseIn(k[0] - RAND_LADEN,
-                                k[1] - RAND_LADEN, k[0] + plan.breiteX + RAND_LADEN, k[1] + plan.breiteZ + RAND_LADEN)) {
+                        // (Fläche wie bei der Freihaltung: Straßen fahren um die Plätze herum, mit diesem Abstand)
+                        int r = VillaPlatzierung.reserveRand();
+                        if (punkt == 0 && de.moinmornhart.stinkendreich.strasse.Strassennetz.get(server).strasseIn(k[0] - r,
+                                k[1] - r, k[0] + plan.breiteX + r, k[1] + plan.breiteZ + VillaPlatzierung.reserveSued())) {
                             zeiger++;
                             return false;
                         }

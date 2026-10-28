@@ -490,6 +490,12 @@ final class StrassenBau {
 
     /** Darf hier nichts verändert werden? Villen, Blöcke der Mod (außer Landminen) und alles Nicht-Natürliche. */
     private boolean geschuetzt(Block b) {
+        // Freigehaltene Plätze für künftige Villen: drumherum, auch durch die Luft darüber (außer die Straße will genau
+        // dorthin, etwa in ein Dorf)
+        int[] platz = plugin.bauleitung().reservierterPlatz(welt, b.getX(), b.getZ());
+        if (platz != null && !zielBei(platz)) {
+            return true;
+        }
         Material m = b.getType();
         if (m.isAir() || Natur.fluessig(m)) {
             return false;
@@ -502,6 +508,13 @@ final class StrassenBau {
             return true;
         }
         return !Natur.natuerlich(m) && !istStrasse(m);
+    }
+
+    /** Liegt das Ziel dieser Straße auf (oder dicht an) einem freigehaltenen Platz? Dann darf sie hinein. */
+    private boolean zielBei(int[] platz) {
+        double[] ziel = ziele.getLast();
+        int rand = 48;
+        return ziel[0] >= platz[0] - rand && ziel[0] < platz[2] + rand && ziel[1] >= platz[1] - rand && ziel[1] < platz[3] + rand;
     }
 
     private static boolean unterbauOderFahrbahn(Material m) {

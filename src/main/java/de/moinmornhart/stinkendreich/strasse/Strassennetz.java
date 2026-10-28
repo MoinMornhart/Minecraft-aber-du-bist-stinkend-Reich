@@ -80,17 +80,23 @@ public final class Strassennetz {
             }
         });
         // Sobald jemand die Welt betritt, entstehen die Straßen zu Dorf, Mine, Netherportal und Endportal von selbst
-        net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-            Strassennetz netz = get(server);
-            if (!netz.automatikGestartet && VillaPlatzierung.villa().isPresent()) {
-                netz.automatikGestartet = true;
-                netz.warteschlange.addAll(AUTOMATISCH);
-                // Nachbarvillen bekommen ihre Straße (schon vorhandene werden beim Abarbeiten übersprungen)
-                for (int i = 1; i < VillaPlatzierung.alle().size(); i++) {
-                    netz.villaAnbinden(i);
-                }
+        net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> automatikStarten(server));
+    }
+
+    /**
+     * Startet einmal je Spielsitzung die Straßen zu Dorf, Mine, Netherportal und Endportal und bindet die Nachbarvillen
+     * an (schon vorhandene Straßen werden beim Abarbeiten übersprungen). Beim Betreten der Welt und sobald die erste
+     * Villa einer Welt von vorher steht.
+     */
+    public static void automatikStarten(MinecraftServer server) {
+        Strassennetz netz = get(server);
+        if (!netz.automatikGestartet && VillaPlatzierung.villa().isPresent()) {
+            netz.automatikGestartet = true;
+            netz.warteschlange.addAll(AUTOMATISCH);
+            for (int i = 1; i < VillaPlatzierung.alle().size(); i++) {
+                netz.villaAnbinden(i);
             }
-        });
+        }
     }
 
     /** Kennung einer Nachbarvilla in der Warteschlange: „villa:“ + Nummer. */

@@ -26,13 +26,18 @@ import java.util.Locale;
 
 /**
  * Straßen zwischen den Villen auf dem Paper-Server (wie das Straßennetz der Mod): Sobald eine Nachbarvilla steht, baut
- * der Server eine Straße vom Ende der Zufahrt der Spawn-Villa bis zum Ende ihrer Zufahrt – liegt das Ziel hinter einer
- * Villa, erst seitlich an ihr vorbei. Gebaut wird immer nur eine Straße zur Zeit, Stück für Stück. Die Mittellinien
- * fertiger Straßen werden gespeichert ({@code strassen.json}); auf ihnen fährt James als Chauffeur.
+ * der Server eine Straße bis zum Ende ihrer Zufahrt – vom Ende der Zufahrt der Spawn-Villa oder, wenn eine fertige
+ * Straße schon deutlich näher am Ziel vorbeiführt, als Abzweig von dieser (sonst liefen zwei Straßen nebeneinander her
+ * und die zweite bliebe an der ersten hängen). Liegt das Ziel hinter einer Villa, geht es erst seitlich an ihr vorbei.
+ * Gebaut wird immer nur eine Straße zur Zeit, Stück für Stück. Die Mittellinien fertiger Straßen werden gespeichert
+ * ({@code strassen.json}); auf ihnen fährt James als Chauffeur.
  */
 public final class Strassen {
-    /** Eine fertige Straße: Name, Nummer der Villa am Ende, Mittellinie (x, y = Fahrbahnblock, z). */
-    public record Strasse(String name, int villa, List<int[]> punkte) {
+    /**
+     * Eine fertige Straße: Name, Nummer der Villa am Ende, Straße, von der sie abzweigt (Nummer ihrer Villa, -1 = beginnt
+     * an der Spawn-Villa), Punkt des Abzweigs auf jener, Mittellinie (x, y = Fahrbahnblock, z).
+     */
+    public record Strasse(String name, int villa, int eltern, int abzweig, List<int[]> punkte) {
     }
 
     private static final Gson GSON = new GsonBuilder().create();
@@ -42,7 +47,7 @@ public final class Strassen {
     private final List<Strasse> strassen = new ArrayList<>();
     private final ArrayDeque<int[]> warteschlange = new ArrayDeque<>();
     private StrassenBau aktiv;
-    private int aktivVilla = -1;
+    private int aktivVilla = -1, aktivEltern = -1, aktivAbzweig;
 
     public Strassen(StinkendReichPaper plugin) {
         this.plugin = plugin;
@@ -102,7 +107,7 @@ public final class Strassen {
         aktiv.tick();
         if (aktiv.fertig()) {
             Villen.Villa v = plugin.villen().nr(aktivVilla);
-            strassen.add(new Strasse(aktiv.name(), aktivVilla, List.copyOf(aktiv.punkte())));
+            strassen.add(new Strasse(aktiv.name(), aktivVilla, aktivEltern, aktivAbzweig, List.copyOf(aktiv.punkte())));
             speichern();
             plugin.getLogger().info("Straßen: " + aktiv.name() + " fertig, " + aktiv.punkte().size() + " Punkte"
                     + (v == null ? "" : ""));
@@ -111,7 +116,7 @@ public final class Strassen {
         }
     }
 
-    /** Wegpunkte von der Spawn-Villa zur Villa {@code nr}, seitlich an den Villen vorbei, wo nötig. */
+    /** Wegpunkte von der Spawn-Villa (bzw. vom Abzweig) zur Villa {@code nr}, seitlich an den Villen vorbei, wo nötig. */
     private StrassenBau starten(int nr) {
         Villen.Villa start = plugin.villen().nr(0), ziel = plugin.villen().nr(nr);
         if (start == null || ziel == null || start.world() == null || !start.welt().equals(ziel.welt())) {
@@ -119,10 +124,35 @@ public final class Strassen {
         }
         Bauplan plan = plugin.bauplan();
         Location a = villaZiel(start), b = villaZiel(ziel);
+        // Abzweig: der Punkt einer fertigen Straße, der dem Ziel am nächsten liegt – wenn er deutlich näher ist als der
+        // Anfang an der Spawn-Villa (nicht auf einem Grundstück und nicht auf einem freigehaltenen Platz)
+        aktivEltern = -1;
+        aktivAbzweig = 0;
+        double ax = a.getX(), ay = a.getY(), az = a.getZ();
+        double beste = Math.hypot(b.getX() - ax, b.getZ() - az) - 50;
+        for (Strasse s : strassen) {
+            Villen.Villa sv = plugin.villen().nr(s.villa());
+            if (sv == null || !sv.welt().equals(ziel.welt())) {
+                continue;
+            }
+            List<int[]> pkt = s.punkte();
+            for (int j = 8; j < pkt.size() - 8; j += 4) {
+                int[] q = pkt.get(j);
+                double d = Math.hypot(q[0] + 0.5 - b.getX(), q[2] + 0.5 - b.getZ());
+                if (d < beste && abzweigErlaubt(a.getWorld(), q)) {
+                    beste = d;
+                    aktivEltern = s.villa();
+                    aktivAbzweig = j;
+                    ax = q[0] + 0.5;
+                    ay = q[1] + 1;
+                    az = q[2] + 0.5;
+                }
+            }
+        }
         List<double[]> wege = new ArrayList<>();
-        double cx = a.getX(), cz = a.getZ();
+        double cx = ax, cz = az;
         double sued0 = start.z() + plan.breiteZ;
-        if (b.getZ() < sued0 - 10) {
+        if (aktivEltern < 0 && b.getZ() < sued0 - 10) {
             // Ziel liegt hinter der Spawn-Villa: erst seitlich an ihr vorbei
             cx = b.getX() < start.x() + plan.breiteX / 2.0 ? start.x() - 64 : start.x() + plan.breiteX + 64;
             cz = sued0 + 24;
@@ -136,9 +166,70 @@ public final class Strassen {
         }
         wege.add(new double[]{b.getX(), b.getZ()});
         String name = "Straße zur " + ziel.name();
-        plugin.getLogger().info(String.format(Locale.ROOT, "Straßen: baue %s von %d %d %d über %d Wegpunkte", name,
-                a.getBlockX(), a.getBlockY(), a.getBlockZ(), wege.size()));
-        return new StrassenBau(plugin, a.getWorld(), name, a.getX(), a.getY(), a.getZ(), 0.0F, wege);
+        plugin.getLogger().info(String.format(Locale.ROOT, "Straßen: baue %s von %d %d %d über %d Wegpunkte%s", name,
+                (int) Math.floor(ax), (int) Math.floor(ay), (int) Math.floor(az), wege.size(),
+                aktivEltern < 0 ? "" : " (Abzweig von der Straße zur Villa " + aktivEltern + ", Punkt " + aktivAbzweig + ")"));
+        // Richtung am Anfang: an der Spawn-Villa nach Süden (die Zufahrt), am Abzweig zum ersten Wegpunkt
+        float richtung = aktivEltern < 0 ? 0.0F
+                : (float) Math.toDegrees(Math.atan2(-(wege.getFirst()[0] - ax), wege.getFirst()[1] - az));
+        return new StrassenBau(plugin, a.getWorld(), name, ax, ay, az, richtung, wege);
+    }
+
+    /** Darf hier eine neue Straße abzweigen? Nicht auf einem Grundstück (samt Rand) und nicht auf einem freien Platz. */
+    private boolean abzweigErlaubt(World w, int[] q) {
+        Location l = new Location(w, q[0] + 0.5, q[1], q[2] + 0.5);
+        return plugin.villen().bei(l, 16) == null && plugin.bauleitung().reservierterPlatz(w, q[0], q[2]) == null;
+    }
+
+    /**
+     * Ganze Strecke von der Spawn-Villa bis vor die Villa {@code nr}: bei einem Abzweig erst die Straße, von der sie
+     * abgeht, bis zum Abzweig, dann sie selbst. Leer für die Spawn-Villa, null ohne Straße.
+     */
+    public List<int[]> strecke(int nr) {
+        return strecke(nr, 0);
+    }
+
+    private List<int[]> strecke(int nr, int tiefe) {
+        if (nr == 0) {
+            return new ArrayList<>();
+        }
+        Strasse s = zur(nr);
+        if (s == null) {
+            return null;
+        }
+        List<int[]> weg = new ArrayList<>();
+        Strasse e = s.eltern() < 0 || tiefe > 16 ? null : zur(s.eltern());
+        List<int[]> vorher = e == null ? null : strecke(s.eltern(), tiefe + 1);
+        if (vorher != null) {
+            // Die Strecke der Elternstraße endet mit ihrer eigenen Mittellinie: bis zum Abzweigpunkt nehmen
+            int bis = vorher.size() - e.punkte().size() + Math.min(s.abzweig(), e.punkte().size() - 1);
+            weg.addAll(vorher.subList(0, bis + 1));
+        }
+        weg.addAll(s.punkte());
+        return weg;
+    }
+
+    /**
+     * Fahrweg von der Villa {@code von} zur Villa {@code nach} über das Netz: zurück bis dorthin, wo sich die beiden
+     * Strecken trennen, dann hin. Null, wenn eine der beiden Villen noch keine Straße hat.
+     */
+    public List<int[]> fahrweg(int von, int nach) {
+        List<int[]> a = strecke(von), b = strecke(nach);
+        if (a == null || b == null) {
+            return null;
+        }
+        int gemeinsam = 0;
+        while (gemeinsam < a.size() && gemeinsam < b.size() && java.util.Arrays.equals(a.get(gemeinsam), b.get(gemeinsam))) {
+            gemeinsam++;
+        }
+        List<int[]> weg = new ArrayList<>();
+        for (int i = a.size() - 1; i >= Math.max(0, gemeinsam - 1); i--) {
+            weg.add(a.get(i));
+        }
+        for (int i = gemeinsam; i < b.size(); i++) {
+            weg.add(b.get(i));
+        }
+        return weg;
     }
 
     /** Anfang der Straße vor einer Villa: drei Blöcke hinter dem Ende ihrer Zufahrt, auf Fahrbahnhöhe. */
@@ -185,7 +276,9 @@ public final class Strassen {
                 for (int i = 0; i + 2 < p.size(); i += 3) {
                     punkte.add(new int[]{p.get(i).getAsInt(), p.get(i + 1).getAsInt(), p.get(i + 2).getAsInt()});
                 }
-                strassen.add(new Strasse(s.get("name").getAsString(), s.get("villa").getAsInt(), punkte));
+                // Straßen von vor 0.4.2 haben keinen Abzweig: sie beginnen an der Spawn-Villa
+                strassen.add(new Strasse(s.get("name").getAsString(), s.get("villa").getAsInt(),
+                        s.has("eltern") ? s.get("eltern").getAsInt() : -1, s.has("abzweig") ? s.get("abzweig").getAsInt() : 0, punkte));
             }
         } catch (IOException | RuntimeException ex) {
             plugin.getLogger().warning("Straßen: strassen.json nicht lesbar: " + ex.getMessage());
@@ -198,6 +291,8 @@ public final class Strassen {
             JsonObject j = new JsonObject();
             j.addProperty("name", s.name());
             j.addProperty("villa", s.villa());
+            j.addProperty("eltern", s.eltern());
+            j.addProperty("abzweig", s.abzweig());
             JsonArray p = new JsonArray();
             for (int[] q : s.punkte()) {
                 p.add(q[0]);

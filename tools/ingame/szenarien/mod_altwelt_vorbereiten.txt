@@ -1,0 +1,16 @@
+# Welt von vorher ohne Villa (Mod), Teil 1: Die Welt entsteht mit "villaBauen": false (Kette mod_altwelt.sh); mitten auf
+# dem Spawn (0/0 bei Saat „stinkendreich“) steht dann ein Holzhaus. Danach wird die Welt als Server-Welt übernommen.
+server /gamemode creative
+server /time set 6000
+server /weather clear
+warte 20
+server /execute positioned 0 0 0 positioned over world_surface run fill ~-6 ~ ~-6 ~6 ~5 ~6 minecraft:oak_planks hollow
+server /execute positioned 0 0 0 positioned over world_surface run setblock ~ ~1 ~6 minecraft:air
+server /execute positioned 0 0 0 positioned over world_surface run setblock ~ ~2 ~6 minecraft:air
+warte 2
+server /execute positioned 0 0 0 positioned over world_surface run tp @p ~16 ~8 ~16 facing ~ ~-4 ~
+warte 6
+taste F1
+bild altwelt_mod_haus
+server /save-all
+warte 5
