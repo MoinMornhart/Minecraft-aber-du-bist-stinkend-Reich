@@ -51,7 +51,7 @@ public final class Fahrzeuge implements Listener {
         BONZENAUTO("bonzenauto", 1.0, 1.0, 1.5F, new double[][]{{0.42, 0.55, 0.0}, {-0.42, 0.55, 0.0}, {0.42, 0.55, -1.0}, {-0.42, 0.55, -1.0}}),
         GELAENDEWAGEN("gelaendewagen", 0.8, 0.85, 1.15F, new double[][]{{0.47, 0.55, 0.41}, {-0.47, 0.55, 0.41}, {0.47, 0.55, -0.84}, {-0.47, 0.55, -0.84}}),
         SUPERSPORTWAGEN("supersportwagen", 1.4, 1.6, 1.5F, new double[][]{{0.41, 0.42, 0.16}, {-0.41, 0.42, 0.16}}),
-        STRETCHLIMO("stretchlimo", 0.75, 0.7, 1.0F, new double[][]{{0.41, 0.45, 2.16}, {-0.41, 0.45, 2.16}, {-0.59, 0.5, 0.5}, {0.59, 0.5, 0.5}, {-0.59, 0.5, -1.0}, {0.59, 0.5, -1.0}}),
+        STRETCHLIMO("stretchlimo", 0.75, 0.7, 1.0F, new double[][]{{0.41, 0.31, 2.16}, {-0.41, 0.31, 2.16}, {-0.59, 0.36, 0.5}, {0.59, 0.36, 0.5}, {-0.59, 0.36, -1.0}, {0.59, 0.36, -1.0}}),
         HUBSCHRAUBER("hubschrauber", 1.0, 1.0, 1.4F, new double[][]{{0.375, 0.55, 0.557}, {-0.375, 0.55, 0.557}, {0.375, 0.55, -0.221}, {-0.375, 0.55, -0.221}});
 
         public final String name;

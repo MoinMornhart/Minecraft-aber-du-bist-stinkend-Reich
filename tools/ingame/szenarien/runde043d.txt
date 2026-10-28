@@ -1,0 +1,56 @@
+# Runde 0.4.3, Teil 4: Limo im zweiten Entwurf (flach, drei klare Teile), Köpfe unter dem Dach (Schaufensterpuppen
+# auf allen Plätzen), Fallschaden im Auto (zehn Blöcke). Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/runde043d.txt
+warte 30
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+taste F1
+server /gamemode spectator @p
+server /tp @p 224 160 210 0 90
+warte 6
+server /fill 190 150 196 262 150 224 minecraft:smooth_stone
+server /summon stinkendreich:stretchlimo 207 151 210
+server /summon stinkendreich:stretchlimo 230 151 210
+warte 2
+server /tp @e[type=stinkendreich:stretchlimo,x=207,y=151,z=210,distance=..3] 207 151 210 -90 0
+server /tp @e[type=stinkendreich:stretchlimo,x=230,y=151,z=210,distance=..3] 230 151 210 -90 0
+server /tp @p 217 153 214 112 10
+warte 4
+bild d01_limo_vorn
+server /tp @p 207 153 219 180 6
+warte 3
+bild d02_limo_seite
+server /tp @p 197 153.5 214 -112 12
+warte 3
+bild d03_limo_hinten
+server /tp @p 213 157 216 135 30
+warte 3
+bild d04_limo_oben
+# Schaufensterpuppen auf alle sechs Plätze der zweiten Limo
+server /summon minecraft:mannequin 230 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 230 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 230 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 230 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 230 151 210 {Tags:["puppe"]}
+server /summon minecraft:mannequin 230 151 210 {Tags:["puppe"]}
+warte 1
+server /execute as @e[type=minecraft:mannequin,tag=puppe] at @s run ride @s mount @e[type=stinkendreich:stretchlimo,distance=..3,limit=1,sort=nearest]
+warte 2
+server /tp @p 230 152.5 216.5 180 0
+warte 3
+bild d05_puppen_seite
+server /tp @p 239 153 214 112 8
+warte 3
+bild d06_puppen_vorn
+# Fallschaden: selbst einsteigen, Limo zehn Blöcke anheben, fallen lassen, Leben ins Protokoll
+server /gamemode survival @p
+server /tp @p 207 151 212
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,x=207,y=151,z=210,distance=..3,limit=1]
+warte 2
+server /execute as @p run data get entity @p Health
+server /tp @e[type=stinkendreich:stretchlimo,x=207,y=151,z=210,distance=..3] 207 162 210 -90 0
+warte 5
+server /execute as @p run data get entity @p Health
+bild d07_nach_dem_fall
+server /gamemode creative @p
