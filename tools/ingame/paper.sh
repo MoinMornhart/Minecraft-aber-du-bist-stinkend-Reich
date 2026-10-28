@@ -7,10 +7,13 @@
 # Ausgabe:  build/ingame/paper/*.png und build/ingame/paper/logs/
 # Umgebung: PORT (Spielserver, Standard 25575), SEED, SICHTWEITE, PAPER_BUILD (Paper-Build, Standard 226),
 #           WELT_BEHALTEN=1 (Welt und Plugin-Daten vom letzten Lauf weiterbenutzen),
-#           KEINE_VILLA=1 (Plugin baut keine Villa – so entsteht eine „schon bestehende“ Welt für Tests)
+#           KEINE_VILLA=1 (Plugin baut keine Villa – so entsteht eine „schon bestehende“ Welt für Tests),
+#           GEYSER=1 (Geyser-Plugin dazu und ein Test-Bedrock-Client „Bob“ aus tools/ingame/bedrock/bot.js; Protokoll
+#           build/ingame/paper/logs/bedrock.log; vorher einmal „npm install --ignore-scripts“ in tools/ingame/bedrock)
 #
 # Szenario-Zeilen wie bei tools/ingame/test.sh: warte, taste, bild, klick, linksklick, maus, halte, druecke,
 # loslassen, tippe, server </befehl oder Chattext>, merke [anfang], bis <sek> <muster> (im Serverprotokoll).
+# Mit GEYSER=1 dazu: bedrock <befehl für bot.js> und bbis <sek> <muster> (im Protokoll des Bedrock-Clients).
 set -uo pipefail
 
 V=26.3
@@ -49,6 +52,43 @@ elif grep -q "amSpawn: false" "$RUN/plugins/StinkendReich/config.yml" 2>/dev/nul
 fi
 rm -f "$RUN/plugins/"stinkendreich-paper-*.jar "$RUN/plugins/"stinkendreich_paper-*.jar
 cp "$PLUGIN" "$RUN/plugins/"
+
+# Geyser (Bedrock-Spieler): neuester Stand für Paper von Modrinth, Anmeldung ohne Xbox (nur im Test!)
+BPORT="${BPORT:-19132}"
+rm -f "$RUN/plugins/Geyser-Spigot.jar"
+if [[ "${GEYSER:-0}" == 1 ]]; then
+  GEYSER_JAR="$(ls -t "$ROOT"/tools/ingame/server-mods/paper/Geyser-Spigot-*.jar 2>/dev/null | head -1)"
+  if [[ -z "$GEYSER_JAR" ]]; then
+    read -r GVER GURL < <(curl -fsSL "https://api.modrinth.com/v2/project/geyser/version?loaders=%5B%22paper%22%5D&game_versions=%5B%22$V%22%5D" \
+      | python3 -c 'import json,sys; v=json.load(sys.stdin)[0]; print(v["version_number"], v["files"][0]["url"])')
+    GEYSER_JAR="$ROOT/tools/ingame/server-mods/paper/Geyser-Spigot-$GVER.jar"
+    melde "Lade Geyser $GVER …"
+    curl -fsSL -o "$GEYSER_JAR" "$GURL" || { melde "FEHLER: Geyser nicht geladen"; exit 1; }
+  fi
+  cp "$GEYSER_JAR" "$RUN/plugins/Geyser-Spigot.jar"
+  mkdir -p "$RUN/plugins/Geyser-Spigot"
+  python3 - "$RUN/plugins/Geyser-Spigot/config.yml" "$BPORT" <<'PY'
+import re, sys
+datei, port = sys.argv[1], sys.argv[2]
+try:
+    text = open(datei, encoding="utf-8").read()
+except FileNotFoundError:
+    text = ""
+def setze(text, abschnitt, schluessel, wert):
+    """Setzt „schluessel: wert“ im Abschnitt (zwei Ebenen, z. B. java/auth-type); legt fehlende Teile an."""
+    teile = abschnitt.split("/")
+    muster = r"(?m)^" + r"".join(rf"{re.escape(t)}:\n(?:(?:  )*.*\n)*?{'  ' * (i + 1)}" for i, t in enumerate(teile)) + re.escape(schluessel) + r": .*$"
+    if re.search(muster, text):
+        return re.sub(muster, lambda m: m.group(0).rsplit(": ", 1)[0] + ": " + wert, text, count=1)
+    block = "".join("  " * i + t + ":\n" for i, t in enumerate(teile)) + "  " * len(teile) + schluessel + ": " + wert + "\n"
+    return text + ("\n" if text and not text.endswith("\n") else "") + block
+text = setze(text, "bedrock", "port", port)
+text = setze(text, "bedrock", "transport", "raknet")          # der Test-Client kann nur RakNet (Standard: NetherNet)
+text = setze(text, "java", "auth-type", "offline")
+text = setze(text, "advanced/bedrock", "validate-bedrock-login", "false")
+open(datei, "w", encoding="utf-8").write(text)
+PY
+fi
 echo "eula=true" > "$RUN/eula.txt"
 cat > "$RUN/server.properties" <<EOF
 level-seed=${SEED:-stinkendreich}
@@ -61,6 +101,8 @@ view-distance=6
 simulation-distance=4
 enable-command-block=true
 sync-chunk-writes=false
+white-list=false
+enforce-whitelist=false
 EOF
 python3 - "$RUN/ops.json" <<'PY'
 import hashlib, json, sys, uuid
@@ -112,7 +154,7 @@ XVFB=$!
 export DISPLAY=":$NR" LIBGL_ALWAYS_SOFTWARE=1 SDL_VIDEO_FORCE_EGL=1 XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/xdg-$UID}"
 mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
 aufraeumen() {
-  kill "${CLIENT:-}" "$XVFB" 2>/dev/null
+  kill "${CLIENT:-}" "$XVFB" ${BOT:-} 2>/dev/null
   if kill -0 "$SERVER" 2>/dev/null; then
     kill "$SERVER" 2>/dev/null
     for _ in $(seq 1 60); do kill -0 "$SERVER" 2>/dev/null || break; sleep 0.5; done
@@ -129,6 +171,15 @@ for _ in $(seq 1 900); do
   sleep 1
 done
 grep -qE "joined the game" "$CHATLOG" || { melde "FEHLER: Server nicht betreten"; tail -40 "$LOGS/client.log"; exit 1; }
+# Bedrock-Spieler „Bob“ über Geyser (Test-Client ohne Grafik, schreibt mit, was er bekommt)
+BOT=""
+if [[ "${GEYSER:-0}" == 1 ]]; then
+  : > "$RUN/bedrock-befehle.txt"; : > "$LOGS/bedrock.log"
+  node "$ROOT/tools/ingame/bedrock/bot.js" 127.0.0.1 "$BPORT" Bob "$LOGS/bedrock.log" "$RUN/bedrock-befehle.txt" \
+    > "$LOGS/bedrock-konsole.log" 2>&1 </dev/null &
+  BOT=$!
+  melde "Bedrock-Client „Bob“ verbindet sich über Geyser (Port $BPORT) …"
+fi
 melde "Auf dem Server, warte auf die Darstellung …"
 sleep "${RENDERZEIT:-25}"
 FENSTER="$(xwininfo -root -tree 2>/dev/null | grep -E '"Minecraft [0-9]' | grep -v 'Hidden' | head -1 | awk '{print $1}')"
@@ -191,6 +242,12 @@ while read -r wort rest || [[ -n "$wort" ]]; do
     loslassen) xdotool keyup --window "$FENSTER" $rest; sleep 0.3 ;;
     halte) set -- $rest; dauer="$1"; shift; xdotool keydown --window "$FENSTER" "$@"; sleep "$dauer"; xdotool keyup --window "$FENSTER" "$@"; sleep 0.3 ;;
     video) video $rest ;;
+    bedrock) printf '%s\n' "$rest" >> "$RUN/bedrock-befehle.txt"; sleep 1 ;;
+    bbis) set -f; set -- $rest; set +f; frist="$1"; shift; muster="$*"; ende=$((SECONDS + frist))
+          until grep -qaE "$muster" "$LOGS/bedrock.log"; do
+            if (( SECONDS >= ende )); then melde "WARNUNG: „$muster“ kam beim Bedrock-Client nicht innerhalb von $frist s"; break; fi
+            sleep 2
+          done ;;
     kapitel) kapitel "$rest" ;;
     *) melde "Unbekannte Szenario-Zeile: $wort $rest" ;;
   esac

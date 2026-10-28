@@ -32,6 +32,8 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
     private Ausstattung ausstattung;
     private FigurenUebersetzen figuren;
     private Ressourcenpaket paket;
+    /** Bedrock-Spieler über Geyser (null ohne Geyser). */
+    private de.moinmornhart.stinkendreich.paper.bedrock.Bedrock bedrock;
     private de.moinmornhart.stinkendreich.paper.block.Mechanik mechanik;
     private de.moinmornhart.stinkendreich.paper.butler.Butler butler;
     private Gaeste gaeste;
@@ -69,6 +71,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
             paket = new Ressourcenpaket(this);
             paket.bauen(blockdaten.modelle());
             paket.bereitstellen();
+            bedrockStarten();
         } catch (Exception e) {
             getLogger().severe("Start fehlgeschlagen: " + e);
             e.printStackTrace();
@@ -160,8 +163,27 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         getServer().getScheduler().runTaskTimer(this, this::fortschrittZeigen, 20L, 20L);
     }
 
+    /**
+     * Bedrock-Spieler über Geyser: nur wenn das Geyser-Plugin da ist (die Geyser-Klassen gibt es sonst nicht).
+     * Fehler hier halten das Plugin nicht auf – Java-Spieler merken davon nichts.
+     */
+    private void bedrockStarten() {
+        if (getServer().getPluginManager().getPlugin("Geyser-Spigot") == null || !getConfig().getBoolean("bedrock.an", true)) {
+            return;
+        }
+        try {
+            bedrock = de.moinmornhart.stinkendreich.paper.bedrock.Bedrock.starten(this, paket.dateien());
+        } catch (Throwable t) {
+            getLogger().warning("Bedrock-Anbindung nicht gestartet: " + t);
+            t.printStackTrace();
+        }
+    }
+
     @Override
     public void onDisable() {
+        if (bedrock != null) {
+            bedrock.beenden();                          // Ersatzfiguren für Bedrock-Spieler weg (nicht gespeichert)
+        }
         if (butler != null) {
             butler.beenden();                           // James steigt aus (Fahrzeugsitze werden nicht gespeichert)
         }

@@ -68,3 +68,6 @@ versions/*/.gradle/
 
 # Fremde Server-Mods für den Test der Server-Version (holt tools/ingame/server_mods_holen.sh)
 /tools/ingame/server-mods/
+
+# Test-Client für Bedrock-Spieler (tools/ingame/bedrock/einrichten.sh)
+/tools/ingame/bedrock/node_modules/

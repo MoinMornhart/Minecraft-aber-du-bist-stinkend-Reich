@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.HexFormat;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -41,6 +42,8 @@ public final class Ressourcenpaket implements Listener {
 
     private final StinkendReichPaper plugin;
     private byte[] daten = new byte[0];
+    /** Alle Dateien des Pakets („assets/…“ → Inhalt), z. B. für das Bedrock-Paket. */
+    private Map<String, byte[]> dateien = Map.of();
     private String sha1 = "";
     private HttpServer webserver;
     private String adresse;
@@ -50,6 +53,11 @@ public final class Ressourcenpaket implements Listener {
     }
 
     /** Name des Item-Modells, das im Paket auf ein Blockmodell zeigt (für die Anzeige-Figuren). */
+    /** Dateien des gebauten Pakets („assets/…“ → Inhalt). */
+    public Map<String, byte[]> dateien() {
+        return dateien;
+    }
+
     public static String anzeigeModell(String modell) {
         String[] teile = modell.split(":", 2);
         return "stinkendreich:anzeige/" + teile[0] + "/" + teile[1];
@@ -110,6 +118,7 @@ public final class Ressourcenpaket implements Listener {
             }
         }
         daten = puffer.toByteArray();
+        this.dateien = java.util.Collections.unmodifiableMap(dateien);
         try {
             sha1 = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(daten));
         } catch (Exception e) {

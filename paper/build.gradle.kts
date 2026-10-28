@@ -17,10 +17,13 @@ val paperApi = "26.3.build.226-stable"
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/") { name = "PaperMC" }
+    // Geyser (Bedrock-Spieler): nur die Schnittstelle zum Übersetzen, Geyser selbst installiert der Betreiber
+    maven("https://repo.opencollab.dev/main/") { name = "GeyserMC" }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:$paperApi")
+    compileOnly("org.geysermc.geyser:api:2.12.1-SNAPSHOT")
 }
 
 java {

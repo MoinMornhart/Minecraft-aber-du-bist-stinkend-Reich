@@ -3,6 +3,8 @@ name: StinkendReich
 version: '${version}'
 main: de.moinmornhart.stinkendreich.paper.StinkendReichPaper
 api-version: '26.3'
+# Nach Geyser laden: dann klappt die Bedrock-Anbindung (eigene Figuren, Paket, Häute), wenn Geyser installiert ist
+softdepend: [Geyser-Spigot, floodgate]
 description: Luxusvilla, Butler James, Bonzenautos und Handy – auf einem Paper-Server, ohne Mod beim Spieler.
 author: MoinMornhart
 website: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich

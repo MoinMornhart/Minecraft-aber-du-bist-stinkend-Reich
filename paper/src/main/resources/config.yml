@@ -21,6 +21,11 @@ tresor:
   # Anzahl versteckter Knöpfe, die zum Entschärfen der Tresorfallen nötig sind
   knoepfe: 2
 
+bedrock:
+  # Bedrock-Spieler über Geyser: eigenes Bedrock-Paket mit allen Modellen, Ersatzfiguren für Möbel/Türen/Autos, Häute
+  # für James und Co. (nur aktiv, wenn das Geyser-Plugin installiert ist)
+  an: true
+
 ressourcenpaket:
   # Port des eingebauten Webservers, der das Paket an die Spieler ausliefert
   port: 25580
