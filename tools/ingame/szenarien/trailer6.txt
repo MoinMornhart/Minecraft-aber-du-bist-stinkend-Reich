@@ -1,7 +1,7 @@
 # Trailer Teil 6 (0.4.2): Straßen zu allen Freunden. Welt aus paper_plaetze.txt (fünf Villen, Straßen mit Abzweigen):
 # erst der Abzweig von Annas Straße an Max' Straße schräg von oben, dann fährt James Philip von Ottos Villa über zwei
 # Abzweige zu Max (Kamera hinter der Limo). Danach trailer6_schnitt.py, video.py, an docs/trailer.mp4 hängen.
-# Aufruf: WELT_BEHALTEN=1 CHAT_AUS=1 tools/ingame/paper.sh tools/ingame/szenarien/trailer6.txt
+# Aufruf: STINKENDREICH_CHAUFFEUR_ALLEIN=1 WELT_BEHALTEN=1 CHAT_AUS=1 tools/ingame/paper.sh tools/ingame/szenarien/trailer6.txt
 server @/time set 6000
 server @/gamerule advance_time false
 server @/weather clear
@@ -14,20 +14,15 @@ video start trailer6a
 kapitel Neu: Straßen zu allen Freunden – jede zweigt vom Netz ab
 warte 7
 video stopp
-# Im Kreativmodus hinbringen (kein Fallschaden), zum Fahren Überlebensmodus
-server @/gamemode creative Philip
-server @/tp Philip -316 120 398
+# Fahrt: James fährt ohne Fahrgast (STINKENDREICH_CHAUFFEUR_ALLEIN), Philip schaut als Zuschauer durch James' Augen
+# nach vorn (aus der Limo heraus, hinter dem Fahrgast, sah man nur das Dach)
+server @/tp Philip -316 90 400
 warte 5
-server /villa ort 60.5 boden 133 0 0
-warte 3
-server @/gamemode survival Philip
-warte 2
 merke
 server /butler fahr mich zur villa von max
 bis 20 Chauffeur: Start
-server /villa einsteigen
-warte 2
-taste F5
+warte 1
+server @/execute in minecraft:overworld positioned -317 77 392 run spectate @e[type=minecraft:wandering_trader,limit=1,sort=nearest,distance=..8] Philip
 warte 2
 video start trailer6b
 kapitel James fährt auf direktem Weg von Villa zu Villa
@@ -35,5 +30,3 @@ merke
 bis 400 Chauffeur: angekommen
 warte 3
 video stopp
-taste F5
-taste F5

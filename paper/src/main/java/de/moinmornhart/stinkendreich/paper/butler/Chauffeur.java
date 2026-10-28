@@ -93,6 +93,13 @@ final class Chauffeur implements Auftrag {
         };
     }
 
+    /**
+     * Testhilfe für Trailer-Aufnahmen: Mit {@code STINKENDREICH_CHAUFFEUR_ALLEIN} (nur im Spieltest) fährt James auch ohne
+     * Fahrgast los – die Kamera kann dann durch seine Augen nach vorn schauen (aus der Limo heraus sieht man nur das Dach).
+     */
+    private static final boolean ALLEIN = de.moinmornhart.stinkendreich.paper.Autotest.aktiv()
+            && System.getenv("STINKENDREICH_CHAUFFEUR_ALLEIN") != null;
+
     @Override
     public Stand tick() {
         Player p = Bukkit.getPlayer(herr);
@@ -103,7 +110,7 @@ final class Chauffeur implements Auftrag {
         koerper.teleport(puppe.getLocation());
         switch (phase) {
             case EINSTEIGEN -> {
-                if (plugin.fahrzeuge().sitztDrin(wagen, p)) {
+                if (ALLEIN || plugin.fahrzeuge().sitztDrin(wagen, p)) {
                     Butler.sagen(p, "Bitte anschnallen. Wir fahren " + zielName + ".");
                     phase = Phase.FAHRT;
                     log("losgefahren");
@@ -116,7 +123,7 @@ final class Chauffeur implements Auftrag {
                 }
             }
             case FAHRT -> {
-                if (!plugin.fahrzeuge().sitztDrin(wagen, p)) {
+                if (!ALLEIN && !plugin.fahrzeuge().sitztDrin(wagen, p)) {
                     Butler.sagen(p, "Sie sind ausgestiegen – ich halte hier.");
                     abbrechen();
                     return Stand.FERTIG;
