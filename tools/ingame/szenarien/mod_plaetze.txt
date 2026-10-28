@@ -1,0 +1,20 @@
+# Feste Plätze und Straßen (Mod, neue Welt): Vier Freunde kommen nacheinander, jeder bekommt den nächsten freien
+# Rasterplatz. Straßen zweigen vom Netz ab, fahren um freie Plätze herum, ohne Schleifen, und schließen auf der Höhe der
+# Zufahrt an. Auswertung im Protokoll: „Straße Villa von …: Ende nach … am Ziel“.
+# Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/mod_plaetze.txt
+warte 20
+merke
+server /villa nachbar Max
+bis 300 Baustelle: Villa 1 fertig
+merke
+server /villa nachbar Anna
+bis 300 Baustelle: Villa 2 fertig
+merke
+server /villa nachbar Otto
+bis 300 Baustelle: Villa 3 fertig
+merke
+server /villa nachbar Lena
+bis 300 Baustelle: Villa 4 fertig
+merke anfang
+bis 1200 Straße Villa von Lena: Ende
+warte 3

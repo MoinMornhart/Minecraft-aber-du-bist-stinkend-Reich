@@ -1,0 +1,27 @@
+# Nach paper_plaetze.txt (Welt behalten): Bilder der Abzweige schräg von oben (Straße läuft weiter, die neue zweigt ab).
+# Aufruf: WELT_BEHALTEN=1 CHAT_AUS=1 tools/ingame/paper.sh tools/ingame/szenarien/paper_plaetze_bilder.txt
+server @/gamemode spectator Philip
+server /time set 6000
+server /weather clear
+warte 15
+taste F1
+# Max' Straße an der Stelle, an der Annas abzweigt (Punkt 260 von 524)
+server /villa strassenblick 0.47 18 1
+warte 25
+bild pp_gabel_max_anna
+# Annas Straße kurz vor ihrer Villa, dort zweigt Ottos ab (Punkt 228 von 238)
+server /villa strassenblick 0.9 18 2
+warte 25
+bild pp_gabel_anna_otto
+# Ottos Straße, dort zweigt Lenas ab (Punkt 348 von 471)
+server /villa strassenblick 0.71 18 3
+warte 25
+bild pp_gabel_otto_lena
+# Ende von Lenas Straße an ihrer Zufahrt (auf Höhe angeschlossen)
+server /villa strassenblick 1 12 4
+warte 25
+bild pp_lena_zufahrt
+# Ende von Ottos Straße an seiner Zufahrt
+server /villa strassenblick 1 12 3
+warte 25
+bild pp_otto_zufahrt

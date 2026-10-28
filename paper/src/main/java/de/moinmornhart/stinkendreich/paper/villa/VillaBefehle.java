@@ -127,12 +127,15 @@ public final class VillaBefehle implements TabExecutor {
                 }
             }
             case "strassenblick" -> {
-                // Testhilfe für Bilder: über der ersten Straße an Stelle <anteil> (0–1), Blick die Straße entlang
+                // Testhilfe für Bilder: über einer Straße an Stelle <anteil> (0–1), Blick die Straße entlang;
+                // /villa strassenblick <anteil> [höhe] [villa]: ohne Villa-Nummer die erste Straße
                 var liste = plugin.strassen().alle();
-                if (p == null || liste.isEmpty()) {
+                var strasse = args.length > 3 ? plugin.strassen().zur(Integer.parseInt(args[3]))
+                        : liste.isEmpty() ? null : liste.getFirst();
+                if (p == null || strasse == null) {
                     antwort(wer, "Noch keine Straße.");
                 } else {
-                    var punkte = liste.getFirst().punkte();
+                    var punkte = strasse.punkte();
                     double anteil = args.length > 1 ? Double.parseDouble(args[1]) : 0.5;
                     int i = (int) Math.clamp(anteil * (punkte.size() - 1), 0, punkte.size() - 1);
                     int[] a = punkte.get(Math.max(0, i - 14)), b = punkte.get(Math.min(punkte.size() - 1, i + 6));
