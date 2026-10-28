@@ -1,6 +1,7 @@
 ### Neu in 0.4.6 – gemeinsam fernsehen, Ressourcenpaket von GitHub, personalisierte Zugangskarten
 
 - **Gemeinsam Videos schauen:** Startet jemand ein Video, wartet der Fernseher, bis es bei allen Zuschauern in der Nähe (32 Blöcke, mit Mod) geladen ist – über der Hotbar steht „Warte auf die anderen Zuschauer … (1/2 bereit)“. Dann startet es bei allen im selben Moment, auch nach Pause und Spulen. Länger als 45 Sekunden wird nicht gewartet.
+- **Pause und Weiter ohne Vorschaubild:** Nach einer Pause bleibt das letzte Bild stehen – auch beim Weiterschauen und Spulen, bis das Video an der neuen Stelle geladen ist (vorher sprang der Fernseher solange auf das Vorschaubild zurück).
 - **Zugangskarten personalisiert:** Jede Karte trägt Nummer und Namen ihrer Villa („Villa von …“), auch die der ersten Villa. Karten in den Truhen werden beim Bau auf ihre Villa ausgestellt – bisher öffneten Karten aus der Truhe einer Nachbarvilla die Villa des ersten Spielers (bestehende Villen werden beim nächsten Serverstart umgestellt).
 - **Paper: Ressourcenpaket kommt jetzt aus dem GitHub-Release.** Bisher lieferte das Plugin das Paket über einen eigenen Webserver auf Port 25580 – bei Hostern wie Pterodactyl ist dieser Port meist nicht freigegeben, dann hieß es „1 von 1 Paket konnte nicht heruntergeladen werden“. Jetzt hängt das Paket an jedem Release (`stinkendreich_paket-<version>.zip`) und die Spieler laden es direkt von GitHub. Wer lieber selbst ausliefert: in der Config `ressourcenpaket.quelle: server`.
 

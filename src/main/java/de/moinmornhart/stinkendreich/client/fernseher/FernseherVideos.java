@@ -23,6 +23,11 @@ import java.util.Set;
  */
 public final class FernseherVideos {
     private static final Map<Integer, VideoAbspieler> SPIELER = new HashMap<>();
+    /**
+     * Abgelöste Abspieler (nach Pause → weiter, Spulen): Ihr letztes Bild bleibt stehen, bis der neue sein erstes Bild
+     * hat (Philip: „dass … das Bild, was zuletzt da war, auch so bleibt und nicht wieder das Thumbnail kommt“).
+     */
+    private static final Map<Integer, VideoAbspieler> VORHER = new HashMap<>();
     private static final double REICHWEITE = 48;
     /** Fehler je Video und Stelle nur einmal im Chat melden. */
     private static final Set<String> GEMELDET = new HashSet<>();
@@ -41,7 +46,29 @@ public final class FernseherVideos {
     /** Textur mit dem laufenden Video für diesen Fernseher, sonst null (dann das Vorschaubild). */
     public static Identifier textur(int tvId) {
         VideoAbspieler p = SPIELER.get(tvId);
-        return p == null ? null : p.textur();
+        Identifier t = p == null ? null : p.textur();
+        VideoAbspieler alt = VORHER.get(tvId);
+        if (alt == null) {
+            return t;
+        }
+        if (t != null || p == null || p.zustand() == VideoAbspieler.Zustand.FEHLER) {
+            VORHER.remove(tvId).close();         // der neue zeigt sein erstes Bild: das alte Standbild darf weg
+            return t;
+        }
+        return alt.textur();
+    }
+
+    /** Neuer Abspieler für diesen Fernseher; der bisherige hält an und zeigt sein letztes Bild weiter, bis der neue so weit ist. */
+    private static void ersetzen(int tvId, VideoAbspieler neu) {
+        VideoAbspieler alt = SPIELER.put(tvId, neu);
+        if (alt == null) {
+            return;
+        }
+        alt.anhalten();
+        VideoAbspieler davor = VORHER.put(tvId, alt);
+        if (davor != null && davor != alt) {
+            davor.close();
+        }
     }
 
     private static void tick(Minecraft mc) {
@@ -69,12 +96,9 @@ public final class FernseherVideos {
                     // Gemeinsam schauen: an der Startstelle vorladen, anhalten und dem Server „bereit“ melden
                     long stelle = tv.positionTicks(0);
                     if (p == null || !p.kennung.equals(tv.video()) || Math.abs(p.start - stelle / 20.0) > 0.5 || !p.halten) {
-                        if (p != null) {
-                            p.close();
-                        }
                         p = new VideoAbspieler(tv.getId(), tv.video(), stelle / 20.0, tv.getX(), tv.getY() + 1.4, tv.getZ());
                         p.halten = true;
-                        SPIELER.put(tv.getId(), p);
+                        ersetzen(tv.getId(), p);
                     }
                     if (p.startbereit() && GEMELDET_BEREIT.add(tv.getId() + "@" + stelle)) {
                         KompatClient.sende("fernseherbereit", tv.blockPosition(), tv.getId() + "|" + stelle);
@@ -99,17 +123,21 @@ public final class FernseherVideos {
                 }
                 double soll = tv.positionTicks(mc.level.getGameTime()) / 20.0;
                 if (p == null || !p.kennung.equals(tv.video()) || p.mussNeuStarten(soll)) {
-                    if (p != null) {
-                        p.close();
-                    }
                     p = new VideoAbspieler(tv.getId(), tv.video(), soll, tv.getX(), tv.getY() + 1.4, tv.getZ());
-                    SPIELER.put(tv.getId(), p);
+                    ersetzen(tv.getId(), p);
                 }
                 aktiv.add(tv.getId());
             }
         }
         SPIELER.entrySet().removeIf(e -> {
             if (aktiv.contains(e.getKey())) {
+                return false;
+            }
+            e.getValue().close();
+            return true;
+        });
+        VORHER.entrySet().removeIf(e -> {
+            if (SPIELER.containsKey(e.getKey())) {
                 return false;
             }
             e.getValue().close();
@@ -157,6 +185,8 @@ public final class FernseherVideos {
     private static void alleBeenden() {
         SPIELER.values().forEach(VideoAbspieler::close);
         SPIELER.clear();
+        VORHER.values().forEach(VideoAbspieler::close);
+        VORHER.clear();
         GEMELDET.clear();
         GEMELDET_BEREIT.clear();
     }
