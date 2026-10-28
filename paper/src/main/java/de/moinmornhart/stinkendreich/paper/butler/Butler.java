@@ -1,6 +1,8 @@
 package de.moinmornhart.stinkendreich.paper.butler;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import de.moinmornhart.stinkendreich.paper.Dialoge;
 import de.moinmornhart.stinkendreich.paper.StinkendReichPaper;
 import de.moinmornhart.stinkendreich.paper.villa.Ausstattung;
@@ -13,6 +15,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mannequin;
 import org.bukkit.entity.Player;
@@ -25,6 +28,10 @@ import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +42,9 @@ import java.util.UUID;
  * Butler James auf dem Paper-Server. Er besteht aus zwei Figuren: einer Schaufensterpuppe mit seiner Haut (das,
  * was man sieht) und einem unsichtbaren Körper, der den Weg findet (ein Händler ohne eigene Ziele). Die Puppe folgt
  * dem Körper jeden Tick. James folgt seinem Herrn, wartet oder geht nach Hause; Befehle im Chat („Butler, komm“)
- * oder per Rechtsklick über ein Menü.
+ * oder per Rechtsklick über ein Menü. Der Chunk, in dem James steht, bleibt immer geladen (auch nach einem Neustart,
+ * Ort in {@code butler_orte.json}): Sonst wäre er nicht erreichbar, solange niemand in seiner Nähe ist – etwa wenn sein
+ * Herr bei einem Freund ist und sich nach Hause fahren lassen will.
  */
 public final class Butler implements Listener {
     /** Was James gerade tut. */
@@ -50,6 +59,11 @@ public final class Butler implements Listener {
     private final Map<Integer, Integer> stillstand = new HashMap<>();
     /** Laufende Aufträge (Bergbau, Holz, Schmelzen, Liefern, Sortieren) je Villa. */
     private final Map<Integer, Auftrag> auftraege = new HashMap<>();
+    /** Chunk, den James je Villa geladen hält („Welt-UUID x z“), und die Merkdatei dazu. */
+    private final Map<Integer, String> haltChunk = new HashMap<>();
+    private final Path haltDatei;
+    private boolean haltGeaendert;
+    private static final Gson GSON = new Gson();
 
     public Butler(StinkendReichPaper plugin) {
         this.plugin = plugin;
@@ -60,6 +74,8 @@ public final class Butler implements Listener {
         for (var w : Bukkit.getWorlds()) {
             w.getEntities().forEach(this::aufnehmen);
         }
+        haltDatei = plugin.getDataFolder().toPath().resolve("butler_orte.json");
+        festhaltenLaden();
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 1L, 1L);
         // Das nächste Dorf schon eine Minute nach dem Start suchen (kostet einmal 2–4 s), damit der erste Flug nicht hakt
         Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.villen().alle().stream()
@@ -98,6 +114,86 @@ public final class Butler implements Listener {
         }
         koerper.put(villa.nr(), k);
         puppen.put(villa.nr(), p);
+    }
+
+    // ------------------------------------------------------------------
+    // James' Chunk geladen halten
+    // ------------------------------------------------------------------
+
+    /** Beim Start: die gemerkten Chunks laden (ohne Eintrag: die Halle der Villa, dort steht James nach dem Bau). */
+    private void festhaltenLaden() {
+        Map<Integer, String> gemerkt = new HashMap<>();
+        try {
+            if (Files.exists(haltDatei)) {
+                JsonObject j = GSON.fromJson(Files.readString(haltDatei, StandardCharsets.UTF_8), JsonObject.class);
+                j.entrySet().forEach(e -> gemerkt.put(Integer.parseInt(e.getKey()), e.getValue().getAsString()));
+            }
+        } catch (IOException | RuntimeException ex) {
+            plugin.getLogger().warning("Butler: butler_orte.json nicht lesbar: " + ex.getMessage());
+        }
+        JsonArray halle = plugin.bauplan().ersteMarke("butler");
+        for (Villen.Villa v : plugin.villen().alle()) {
+            String ort = gemerkt.get(v.nr());
+            if (ort == null && halle != null && v.world() != null) {
+                Location l = Ausstattung.ort(v, halle);
+                ort = chunkSchluessel(l.getWorld(), l.getBlockX() >> 4, l.getBlockZ() >> 4);
+            }
+            if (ort != null) {
+                festhalten(v.nr(), ort);
+            }
+        }
+    }
+
+    private static String chunkSchluessel(World w, int cx, int cz) {
+        return w.getUID() + " " + cx + " " + cz;
+    }
+
+    /** Hält den Chunk {@code ort} für James der Villa {@code nr} geladen und gibt den vorigen frei (falls kein anderer dort steht). */
+    private void festhalten(int nr, String ort) {
+        String alt = haltChunk.put(nr, ort);
+        if (ort.equals(alt)) {
+            return;
+        }
+        haltGeaendert = true;
+        if (alt != null && !haltChunk.containsValue(alt)) {
+            String[] t = alt.split(" ");
+            World w = Bukkit.getWorld(UUID.fromString(t[0]));
+            if (w != null) {
+                w.removePluginChunkTicket(Integer.parseInt(t[1]), Integer.parseInt(t[2]), plugin);
+            }
+        }
+        String[] t = ort.split(" ");
+        World w = Bukkit.getWorld(UUID.fromString(t[0]));
+        if (w != null) {
+            w.getChunkAtAsync(Integer.parseInt(t[1]), Integer.parseInt(t[2])).thenAccept(c -> {
+                if (haltChunk.containsValue(ort)) {
+                    c.addPluginChunkTicket(plugin);
+                }
+            });
+        }
+    }
+
+    /** Alle 5 s: Chunk jedes geladenen James festhalten (auch erneut – andere Teile geben ihre Chunks frei), Datei schreiben. */
+    private void festhaltenPruefen() {
+        for (Map.Entry<Integer, Mannequin> e : puppen.entrySet()) {
+            Mannequin p = e.getValue();
+            if (p != null && p.isValid()) {
+                Location l = p.getLocation();
+                festhalten(e.getKey(), chunkSchluessel(l.getWorld(), l.getBlockX() >> 4, l.getBlockZ() >> 4));
+                p.getChunk().addPluginChunkTicket(plugin);
+            }
+        }
+        if (haltGeaendert) {
+            haltGeaendert = false;
+            JsonObject j = new JsonObject();
+            haltChunk.forEach((nr, ort) -> j.addProperty(String.valueOf(nr), ort));
+            try {
+                Files.createDirectories(haltDatei.getParent());
+                Files.writeString(haltDatei, GSON.toJson(j), StandardCharsets.UTF_8);
+            } catch (IOException ex) {
+                plugin.getLogger().warning("Butler: butler_orte.json nicht geschrieben: " + ex.getMessage());
+            }
+        }
     }
 
     private void aufnehmen(Entity e) {
@@ -155,6 +251,9 @@ public final class Butler implements Listener {
     // ------------------------------------------------------------------
 
     private void tick() {
+        if (Bukkit.getCurrentTick() % 100 == 0) {
+            festhaltenPruefen();
+        }
         for (Map.Entry<Integer, Mannequin> e : puppen.entrySet()) {
             Mannequin p = e.getValue();
             WanderingTrader k = koerper.get(e.getKey());
