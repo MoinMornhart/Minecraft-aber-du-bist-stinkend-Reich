@@ -41,12 +41,22 @@ import java.util.regex.Pattern;
  */
 public class FernseherEntity extends Mob {
     private static final EntityDataAccessor<String> VIDEO = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
-    /** Wiedergabe: "" = keine, "L&lt;Tick&gt;" = läuft (Position 0 war bei diesem Spielzeit-Tick), "P&lt;Ticks&gt;" = angehalten. */
+    /**
+     * Wiedergabe: "" = keine, "L&lt;Tick&gt;" = läuft (Position 0 war bei diesem Spielzeit-Tick), "P&lt;Ticks&gt;" = angehalten,
+     * "W&lt;Ticks&gt;;&lt;bereit&gt;/&lt;alle&gt;" = wartet an dieser Stelle, bis alle Zuschauer das Video geladen haben.
+     */
     private static final EntityDataAccessor<String> WIEDERGABE = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
     /** Bildgröße in Blöcken als „Breite;Höhe“, "" = Standardgröße (der Bunker-Fernseher füllt so seinen Goldrahmen). */
     private static final EntityDataAccessor<String> GROESSE = SynchedEntityData.defineId(FernseherEntity.class, EntityDataSerializers.STRING);
     /** Standardgröße in Blöcken (Modell 80 × 45 Pixel). */
     public static final float STANDARD_BREITE = 5.0F, STANDARD_HOEHE = 2.8125F;
+    /** Wer so nah am Fernseher ist, schaut mit: auf ihn wird beim Start gewartet. */
+    public static final int ZUSCHAUER_RADIUS = 32;
+    /** Länger als 45 Sekunden wird nicht gewartet (z. B. wenn bei einem das Laden hängt). */
+    private static final int HOECHSTENS_WARTEN = 20 * 45;
+    /** Zuschauer, bei denen das Video an der Wartestelle geladen ist (nur auf dem Server). */
+    private final java.util.Set<java.util.UUID> bereit = new java.util.HashSet<>();
+    private long wartenSeit;
     private static final Pattern KENNUNG = Pattern.compile("(?:v=|youtu\\.be/|shorts/|embed/|live/)([A-Za-z0-9_-]{11})");
     private static final Pattern NUR_KENNUNG = Pattern.compile("[A-Za-z0-9_-]{11}");
 
@@ -63,6 +73,18 @@ public class FernseherEntity extends Mob {
 
     /** Nimmt die Aktion „fernseher“ vom Menü entgegen: „&lt;Entity-ID&gt;|&lt;Befehl&gt;“ (siehe {@link #befehl}). */
     public static void registrieren() {
+        // Zuschauer meldet: Video ist an der Wartestelle geladen („&lt;Entity-ID&gt;|&lt;Wartestelle in Ticks&gt;“)
+        Netz.bearbeiter("fernseherbereit", ZUSCHAUER_RADIUS + 8, (spieler, pos, wert) -> {
+            String[] t = wert.split("\\|");
+            try {
+                if (t.length == 2 && spieler.level().getEntity(Integer.parseInt(t[0])) instanceof FernseherEntity tv && tv.wartet()
+                        && tv.positionTicks(0) == Long.parseLong(t[1])) {
+                    tv.bereit.add(spieler.getUUID());
+                }
+            } catch (NumberFormatException ignoriert) {
+                // ungültige Nachricht
+            }
+        });
         Netz.bearbeiter("fernseher", 10, (spieler, pos, wert) -> {
             int trenner = wert.indexOf('|');
             if (trenner < 0) {
@@ -110,24 +132,24 @@ public class FernseherEntity extends Mob {
                 }
                 if (!k.isEmpty()) {
                     setzeVideo(k);
-                    entityData.set(WIEDERGABE, "L" + jetzt);
+                    warten(0);
                 }
             }
             case "!pause" -> {
-                if (laeuft()) {
+                if (laeuft() || wartet()) {
                     entityData.set(WIEDERGABE, "P" + positionTicks(jetzt));
                 }
             }
             case "!weiter" -> {
                 if (angehalten()) {
-                    entityData.set(WIEDERGABE, "L" + (jetzt - positionTicks(jetzt)));
+                    warten(positionTicks(jetzt));
                 }
             }
             case "!spulen" -> {
                 try {
                     long neu = Math.max(0, positionTicks(jetzt) + Long.parseLong(rest.trim()) * 20);
-                    if (laeuft()) {
-                        entityData.set(WIEDERGABE, "L" + (jetzt - neu));
+                    if (laeuft() || wartet()) {
+                        warten(neu);
                     } else if (angehalten()) {
                         entityData.set(WIEDERGABE, "P" + neu);
                     }
@@ -152,6 +174,36 @@ public class FernseherEntity extends Mob {
         return wiedergabe().startsWith("L") && !video().isEmpty();
     }
 
+    /** Wartet der Fernseher, bis alle Zuschauer das Video geladen haben? */
+    public boolean wartet() {
+        return wiedergabe().startsWith("W") && !video().isEmpty();
+    }
+
+    /** Beim Warten: „bereit/alle“ (für den Hinweis über der Hotbar), sonst "". */
+    public String wartenStand() {
+        String w = wiedergabe();
+        int i = w.indexOf(';');
+        return w.startsWith("W") && i > 0 ? w.substring(i + 1) : "";
+    }
+
+    /**
+     * Gemeinsam schauen (Philip: „dass beide das Gleiche sehen … wenn es bei meinem Freund noch runterlädt, dass es bei
+     * mir dann auch noch wartet“): Statt sofort loszulaufen, wartet der Fernseher an dieser Stelle, bis jeder Zuschauer
+     * im Umkreis von {@link #ZUSCHAUER_RADIUS} Blöcken das Video geladen hat (höchstens {@link #HOECHSTENS_WARTEN} Ticks),
+     * und startet dann für alle im selben Tick.
+     */
+    private void warten(long position) {
+        bereit.clear();
+        wartenSeit = level().getGameTime();
+        entityData.set(WIEDERGABE, "W" + position + ";0/0");
+    }
+
+    /** Zuschauer: Spieler mit der Mod in der Nähe (ohne Mod gibt es kein Video, auf sie wird nicht gewartet). */
+    private java.util.List<net.minecraft.server.level.ServerPlayer> zuschauer() {
+        return level().getEntitiesOfClass(net.minecraft.server.level.ServerPlayer.class, getBoundingBox().inflate(ZUSCHAUER_RADIUS),
+                p -> de.moinmornhart.stinkendreich.netz.ModErkennung.hatMod(p));
+    }
+
     /** Ist ein Video angehalten (Standbild)? */
     public boolean angehalten() {
         return wiedergabe().startsWith("P") && !video().isEmpty();
@@ -166,6 +218,10 @@ public class FernseherEntity extends Mob {
             }
             if (w.startsWith("P")) {
                 return Math.max(0, Long.parseLong(w.substring(1)));
+            }
+            if (w.startsWith("W")) {
+                int i = w.indexOf(';');
+                return Math.max(0, Long.parseLong(i > 0 ? w.substring(1, i) : w.substring(1)));
             }
         } catch (NumberFormatException ignoriert) {
             // beschädigter Wert: wie „keine Wiedergabe“
@@ -231,6 +287,22 @@ public class FernseherEntity extends Mob {
     @Override
     public void tick() {
         super.tick();
+        if (!level().isClientSide() && wartet() && tickCount % 5 == 0) {
+            var alle = zuschauer();
+            long fertig = alle.stream().filter(p -> bereit.contains(p.getUUID())).count();
+            long jetzt = level().getGameTime();
+            if (fertig >= alle.size() || jetzt - wartenSeit > HOECHSTENS_WARTEN) {
+                // Alle bereit (oder genug gewartet): für alle im selben Tick los
+                de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Fernseher: Start für {} von {} Zuschauern nach {} s",
+                        fertig, alle.size(), (jetzt - wartenSeit) / 20);
+                entityData.set(WIEDERGABE, "L" + (jetzt - positionTicks(jetzt)));
+            } else {
+                String stand = "W" + positionTicks(jetzt) + ";" + fertig + "/" + alle.size();
+                if (!stand.equals(wiedergabe())) {
+                    entityData.set(WIEDERGABE, stand);
+                }
+            }
+        }
         setDeltaMovement(Vec3.ZERO);
         yBodyRot = getYRot();
         yHeadRot = getYRot();

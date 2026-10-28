@@ -1,0 +1,30 @@
+# Gemeinsam schauen: Philip startet ein Video, Max lädt künstlich 10 s länger (STINKENDREICH_TESTVIDEO_LANGSAM=Max).
+# Erwartet: der Fernseher wartet („Warte auf die anderen Zuschauer“), startet erst, wenn beide bereit sind, bei beiden gleich.
+# Aufruf: STINKENDREICH_TESTVIDEO=<video> STINKENDREICH_TESTVIDEO_LANGSAM=Max GAST=mit tools/ingame/lan.sh 26.3 lan_fernseher.txt
+warte 5
+bis 300 Baustelle: Villa 1 fertig
+warte 10
+server /time set 6000
+server /gamerule advance_time false
+server /gamemode creative Max
+server /gamemode creative Philip
+server /tp Philip 240 156 200
+server /tp Max 240 156 200
+warte 6
+server /fill 230 150 200 250 150 214 minecraft:smooth_stone
+server /fill 230 151 211 250 156 211 minecraft:white_concrete
+server /summon stinkendreich:fernseher 240 152 210 {Rotation:[180f,0f]}
+warte 2
+server /tp @e[type=stinkendreich:fernseher] 240 151 210.5 180 0
+server /tp Philip 238 151 203 0 0
+server /tp Max 241 151.6 203 0 0
+warte 4
+merke
+server /execute as Philip at @s run villa fernseher !abspielen|aqz-KE-bpKQ
+warte 4
+bild f01_max_laedt_noch
+bis 60 Fernseher: Start für
+warte 4
+bild f02_beide_laufen
+warte 6
+bild f03_spaeter

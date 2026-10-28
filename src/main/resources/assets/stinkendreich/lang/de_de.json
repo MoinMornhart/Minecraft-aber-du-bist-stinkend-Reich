@@ -347,6 +347,7 @@
   "stinkendreich.fernseher.status.freigabe": "Hier läuft ein Video. Rechtsklick auf den Fernseher, um Videos im Spiel einzuschalten.",
   "stinkendreich.fernseher.status.laden": "Fernseher: Hilfsprogramme werden geladen … %s",
   "stinkendreich.fernseher.status.video": "Fernseher: Video wird geladen …",
+  "stinkendreich.fernseher.status.warten": "Fernseher: Warte auf die anderen Zuschauer … (%s bereit)",
   "stinkendreich.fernseher.stopp": "Stopp",
   "stinkendreich.fernseher.titel": "XXL-Fernseher",
   "stinkendreich.fernseher.ungueltig": "Kein gültiger YouTube-Link",

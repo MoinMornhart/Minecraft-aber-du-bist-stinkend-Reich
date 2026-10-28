@@ -36,6 +36,11 @@ record VideoQuelle(String bild, String ton, Map<String, String> kopfzeilen, Stri
     static VideoQuelle holen(String kennung) throws IOException, InterruptedException {
         String test = VideoWerkzeuge.testvideo();
         if (!test.isEmpty()) {
+            // Nur im Test: dieser Spieler lädt künstlich langsam (gemeinsam schauen: die anderen müssen warten)
+            String langsam = System.getenv("STINKENDREICH_TESTVIDEO_LANGSAM");
+            if (langsam != null && langsam.equals(net.minecraft.client.Minecraft.getInstance().getUser().getName())) {
+                Thread.sleep(10_000);
+            }
             return new VideoQuelle(test, test, Map.of(), "", 0, false, "", "", "", "");
         }
         VideoWerkzeuge.ytdlpAktualisieren();

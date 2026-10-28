@@ -77,6 +77,8 @@ final class VideoAbspieler implements AutoCloseable {
     private final long angelegt = System.nanoTime();
     private volatile double ladeSekunden;
     private volatile long pauseSeit = -1;
+    /** Gemeinsam schauen: fertig laden, aber noch nicht loslaufen (der Server wartet auf die anderen Zuschauer). */
+    volatile boolean halten;
     private volatile long pausiert;
 
     private static final class Bild {
@@ -99,6 +101,14 @@ final class VideoAbspieler implements AutoCloseable {
 
     Zustand zustand() {
         return zustand;
+    }
+
+    /** Fertig zum Start (genug Bild und Ton geladen), läuft schon oder geht nicht – dann nicht länger auf ihn warten. */
+    boolean startbereit() {
+        if (zustand != Zustand.LAEDT) {
+            return true;
+        }
+        return quelle != null && (ton.menge() >= VORLAUF || tonEnde) && (!fertig.isEmpty() || bildEnde);
     }
 
     String fehler() {
@@ -300,7 +310,7 @@ final class VideoAbspieler implements AutoCloseable {
             pausiert += jetzt - pauseSeit;
             pauseSeit = -1;
         }
-        if (zustand == Zustand.LAEDT && quelle != null && !spielPausiert && !geschlossen) {
+        if (zustand == Zustand.LAEDT && quelle != null && !spielPausiert && !geschlossen && !halten) {
             boolean tonDa = ton.menge() >= VORLAUF || tonEnde;
             boolean bildDa = !fertig.isEmpty() || bildEnde;
             if (tonDa && bildDa) {

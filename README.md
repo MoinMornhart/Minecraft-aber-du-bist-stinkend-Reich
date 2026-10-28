@@ -148,7 +148,7 @@ Auf Sofas, Liegen, Barhockern, Esszimmerstühlen, Gartenbänken, Gaming-Stühlen
 </tr>
 </table>
 
-Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link einfügen (Strg + V) und **Im Fernseher abspielen**. Das Video läuft direkt auf dem Bildschirm, der Ton kommt aus dem Fernseher und wird leiser, je weiter du weggehst. Alle in der Nähe sehen dieselbe Stelle. Im Menü: **Anhalten / Weiter**, **« 10 s** und **30 s »**, **Stopp**, im Browser öffnen, Ausschalten.
+Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link einfügen (Strg + V) und **Im Fernseher abspielen**. Das Video läuft direkt auf dem Bildschirm, der Ton kommt aus dem Fernseher und wird leiser, je weiter du weggehst. Alle in der Nähe sehen dieselbe Stelle. Im Menü: **Anhalten / Weiter**, **« 10 s** und **30 s »**, **Stopp**, im Browser öffnen, Ausschalten. **Gemeinsam schauen:** Startet jemand ein Video, wartet der Fernseher, bis es bei allen in der Nähe geladen ist („Warte auf die anderen Zuschauer …“), und startet dann bei allen gleichzeitig.
 
 **Beim ersten Video** fragt die Mod einmal, ob sie drei kostenlose Hilfsprogramme laden darf: **yt-dlp** (findet das Video), **FFmpeg** (macht daraus Bild und Ton) und **Deno** (hilft yt-dlp bei YouTube). Zusammen etwa 200 MB, direkt von den offiziellen GitHub-Seiten nach `.minecraft/stinkendreich/werkzeuge`. Sind sie schon auf dem PC installiert, nimmt die Mod diese (auf dem Mac FFmpeg mit `brew install ffmpeg`). yt-dlp hält sich selbst aktuell, denn YouTube ändert öfter etwas. Die Lautstärke regelt der Regler **Jukebox/Notenblöcke** und `fernseherLautstaerke` in der Config; `fernseherVideos: false` schaltet Videos im Spiel ab (dann nur Vorschaubild und Browser).
 

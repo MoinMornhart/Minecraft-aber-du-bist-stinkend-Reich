@@ -27,6 +27,8 @@ public final class FernseherVideos {
     /** Fehler je Video und Stelle nur einmal im Chat melden. */
     private static final Set<String> GEMELDET = new HashSet<>();
     private static int takt;
+    /** Schon als bereit gemeldet: „Fernseher-ID@Wartestelle“. */
+    private static final Set<String> GEMELDET_BEREIT = new HashSet<>();
 
     private FernseherVideos() {
     }
@@ -63,8 +65,31 @@ public final class FernseherVideos {
                     }
                     continue;
                 }
+                if (tv.wartet() && bereit) {
+                    // Gemeinsam schauen: an der Startstelle vorladen, anhalten und dem Server „bereit“ melden
+                    long stelle = tv.positionTicks(0);
+                    if (p == null || !p.kennung.equals(tv.video()) || Math.abs(p.start - stelle / 20.0) > 0.5 || !p.halten) {
+                        if (p != null) {
+                            p.close();
+                        }
+                        p = new VideoAbspieler(tv.getId(), tv.video(), stelle / 20.0, tv.getX(), tv.getY() + 1.4, tv.getZ());
+                        p.halten = true;
+                        SPIELER.put(tv.getId(), p);
+                    }
+                    if (p.startbereit() && GEMELDET_BEREIT.add(tv.getId() + "@" + stelle)) {
+                        KompatClient.sende("fernseherbereit", tv.blockPosition(), tv.getId() + "|" + stelle);
+                    }
+                    aktiv.add(tv.getId());
+                    if (tv.distanceToSqr(mc.player) < 16 * 16 && (naechster == null || tv.distanceToSqr(mc.player) < naechster.distanceToSqr(mc.player))) {
+                        naechster = tv;
+                    }
+                    continue;
+                }
                 if (!tv.laeuft()) {
                     continue;
+                }
+                if (p != null && p.halten && p.kennung.equals(tv.video())) {
+                    p.halten = false;                // alle bereit: jetzt überall gleichzeitig los
                 }
                 if (tv.distanceToSqr(mc.player) < 16 * 16 && (naechster == null || tv.distanceToSqr(mc.player) < naechster.distanceToSqr(mc.player))) {
                     naechster = tv;
@@ -118,7 +143,9 @@ public final class FernseherVideos {
             }
         } else {
             VideoAbspieler p = SPIELER.get(tv.getId());
-            if (p != null && p.zustand() == VideoAbspieler.Zustand.LAEDT) {
+            if (tv.wartet() && p != null && p.startbereit()) {
+                text = Component.translatable("stinkendreich.fernseher.status.warten", tv.wartenStand());
+            } else if (p != null && p.zustand() == VideoAbspieler.Zustand.LAEDT) {
                 text = Component.translatable("stinkendreich.fernseher.status.video");
             }
         }
@@ -131,5 +158,6 @@ public final class FernseherVideos {
         SPIELER.values().forEach(VideoAbspieler::close);
         SPIELER.clear();
         GEMELDET.clear();
+        GEMELDET_BEREIT.clear();
     }
 }

@@ -347,6 +347,7 @@
   "stinkendreich.fernseher.status.freigabe": "A video is playing here. Right-click the TV to turn on videos in the game.",
   "stinkendreich.fernseher.status.laden": "TV: downloading helper programs … %s",
   "stinkendreich.fernseher.status.video": "TV: loading video …",
+  "stinkendreich.fernseher.status.warten": "TV: waiting for the other viewers … (%s ready)",
   "stinkendreich.fernseher.stopp": "Stop",
   "stinkendreich.fernseher.titel": "XXL TV",
   "stinkendreich.fernseher.ungueltig": "Not a valid YouTube link",

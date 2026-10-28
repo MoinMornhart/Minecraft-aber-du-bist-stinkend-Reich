@@ -86,6 +86,17 @@ public final class VillaBefehle {
                                 .then(Commands.literal("pruefen").executes(k -> vergleich(k, false, 0))
                                         .then(Commands.argument("dy", IntegerArgumentType.integer())
                                                 .executes(k -> vergleich(k, false, IntegerArgumentType.getInteger(k, "dy"))))))
+                        // Testhilfe: Befehl an den nächsten Fernseher (z. B. „/villa fernseher !abspielen|aqz-KE-bpKQ“)
+                        .then(Commands.literal("fernseher").requires(Kompat.istOperator())
+                                .then(Commands.argument("befehl", com.mojang.brigadier.arguments.StringArgumentType.greedyString())
+                                        .executes(k -> {
+                                            var pos = k.getSource().getPosition();
+                                            var tvs = k.getSource().getLevel().getEntitiesOfClass(de.moinmornhart.stinkendreich.fernseher.FernseherEntity.class,
+                                                    new net.minecraft.world.phys.AABB(pos, pos).inflate(32));
+                                            tvs.stream().min(java.util.Comparator.comparingDouble(t -> t.distanceToSqr(pos))).ifPresent(t ->
+                                                    t.befehl(com.mojang.brigadier.arguments.StringArgumentType.getString(k, "befehl")));
+                                            return tvs.isEmpty() ? 0 : 1;
+                                        })))
                         .then(Commands.literal("minentest").requires(Kompat.istOperator()).executes(VillaBefehle::minentest))
                         .then(Commands.literal("luke").requires(Kompat.istOperator()).executes(VillaBefehle::luke))
                         .then(Commands.literal("ort").requires(Kompat.istOperator())
