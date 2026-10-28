@@ -1,3 +1,7 @@
+### Neu in 0.4.6 – Ressourcenpaket für Paper-Server von GitHub
+
+- **Paper: Ressourcenpaket kommt jetzt aus dem GitHub-Release.** Bisher lieferte das Plugin das Paket über einen eigenen Webserver auf Port 25580 – bei Hostern wie Pterodactyl ist dieser Port meist nicht freigegeben, dann hieß es „1 von 1 Paket konnte nicht heruntergeladen werden“. Jetzt hängt das Paket an jedem Release (`stinkendreich_paket-<version>.zip`) und die Spieler laden es direkt von GitHub. Wer lieber selbst ausliefert: in der Config `ressourcenpaket.quelle: server`.
+
 ### Neu in 0.4.5 – keine hängenden Laser
 
 - **Inkognito in der Festung:** Die Himmelslaser auf der Mauer reichen bis 40 Blöcke hoch; beim Abtauchen fuhr nur die Villa mit, der obere Teil der Strahlen blieb in der Luft hängen. Jetzt werden die Strahlen vor dem Abtauchen entfernt und wachsen nach dem Auftauchen neu (die Festung ist dann wieder an).

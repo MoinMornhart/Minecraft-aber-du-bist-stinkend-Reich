@@ -142,11 +142,28 @@ public final class Ressourcenpaket implements Listener {
                 + ",\"west\":" + holz + ",\"up\":" + holz + ",\"down\":" + holz + "}}]}").getBytes(StandardCharsets.UTF_8);
     }
 
-    /** Startet den eingebauten Webserver (oder nimmt die Adresse aus der Config). */
+    /** Adresse des Pakets im GitHub-Release dieser Version (der Release-Ablauf baut es mit und hängt es an). */
+    private String githubAdresse() {
+        String version = plugin.getPluginMeta().getVersion();
+        return "https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/download/v" + version
+                + "/stinkendreich_paket-" + version + ".zip";
+    }
+
+    /**
+     * Wo die Spieler das Paket herunterladen: eigene Adresse aus der Config, sonst (Standard, „ressourcenpaket.quelle:
+     * github“) aus dem GitHub-Release – das klappt auf jedem Server, auch bei Hostern wie Pterodactyl, die keinen zweiten
+     * Port freigeben (Philip: „es geht immer noch nicht“). Mit „quelle: server“ liefert der eingebaute Webserver.
+     */
     public void bereitstellen() throws IOException {
         String eigene = plugin.getConfig().getString("ressourcenpaket.adresse", "");
         if (eigene != null && !eigene.isBlank()) {
             adresse = eigene;
+            return;
+        }
+        if (!"server".equalsIgnoreCase(plugin.getConfig().getString("ressourcenpaket.quelle", "github"))) {
+            adresse = githubAdresse();
+            ohnePruefsumme = true;
+            plugin.getLogger().info("Ressourcenpaket kommt aus dem GitHub-Release: " + adresse);
             return;
         }
         int port = plugin.getConfig().getInt("ressourcenpaket.port", 25580);
@@ -179,6 +196,8 @@ public final class Ressourcenpaket implements Listener {
     }
 
     private int port;
+    /** Paket kommt von GitHub: keine Prüfsumme mitschicken. */
+    private boolean ohnePruefsumme;
     /** Host aus der Config bzw. server.properties, sonst null (dann die Adresse, mit der sich der Spieler verbunden hat). */
     private String festerHost;
 
@@ -230,7 +249,9 @@ public final class Ressourcenpaket implements Listener {
         if (adresse == null) {
             return;
         }
-        ResourcePackInfo info = ResourcePackInfo.resourcePackInfo(PAKET_ID, URI.create(adresseFuer(spieler)), sha1);
+        // Beim Paket aus GitHub ohne Prüfsumme: das dort gebaute Paket ist zwar inhaltsgleich, aber ein abweichendes Byte
+        // würde sonst jeden Download scheitern lassen
+        ResourcePackInfo info = ResourcePackInfo.resourcePackInfo(PAKET_ID, URI.create(adresseFuer(spieler)), ohnePruefsumme ? "" : sha1);
         spieler.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
                 .packs(info)
                 .required(plugin.getConfig().getBoolean("ressourcenpaket.pflicht", true))

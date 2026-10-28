@@ -62,6 +62,9 @@ jobs:
           mkdir -p build/plugin
           cp paper/build/libs/stinkendreich_paper-*.jar build/plugin/
 
+      - name: Ressourcenpaket für Paper-Server bauen (Spieler laden es von hier)
+        run: tools/paper/paket_bauen.sh build/plugin/stinkendreich_paper-*.jar "build/plugin/stinkendreich_paket-${VERSION}.zip"
+
       - name: Release-Text
         run: |
           {
@@ -99,4 +102,5 @@ jobs:
           files: |
             build/libs/*/*.jar
             build/plugin/*.jar
+            build/plugin/*.zip
           fail_on_unmatched_files: true

@@ -27,6 +27,9 @@ bedrock:
   an: true
 
 ressourcenpaket:
+  # Woher die Spieler das Paket laden: "github" (Standard, aus dem GitHub-Release dieser Version – braucht keinen
+  # zusätzlichen Port) oder "server" (eingebauter Webserver auf dem Port unten, der dann von außen erreichbar sein muss)
+  quelle: github
   # Port des eingebauten Webservers, der das Paket an die Spieler ausliefert
   port: 25580
   # Adresse, unter der Spieler den Server erreichen (leer = server-ip aus server.properties bzw. localhost)
