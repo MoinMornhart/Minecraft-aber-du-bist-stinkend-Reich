@@ -625,6 +625,10 @@ final class StrassenBau {
         if (m.isAir() || Natur.fluessig(m) || geschuetzt(b) || istStrasse(m)) {
             return;
         }
+        if (plugin.bloecke().zustand(b) != null) {
+            plugin.bloecke().entfernen(b);                  // Landmine im Weg: samt Anzeige weg (sonst schwebte sie)
+            return;
+        }
         b.setBlockData(LUFT, false);
     }
 
