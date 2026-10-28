@@ -102,6 +102,12 @@ public final class Butler implements Listener {
             t.getPersistentDataContainer().set(schluesselRolle, PersistentDataType.STRING, "koerper");
         });
         Bukkit.getMobGoals().removeAllGoals(k);
+        koerper.put(villa.nr(), k);
+        puppeAnlegen(villa, ort);
+    }
+
+    /** Die sichtbare Figur von James (Schaufensterpuppe mit seiner Haut) für die Villa anlegen. */
+    private void puppeAnlegen(Villen.Villa villa, Location ort) {
         Mannequin p = FigurenUebersetzen.puppe(ort, "butler");
         p.setInvulnerable(true);
         p.customName(Component.text(villa.besitzerName().isEmpty() ? "James" : "James · " + villa.besitzerName(), NamedTextColor.GOLD));
@@ -112,8 +118,17 @@ public final class Butler implements Listener {
         if (villa.besitzer() != null) {
             p.getPersistentDataContainer().set(schluesselHerr, PersistentDataType.STRING, villa.besitzer().toString());
         }
-        koerper.put(villa.nr(), k);
         puppen.put(villa.nr(), p);
+    }
+
+    /**
+     * Server stoppt: laufende Aufträge beenden, James steigt aus. Die Sitze der Fahrzeuge werden nicht gespeichert –
+     * wer beim Stoppen darauf sitzt, ginge mit ihnen verloren.
+     */
+    public void beenden() {
+        auftraege.values().forEach(Auftrag::abbrechen);
+        auftraege.clear();
+        puppen.values().stream().filter(p -> p != null && p.isValid() && p.isInsideVehicle()).forEach(Entity::leaveVehicle);
     }
 
     // ------------------------------------------------------------------
@@ -173,8 +188,29 @@ public final class Butler implements Listener {
         }
     }
 
-    /** Alle 5 s: Chunk jedes geladenen James festhalten (auch erneut – andere Teile geben ihre Chunks frei), Datei schreiben. */
+    /** Prüfungen hintereinander, in denen der Körper von James da war, seine Figur aber nicht. */
+    private final Map<Integer, Integer> ohnePuppe = new HashMap<>();
+
+    /**
+     * Alle 5 s: Chunk jedes geladenen James festhalten (auch erneut – andere Teile geben ihre Chunks frei), Datei
+     * schreiben. Ist der Körper da, die Figur aber 30 s lang nicht (verloren, etwa mit einem Fahrzeugsitz bei einem
+     * Absturz des Servers), entsteht sie neu.
+     */
     private void festhaltenPruefen() {
+        for (Map.Entry<Integer, WanderingTrader> e : koerper.entrySet()) {
+            WanderingTrader k = e.getValue();
+            Mannequin p = puppen.get(e.getKey());
+            if (k == null || !k.isValid() || (p != null && p.isValid())) {
+                ohnePuppe.remove(e.getKey());
+            } else if (ohnePuppe.merge(e.getKey(), 1, Integer::sum) >= 6) {
+                ohnePuppe.remove(e.getKey());
+                Villen.Villa v = plugin.villen().nr(e.getKey());
+                if (v != null) {
+                    puppeAnlegen(v, k.getLocation());
+                    plugin.getLogger().info("Butler: Figur von James (Villa " + e.getKey() + ") fehlte – neu angelegt");
+                }
+            }
+        }
         for (Map.Entry<Integer, Mannequin> e : puppen.entrySet()) {
             Mannequin p = e.getValue();
             if (p != null && p.isValid()) {
@@ -202,6 +238,13 @@ public final class Butler implements Listener {
             return;
         }
         if (e instanceof Mannequin p) {
+            Mannequin schon = puppen.get(nr);
+            if (schon != null && schon.isValid() && !schon.equals(p)) {
+                // Die alte Figur taucht wieder auf, nachdem sie schon ersetzt wurde: nur eine James-Figur je Villa
+                plugin.getLogger().info("Butler: doppelte Figur von James (Villa " + nr + ") entfernt");
+                p.remove();
+                return;
+            }
             puppen.put(nr, p);
         } else if (e instanceof WanderingTrader k) {
             Bukkit.getMobGoals().removeAllGoals(k);

@@ -162,6 +162,9 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        if (butler != null) {
+            butler.beenden();                           // James steigt aus (Fahrzeugsitze werden nicht gespeichert)
+        }
         if (bauleitung != null) {
             bauleitung.stoppen();                       // Lade-Tickets zurück; der Bau geht nach dem Start weiter
         }
