@@ -54,6 +54,8 @@ public class AnrufAuftrag extends Auftrag {
         switch (phase) {
             case KLINGELN -> {
                 if (ticks == 1) {
+                    // Die Limo aus der Garage holen (ihr Stellplatz wird geladen), statt jedes Mal eine neue zu rufen
+                    de.moinmornhart.stinkendreich.auto.Garage.vorladen(welt, herr.getUUID(), Autotyp.STRETCHLIMO);
                     butler.sagen(Component.translatable(lieferung.isEmpty() ? "stinkendreich.handy.unterwegs" : "stinkendreich.handy.lieferung.unterwegs"));
                 }
                 if (ticks < WARTEZEIT) {

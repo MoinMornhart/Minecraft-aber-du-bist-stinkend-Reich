@@ -1,0 +1,39 @@
+# 0.4.3: Nach der Fahrt bringt James die Limo in die Tiefgarage (Philip: „immer in die Garage fahren und da parken“).
+# Fahrt zum Dorf wie kurz03, aussteigen, James fährt los; außer Sicht steht die Limo auf ihrem Stellplatz
+# (Villa 93.5 16 36 = Welt 37.5 78 -20), keine Limo bleibt im Dorf.
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+server /difficulty peaceful
+warte 30
+server /butler strasse dorf
+bis 300 Straße Dorf: Ende
+server /villa ort 55.5 26 86 0 15
+warte 2
+merke
+server Butler, hol den Wagen
+bis 60 vorgefahren
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,sort=nearest,limit=1]
+warte 2
+merke
+server Butler, fahr mich zum Dorf
+bis 360 Wir sind da|fast da
+warte 2
+bild g01_angekommen
+merke
+server /ride @p dismount
+bis 10 bringe den Wagen nach Hause
+warte 4
+bild g02_faehrt_los
+bis 120 Garage: STRETCHLIMO eingeparkt
+warte 1
+server /execute at @p unless entity @e[type=stinkendreich:stretchlimo,distance=..64] run say Autotest-Pruefung: keine Limo mehr im Dorf
+server /execute if entity @e[type=stinkendreich:stretchlimo,x=37.5,y=78,z=-20,distance=..3] run say Autotest-Pruefung: Limo steht in der Garage
+server /execute if entity @e[type=stinkendreich:butler,x=0,y=88,z=0,distance=..120] run say Autotest-Pruefung: James ist zu Hause
+warte 2
+server /gamemode spectator
+server /tp @p 33 80 -25 -30 15
+warte 4
+bild g03_garage

@@ -625,6 +625,21 @@ public final class VillaPlatzierung {
         return villa;
     }
 
+    /**
+     * Stellplatz eines Wagens dieser Art in der Tiefgarage einer Villa (Weltkoordinaten x, y, z und Blickrichtung),
+     * der erste passende aus dem Fuhrpark; null, wenn es dort keinen Wagen dieser Art gibt.
+     */
+    public static double[] stellplatz(VillaInfo v, de.moinmornhart.stinkendreich.auto.Autotyp art) {
+        for (JsonArray platz : v.plan().marke("stellplatz")) {
+            int stelle = platz.get(4).getAsInt();
+            if (stelle < FUHRPARK.length && FUHRPARK[stelle].art() == art) {
+                return new double[]{v.ursprung().getX() + platz.get(0).getAsDouble(), v.ursprung().getY() + platz.get(1).getAsDouble(),
+                        v.ursprung().getZ() + platz.get(2).getAsDouble(), platz.get(3).getAsDouble()};
+            }
+        }
+        return null;
+    }
+
     /** Ein Wagen im Fuhrpark: Typ und Lackfarbe (Index in AutoEntity.FARBEN). */
     private record Wagen(de.moinmornhart.stinkendreich.auto.Autotyp art, int farbe) {
     }

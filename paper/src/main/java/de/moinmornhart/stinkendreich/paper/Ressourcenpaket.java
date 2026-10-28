@@ -160,20 +160,64 @@ public final class Ressourcenpaket implements Listener {
             }
         });
         webserver.start();
+        this.port = port;
         String host = plugin.getConfig().getString("ressourcenpaket.host", "");
         if (host == null || host.isBlank()) {
             host = plugin.getServer().getIp();
         }
-        if (host == null || host.isBlank()) {
-            host = "localhost";
-        }
-        adresse = "http://" + host + ":" + port + "/stinkendreich-" + sha1.substring(0, 8) + ".zip";
-        plugin.getLogger().info("Ressourcenpaket unter " + adresse);
+        // Ohne feste Adresse (server-ip ist meist leer) bekommt jeder Spieler die Adresse, mit der er sich verbunden
+        // hat (siehe adresseFuer) – vorher stand dort „localhost“, und Minecraft suchte das Paket auf dem eigenen PC
+        festerHost = host == null || host.isBlank() ? null : host;
+        adresse = "http://" + (festerHost != null ? festerHost : "<Adresse des Spielers>") + ":" + port + pfad();
+        plugin.getLogger().info("Ressourcenpaket unter " + adresse + " (Port " + port + " muss von außen erreichbar sein)");
     }
 
     public void stoppen() {
         if (webserver != null) {
             webserver.stop(0);
+        }
+    }
+
+    private int port;
+    /** Host aus der Config bzw. server.properties, sonst null (dann die Adresse, mit der sich der Spieler verbunden hat). */
+    private String festerHost;
+
+    private String pfad() {
+        return "/stinkendreich-" + sha1.substring(0, 8) + ".zip";
+    }
+
+    /** Download-Adresse für diesen Spieler. */
+    private String adresseFuer(Player spieler) {
+        if (webserver == null) {
+            return adresse;                          // selbst gehostet (ressourcenpaket.adresse)
+        }
+        String host = festerHost;
+        if (host == null) {
+            InetSocketAddress v = spieler.getVirtualHost();
+            host = v == null || v.getHostString() == null || v.getHostString().isBlank() ? "localhost" : v.getHostString();
+            // Manche Clients hängen an den Namen noch Zusatzdaten (z. B. „\0FML…“) oder einen Punkt an
+            int null0 = host.indexOf('\0');
+            if (null0 >= 0) {
+                host = host.substring(0, null0);
+            }
+            if (host.endsWith(".")) {
+                host = host.substring(0, host.length() - 1);
+            }
+        }
+        if (host.contains(":") && !host.startsWith("[")) {
+            host = "[" + host + "]";                 // IPv6
+        }
+        return "http://" + host + ":" + port + pfad();
+    }
+
+    /** Konnte ein Spieler das Paket nicht laden: Hinweis für den Betreiber im Protokoll. */
+    @EventHandler
+    public void beimStatus(org.bukkit.event.player.PlayerResourcePackStatusEvent e) {
+        if (e.getStatus() == org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD
+                || e.getStatus() == org.bukkit.event.player.PlayerResourcePackStatusEvent.Status.INVALID_URL) {
+            plugin.getLogger().warning(e.getPlayer().getName() + " konnte das Ressourcenpaket nicht laden ("
+                    + adresseFuer(e.getPlayer()) + "). Ist Port " + port + " (TCP) von außen erreichbar? Sonst in der Config "
+                    + "„ressourcenpaket.host“ (öffentliche Adresse) oder „ressourcenpaket.adresse“ (eigener Download) eintragen.");
         }
     }
 
@@ -186,7 +230,7 @@ public final class Ressourcenpaket implements Listener {
         if (adresse == null) {
             return;
         }
-        ResourcePackInfo info = ResourcePackInfo.resourcePackInfo(PAKET_ID, URI.create(adresse), sha1);
+        ResourcePackInfo info = ResourcePackInfo.resourcePackInfo(PAKET_ID, URI.create(adresseFuer(spieler)), sha1);
         spieler.sendResourcePacks(ResourcePackRequest.resourcePackRequest()
                 .packs(info)
                 .required(plugin.getConfig().getBoolean("ressourcenpaket.pflicht", true))

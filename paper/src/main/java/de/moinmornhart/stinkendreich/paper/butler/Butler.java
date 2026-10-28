@@ -308,7 +308,7 @@ public final class Butler implements Listener {
             if (a != null) {
                 if (a.tick() == Auftrag.Stand.FERTIG) {
                     auftraege.remove(nr);
-                    modusSetzen(nr, Modus.FOLGEN);
+                    modusSetzen(nr, a instanceof Chauffeur c && c.heimgekehrt() ? Modus.HEIM : Modus.FOLGEN);
                 }
             } else if (Bukkit.getCurrentTick() % 10 == 0) {
                 ziehen(nr, p, k);
@@ -666,7 +666,8 @@ public final class Butler implements Listener {
         }
         k.getPathfinder().stopPathfinding();
         String name = ziel == eigene ? "nach Hause" : "zur " + ziel.name();
-        auftraege.put(nr, new Chauffeur(plugin, k, puppe, p, limo, weg, name));
+        Location garage = Ausstattung.stellplatz(eigene, plugin.bauplan(), de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO);
+        auftraege.put(nr, new Chauffeur(plugin, k, puppe, p, limo, weg, name, garage));
         modusSetzen(nr, Modus.ARBEIT);
         sagen(p, "Sehr wohl, ich fahre Sie " + name + ".");
     }

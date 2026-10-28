@@ -113,6 +113,22 @@ public final class Ausstattung {
             {Fahrzeuge.Art.SUPERSPORTWAGEN, 2}, {Fahrzeuge.Art.BONZENAUTO, 0}, {Fahrzeuge.Art.BONZENAUTO, 5},
             {Fahrzeuge.Art.STRETCHLIMO, 0}};
 
+    /** Stellplatz eines Wagens dieser Art in der Tiefgarage einer Villa (mit Blickrichtung) oder null. */
+    public static Location stellplatz(Villen.Villa villa, Bauplan plan, Fahrzeuge.Art art) {
+        if (villa == null || villa.world() == null) {
+            return null;
+        }
+        for (JsonArray platz : plan.marke("stellplatz")) {
+            int stelle = platz.get(4).getAsInt();
+            if (stelle < FUHRPARK.length && FUHRPARK[stelle][0] == art) {
+                Location l = ort(villa, platz);
+                l.setYaw(platz.get(3).getAsFloat());
+                return l;
+            }
+        }
+        return null;
+    }
+
     /** Fuhrpark in der Tiefgarage und Hubschrauber auf dem Landeplatz. */
     private void fuhrpark(Villen.Villa villa, Bauplan plan) {
         for (JsonArray platz : plan.marke("stellplatz")) {

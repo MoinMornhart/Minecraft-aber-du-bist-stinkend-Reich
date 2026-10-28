@@ -586,6 +586,12 @@ public final class Fahrzeuge implements Listener {
         }
     }
 
+    /** Entfernt ein Fahrzeug ganz (Modell, Klickfeld und Sitze räumt der nächste Tick weg). */
+    public void entfernen(ArmorStand fahrzeug) {
+        fahrzeug.eject();
+        fahrzeug.remove();
+    }
+
     private void teileEntfernen(Wagen w) {
         if (w.modell != null) {
             w.modell.remove();

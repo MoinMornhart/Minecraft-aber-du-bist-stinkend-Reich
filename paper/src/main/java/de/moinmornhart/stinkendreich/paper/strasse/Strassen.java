@@ -52,6 +52,7 @@ public final class Strassen {
     public Strassen(StinkendReichPaper plugin) {
         this.plugin = plugin;
         this.datei = plugin.getDataFolder().toPath().resolve("strassen.json");
+        this.kehrer = new Strassenkehrer(plugin);
         laden();
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20L, 1L);
         // Villen von früher ohne Straße (etwa vor diesem Update gebaut) bekommen ihre nach dem Start
@@ -94,7 +95,27 @@ public final class Strassen {
         zurVilla(v);
     }
 
+    private final Strassenkehrer kehrer;
+    private int ticks;
+
+    /** Liegengebliebenes an den Straßen wegräumen (fertige Straßen und die, die gerade entsteht). */
+    private void kehren() {
+        Villen.Villa spawn = plugin.villen().nr(0);
+        if (spawn == null) {
+            return;
+        }
+        List<List<int[]>> strecken = new ArrayList<>();
+        strassen.forEach(s -> strecken.add(s.punkte()));
+        if (aktiv != null) {
+            strecken.add(aktiv.punkte());
+        }
+        kehrer.kehren(spawn.world(), strecken);
+    }
+
     private void tick() {
+        if (++ticks % Strassenkehrer.ALLE == 0) {
+            kehren();
+        }
         if (aktiv == null) {
             int[] naechste = warteschlange.poll();
             if (naechste == null) {

@@ -1,3 +1,8 @@
+### Neu in 0.4.4 – Limo zurück in die Garage, saubere Straßen
+
+- **James bringt die Limo nach Hause:** Nach der Fahrt wartet er, bis du ausgestiegen bist, fährt los Richtung Villa und parkt die Limo auf ihrem Stellplatz in der Tiefgarage. Es bleiben keine Limos mehr in der Landschaft stehen; gerufen wird immer die Limo aus der Garage (vorher kam bei jedem Anruf eine neue dazu, wenn die Garage gerade nicht geladen war). Mod und Paper.
+- **Keine vollen Taschen mehr an den Straßen:** Wo eine Straße Bäume und Hänge anschneidet, zerfiel später das Laub, Blumen fielen ab – und beim Fahren sammelte man Setzlinge, Stöcke und Äpfel ein. Ein Straßenkehrer räumt solche liegengebliebenen Gegenstände neben den Straßen jetzt weg (was du selbst wirfst und alles auf dem Grundstück bleibt liegen). Mod und Paper.
+
 ### Neu in 0.4.3 – neue Limo, neuer Supersportwagen, Fernbedienung in die Hand
 
 - **Neue Stretch-Limo** nach dem Vorbild echter Stretch-Limousinen: flach und lang in drei klaren Teilen – lange Motorhaube, Fahrgastzelle, kurzer Kofferraum –, schräge Front- und Heckscheibe, ein schmales Band aus getönten Scheiben zwischen schwarzen Säulen (echtes halbdurchsichtiges Glas: von außen dunkel, von innen sieht man hinaus), flaches Dach mit Chromkante, Chromgrill mit Kühlerfigur, LED-Scheinwerfer, Rücklichtband und Sternenhimmel. Innen zwei lange Ledersofas und eine Bar mit Champagner; alle sechs Fahrgäste passen mit dem Kopf unter das Dach.

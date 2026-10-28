@@ -20,7 +20,10 @@ import java.util.UUID;
  * langsamer, der Wagen schaut immer ein Stück voraus.
  */
 final class Chauffeur implements Auftrag {
-    private enum Phase { EINSTEIGEN, FAHRT, ANGEKOMMEN }
+    private enum Phase { EINSTEIGEN, FAHRT, ANGEKOMMEN, HEIMFAHRT }
+
+    /** Ab dieser Entfernung zum Herrn steht der Wagen gleich auf seinem Stellplatz (er sieht es nicht mehr). */
+    private static final double AUSSER_SICHT = 48.0;
 
     /** Höchsttempo und Beschleunigung (Blöcke je Tick). */
     private static final double TEMPO = 0.75, GAS = 0.012, BREMSE = 0.03;
@@ -31,7 +34,11 @@ final class Chauffeur implements Auftrag {
     private final UUID herr;
     private final ArmorStand wagen;
     /** Mittellinie in Fahrtrichtung (x, y = Fahrbahnblock, z). */
-    private final List<int[]> weg;
+    private List<int[]> weg;
+    /** Stellplatz der Limo in der Tiefgarage der eigenen Villa (oder null). */
+    private final Location garage;
+    /** Wagen steht in der Garage, James soll nach Hause gehen (statt dem Herrn zu folgen). */
+    private boolean heimgekehrt;
     private final String zielName;
     private Phase phase = Phase.EINSTEIGEN;
     /** Gefahrene Strecke entlang der Mittellinie (Index + Anteil). */
@@ -40,7 +47,9 @@ final class Chauffeur implements Auftrag {
     private int warten;
     private float gier;
 
-    Chauffeur(StinkendReichPaper plugin, Mob koerper, Mannequin puppe, Player herr, ArmorStand wagen, List<int[]> weg, String zielName) {
+    Chauffeur(StinkendReichPaper plugin, Mob koerper, Mannequin puppe, Player herr, ArmorStand wagen, List<int[]> weg, String zielName,
+              Location garage) {
+        this.garage = garage;
         this.plugin = plugin;
         this.koerper = koerper;
         this.puppe = puppe;
@@ -90,6 +99,7 @@ final class Chauffeur implements Auftrag {
             case EINSTEIGEN -> "wartet mit der Limo am Ende der Zufahrt";
             case FAHRT -> "fährt Sie " + zielName;
             case ANGEKOMMEN -> "ist angekommen";
+            case HEIMFAHRT -> "bringt die Limo in die Garage";
         };
     }
 
@@ -109,6 +119,10 @@ final class Chauffeur implements Auftrag {
     public Stand tick() {
         Player p = Bukkit.getPlayer(herr);
         if (!wagen.isValid() || p == null) {
+            if (p == null && wagen.isValid() && (phase == Phase.ANGEKOMMEN || phase == Phase.HEIMFAHRT)) {
+                einparken();
+                return Stand.FERTIG;
+            }
             abbrechen();
             return Stand.FERTIG;
         }
@@ -133,13 +147,13 @@ final class Chauffeur implements Auftrag {
             }
             case FAHRT -> {
                 if (!ALLEIN && !plugin.fahrzeuge().sitztDrin(wagen, p)) {
-                    Butler.sagen(p, "Sie sind ausgestiegen – ich halte hier.");
-                    abbrechen();
-                    return Stand.FERTIG;
+                    // Unterwegs ausgestiegen: James bringt den Wagen nach Hause
+                    heimfahrtStarten(p);
+                    return Stand.LAEUFT;
                 }
                 fahren();
                 if (s >= weg.size() - 1.001) {
-                    Butler.sagen(p, "Wir sind da. Ich wünsche einen angenehmen Besuch.");
+                    Butler.sagen(p, "Wir sind da. Ich wünsche einen angenehmen Besuch – wenn Sie ausgestiegen sind, bringe ich den Wagen nach Hause.");
                     phase = Phase.ANGEKOMMEN;
                     warten = 0;
                     log("angekommen");
@@ -148,13 +162,76 @@ final class Chauffeur implements Auftrag {
                 }
             }
             case ANGEKOMMEN -> {
-                if (++warten > 30) {
+                if (ALLEIN || !plugin.fahrzeuge().sitztDrin(wagen, p)) {
+                    if (++warten > 30) {
+                        heimfahrtStarten(p);
+                    }
+                } else if (++warten > 20 * 120) {
+                    // Der Herr bleibt sitzen: James steigt aus und überlässt ihm den Wagen
                     abbrechen();
+                    return Stand.FERTIG;
+                }
+            }
+            case HEIMFAHRT -> {
+                if (plugin.fahrzeuge().sitztDrin(wagen, p)) {
+                    return Stand.LAEUFT;                    // doch wieder eingestiegen: James wartet
+                }
+                fahren();
+                boolean ausserSicht = !p.getWorld().equals(wagen.getWorld()) || p.getLocation().distance(wagen.getLocation()) > AUSSER_SICHT;
+                if (s >= weg.size() - 1.001 || ausserSicht || ++warten > 20 * 180) {
+                    einparken();
                     return Stand.FERTIG;
                 }
             }
         }
         return Stand.LAEUFT;
+    }
+
+    /**
+     * Nach der Fahrt (Philip: „dass er dann wieder mit der Limo nach Hause fährt“, „immer in die Garage fahren und da
+     * dann parken“): James fährt die Strecke sichtbar zurück; ist der Herr außer Sicht oder der Anfang erreicht, steht
+     * die Limo auf ihrem Stellplatz in der Tiefgarage.
+     */
+    private void heimfahrtStarten(Player p) {
+        Butler.sagen(p, "Sehr wohl, Sir. Ich bringe den Wagen nach Hause – rufen Sie mich einfach, wenn Sie mich brauchen.");
+        List<int[]> zurueck = new java.util.ArrayList<>(weg.subList(0, Math.min(weg.size(), (int) s + 1)));
+        java.util.Collections.reverse(zurueck);
+        if (zurueck.size() < 2) {
+            zurueck = List.of(weg.getFirst(), weg.getFirst());
+        }
+        weg = zurueck;
+        s = 0;
+        tempo = 0;
+        gier = richtung(0) ;
+        warten = 0;
+        phase = Phase.HEIMFAHRT;
+        log("Heimfahrt");
+    }
+
+    /** Wagen auf den Stellplatz, James steigt aus und geht nach Hause. Steht dort schon eine Limo, verschwindet diese hier. */
+    private void einparken() {
+        heimgekehrt = true;
+        if (puppe.isInsideVehicle()) {
+            puppe.leaveVehicle();
+        }
+        if (garage == null) {
+            plugin.fahrzeuge().vorfahren(wagen, wagen.getLocation(), false);
+            return;
+        }
+        garage.getWorld().getChunkAt(garage);           // Garage laden (oft weit weg)
+        ArmorStand schonDa = plugin.fahrzeuge().fahrzeug(de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO, garage, 2.5);
+        if (schonDa != null && schonDa != wagen) {
+            plugin.fahrzeuge().entfernen(wagen);
+            log("eingeparkt (doppelte Limo entfernt)");
+            return;
+        }
+        plugin.fahrzeuge().vorfahren(wagen, garage, false);
+        log("eingeparkt in der Garage");
+    }
+
+    /** Hat James den Wagen in die Garage gebracht? (Dann geht er nach Hause statt dem Herrn zu folgen.) */
+    boolean heimgekehrt() {
+        return heimgekehrt;
     }
 
     /** Ein Tick Fahrt: Tempo nach Kurve und Steigung voraus, Wagen weiter entlang der Linie. */

@@ -1,0 +1,24 @@
+# 0.4.3: Straßenkehrer – liegengebliebene Gegenstände an den Straßen verschwinden (Laub-Beute, abgefallene Pflanzen)
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+bis 300 Straße Endportal: Ende
+server /butler strassenpunkt 0 30
+warte 4
+server /gamemode spectator
+merke
+server /execute at @p run summon item ~2 ~1 ~ {Item:{id:"minecraft:oak_sapling",count:1}}
+server /execute at @p run summon item ~-3 ~1 ~1 {Item:{id:"minecraft:stick",count:2}}
+server /execute at @p run summon item ~5 ~1 ~-2 {Item:{id:"minecraft:apple",count:1}}
+server /execute at @p run summon item ~60 ~ ~60 {Item:{id:"minecraft:diamond",count:1},Tags:["weit"]}
+warte 2
+bild k01_vorher
+server /execute at @p if entity @e[type=item,distance=..10] run say Autotest-Pruefung: an der Strasse liegt etwas
+warte 10
+server /execute at @p unless entity @e[type=item,distance=..10] run say Autotest-Pruefung: an der Strasse ist alles weg
+warte 2
+bild k02_nachher
+server /execute if entity @e[type=item,tag=weit] run say Autotest-Pruefung: Diamant weit weg liegt noch
+warte 2

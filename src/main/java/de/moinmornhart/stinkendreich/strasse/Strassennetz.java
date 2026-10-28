@@ -78,6 +78,9 @@ public final class Strassennetz {
                 } else if (!aktuell.warteschlange.isEmpty() && s.getTickCount() % 20 == 0) {
                     aktuell.naechsteAutomatisch();
                 }
+                if (s.getTickCount() % Strassenkehrer.ALLE == 0) {
+                    aktuell.kehren();
+                }
             }
         });
         // Sobald jemand die Welt betritt, entstehen die Straßen zu Dorf, Mine, Netherportal und Endportal von selbst
@@ -589,6 +592,20 @@ public final class Strassennetz {
         }
         // auch die Straße, die gerade entsteht
         return bau != null && bau.punkte().stream().anyMatch(p -> p.getX() >= x0 && p.getX() <= x1 && p.getZ() >= z0 && p.getZ() <= z1);
+    }
+
+    private final Strassenkehrer kehrer = new Strassenkehrer();
+
+    /** Liegengebliebenes an den Straßen wegräumen (fertige Straßen und die, die gerade entsteht). */
+    private void kehren() {
+        List<List<BlockPos>> strecken = new ArrayList<>();
+        for (Strasse s : strassen) {
+            strecken.add(s.punkte());
+        }
+        if (bau != null) {
+            strecken.add(bau.punkte());
+        }
+        kehrer.kehren(server.overworld(), strecken);
     }
 
     public List<Strasse> strassen() {
