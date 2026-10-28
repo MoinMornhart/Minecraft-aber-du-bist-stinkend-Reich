@@ -1,0 +1,48 @@
+# Runde 0.4.3, Teil 3: neue Limo (getönte Scheiben, Transparenz) und Supersportwagen. Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/runde043c.txt
+warte 30
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+taste F1
+# 3. Neue Autos auf einer Plattform am Himmel
+server /gamemode spectator @p
+server /tp @p 224 160 210 0 90
+warte 6
+server /fill 190 150 196 262 150 224 minecraft:smooth_stone
+server /summon stinkendreich:stretchlimo 207 151 210
+server /summon stinkendreich:supersportwagen 240 151 210
+warte 2
+server /tp @e[type=stinkendreich:stretchlimo] 207 151 210 -90 0
+server /tp @e[type=stinkendreich:supersportwagen] 240 151 210 -90 0
+warte 1
+server /tp @p 207 153.5 223 180 8
+warte 5
+bild b06_limo_seite
+server /tp @p 194 154 219 -135 15
+warte 3
+bild b07_limo_vorn
+server /tp @p 220 154.5 218 135 18
+warte 3
+bild b08_limo_hinten
+server /tp @p 240 153 218 180 8
+warte 3
+bild b09_sport_seite
+server /tp @p 231 153.5 216 -140 15
+warte 3
+bild b10_sport_vorn
+server /tp @p 249 153.5 216 140 15
+warte 3
+bild b11_sport_hinten
+server /tp @p 240 158 210 0 90
+warte 3
+bild b12_sport_oben
+# Einsteigen: sieht man aus der Limo hinaus (getönte Scheiben)?
+server /gamemode creative @p
+server /tp @p 207 151 212
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,limit=1]
+warte 3
+bild b13_limo_innen
+taste F5
+warte 2
+bild b14_limo_dritte_person

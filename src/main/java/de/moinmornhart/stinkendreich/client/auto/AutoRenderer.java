@@ -24,6 +24,33 @@ public class AutoRenderer extends MobRenderer<AutoEntity, AutoRenderState, Fahrz
         addLayer(new KennzeichenLayer(this, typ.name));
     }
 
+    // Mit Transparenz zeichnen (nicht nur mit Ausschnitt): Die getönten Scheiben der Limousine sind halbdurchsichtig
+    //? if >=1.21.11 {
+    @Override
+    protected net.minecraft.client.renderer.rendertype.RenderType getRenderType(AutoRenderState zustand, boolean sichtbar,
+                                                                               boolean durchsichtig, boolean leuchtet) {
+        return sichtbar && !durchsichtig && !leuchtet
+                ? net.minecraft.client.renderer.rendertype.RenderTypes.entityTranslucent(getTextureLocation(zustand))
+                : super.getRenderType(zustand, sichtbar, durchsichtig, leuchtet);
+    }
+    //?} elif >=1.21.2 {
+    /*@Override
+    protected net.minecraft.client.renderer.RenderType getRenderType(AutoRenderState zustand, boolean sichtbar,
+                                                                    boolean durchsichtig, boolean leuchtet) {
+        return sichtbar && !durchsichtig && !leuchtet
+                ? net.minecraft.client.renderer.RenderType.entityTranslucent(getTextureLocation(zustand))
+                : super.getRenderType(zustand, sichtbar, durchsichtig, leuchtet);
+    }
+    *///?} else {
+    /*@Override
+    protected net.minecraft.client.renderer.RenderType getRenderType(AutoEntity auto, boolean sichtbar,
+                                                                    boolean durchsichtig, boolean leuchtet) {
+        return sichtbar && !durchsichtig && !leuchtet
+                ? net.minecraft.client.renderer.RenderType.entityTranslucent(getTextureLocation(auto))
+                : super.getRenderType(auto, sichtbar, durchsichtig, leuchtet);
+    }
+    *///?}
+
     //? if >=1.21.2 {
     @Override
     public AutoRenderState createRenderState() {

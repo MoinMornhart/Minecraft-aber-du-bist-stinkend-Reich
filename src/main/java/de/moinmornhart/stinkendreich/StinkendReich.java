@@ -62,6 +62,7 @@ public class StinkendReich implements ModInitializer {
         VillaZustand.registrieren();
         Aufzug.registrieren();
         de.moinmornhart.stinkendreich.mechanik.Graben.registrieren();
+        de.moinmornhart.stinkendreich.fernseher.FernbedienungBlock.registrieren();
         de.moinmornhart.stinkendreich.mechanik.Zugbruecke.registrieren();
         de.moinmornhart.stinkendreich.mechanik.SmartHome.registrieren();
         de.moinmornhart.stinkendreich.mechanik.Inkognito.registrieren();

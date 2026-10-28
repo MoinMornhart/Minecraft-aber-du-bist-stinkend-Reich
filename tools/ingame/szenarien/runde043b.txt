@@ -36,6 +36,8 @@ klient schliessen
 taste F1
 # 3. Neue Autos auf einer Plattform am Himmel
 server /gamemode spectator @p
+server /tp @p 224 160 210 0 90
+warte 6
 server /fill 190 150 196 262 150 224 minecraft:smooth_stone
 server /summon stinkendreich:stretchlimo 207 151 210
 server /summon stinkendreich:supersportwagen 240 151 210
@@ -71,3 +73,6 @@ warte 2
 server /ride @p mount @e[type=stinkendreich:stretchlimo,limit=1]
 warte 3
 bild b13_limo_innen
+taste F5
+warte 2
+bild b14_limo_dritte_person

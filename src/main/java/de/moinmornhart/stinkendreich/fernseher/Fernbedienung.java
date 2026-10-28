@@ -61,6 +61,9 @@ public final class Fernbedienung {
             }
             return;
         }
+        if (de.moinmornhart.stinkendreich.dev.Autotest.aktiv()) {
+            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Autotest: Fernbedienung bedient {}", tv == null ? "-" : tv.blockPosition());
+        }
         if (tv == null) {
             Kompat.nachricht(spieler, Component.translatable("stinkendreich.fernbedienung.keiner"), true);
             return;

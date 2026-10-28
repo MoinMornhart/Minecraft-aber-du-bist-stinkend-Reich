@@ -46,6 +46,7 @@ LICHT = (255, 248, 210)
 ROT = (210, 20, 24)
 REIFEN = (30, 30, 32)
 FLANKE = (38, 38, 42)
+GETOENT = (14, 18, 26, 196)   # getöntes Glas: dunkel, etwa ein Viertel durchsichtig
 FEIN = 4   # Auflösung der Textur: 4 Texel pro Modellpixel (runde Felgen und Scheinwerfer werden fein gemalt)
 
 
@@ -116,9 +117,11 @@ def mat_glas_dunkel(d, r, lack):
 
 
 def mat_glas_getoent(d, r, lack):
-    """Getönte Scheibe (Limousine): grob dunkel, fein gerastert (siehe fein_getoent) – von außen dunkel, von innen
-    sieht man durch die Lücken hinaus."""
-    fuellen(d, r, (20, 24, 32))
+    """Getönte Scheibe (Limousine): dunkel und halbdurchsichtig – von außen schwarz glänzend, von innen sieht man
+    gedämpft hinaus (das Auto wird mit Transparenz gezeichnet). Fein bemalt in fein_getoent."""
+    x0, y0, b, h = r
+    if b > 0 and h > 0:
+        d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=GETOENT)
 
 
 def mat_sterne(d, r, lack):
@@ -204,15 +207,11 @@ def fein_felge(d, r):
 
 
 def fein_getoent(d, r):
-    """Getöntes Glas fein: Raster aus dunklen und durchsichtigen Punkten, dazu schräge Lichtreflexe."""
+    """Getöntes Glas fein: gleichmäßig dunkel und halbdurchsichtig, dazu zwei dezente schräge Lichtreflexe."""
     x0, y0, b, h = r
-    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=(0, 0, 0, 0))
-    for y in range(y0, y0 + h):
-        for x in range(x0 + (y - y0) % 2, x0 + b, 2):
-            d.point((x, y), fill=(18, 22, 32, 255))
-    for i in range(-h, b, max(12, b // 3)):
-        for k in range(2):
-            d.line([(x0 + i + k, y0 + h - 1), (x0 + i + k + h - 1, y0)], fill=(70, 86, 112, 255))
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=GETOENT)
+    for i in range(-h, b, max(24, b // 2)):
+        d.line([(x0 + i, y0 + h - 1), (x0 + i + h - 1, y0)], fill=(70, 86, 112, 200), width=2)
 
 
 def fein_scheinwerfer_rund(d, r):

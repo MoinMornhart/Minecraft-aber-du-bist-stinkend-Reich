@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -63,18 +64,50 @@ public class FernbedienungBlock extends DekoBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState zustand, Level welt, BlockPos pos, Player spieler, BlockHitResult treffer) {
-        if (!welt.isClientSide()) {
-            welt.removeBlock(pos, false);
-            ItemStack stapel = new ItemStack(asItem());
-            // Bevorzugt in die leere Hand, sonst ins Inventar, notfalls vor die Füße
-            if (spieler.getMainHandItem().isEmpty()) {
-                spieler.setItemInHand(InteractionHand.MAIN_HAND, stapel);
-            } else if (!spieler.getInventory().add(stapel)) {
-                welt.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(welt, spieler.getX(), spieler.getY(), spieler.getZ(), stapel));
-            }
-            welt.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.4F, 1.4F);
-            Kompat.nachricht(spieler, Component.translatable("stinkendreich.fernbedienung.genommen"), true);
-        }
+        nehmen(welt, pos, spieler);
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * Die Fernbedienung liegt tiefer als ihr Block (auf der Tischplatte darunter). Kommt der Blick flach von der Seite,
+     * trifft Minecraft deshalb oft den Tisch statt der Fernbedienung. Ein Rechtsklick oben auf das Möbel direkt an der
+     * Fernbedienung nimmt sie darum auch in die Hand.
+     */
+    public static void registrieren() {
+        net.fabricmc.fabric.api.event.player.UseBlockCallback.EVENT.register((spieler, welt, hand, treffer) -> {
+            if (hand != InteractionHand.MAIN_HAND || spieler.isSpectator() || spieler.isShiftKeyDown()) {
+                return InteractionResult.PASS;
+            }
+            BlockPos oben = treffer.getBlockPos().above();
+            if (!(welt.getBlockState(oben).getBlock() instanceof FernbedienungBlock)) {
+                return InteractionResult.PASS;
+            }
+            Vec3 stelle = treffer.getLocation();
+            double dx = stelle.x - (oben.getX() + 0.5), dz = stelle.z - (oben.getZ() + 0.5);
+            if (dx * dx + dz * dz > 0.45 * 0.45 || stelle.y < oben.getY() - 0.6) {
+                return InteractionResult.PASS;
+            }
+            nehmen(welt, oben, spieler);
+            return InteractionResult.SUCCESS;
+        });
+    }
+
+    /** Vom Möbel in die Hand: bevorzugt in die leere Hand, sonst ins Inventar, notfalls vor die Füße. */
+    private static void nehmen(Level welt, BlockPos pos, Player spieler) {
+        if (welt.isClientSide()) {
+            return;
+        }
+        ItemStack stapel = new ItemStack(welt.getBlockState(pos).getBlock().asItem());
+        welt.removeBlock(pos, false);
+        if (spieler.getMainHandItem().isEmpty()) {
+            spieler.setItemInHand(InteractionHand.MAIN_HAND, stapel);
+        } else if (!spieler.getInventory().add(stapel)) {
+            welt.addFreshEntity(new net.minecraft.world.entity.item.ItemEntity(welt, spieler.getX(), spieler.getY(), spieler.getZ(), stapel));
+        }
+        welt.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.4F, 1.4F);
+        Kompat.nachricht(spieler, Component.translatable("stinkendreich.fernbedienung.genommen"), true);
+        if (de.moinmornhart.stinkendreich.dev.Autotest.aktiv()) {
+            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Autotest: Fernbedienung genommen bei {}", pos);
+        }
     }
 }
