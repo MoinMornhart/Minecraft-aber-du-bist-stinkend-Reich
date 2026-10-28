@@ -37,7 +37,7 @@
 
 In **jeder neuen Welt** steht am Spawn deine Villa – egal welcher Welttyp. Das Gelände drumherum wird geebnet und weich an die Landschaft angeblendet. Du startest vor dem Tor, mit der Zugangskarte in der Tasche. **Auch in einer Welt, die du schon vorher hattest:** Beim ersten Betreten entsteht die Villa im Hintergrund auf einem freien Platz am Spawn – deine Bauten bleiben, wie sie sind – und du ziehst nach etwa einer halben Minute als Herr ein (abschaltbar mit `villaInBestehendenWelten`).
 
-Wassergraben mit Zugbrücke (wird im Lockdown und in der Festung zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke und Teakbänken · Ballsaal · Wohnzimmer mit Konzertflügel und Haifischbecken · Esszimmer für 18 Gäste · Luxusküche · Nachtclub im Keller mit großer Bar vor dem Meeresaquarium, VIP-Seerestaurant unter einer Glaskuppel und Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Kommandozentrale, Bunker-Suite, Waffenkammer, Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen) und Notausgang.
+Wassergraben mit Zugbrücke (friert auch im Schnee nie zu, wird im Lockdown und in der Festung zum Lava-Graben) · zwei Glaskuppel-Brunnen · Pool mit Abdeckung, Wasserrutsche und Strandliegen · Garten mit Grillecke und Teakbänken · Ballsaal · Wohnzimmer mit Konzertflügel und Haifischbecken · Esszimmer für 18 Gäste · Luxusküche · Nachtclub im Keller mit großer Bar vor dem Meeresaquarium, VIP-Seerestaurant unter einer Glaskuppel und Geheimclub hinter dem Bücherregal (Show-Bühne mit Tänzerinnen an den Stangen) · Tiefgarage mit Drehteller · Penthouse mit XXL-Bett und Kino · Dachparty und Whirlpool · Hubschrauber-Landeplatz · Untergrundbunker mit Kommandozentrale, Bunker-Suite, Waffenkammer, Geldspeicher (Münzgrube mit Sprungbrett zum Hineinspringen) und Notausgang.
 
 <table>
 <tr>
@@ -152,7 +152,7 @@ Rechtsklick auf den Fernseher (oder mit der **Fernbedienung**), YouTube-Link ein
 
 **Beim ersten Video** fragt die Mod einmal, ob sie drei kostenlose Hilfsprogramme laden darf: **yt-dlp** (findet das Video), **FFmpeg** (macht daraus Bild und Ton) und **Deno** (hilft yt-dlp bei YouTube). Zusammen etwa 200 MB, direkt von den offiziellen GitHub-Seiten nach `.minecraft/stinkendreich/werkzeuge`. Sind sie schon auf dem PC installiert, nimmt die Mod diese (auf dem Mac FFmpeg mit `brew install ffmpeg`). yt-dlp hält sich selbst aktuell, denn YouTube ändert öfter etwas. Die Lautstärke regelt der Regler **Jukebox/Notenblöcke** und `fernseherLautstaerke` in der Config; `fernseherVideos: false` schaltet Videos im Spiel ab (dann nur Vorschaubild und Browser).
 
-**Fernbedienung:** Rechtsklick mit der Fernbedienung in der Hand öffnet das Menü des nächsten Fernsehers (bis 32 Blöcke). **Schleichen + Rechtsklick** auf einen Block legt sie ab, sie liegt dann flach auf Nachttisch oder Tisch. Rechtsklick auf die abgelegte Fernbedienung steuert den Fernseher ebenfalls. In der Villa liegt je eine im Schlafzimmer und im Penthouse-Kino.
+**Fernbedienung:** Rechtsklick auf die Fernbedienung auf dem Tisch nimmt sie in die Hand – auch im Sitzen, ohne aufzustehen. In der Hand öffnet ein Rechtsklick das Menü des Fernsehers, den du anschaust (sonst des nächsten, bis 32 Blöcke). **Schleichen + Rechtsklick** auf einen Block legt sie wieder ab, sie liegt dann flach auf Nachttisch oder Tisch. In der Villa liegt je eine im Schlafzimmer und im Penthouse-Kino.
 
 ### 🛡️ Bunker und Festung
 
@@ -282,7 +282,7 @@ Außerdem: `/butler rufen` holt ihn herbei (oder stellt dir einen eigenen ein), 
 
 <img src="docs/bilder/auto_held.jpg" alt="Das goldene Bonzenauto vor der Villa" width="100%">
 
-In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit vier Sitzen), ein **Luxus-Geländewagen**, ein **Supersportwagen** und die **Stretch-Limo**. Alle mit Goldfelgen, in allen passt man mit dem Kopf unter das Dach. Über die Rampe geht es nach draußen, und der **Drehteller** am Fuß der Rampe wendet dich samt Auto um 180 Grad. Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
+In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit vier Sitzen), ein **Luxus-Geländewagen**, ein **Supersportwagen** im Stil der italienischen Keile (flach, Y-Lichter, riesige Lufteinlässe, Lamellen-Motorhaube, Heckflügel) und die **Stretch-Limo** mit durchgehend getönten Scheiben, Chromleisten, Chromgrill und Sternenhimmel innen. Alle mit Goldfelgen, in allen passt man mit dem Kopf unter das Dach. Über die Rampe geht es nach draußen, und der **Drehteller** am Fuß der Rampe wendet dich samt Auto um 180 Grad. Gas mit Trägheit, Bremse und Rückwärtsgang, Driften mit der Handbremse, Steigungen, Scheinwerfer mit echtem Licht, Hupe, Tacho, drei Kameraarten und acht Lackfarben.
 
 <table>
 <tr>
@@ -291,7 +291,11 @@ In der **Tiefgarage** stehen zehn Wagen: das goldene **Bonzenauto** (Cabrio mit 
 </tr>
 <tr>
 <td><img src="docs/bilder/gelaendewagen.jpg" alt="Geländewagen"><br><sub><b>Geländewagen</b> mit Reserverad und Dachreling</sub></td>
-<td><img src="docs/bilder/supersportwagen.jpg" alt="Supersportwagen"><br><sub><b>Supersportwagen</b> neben dem Geländewagen</sub></td>
+<td><img src="docs/bilder/supersportwagen.jpg" alt="Supersportwagen"><br><sub><b>Supersportwagen</b> im Stil der italienischen Keile: Y-Lichter, Lufteinlässe</sub></td>
+</tr>
+<tr>
+<td><img src="docs/bilder/supersportwagen_heck.jpg" alt="Supersportwagen von hinten"><br><sub>Lamellen-Motorhaube, Y-Rücklichter, Diffusor und Heckflügel</sub></td>
+<td><img src="docs/bilder/limo_front.jpg" alt="Stretch-Limo von vorn"><br><sub><b>Stretch-Limo:</b> Chromgrill, Kühlerfigur, getönte Scheiben</sub></td>
 </tr>
 <tr>
 <td><img src="docs/bilder/auto_drift.jpg" alt="Drift mit Reifenqualm"><br><sub><b>Drift</b> mit Reifenqualm</sub></td>
@@ -367,7 +371,7 @@ Jeder Bewohner bekommt einmal ein **goldenes Handy** geschenkt (auch in Welten v
 
 **Mitarbeiter:** Stell die Mitarbeiterkiste auf, und drei Mitarbeiter steigen aus – einer sucht Diamanten, einer Eisen, einer Kohle. Sie graben sich selbst zum Erz und bringen jede Ladung in die Kiste. Rechtsklick auf einen Mitarbeiter wechselt seine Aufgabe (auch Gold, Smaragde, Redstone, Lapis und Holz), Schleichen + Rechtsklick zeigt, was er gerade dabeihat.
 
-**Bodyguards:** Echte Eisengolems mit Sakko, weißem Hemd, Krawatte, roter Blume und Sonnenbrille. Sie können nicht sterben und bleiben wie echte Personenschützer an deiner Seite: Taucht ein Monster auf, drehen sie sich hin, heben die goldene Pistole und schießen – bei mehreren Gegnern nimmt sich jeder einen eigenen. Kommt einer zu nah, gibt es die Golem-Faust. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
+**Bodyguards:** Echte Eisengolems mit Sakko, weißem Hemd, Krawatte, roter Blume und Sonnenbrille. Sie können nicht sterben und bleiben wie echte Personenschützer an deiner Seite: Taucht ein Monster auf, drehen sie sich hin, heben die goldene Pistole und schießen – bei mehreren Gegnern nimmt sich jeder einen eigenen. Die Pistole halten sie wie du, mit gehobenem Arm und dem Lauf nach vorn. Kommt einer zu nah, stecken sie die Pistole weg und es gibt die Golem-Faust. Creeper erledigen sie nur aus der Ferne, damit nichts in die Luft fliegt.
 
 **Straßennetz:** Sobald du die Welt betrittst, entstehen Straßen zum Dorf, zur Mine, zum Netherportal und zum Endportal; für jedes neue Ziel baut James eine echte Straße: zuerst einen Kreisel mit Insel vor der Villa, dann eine Straße mit Mittelstreifen, Bordstein, Laternen und Brücken zum Ziel. Neue Ziele zweigen vom nächsten Straßenstück ab, so wächst ein ganzes Netz – und du kannst es auch selbst befahren. Abgerissen wird nichts, weder an der Villa noch an deinen Bauten. Die Straßen liegen immer an der Luft: durch Hügel als offener Einschnitt, über Meer und Flüsse als Brücke mit Geländer und Laternen, Höhenunterschiede mit halben Stufen, über die das Auto weich rollt. `/butler strassen` zeigt alle Straßen, `Butler, bau eine Straße zum Dorf` baut eine schon vorher, `/butler strassen neu` baut alle neu.
 

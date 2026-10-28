@@ -649,10 +649,14 @@ public final class Butler implements Listener {
             sagen(p, "Verzeihung, dorthin finde ich keinen Weg.");
             return;
         }
-        // Wagen: die Limo in der Nähe, sonst eine aus der Garage der Villa, sonst eine neue
+        // Wagen: die Limo bei dir (z. B. gerade gerufen, du sitzt schon drin), sonst eine in der Nähe der Strecke oder aus
+        // der Garage der Villa, erst dann eine neue
         int[] a = weg.getFirst();
         Location start = new Location(p.getWorld(), a[0] + 0.5, a[1] + 1, a[2] + 0.5);
-        org.bukkit.entity.ArmorStand limo = plugin.fahrzeuge().fahrzeug(de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO, start, 200);
+        org.bukkit.entity.ArmorStand limo = plugin.fahrzeuge().fahrzeug(de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO, p.getLocation(), 64);
+        if (limo == null) {
+            limo = plugin.fahrzeuge().fahrzeug(de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO, start, 200);
+        }
         if (limo == null) {
             limo = plugin.fahrzeuge().abstellen(de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge.Art.STRETCHLIMO, 0, start, 0);
         }

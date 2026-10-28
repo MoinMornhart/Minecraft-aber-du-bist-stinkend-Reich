@@ -1,3 +1,12 @@
+### Neu in 0.4.3 – neue Limo, neuer Supersportwagen, Fernbedienung in die Hand
+
+- **Neue Stretch-Limo:** wie eine echte – lange, niedrige Karosserie, durchgehendes Band aus getönten Scheiben (echtes halbdurchsichtiges Glas: von außen dunkel, von innen sieht man hinaus), Chromleisten, großer Chromgrill mit Kühlerfigur, LED-Scheinwerfer, Chromstoßstangen, durchgehendes Rücklichtband und ein Sternenhimmel unter dem Dach.
+- **Neuer Supersportwagen** im Stil der italienischen Keile: flach und kantig, lange schräge Haube, weit vorn liegende Frontscheibe, Y-Scheinwerfer und Y-Rücklichter, riesige Lufteinlässe, Lamellen-Motorhaube, Diffusor mit Endrohren in der Mitte und Heckflügel.
+- **Fernbedienung in die Hand:** Ein Rechtsklick auf die Fernbedienung auf dem Tisch nimmt sie in die Hand – auch im Sitzen, ohne aufzustehen. In der Hand steuert sie den Fernseher, den du anschaust (vorher immer den nächsten). Auf Paper-Servern tat ein Klick auf die Fernbedienung bisher nichts – jetzt geht dort dasselbe.
+- **Kein Eis im Graben:** In kalten Gegenden fror der Wassergraben zu. Auf dem Grundstück einer Villa friert jetzt kein Wasser mehr (Graben, Pool, Haibecken), Eis im Graben taut von selbst auf (Mod und Paper).
+- **Bodyguards halten die Pistole wie ein Spieler:** Arm gehoben, Lauf nach vorn (vorher hing sie an der Hand auf Kniehöhe). Im Nahkampf stecken sie die Pistole weg und nehmen die Fäuste (Mod und Paper).
+- **Personalküche:** Neben der Tür war ein Loch in der Wand – jetzt ist dort Wand (neue Villen).
+
 ### Neu in 0.4.2 – Villen jederzeit, Bodyguards zielen
 
 - **Paper: Villen jederzeit.** Das Plugin baut die erste Villa jetzt auch in einer Welt, die es schon vor dem Plugin gab (vorher nur in ganz neuen Welten – auf einem bestehenden Server gab es deshalb weder Villa noch James). Jeder Spieler, der irgendwann dazukommt, bekommt seine eigene Villa, auch wenn gerade eine andere gebaut wird.

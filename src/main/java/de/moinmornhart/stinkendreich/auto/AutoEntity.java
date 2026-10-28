@@ -506,6 +506,11 @@ public class AutoEntity extends Mob {
     @Override
     public void tick() {
         super.tick();
+        // Kein Fallschaden für Auto und Insassen (auch nicht nach einem Sprung von zehn Blöcken)
+        resetFallDistance();
+        for (Entity e : getPassengers()) {
+            e.resetFallDistance();
+        }
         kennzeichenPruefen();
         yBodyRot = getYRot();
         yHeadRot = getYRot();

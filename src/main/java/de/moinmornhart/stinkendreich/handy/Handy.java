@@ -134,7 +134,12 @@ public final class Handy {
                     b.sagen(z.antwort().text());
                     return;
                 }
-                b.neueAuftraege(List.of(new AnrufAuftrag(""), new FahrAuftrag(z.punkt(), z.name())));
+                // Steht der Wagen schon bereit (du sitzt drin oder James wartet am Steuer), nimmt James genau diesen –
+                // sonst ruft er erst die Limo
+                boolean wagenDa = p.getVehicle() instanceof de.moinmornhart.stinkendreich.auto.AutoEntity a && !a.art.fliegt()
+                        || b.getVehicle() instanceof de.moinmornhart.stinkendreich.auto.AutoEntity w && !w.art.fliegt() && w.distanceTo(p) < 64;
+                b.neueAuftraege(wagenDa ? List.of(new FahrAuftrag(z.punkt(), z.name()))
+                        : List.of(new AnrufAuftrag(""), new FahrAuftrag(z.punkt(), z.name())));
                 b.sagen(z.antwort().text());
             }
             case "liefer" -> {

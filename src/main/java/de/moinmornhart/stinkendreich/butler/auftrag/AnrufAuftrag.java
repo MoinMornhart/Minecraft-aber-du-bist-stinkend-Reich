@@ -116,12 +116,12 @@ public class AnrufAuftrag extends Auftrag {
         return Stand.LAEUFT;
     }
 
-    /** Freie Limo irgendwo in der Welt (geladen), sonst eine neue. */
+    /** Freie Limo irgendwo in der Welt (geladen; darin sitzen höchstens James und der Herr), sonst eine neue. */
     private static AutoEntity wagen(ServerLevel welt, ServerPlayer herr) {
         AutoEntity beste = null;
         for (var e : welt.getAllEntities()) {
             if (e instanceof AutoEntity a && a.art == Autotyp.STRETCHLIMO && !a.isRemoved()
-                    && a.getPassengers().stream().allMatch(p -> p instanceof ButlerEntity)
+                    && a.getPassengers().stream().allMatch(p -> p instanceof ButlerEntity || p == herr)
                     && (beste == null || a.distanceToSqr(herr) < beste.distanceToSqr(herr))) {
                 beste = a;
             }

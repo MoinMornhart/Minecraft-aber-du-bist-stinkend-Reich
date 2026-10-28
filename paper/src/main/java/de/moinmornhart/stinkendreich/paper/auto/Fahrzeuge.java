@@ -575,6 +575,14 @@ public final class Fahrzeuge implements Listener {
     public void beimSchaden(EntityDamageEvent e) {
         if (e.getEntity().getPersistentDataContainer().has(schluesselArt) && e.getCause() != EntityDamageEvent.DamageCause.KILL) {
             e.setCancelled(true);
+            return;
+        }
+        // Kein Fallschaden für Insassen (auch nicht, wenn der Wagen zehn Blöcke tief fällt)
+        Entity sitz = e.getEntity().getVehicle();
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL && sitz != null
+                && (sitz.getPersistentDataContainer().has(schluesselWagen) || sitz.getPersistentDataContainer().has(schluesselArt))) {
+            e.setCancelled(true);
+            e.getEntity().setFallDistance(0);
         }
     }
 

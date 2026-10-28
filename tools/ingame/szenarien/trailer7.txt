@@ -1,0 +1,84 @@
+# Trailer Teil 7 (0.4.3): neue Stretch-Limo, neuer Supersportwagen, Bodyguards halten die Pistole wie ein Spieler und
+# stecken sie im Nahkampf weg, Fernbedienung vom Tisch in die Hand.
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer7.txt
+# Weltkoordinaten = Villa + (-56, 62, -56); „fahrt“ und „/villa ort“ nehmen Villa-Koordinaten.
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+# Autos auf einer Plattform am Himmel (Welt 190–262 / 150 / 196–224)
+server /gamemode spectator
+server /tp @p 224 160 210 0 90
+warte 6
+server /fill 190 150 196 262 150 224 minecraft:smooth_stone
+server /summon stinkendreich:stretchlimo 207 151 210
+server /summon stinkendreich:supersportwagen 240 151 210
+warte 2
+server /tp @e[type=stinkendreich:stretchlimo] 207 151 210 -90 0
+server /tp @e[type=stinkendreich:supersportwagen] 240 151 210 -90 0
+taste F1
+server /villa ort 273 91 270 112 10
+warte 4
+video start trailer7
+kapitel Neu in 0.4.3: die neue Stretch-Limo mit getönten Scheiben
+server fahrt 9 | 273 91 270 112 10 | 263 91.5 275 180 12 | 253 91 270 -112 10
+warte 10
+kapitel Neuer Supersportwagen im Stil der italienischen Keile
+server /villa ort 305 91 270 112 10
+warte 1
+server fahrt 9 | 305 91 270 112 10 | 296 91.5 274 180 12 | 287 91 270 -112 10
+warte 10
+video stopp
+# Bodyguards rufen (wie trailer5a), dann zielen und Nahkampf
+server /gamemode creative
+server /difficulty easy
+server /villa ort 55.5 26 92 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+taste F1
+klick
+warte 1.5
+merke
+linksklick 640 440
+bis 15 Bodyguards sind da
+server /item replace entity @p weapon.mainhand with minecraft:air
+warte 2
+taste F1
+server /gamemode spectator
+server /villa ort 61 28 93 140 10
+warte 4
+video start trailer7b
+kapitel Bodyguards halten die Pistole wie du
+server /summon minecraft:vindicator -3.5 88 24 {NoAI:1b,PersistenceRequired:1b,Rotation:[0f,0f],active_effects:[{id:"minecraft:resistance",amplifier:4b,duration:200,show_particles:0b}]}
+warte 1
+server fahrt 7 | 61 28 93 140 10 | 62.5 27.8 91 125 8 | 64 27.6 88 90 5
+warte 8
+kapitel Im Nahkampf ist die Pistole weg
+server /kill @e[type=minecraft:vindicator]
+server /villa ort 63 27.6 90 90 8
+warte 0.5
+server /summon minecraft:vindicator 1.5 88 33 {NoAI:1b,PersistenceRequired:1b,Rotation:[90f,0f],active_effects:[{id:"minecraft:resistance",amplifier:1b,duration:60,show_particles:0b}]}
+warte 6
+video stopp
+server /kill @e[type=minecraft:vindicator]
+server /difficulty peaceful
+# Fernbedienung vom Tisch in die Hand (Hand sichtbar, also ohne F1)
+server /gamemode creative @p
+server /clear @p
+server /villa ort 63.5 38 42.2 0 17
+warte 3
+taste F1
+warte 1
+video start trailer7c
+kapitel Fernbedienung vom Tisch in die Hand – auch im Sitzen
+warte 2
+klick
+warte 2.5
+server /villa ort 63.5 38 42.2 0 3
+warte 1.5
+klick
+warte 3
+klient schliessen
+warte 1
+video stopp

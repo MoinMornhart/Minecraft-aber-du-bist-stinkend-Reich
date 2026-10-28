@@ -272,6 +272,10 @@ public class FahrAuftrag extends Auftrag {
         if (herr.getVehicle() instanceof AutoEntity eigener && !eigener.art.fliegt()) {
             return eigener;
         }
+        // James sitzt schon am Steuer (gerade mit der Limo vorgefahren): genau diesen Wagen nehmen, keinen neuen
+        if (butler.getVehicle() instanceof AutoEntity seiner && !seiner.art.fliegt()) {
+            return seiner;
+        }
         // In der Nähe heißt auch: etwa auf gleicher Höhe (nicht in der Tiefgarage unter dem Herrn)
         List<AutoEntity> nah = butler.level().getEntitiesOfClass(AutoEntity.class, herr.getBoundingBox().inflate(NAH),
                 a -> !a.art.fliegt() && (a.getPassengers().isEmpty() || a.chauffeurFaehrt()) && Math.abs(a.getY() - herr.getY()) < 4);
