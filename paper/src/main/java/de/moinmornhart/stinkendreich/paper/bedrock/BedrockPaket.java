@@ -59,6 +59,8 @@ public final class BedrockPaket {
     private final Map<String, byte[]> paket = new TreeMap<>();
     /** Item-Modell („stinkendreich:anzeige/…“) → Variante der Bedrock-Figur. */
     private final Map<String, Integer> varianten = new LinkedHashMap<>();
+    /** Flache Gegenstände (Handy, Karte, Waffen …): Item-Modell → Bild-Name in item_texture.json. */
+    private final Map<String, String> symbole = new LinkedHashMap<>();
     private final Map<String, Modellwandler.Groesse> groessen = new HashMap<>();
     private final Map<String, Boolean> durchscheinend = new HashMap<>();
     private UUID kopfId;
@@ -72,6 +74,10 @@ public final class BedrockPaket {
 
     public Map<String, Integer> varianten() {
         return varianten;
+    }
+
+    public Map<String, String> symbole() {
+        return symbole;
     }
 
     public UUID kennung() {
@@ -179,6 +185,12 @@ public final class BedrockPaket {
         paket.put("render_controllers/sr_anzeige.render_controllers.json", json(rc));
         paket.put("animations/sr_anzeige.animation.json", json(animation()));
         paket.put("entity/sr_anzeige.entity.json", json(figur(geometrien, texturen, regelNamen)));
+        gegenstaende(modelle);
+        toene();
+        // Für Werkzeuge (Vorschau tools/paper/bedrock_vorschau.py): welches Modell welche Variante ist; Bedrock ignoriert das
+        JsonObject liste = new JsonObject();
+        varianten.forEach(liste::addProperty);
+        paket.put("sr_varianten.json", json(liste));
         // 4. Beschreibung: Version aus dem Inhalt, damit Bedrock ein geändertes Paket neu lädt
         byte[] inhalt = inhaltsSumme();
         kopfId = UUID.nameUUIDFromBytes("stinkendreich-bedrock".getBytes(StandardCharsets.UTF_8));
@@ -187,8 +199,105 @@ public final class BedrockPaket {
         daten = zip();
         Files.createDirectories(ziel.getParent());
         Files.write(ziel, daten);
-        log.info("Bedrock-Paket: " + varianten.size() + " Modelle, " + texturNamen.size() + " Texturen, "
+        log.info("Bedrock-Paket: " + varianten.size() + " Modelle, " + symbole.size() + " Gegenstände, " + texturNamen.size() + " Texturen, "
                 + regelNamen.size() + " Zeichen-Regeln, " + daten.length / 1024 + " KB" + (fehler > 0 ? ", " + fehler + " Modelle fehlerhaft" : ""));
+    }
+
+    // ------------------------------------------------------------------
+    // Gegenstände und Töne
+    // ------------------------------------------------------------------
+
+    /**
+     * Flache Gegenstände (Modell „item/generated“ mit layer0) bekommen ein Bild im Bedrock-Inventar; Geyser ordnet sie
+     * über das Item-Modell zu ({@link GeyserAnbindung}).
+     */
+    private void gegenstaende(Map<String, String> modelle) {
+        JsonObject daten = new JsonObject();
+        for (var e : modelle.entrySet()) {
+            String bild = flachesBild(e.getValue());
+            if (bild == null) {
+                continue;
+            }
+            String name = "sr_" + e.getKey().substring(e.getKey().indexOf(':') + 1).replace('/', '_');
+            JsonObject eintrag = new JsonObject();
+            eintrag.addProperty("textures", texturPfad(bild));
+            daten.add(name, eintrag);
+            symbole.put(e.getKey(), name);
+        }
+        JsonObject datei = new JsonObject();
+        datei.addProperty("resource_pack_name", "stinkendreich");
+        datei.addProperty("texture_name", "atlas.items");
+        datei.add("texture_data", daten);
+        paket.put("textures/item_texture.json", json(datei));
+    }
+
+    /** layer0 eines flachen Item-Modells (über die Eltern), sonst null. */
+    private String flachesBild(String modellId) {
+        String id = modellId;
+        String layer0 = null;
+        for (int tiefe = 0; id != null && tiefe < 6; tiefe++) {
+            String voll = id.contains(":") ? id : "minecraft:" + id;
+            if (voll.equals("minecraft:item/generated") || voll.equals("minecraft:item/handheld")) {
+                return layer0;
+            }
+            String[] t = voll.split(":", 2);
+            byte[] b = java.get("assets/" + t[0] + "/models/" + t[1] + ".json");
+            if (b == null) {
+                return null;
+            }
+            JsonObject m = JsonParser.parseString(new String(b, StandardCharsets.UTF_8)).getAsJsonObject();
+            if (layer0 == null && m.has("textures") && m.getAsJsonObject("textures").has("layer0")) {
+                String l = m.getAsJsonObject("textures").get("layer0").getAsString();
+                layer0 = l.contains(":") ? l : "minecraft:" + l;
+            }
+            if (m.has("elements")) {
+                return null;
+            }
+            id = m.has("parent") ? m.get("parent").getAsString() : null;
+        }
+        return null;
+    }
+
+    /**
+     * Unsere Töne (Klingel, Sirene, Hupe, Flügel …): Geyser gibt eigene Töne mit ihrem Java-Namen weiter
+     * („stinkendreich:klingel“), unter genau diesem Namen stehen sie im Bedrock-Paket.
+     */
+    private void toene() {
+        byte[] b = java.get("assets/stinkendreich/sounds.json");
+        if (b == null) {
+            return;
+        }
+        JsonObject definitionen = new JsonObject();
+        for (var e : JsonParser.parseString(new String(b, StandardCharsets.UTF_8)).getAsJsonObject().entrySet()) {
+            JsonArray toene = new JsonArray();
+            for (JsonElement t : e.getValue().getAsJsonObject().getAsJsonArray("sounds")) {
+                boolean strom = t.isJsonObject() && t.getAsJsonObject().has("stream") && t.getAsJsonObject().get("stream").getAsBoolean();
+                String name = t.isJsonObject() ? t.getAsJsonObject().get("name").getAsString() : t.getAsString();
+                String[] n = (name.contains(":") ? name : "minecraft:" + name).split(":", 2);
+                byte[] ogg = java.get("assets/" + n[0] + "/sounds/" + n[1] + ".ogg");
+                if (ogg == null) {
+                    continue;
+                }
+                String pfad = "sounds/sr/" + n[0] + "/" + n[1];
+                paket.put(pfad + ".ogg", ogg);
+                JsonObject ton = new JsonObject();
+                ton.addProperty("name", pfad);
+                ton.addProperty("stream", strom);
+                ton.addProperty("load_on_low_memory", true);
+                toene.add(ton);
+            }
+            if (toene.isEmpty()) {
+                continue;
+            }
+            JsonObject d = new JsonObject();
+            d.addProperty("category", "neutral");
+            d.add("sounds", toene);
+            definitionen.add("stinkendreich:" + e.getKey(), d);
+        }
+        JsonObject datei = new JsonObject();
+        datei.addProperty("format_version", "1.14.0");
+        datei.add("sound_definitions", definitionen);
+        paket.put("sounds/sound_definitions.json", json(datei));
     }
 
     // ------------------------------------------------------------------

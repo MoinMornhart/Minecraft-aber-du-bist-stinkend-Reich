@@ -1,6 +1,7 @@
 package de.moinmornhart.stinkendreich.paper.bedrock;
 
 import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import io.papermc.paper.datacomponent.item.ResolvableProfile;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -15,7 +16,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Base64;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +41,7 @@ public final class Bedrock implements Listener {
         this.plugin = plugin;
         this.java = java;
         Zwillinge[] z = new Zwillinge[1];
-        this.geyser = new GeyserAnbindung(plugin, paketDatei, id -> z[0] == null ? null : z[0].lage(id), this::haut, this::schmal);
+        this.geyser = new GeyserAnbindung(plugin, paketDatei, paket.symbole(), id -> z[0] == null ? null : z[0].lage(id), this::haut, this::schmal);
         this.zwillinge = new Zwillinge(plugin, paket.varianten(), geyser::istBedrock, geyser::aendern);
         z[0] = zwillinge;
     }
@@ -91,8 +94,37 @@ public final class Bedrock implements Listener {
         if (koerper != null && koerper.namespace().equals("stinkendreich")) {
             boolean schmal = profil.skinPatch().model() == org.bukkit.profile.PlayerTextures.SkinModel.SLIM;
             puppen.put(m.getUniqueId(), new String[]{koerper.asString(), schmal ? "schmal" : ""});
+            hautVerweisErgaenzen(m, profil, schmal);
         }
     }
+
+    /**
+     * Geyser fragt Häute nur für Profile mit Haut-Verweis ab (und auch nur bei Mojang) – die Haut aus unserem Paket
+     * kennt es nicht. Die Puppe bekommt deshalb zusätzlich einen Verweis auf eine Standardhaut bei Mojang; Geyser meldet
+     * dann {@code SessionSkinApplyEvent}, und wir tauschen die Haut gegen die echte. Java-Spieler sehen weiter die Haut aus
+     * dem Paket (der Haut-Aufsatz hat Vorrang).
+     */
+    private void hautVerweisErgaenzen(Mannequin m, ResolvableProfile profil, boolean schmal) {
+        if (profil.properties().stream().anyMatch(p -> p.getName().equals("textures"))) {
+            return;
+        }
+        String json = "{\"textures\":{\"SKIN\":{\"url\":\"" + STANDARD_HAUT + "\""
+                + (schmal ? ",\"metadata\":{\"model\":\"slim\"}" : "") + "}}}";
+        ResolvableProfile.Builder neu = ResolvableProfile.resolvableProfile()
+                .addProperties(profil.properties())
+                .addProperty(new ProfileProperty("textures", Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8))))
+                .skinPatch(profil.skinPatch());
+        if (profil.name() != null) {
+            neu.name(profil.name());
+        }
+        if (profil.uuid() != null) {
+            neu.uuid(profil.uuid());
+        }
+        m.setProfile(neu.build());
+    }
+
+    /** Irgendeine Haut bei Mojang (Alex) – sie wird für Bedrock ohnehin ersetzt. */
+    private static final String STANDARD_HAUT = "http://textures.minecraft.net/texture/3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3";
 
     /** Haut einer Schaufensterpuppe für Geyser (RGBA-Bytes), null für alles andere. */
     private Skin haut(UUID figur) {
