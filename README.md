@@ -647,6 +647,10 @@ James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt eine
 
 **Straßen zwischen den Villen:** Sobald ein neuer Spieler seine Villa bekommt, baut der Server eine Straße bis vor seine Zufahrt – sie zweigt von der nächsten Straße des Netzes ab, mit Mittellinie, Bordstein und Laternen, durch Hügel als offener Einschnitt, über Wasser als Brücke, um freie Plätze und Grundstücke herum und von vorn auf die Höhe der Zufahrt. „Butler, fahr mich zur Villa von Max“ (oder „nach Hause“, auch im Handy): James fährt die Limo vor und dich über die Abzweige auf direktem Weg hin – auch nach einem Neustart des Servers, wenn gerade niemand bei seiner Villa ist.
 
+**Bedrock-Spieler (Handy, Konsole, Windows) über Geyser – Vorschau:** Läuft auf deinem Paper-Server zusätzlich [Geyser](https://geysermc.org/), baut das Plugin beim Start selbst ein Bedrock-Ressourcenpaket aus allen Modellen der Villa und gibt es Geyser mit – du musst nichts von Hand einrichten. Bedrock-Spieler sehen dann Möbel, Türen, Autos und alle eigenen Blöcke wie Java-Spieler, Handy und Butler-Menü öffnen sich als Bedrock-Formulare, James, Personal und Tänzerinnen tragen ihre Häute, und Handy, Zugangskarte und Waffen haben eigene Bilder im Inventar. Mit einem Bedrock-Testprogramm geprüft, auf echten Geräten noch nicht – Rückmeldungen sind willkommen. Bedrock-Spieler heißen mit Punkt davor (z. B. „.Bob“), bei einer Whitelist so eintragen. Abschalten: `bedrock: an: false` in `plugins/StinkendReich/config.yml`.
+
+<img src="docs/bilder/bedrock_vorschau.jpg" alt="Java-Modelle links, daraus erzeugte Bedrock-Modelle rechts" width="360"><br><sub>Links das Java-Modell, rechts das daraus gebaute Bedrock-Modell: Sofa, Flügel, Kronleuchter, Gaming-Stuhl, Goldtoilette</sub>
+
 Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser) sowie eigene Musik und Spotify.
 
 <br>

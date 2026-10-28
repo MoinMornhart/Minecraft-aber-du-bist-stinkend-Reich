@@ -14,6 +14,9 @@
 - **Bilder:** Jeden sichtbaren Zwischenstand als echten Minecraft-Screenshot an Philip in den Chat schicken (SendUserFile) und auf die Fortschrittsseite legen.
 - **Abschluss jeder Arbeitsrunde (Philip, 26.10.):** Immer als letzter Schritt, bevor eine Runde als fertig gemeldet wird: README auf den neuen Stand bringen und den Trailer neu aufnehmen, mit den Neuerungen (`tools/ingame/trailer_szenario.py`, `tools/ingame/video.py`), ins README einbinden (`docs/trailer.mp4`) und an Philip schicken.
 
+- **Sprache (Philip, 28.10., sehr deutlich): Mit Philip IMMER Deutsch reden** – jede Antwort, jede Zwischenmeldung, jede Zusammenfassung. Nie Englisch.
+- **Von selbst aktuell halten, ohne dass Philip erinnern muss (28.10.):** Nach jedem Zwischenschritt, Test, Feature und Release die Fortschrittsseite neu veröffentlichen (Punkte, „Läuft gerade“, „Als Nächstes“, Update-Abschnitt mit der richtigen Versionsnummer), und bei jedem neuen Feature README und `.github/neu.md` mitziehen. Muss Philip daran erinnern, ist es schon zu spät.
+
 ## Harte Regeln
 
 - **Die Original-Map (`/vorlage`) ist nur Referenz** für Stil und Mechanismen-Liste. Sie und alles direkt daraus Erzeugte (Welt, Regionen, Exporte, Analyse-Bilder) NIE committen und nie in eine .jar oder ein Release packen. Analyse-Ausgaben gehen nur nach `/vorlage/analyse/`. Die Nutzungsbedingungen von chamo572 verbieten einen Re-Upload.
