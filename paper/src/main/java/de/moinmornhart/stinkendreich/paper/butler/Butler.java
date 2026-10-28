@@ -502,6 +502,7 @@ public final class Butler implements Listener {
         if (weg == null) {
             weg = List.of();
         }
+        plugin.getLogger().info("Chauffeur: Fahrweg von Villa " + von + " zu Villa " + ziel.nr() + ", " + weg.size() + " Punkte");
         if (weg.size() < 2) {
             sagen(p, "Verzeihung, dorthin finde ich keinen Weg.");
             return;

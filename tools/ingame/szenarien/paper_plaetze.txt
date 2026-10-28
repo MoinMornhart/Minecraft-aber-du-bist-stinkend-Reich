@@ -16,3 +16,35 @@ bis 300 Baustelle: Villa 4 fertig
 merke
 bis 900 Straßen: .*Lena.* fertig
 warte 3
+server @/villa strassen
+# James fährt von Ottos Villa zu Max (über zwei Abzweige: Otto → Anna → Max), Philip sitzt hinten drin
+server @/gamemode survival Philip
+server @/tp Philip -316 120 398
+warte 5
+# /villa ort zählt ab der Villa, an der man steht (Ottos: -376 264), hier vor dem Ende ihrer Zufahrt
+server /villa ort 60.5 boden 133 0 0
+warte 3
+merke
+server /butler fahr mich zur villa von max
+bis 20 Chauffeur: Fahrweg
+bis 20 Chauffeur: Start
+server /villa einsteigen
+merke
+bis 15 Chauffeur: losgefahren
+merke
+bis 400 Chauffeur: angekommen
+warte 2
+server @/execute as Philip run data get entity Philip Pos
+# Bilder von oben (unter den Wolken, mit Zeit zum Laden)
+server @/gamemode spectator Philip
+server /time set 6000
+taste F1
+server /tp @s -290 186 150 0 90
+warte 25
+bild pp_otto
+server /tp @s -230 186 40 0 90
+warte 25
+bild pp_abzweig_anna
+server /tp @s -100 186 390 0 90
+warte 25
+bild pp_lena
