@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-28, 07:35 Uhr (0.4.2 erweitert: Villa auch in bestehenden Welten der Mod, feste Plätze frei, Straßen robuster, James bleibt erreichbar; Release erst nach Philips OK)_
+_Zuletzt aktualisiert: 2026-10-28, 08:12 Uhr (0.4.2 erweitert: Villa auch in bestehenden Welten der Mod, feste Plätze frei, Straßen robuster, James bleibt erreichbar, Trailer Teil 6; Release erst nach Philips OK)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -657,10 +657,20 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 - Testfallen: Ein Spieler, der im Überlebensmodus nach `/tp` stirbt, bleibt in der Paper-Testwelt tot gespeichert
   („Attempt to teleport removed player“) → Spielerdatei in `build/paper-test/world/players/data/` löschen. In Szenarien
   erst Kreativmodus, dann teleportieren.
+- **Trailer Teil 6** (0.4.2, 33 s, „Neu in 0.4.2 – Straßen zu allen Freunden“): `trailer6.txt` in der Welt aus
+  `paper_plaetze.txt` (`STINKENDREICH_CHAUFFEUR_ALLEIN=1 WELT_BEHALTEN=1 CHAT_AUS=1 paper.sh`). Mit
+  `STINKENDREICH_CHAUFFEUR_ALLEIN` (nur im Autotest) fährt James ohne Fahrgast, wartet 3 s vor der Abfahrt und zieht eine
+  unsichtbare Kamera (Rüstungsständer, Marke `stinkendreich_kamera`) weich hinter der Limo her; der Zuschauer hängt sich
+  per `/spectate` daran (durch James' Augen sah man nur Dach und Säulen, F5 im Fond landete im Dach). Schnitt
+  `tools/ingame/trailer6_schnitt.py` (Fahrt 4×), `video.py`, dann wegen der schnellen Fahrt neu kodiert
+  (`-crf 28 -maxrate 1300k -bufsize 2600k`, sonst 15 MB statt 5 MB) und mit ffmpeg concat (`-c copy`) angehängt:
+  `docs/trailer.mp4` jetzt 14:21 und 92 MB (GitHub-Grenze 100 MB → beim nächsten Teil den ganzen Trailer neu kodieren).
+- Platte war voll (alte Rohvideos in `build/ingame/26.3` und im Scratchpad gelöscht). Die Worktrees `/home/user/sr-test`,
+  `sr-dusche`, `sr-hai` belegen zusammen mehrere GB; `sr-test` hat alte, nicht committete Änderungen (nicht ungeprüft löschen).
 
 ## Nächster Schritt
 
-**0.4.2 ist fertig** (27.10. 23:10): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards; Mod: Nachbarvilla auf bebautem Platz, Bodyguards), README und Trailer (Teil 5) neu. **Release erst nach Philips „Release raus“:** dann `.github/release-version` auf 0.4.2. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
+**0.4.2 ist fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. **Release erst nach Philips „Release raus“:** dann `.github/release-version` auf 0.4.2. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
 
 **Release 0.4.1 veröffentlicht** (27.10. 12:05, 17 Mod-Dateien + `stinkendreich_paper-0.4.1+paper26.3.jar`: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.1). Vorher geprüft (27.10. 11:45):
 alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
