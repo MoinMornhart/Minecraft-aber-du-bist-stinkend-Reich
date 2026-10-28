@@ -95,10 +95,15 @@ final class Chauffeur implements Auftrag {
 
     /**
      * Testhilfe für Trailer-Aufnahmen: Mit {@code STINKENDREICH_CHAUFFEUR_ALLEIN} (nur im Spieltest) fährt James auch ohne
-     * Fahrgast los – die Kamera kann dann durch seine Augen nach vorn schauen (aus der Limo heraus sieht man nur das Dach).
+     * Fahrgast los, und eine unsichtbare Kamera (Rüstungsständer mit Marke {@code stinkendreich_kamera}) fährt schräg
+     * hinter der Limo her; an sie hängt sich der Zuschauer (aus der Limo heraus sieht man nur Dach und Säulen).
      */
     private static final boolean ALLEIN = de.moinmornhart.stinkendreich.paper.Autotest.aktiv()
             && System.getenv("STINKENDREICH_CHAUFFEUR_ALLEIN") != null;
+    /** Kamera im Testmodus: Abstand hinter dem Wagen, Höhe darüber, Neigung nach unten, Nachziehen je Tick. */
+    private static final double KAMERA_ABSTAND = 11, KAMERA_HOEHE = 5.5, KAMERA_FOLGEN = 0.12;
+    private static final float KAMERA_NEIGUNG = 16.0F;
+    private ArmorStand kamera;
 
     @Override
     public Stand tick() {
@@ -108,6 +113,9 @@ final class Chauffeur implements Auftrag {
             return Stand.FERTIG;
         }
         koerper.teleport(puppe.getLocation());
+        if (ALLEIN) {
+            kameraNachfuehren();
+        }
         switch (phase) {
             case EINSTEIGEN -> {
                 // Testmodus: drei Sekunden stehen bleiben, damit sich die Kamera an James hängen kann
@@ -175,8 +183,38 @@ final class Chauffeur implements Auftrag {
         return w;
     }
 
+    /** Testmodus: Kamera weich hinter den Wagen ziehen (nie in einen Hang hinein), Blick in Fahrtrichtung. */
+    private void kameraNachfuehren() {
+        Location w = wagen.getLocation();
+        double rad = Math.toRadians(gier);
+        Location ziel = w.clone().add(Math.sin(rad) * KAMERA_ABSTAND, KAMERA_HOEHE, -Math.cos(rad) * KAMERA_ABSTAND);
+        for (int i = 0; i < 8 && !ziel.getBlock().isPassable(); i++) {
+            ziel.add(0, 1, 0);
+        }
+        if (kamera == null || !kamera.isValid()) {
+            ziel.setYaw(gier);
+            ziel.setPitch(KAMERA_NEIGUNG);
+            kamera = w.getWorld().spawn(ziel, ArmorStand.class, a -> {
+                a.setInvisible(true);
+                a.setMarker(true);
+                a.setGravity(false);
+                a.setPersistent(false);
+                a.addScoreboardTag("stinkendreich_kamera");
+            });
+            return;
+        }
+        Location k = kamera.getLocation();
+        Location neu = k.clone().add(ziel.toVector().subtract(k.toVector()).multiply(KAMERA_FOLGEN));
+        neu.setYaw(k.getYaw() + wrap(gier - k.getYaw()) * (float) KAMERA_FOLGEN);
+        neu.setPitch(KAMERA_NEIGUNG);
+        kamera.teleport(neu);
+    }
+
     @Override
     public void abbrechen() {
+        if (kamera != null) {
+            kamera.remove();
+        }
         plugin.fahrzeuge().vorfahren(wagen, wagen.getLocation(), false);   // Schwerkraft wieder an
         if (puppe.isInsideVehicle()) {
             puppe.leaveVehicle();
