@@ -174,9 +174,13 @@ public final class Strassen {
         // Richtung am Anfang: an der Spawn-Villa nach Süden (die Zufahrt), am Abzweig zum ersten Wegpunkt
         float richtung = aktivEltern < 0 ? 0.0F
                 : (float) Math.toDegrees(Math.atan2(-(wege.getFirst()[0] - ax), wege.getFirst()[1] - az));
-        // Fahrbahnhöhe am Ziel: villaZiel liefert die Stehhöhe über der Fahrbahn (ohne gefundene Zufahrt: unbekannt)
-        double zielY = b.getBlock().getRelative(0, -1, 0).getType() == Material.GRAY_CONCRETE
-                || b.getBlock().getType() == Material.POLISHED_ANDESITE_SLAB ? Math.floor(b.getY()) - 1 : Double.NaN;
+        // Fahrbahnhöhe am Ziel: villaZiel liefert die Stehhöhe über dem Ende der Zufahrt, drei Blöcke dahinter (ohne
+        // gefundene Zufahrt den Spawnpunkt: Höhe unbekannt)
+        Block ende = b.getWorld().getBlockAt(b.getBlockX(), b.getBlockY(), (int) Math.floor(b.getZ() - 3));
+        double zielY = ende.getRelative(0, -1, 0).getType() == Material.GRAY_CONCRETE
+                || ende.getType() == Material.POLISHED_ANDESITE_SLAB ? b.getBlockY() - 1 : Double.NaN;
+        plugin.getLogger().info(String.format(Locale.ROOT, "Straßen: Ziel %d %d %d, Fahrbahnhöhe dort %s", b.getBlockX(),
+                b.getBlockY(), b.getBlockZ(), Double.isNaN(zielY) ? "unbekannt" : String.valueOf((int) zielY)));
         return new StrassenBau(plugin, a.getWorld(), name, ax, ay, az, richtung, wege, zielY);
     }
 
