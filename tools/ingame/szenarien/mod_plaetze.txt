@@ -15,6 +15,13 @@ bis 300 Baustelle: Villa 3 fertig
 merke
 server /villa nachbar Lena
 bis 300 Baustelle: Villa 4 fertig
+# alle vier Straßen abwarten (in beliebiger Reihenfolge, daher jeweils ab Serverstart suchen)
 merke anfang
 bis 1200 Straße Villa von Lena: Ende
+merke anfang
+bis 1200 Straße Villa von Otto: Ende
+merke anfang
+bis 1200 Straße Villa von Anna: Ende
+merke anfang
+bis 1200 Straße Villa von Max: Ende
 warte 3

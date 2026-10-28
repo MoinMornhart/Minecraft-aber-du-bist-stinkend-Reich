@@ -1,0 +1,9 @@
+# Nach mod_plaetze.txt (Welt behalten): noch fehlende Straßen zu den Villen fertig bauen lassen und abwarten.
+# Aufruf: WELT_BEHALTEN=1 tools/ingame/test.sh 26.3 tools/ingame/szenarien/mod_plaetze_strassen.txt
+merke anfang
+bis 1200 Straße Villa von Otto: Ende
+merke anfang
+bis 1200 Straße Villa von Anna: Ende
+merke anfang
+bis 1200 Straße Villa von Max: Ende
+warte 3
