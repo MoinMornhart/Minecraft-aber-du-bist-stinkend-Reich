@@ -271,8 +271,9 @@ public final class StrassenBau {
             }
         }
         if (frei == null) {
-            // Kurz vor dem Ziel (etwa am Dorfrand) endet die Straße hier, sonst bricht der Bau ab
-            ende("kein freier Weg (Rest " + (int) rest + ", Sperre " + letzteSperre + ")");
+            // Kurz vor dem Ziel (etwa am Dorfrand) endet die Straße hier, sonst bricht der Bau ab; höchstens acht Blöcke
+            // vor dem Ziel ist sie angeschlossen (die Fahrbahn ist sieben Blöcke breit, etwa an der Zufahrt einer Villa)
+            ende(rest < 8 ? "am Ziel" : "kein freier Weg (Rest " + (int) rest + ", Sperre " + letzteSperre + ")");
             return;
         }
         // Große Ausweichschwenks nur schrittweise fahren (weite Kurven, die der Wagen sauber schafft)

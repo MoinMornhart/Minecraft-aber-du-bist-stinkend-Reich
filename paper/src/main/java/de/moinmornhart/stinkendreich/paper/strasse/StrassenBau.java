@@ -246,7 +246,8 @@ final class StrassenBau {
             }
         }
         if (frei == null) {
-            ende("kein freier Weg (Rest " + (int) rest + ", Sperre " + letzteSperre + ")");
+            // höchstens acht Blöcke vor dem Ziel ist sie angeschlossen (die Fahrbahn ist sieben Blöcke breit)
+            ende(rest < 8 && ziele.size() == 1 ? "am Ziel" : "kein freier Weg (Rest " + (int) rest + ", Sperre " + letzteSperre + ")");
             return;
         }
         float neu = richtung + clamp(wrap(frei - richtung), -1.5F * KURVE, 1.5F * KURVE);
