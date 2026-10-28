@@ -1,6 +1,6 @@
 # Stand (Übergabe)
 
-_Zuletzt aktualisiert: 2026-10-28, 09:30 Uhr (Release 0.4.2 angestoßen nach Philips OK, mit Bedrock-Vorschau im Plugin)_
+_Zuletzt aktualisiert: 2026-10-28, 09:36 Uhr (Release 0.4.2 veröffentlicht, mit Bedrock-Vorschau im Plugin)_
 
 **Philips feste Regel (26.10., mehrfach gesagt; 27.10. ernst gemeint – „sonst wechsle ich zu Codex“):** Die Fortschrittsseite nach JEDEM Zwischenschritt neu
 veröffentlichen (jede Gruppe Bilder, jedes fertige Feature, jeder Test) – ohne dass er es sagen muss.
@@ -697,7 +697,7 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 
 ## Nächster Schritt
 
-**Release 0.4.2 angestoßen** (28.10. 09:27, Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
+**Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
 
 **Release 0.4.1 veröffentlicht** (27.10. 12:05, 17 Mod-Dateien + `stinkendreich_paper-0.4.1+paper26.3.jar`: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.1). Vorher geprüft (27.10. 11:45):
 alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
