@@ -239,12 +239,13 @@ public final class StrassenBau {
                     break;      // Am Dorfrand nicht um die Häuser kurven: hier endet die Straße
                 }
                 double steigung = Math.max(0, steigung(r) - 3);
-                double kosten = steigung * 4 + Math.abs(abw) * 0.12 + Math.max(0, weg - 45) * 0.15;
+                boolean fern = fernGesperrt(r, rest);
+                double kosten = steigung * 4 + Math.abs(abw) * 0.12 + Math.max(0, weg - 45) * 0.15 + (fern ? 25 : 0);
                 if (kosten < besteKosten) {
                     besteKosten = kosten;
                     frei = r;
                 }
-                if (steigung == 0 && weg <= 45) {
+                if (steigung == 0 && weg <= 45 && !fern) {
                     break;      // flach genug: die erste (zielnächste) freie Richtung nehmen
                 }
             }
@@ -574,6 +575,28 @@ public final class StrassenBau {
         }
         BlockState s = welt.getBlockState(p);
         return !s.isAir() && s.getFluidState().isEmpty() && !Schutz.istNatuerlich(s) && !istStrasse(s);
+    }
+
+    /**
+     * Weitblick: Führt die Richtung in den nächsten 48 Blöcken (höchstens bis zum Ziel) auf einen freigehaltenen Platz
+     * oder ein Grundstück? Diese großen Flächen sind bekannt; die Straße biegt früh ab und fährt außen entlang, statt
+     * erst zehn Blöcke davor zu merken, dass es nicht weitergeht (frontal kam sie sonst nicht mehr herum).
+     */
+    private boolean fernGesperrt(float r, double rest) {
+        double rx = -Math.sin(Math.toRadians(r)), rz = Math.cos(Math.toRadians(r));
+        for (int d = 12; d <= Math.min(48, rest); d += 6) {
+            int bx = (int) Math.floor(x + rx * d), bz = (int) Math.floor(z + rz * d);
+            int[] platz = VillaPlatzierung.reservierterPlatz(bx, bz);
+            if (platz != null && !zielBei(platz)) {
+                return true;
+            }
+            BlockPos p = new BlockPos(bx, y, bz);
+            VillaPlatzierung.VillaInfo villa = VillaPlatzierung.bei(p);
+            if (villa != null && villa.inDerNaehe(p, 4)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Liegt das Ziel dieser Straße auf (oder dicht an) einem freigehaltenen Platz? Dann darf sie hinein. */

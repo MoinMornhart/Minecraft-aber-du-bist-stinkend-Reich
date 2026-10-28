@@ -228,12 +228,13 @@ final class StrassenBau {
                     continue;
                 }
                 double steigung = Math.max(0, steigung(r) - 3);
-                double kosten = steigung * 4 * strenge + Math.abs(abw) * 0.12 + Math.max(0, weg - 45) * 0.15;
+                boolean fern = fernGesperrt(r, rest);
+                double kosten = steigung * 4 * strenge + Math.abs(abw) * 0.12 + Math.max(0, weg - 45) * 0.15 + (fern ? 25 : 0);
                 if (kosten < besteKosten) {
                     besteKosten = kosten;
                     frei = r;
                 }
-                if (steigung == 0 && weg <= 45) {
+                if (steigung == 0 && weg <= 45 && !fern) {
                     break;
                 }
             }
@@ -528,6 +529,26 @@ final class StrassenBau {
             return true;
         }
         return !Natur.natuerlich(m) && !istStrasse(m);
+    }
+
+    /**
+     * Weitblick: Führt die Richtung in den nächsten 48 Blöcken (höchstens bis zum Wegpunkt) auf einen freigehaltenen
+     * Platz oder ein Grundstück? Diese großen Flächen sind bekannt; die Straße biegt früh ab und fährt außen entlang,
+     * statt erst zehn Blöcke davor zu merken, dass es nicht weitergeht (frontal kam sie sonst nicht mehr herum).
+     */
+    private boolean fernGesperrt(float r, double rest) {
+        double rx = -Math.sin(Math.toRadians(r)), rz = Math.cos(Math.toRadians(r));
+        for (int d = 12; d <= Math.min(48, rest); d += 6) {
+            int bx = (int) Math.floor(x + rx * d), bz = (int) Math.floor(z + rz * d);
+            int[] platz = plugin.bauleitung().reservierterPlatz(welt, bx, bz);
+            if (platz != null && !zielBei(platz)) {
+                return true;
+            }
+            if (plugin.villen().bei(new org.bukkit.Location(welt, bx, y, bz), 4) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Ist die Straße auf dem letzten Stück und näher als {@code abstand} am Ziel (das eine bekannte Höhe hat)? */
