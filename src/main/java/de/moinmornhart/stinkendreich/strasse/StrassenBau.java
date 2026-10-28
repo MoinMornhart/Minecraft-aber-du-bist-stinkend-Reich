@@ -49,7 +49,7 @@ public final class StrassenBau {
     private static final float KURVE = 4.0F;
 
     // Beton über die ID (die Farbblöcke heißen im Code je nach Version anders)
-    private static final BlockState ASPHALT = id("gray_concrete");
+    static final BlockState ASPHALT = id("gray_concrete");
     /** Halbe Stufe in Asphaltfarbe (auch auf der Mittellinie, sonst wirkt die Steigung fleckig). */
     private static final BlockState ASPHALT_STUFE = Blocks.POLISHED_DEEPSLATE_SLAB.defaultBlockState();
     private static final BlockState LINIE = id("white_concrete");

@@ -140,7 +140,7 @@ public final class Strassennetz {
             // Höhe der Zufahrt am Ziel (punkt ist die Stehhöhe über ihrem Ende, drei Blöcke dahinter; ohne gefundene
             // Zufahrt der Spawnpunkt: unbekannt)
             BlockPos p = BlockPos.containing(punkt.x, punkt.y, punkt.z - 3);
-            if (welt.getBlockState(p.below()).is(Blocks.GRAY_CONCRETE) || welt.getBlockState(p).is(Blocks.POLISHED_ANDESITE_SLAB)) {
+            if (welt.getBlockState(p.below()).is(StrassenBau.ASPHALT.getBlock()) || welt.getBlockState(p).is(Blocks.POLISHED_ANDESITE_SLAB)) {
                 b.zielHoehe(p.getY() - 1);
             }
         }
