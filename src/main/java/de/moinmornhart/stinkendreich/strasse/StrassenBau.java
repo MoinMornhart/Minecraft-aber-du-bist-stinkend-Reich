@@ -96,6 +96,8 @@ public final class StrassenBau {
 
     /** Fahrbahnhöhe am Ziel (Ende der Zufahrt einer Villa), NaN = unbekannt. */
     private double zielY = Double.NaN;
+    /** Punkt vor der Zufahrt, über den die Straße ans Ziel kommt (von vorn statt seitlich), null = direkt. */
+    private Vec3 anfahrt;
 
     StrassenBau(ServerLevel welt, String name, Vec3 ziel, Vec3 start, float richtung, int eltern, int abzweig) {
         this.welt = welt;
@@ -113,6 +115,14 @@ public final class StrassenBau {
 
     public String name() {
         return name;
+    }
+
+    /**
+     * Die Straße soll über diesen Punkt ans Ziel kommen (vor der Zufahrt einer Villa): Seitlich kam sie an deren
+     * Randsteinen nicht vorbei und endete zehn Blöcke vor dem Ziel.
+     */
+    void anfahrt(Vec3 p) {
+        anfahrt = p;
     }
 
     /** Die Straße endet an einer Zufahrt mit dieser Fahrbahnhöhe: kurz davor rechtzeitig darauf einschwenken. */
@@ -216,8 +226,14 @@ public final class StrassenBau {
             ende(rest < 5 ? "am Ziel" : "zu viele Schritte");
             return;
         }
+        // Erst zum Anfahrtspunkt (falls es einen gibt), dann zum Ziel
+        if (anfahrt != null && Math.hypot(anfahrt.x - x, anfahrt.z - z) < 6) {
+            anfahrt = null;
+        }
+        Vec3 lenk = anfahrt != null ? anfahrt : ziel;
+        double lenkRest = Math.hypot(lenk.x - x, lenk.z - z);
         // Richtung: sanft zum Ziel einlenken, Hindernissen (Villa, Häuser, Spielerbauten) ausweichen
-        float zum = (float) Strassennetz.gier(x, z, ziel.x, ziel.z);
+        float zum = (float) Strassennetz.gier(x, z, lenk.x, lenk.z);
         float wunsch = richtung + clamp((float) Strassennetz.wrap(zum - richtung), -KURVE, KURVE);
         // Freie Richtung nahe am Ziel; steile Hänge umfahren wie eine echte Bergstraße (nur wenn es geradeaus deutlich
         // bergauf oder bergab ginge und eine Abweichung flacher ist)
@@ -228,8 +244,11 @@ public final class StrassenBau {
         // Nur wenn dort alles versperrt ist, darf sie auch weiter abdrehen.
         boolean dorfrand = false;
         for (int durchgang = 0; durchgang < 2 && frei == null && !dorfrand; durchgang++) {
-            for (float abw : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}) {
-                float r = wunsch + Math.copySign(Math.min(Math.abs(abw), 90), abw);
+            // Im zweiten Durchgang auch scharf abdrehen (nur wenn vorn alles versperrt ist: von einer Kante freikommen)
+            float[] abweichungen = durchgang == 0 ? new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}
+                    : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75, 105, -105, 135, -135};
+            for (float abw : abweichungen) {
+                float r = wunsch + abw;
                 float weg = Math.abs((float) Strassennetz.wrap(r - zum));
                 if ((durchgang == 0 && weg > 100) || !frei(r)) {
                     continue;
@@ -239,7 +258,7 @@ public final class StrassenBau {
                     break;      // Am Dorfrand nicht um die Häuser kurven: hier endet die Straße
                 }
                 double steigung = Math.max(0, steigung(r) - 3);
-                boolean fern = fernGesperrt(r, rest);
+                boolean fern = fernGesperrt(r, lenkRest);
                 double kosten = steigung * 4 + Math.abs(abw) * 0.12 + Math.max(0, weg - 45) * 0.15 + (fern ? 25 : 0);
                 if (kosten < besteKosten) {
                     besteKosten = kosten;
@@ -584,8 +603,11 @@ public final class StrassenBau {
      */
     private boolean fernGesperrt(float r, double rest) {
         double rx = -Math.sin(Math.toRadians(r)), rz = Math.cos(Math.toRadians(r));
+        // die ganze Breite der Straße und zwei Blöcke Rand (nur die Mittellinie: Sie fuhr dicht an der Kante entlang,
+        // bis ihr Rand anstieß)
         for (int d = 12; d <= Math.min(48, rest); d += 6) {
-            int bx = (int) Math.floor(x + rx * d), bz = (int) Math.floor(z + rz * d);
+            for (int o = -HALB - 2; o <= HALB + 2; o += HALB + 2) {
+            int bx = (int) Math.floor(x + rx * d + rz * o), bz = (int) Math.floor(z + rz * d - rx * o);
             int[] platz = VillaPlatzierung.reservierterPlatz(bx, bz);
             if (platz != null && !zielBei(platz)) {
                 return true;
@@ -594,6 +616,7 @@ public final class StrassenBau {
             VillaPlatzierung.VillaInfo villa = VillaPlatzierung.bei(p);
             if (villa != null && villa.inDerNaehe(p, 4)) {
                 return true;
+            }
             }
         }
         return false;

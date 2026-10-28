@@ -57,7 +57,8 @@ final class StrassenBau {
     private final World welt;
     private final String name;
     /**
-     * Wegpunkte (x, z), der letzte ist das Ziel. Ein Wegpunkt seitlich an einer Villa vorbei hat drei Werte mehr: Er gilt
+     * Wegpunkte (x, z), der letzte ist das Ziel. Ein dritter Wert ist der Umkreis, in dem der Wegpunkt als erreicht gilt
+     * (Anfahrt vor einer Zufahrt). Ein Wegpunkt seitlich an einer Villa vorbei hat drei Werte mehr: Er gilt
      * schon als erreicht, sobald die Straße südlich von {@code [2]} und auf seiner Seite der Villa ist ({@code [4]} = -1:
      * x höchstens {@code [3]}, +1: x mindestens {@code [3]}) – sonst führe sie erst ganz hin und wendete dann.
      */
@@ -201,7 +202,8 @@ final class StrassenBau {
         double[] ziel = ziele.getFirst();
         double rest = Math.hypot(ziel[0] - x, ziel[1] - z);
         boolean vorbei = ziel.length >= 5 && z >= ziel[2] && (ziel[4] < 0 ? x <= ziel[3] : x >= ziel[3]);
-        if ((rest < 5 || vorbei) && ziele.size() > 1) {
+        boolean nah = ziel.length == 3 && rest < ziel[2];           // Anfahrtspunkt: erreicht im Umkreis
+        if ((rest < 5 || vorbei || nah) && ziele.size() > 1) {
             ziele.removeFirst();                            // Wegpunkt erreicht: weiter zum nächsten
             plugin.getLogger().info(String.format(Locale.ROOT, "Straße %s: Wegpunkt erreicht bei %d %d %d", name, (int) x, y, (int) z));
             return;
@@ -221,8 +223,11 @@ final class StrassenBau {
         // sonst wich die Straße an einem Hang immer weiter aus, fuhr eine Schleife und blieb an sich selbst hängen.
         // Nur wenn dort alles versperrt ist, darf sie auch weiter abdrehen.
         for (int durchgang = 0; durchgang < 2 && frei == null; durchgang++) {
-            for (float abw : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}) {
-                float r = wunsch + Math.copySign(Math.min(Math.abs(abw), 90), abw);
+            // Im zweiten Durchgang auch scharf abdrehen (nur wenn vorn alles versperrt ist: von einer Kante freikommen)
+            float[] abweichungen = durchgang == 0 ? new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}
+                    : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75, 105, -105, 135, -135};
+            for (float abw : abweichungen) {
+                float r = wunsch + abw;
                 float weg = Math.abs(wrap(r - zum));
                 if ((durchgang == 0 && weg > 100) || !frei(r)) {
                     continue;
@@ -538,14 +543,18 @@ final class StrassenBau {
      */
     private boolean fernGesperrt(float r, double rest) {
         double rx = -Math.sin(Math.toRadians(r)), rz = Math.cos(Math.toRadians(r));
+        // die ganze Breite der Straße und zwei Blöcke Rand (nur die Mittellinie: Sie fuhr dicht an der Kante entlang,
+        // bis ihr Rand anstieß)
         for (int d = 12; d <= Math.min(48, rest); d += 6) {
-            int bx = (int) Math.floor(x + rx * d), bz = (int) Math.floor(z + rz * d);
+            for (int o = -HALB - 2; o <= HALB + 2; o += HALB + 2) {
+            int bx = (int) Math.floor(x + rx * d + rz * o), bz = (int) Math.floor(z + rz * d - rx * o);
             int[] platz = plugin.bauleitung().reservierterPlatz(welt, bx, bz);
             if (platz != null && !zielBei(platz)) {
                 return true;
             }
             if (plugin.villen().bei(new org.bukkit.Location(welt, bx, y, bz), 4) != null) {
                 return true;
+            }
             }
         }
         return false;

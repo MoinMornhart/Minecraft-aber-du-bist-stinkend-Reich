@@ -143,6 +143,7 @@ public final class Strassennetz {
             if (welt.getBlockState(p.below()).is(StrassenBau.ASPHALT.getBlock()) || welt.getBlockState(p).is(Blocks.POLISHED_ANDESITE_SLAB)) {
                 b.zielHoehe(p.getY() - 1);
             }
+            b.anfahrt(new Vec3(punkt.x, punkt.y, punkt.z + 10));     // von vorn an die Zufahrt (sie zeigt nach Süden)
         }
         StinkendReich.LOGGER.info("Straßennetz: baue Straße zur {} ({})", name, b == null ? "ging nicht" : BlockPos.containing(punkt));
     }
@@ -358,6 +359,9 @@ public final class Strassennetz {
                 if (drin != null && drin.inDerNaehe(pkt.get(j), 8)) {
                     continue;                                   // überbaut (Villa später darauf gesetzt): nicht abzweigen
                 }
+                if (naheFreiemPlatz(pkt.get(j))) {
+                    continue;                                   // an der Kante eines freien Platzes ginge es nicht weiter
+                }
                 if (d < besteEntfernung) {
                     besteEntfernung = d;
                     eltern = i;
@@ -371,6 +375,18 @@ public final class Strassennetz {
         }
         bau = new StrassenBau(welt, name, ziel, start, (float) gier(start.x, start.z, ziel.x, ziel.z), eltern, abzweig);
         return bau;
+    }
+
+    /** Liegt die Stelle auf oder dicht (12 Blöcke) an einem freigehaltenen Platz für eine künftige Villa? */
+    private static boolean naheFreiemPlatz(BlockPos p) {
+        for (int dx = -12; dx <= 12; dx += 12) {
+            for (int dz = -12; dz <= 12; dz += 12) {
+                if (VillaPlatzierung.reservierterPlatz(p.getX() + dx, p.getZ() + dz) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void bauTick() {

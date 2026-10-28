@@ -166,6 +166,8 @@ public final class Strassen {
             double sx = westen ? ziel.x() - 64 : ziel.x() + plan.breiteX + 64;
             wege.add(new double[]{sx, suedZiel + 24, suedZiel + 12, westen ? ziel.x() - 8 : ziel.x() + plan.breiteX + 8, westen ? -1 : 1});
         }
+        // Von vorn an die Zufahrt (sie zeigt nach Süden): seitlich kam die Straße an deren Randsteinen nicht vorbei
+        wege.add(new double[]{b.getX(), b.getZ() + 10, 6});
         wege.add(new double[]{b.getX(), b.getZ()});
         String name = "Straße zur " + ziel.name();
         plugin.getLogger().info(String.format(Locale.ROOT, "Straßen: baue %s von %d %d %d über %d Wegpunkte%s", name,
@@ -187,7 +189,18 @@ public final class Strassen {
     /** Darf hier eine neue Straße abzweigen? Nicht auf einem Grundstück (samt Rand) und nicht auf einem freien Platz. */
     private boolean abzweigErlaubt(World w, int[] q) {
         Location l = new Location(w, q[0] + 0.5, q[1], q[2] + 0.5);
-        return plugin.villen().bei(l, 16) == null && plugin.bauleitung().reservierterPlatz(w, q[0], q[2]) == null;
+        if (plugin.villen().bei(l, 16) != null) {
+            return false;
+        }
+        // auch nicht dicht (12 Blöcke) an einem freien Platz: an dessen Kante ginge es nicht weiter
+        for (int dx = -12; dx <= 12; dx += 12) {
+            for (int dz = -12; dz <= 12; dz += 12) {
+                if (plugin.bauleitung().reservierterPlatz(w, q[0] + dx, q[2] + dz) != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
