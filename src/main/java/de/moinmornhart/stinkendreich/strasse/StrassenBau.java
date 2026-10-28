@@ -210,22 +210,30 @@ public final class StrassenBau {
         // bergauf oder bergab ginge und eine Abweichung flacher ist)
         Float frei = null;
         double besteKosten = Double.MAX_VALUE;
-        for (float abw : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}) {
-            float r = wunsch + Math.copySign(Math.min(Math.abs(abw), 90), abw);
-            if (!frei(r)) {
-                continue;
-            }
-            if (Math.abs(abw) >= 30 && rest < 48 && frei == null) {
-                break;      // Am Dorfrand nicht um die Häuser kurven: hier endet die Straße
-            }
-            double steigung = Math.max(0, steigung(r) - 3);
-            double kosten = steigung * 4 + Math.abs(abw) * 0.12;
-            if (kosten < besteKosten) {
-                besteKosten = kosten;
-                frei = r;
-            }
-            if (steigung == 0) {
-                break;      // flach genug: die erste (zielnächste) freie Richtung nehmen
+        // Nie im Kreis: erst nur Richtungen, die höchstens 100° vom Ziel weg zeigen (ausweichen ja, umkehren nein) –
+        // sonst wich die Straße an einem Hang immer weiter aus, fuhr eine Schleife und blieb an sich selbst hängen.
+        // Nur wenn dort alles versperrt ist, darf sie auch weiter abdrehen.
+        boolean dorfrand = false;
+        for (int durchgang = 0; durchgang < 2 && frei == null && !dorfrand; durchgang++) {
+            for (float abw : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}) {
+                float r = wunsch + Math.copySign(Math.min(Math.abs(abw), 90), abw);
+                float weg = Math.abs((float) Strassennetz.wrap(r - zum));
+                if ((durchgang == 0 && weg > 100) || !frei(r)) {
+                    continue;
+                }
+                if (Math.abs(abw) >= 30 && rest < 48 && frei == null) {
+                    dorfrand = true;
+                    break;      // Am Dorfrand nicht um die Häuser kurven: hier endet die Straße
+                }
+                double steigung = Math.max(0, steigung(r) - 3);
+                double kosten = steigung * 4 + Math.abs(abw) * 0.12 + Math.max(0, weg - 45) * 0.15;
+                if (kosten < besteKosten) {
+                    besteKosten = kosten;
+                    frei = r;
+                }
+                if (steigung == 0 && weg <= 45) {
+                    break;      // flach genug: die erste (zielnächste) freie Richtung nehmen
+                }
             }
         }
         if (frei == null) {

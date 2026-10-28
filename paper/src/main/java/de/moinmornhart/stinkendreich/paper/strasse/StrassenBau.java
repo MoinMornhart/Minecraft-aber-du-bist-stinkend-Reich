@@ -56,7 +56,11 @@ final class StrassenBau {
     private final StinkendReichPaper plugin;
     private final World welt;
     private final String name;
-    /** Wegpunkte (x, z), der letzte ist das Ziel. */
+    /**
+     * Wegpunkte (x, z), der letzte ist das Ziel. Ein Wegpunkt seitlich an einer Villa vorbei hat drei Werte mehr: Er gilt
+     * schon als erreicht, sobald die Straße südlich von {@code [2]} und auf seiner Seite der Villa ist ({@code [4]} = -1:
+     * x höchstens {@code [3]}, +1: x mindestens {@code [3]}) – sonst führe sie erst ganz hin und wendete dann.
+     */
     private final List<double[]> ziele;
     private final int maxSchritte;
     private double x, z;
@@ -193,7 +197,8 @@ final class StrassenBau {
     private void schritt() {
         double[] ziel = ziele.getFirst();
         double rest = Math.hypot(ziel[0] - x, ziel[1] - z);
-        if (rest < 5 && ziele.size() > 1) {
+        boolean vorbei = ziel.length >= 5 && z >= ziel[2] && (ziel[4] < 0 ? x <= ziel[3] : x >= ziel[3]);
+        if ((rest < 5 || vorbei) && ziele.size() > 1) {
             ziele.removeFirst();                            // Wegpunkt erreicht: weiter zum nächsten
             plugin.getLogger().info(String.format(Locale.ROOT, "Straße %s: Wegpunkt erreicht bei %d %d %d", name, (int) x, y, (int) z));
             return;
@@ -209,19 +214,25 @@ final class StrassenBau {
         // Steile Hänge umfahren wie eine Bergstraße – aber nicht endlos: Je länger der Weg schon ist, desto eher geht es
         // geradeaus durch den Berg (offener Einschnitt) bzw. als Brücke übers Tal
         double strenge = Math.max(0.1, 1.0 - schritte / (startAbstand * 1.4));
-        for (float abw : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}) {
-            float r = wunsch + Math.copySign(Math.min(Math.abs(abw), 90), abw);
-            if (!frei(r)) {
-                continue;
-            }
-            double steigung = Math.max(0, steigung(r) - 3);
-            double kosten = steigung * 4 * strenge + Math.abs(abw) * 0.12;
-            if (kosten < besteKosten) {
-                besteKosten = kosten;
-                frei = r;
-            }
-            if (steigung == 0) {
-                break;
+        // Nie im Kreis: Erst nur Richtungen, die höchstens 100° vom Ziel weg zeigen (ausweichen ja, umkehren nein) –
+        // sonst wich die Straße an einem Hang immer weiter aus, fuhr eine Schleife und blieb an sich selbst hängen.
+        // Nur wenn dort alles versperrt ist, darf sie auch weiter abdrehen.
+        for (int durchgang = 0; durchgang < 2 && frei == null; durchgang++) {
+            for (float abw : new float[]{0, 15, -15, 30, -30, 50, -50, 75, -75}) {
+                float r = wunsch + Math.copySign(Math.min(Math.abs(abw), 90), abw);
+                float weg = Math.abs(wrap(r - zum));
+                if ((durchgang == 0 && weg > 100) || !frei(r)) {
+                    continue;
+                }
+                double steigung = Math.max(0, steigung(r) - 3);
+                double kosten = steigung * 4 * strenge + Math.abs(abw) * 0.12 + Math.max(0, weg - 45) * 0.15;
+                if (kosten < besteKosten) {
+                    besteKosten = kosten;
+                    frei = r;
+                }
+                if (steigung == 0 && weg <= 45) {
+                    break;
+                }
             }
         }
         if (frei == null) {

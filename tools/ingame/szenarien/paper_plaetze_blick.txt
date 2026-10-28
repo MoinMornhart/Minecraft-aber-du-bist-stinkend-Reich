@@ -1,0 +1,16 @@
+# Bilder von oben nach paper_plaetze.txt (Welt behalten): Straßennetz mit Abzweigen, Stelle, an der eine Straße kreiste.
+# Aufruf: WELT_BEHALTEN=1 CHAT_AUS=1 tools/ingame/paper.sh tools/ingame/szenarien/paper_plaetze_blick.txt
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+warte 15
+taste F1
+server /tp @s -285 230 150 0 90
+warte 12
+bild pp_schleife
+server /tp @s -230 330 40 0 90
+warte 12
+bild pp_abzweige
+server /tp @s -90 300 330 0 90
+warte 12
+bild pp_lena

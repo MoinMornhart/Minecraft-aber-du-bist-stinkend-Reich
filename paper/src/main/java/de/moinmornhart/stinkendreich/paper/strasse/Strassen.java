@@ -154,15 +154,17 @@ public final class Strassen {
         double sued0 = start.z() + plan.breiteZ;
         if (aktivEltern < 0 && b.getZ() < sued0 - 10) {
             // Ziel liegt hinter der Spawn-Villa: erst seitlich an ihr vorbei
-            cx = b.getX() < start.x() + plan.breiteX / 2.0 ? start.x() - 64 : start.x() + plan.breiteX + 64;
+            boolean westen = b.getX() < start.x() + plan.breiteX / 2.0;
+            cx = westen ? start.x() - 64 : start.x() + plan.breiteX + 64;
             cz = sued0 + 24;
-            wege.add(new double[]{cx, cz});
+            wege.add(new double[]{cx, cz, sued0 + 12, westen ? start.x() - 8 : start.x() + plan.breiteX + 8, westen ? -1 : 1});
         }
         double suedZiel = ziel.z() + plan.breiteZ;
         if (cz < suedZiel - 10) {
             // Die Straße käme von hinten an die Zielvilla: seitlich herum zur Zufahrt
-            double sx = cx < ziel.x() + plan.breiteX / 2.0 ? ziel.x() - 64 : ziel.x() + plan.breiteX + 64;
-            wege.add(new double[]{sx, suedZiel + 24});
+            boolean westen = cx < ziel.x() + plan.breiteX / 2.0;
+            double sx = westen ? ziel.x() - 64 : ziel.x() + plan.breiteX + 64;
+            wege.add(new double[]{sx, suedZiel + 24, suedZiel + 12, westen ? ziel.x() - 8 : ziel.x() + plan.breiteX + 8, westen ? -1 : 1});
         }
         wege.add(new double[]{b.getX(), b.getZ()});
         String name = "Straße zur " + ziel.name();
