@@ -49,6 +49,9 @@ public class StinkendReich implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Stinkend Reich {} für Minecraft {} startet", VERSION, MINECRAFT);
         Konfig.laden();
+        if (net.fabricmc.loader.api.FabricLoader.getInstance().getEnvironmentType() == net.fabricmc.api.EnvType.SERVER) {
+            WeltVonPaper.reparieren();
+        }
         ModSounds.init();
         ModItems.init();
         ModBloecke.init();

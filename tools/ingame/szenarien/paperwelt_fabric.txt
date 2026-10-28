@@ -1,0 +1,4 @@
+warte 25
+server /say Autotest-Pruefung Paper-Welt laeuft
+warte 3
+bild pw_paperwelt
