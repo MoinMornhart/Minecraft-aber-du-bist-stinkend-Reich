@@ -720,6 +720,9 @@ public final class Butler implements Listener {
 
     public static void sagen(Player p, String text) {
         p.sendMessage(Component.text("<James> ", NamedTextColor.GOLD).append(Component.text(text, NamedTextColor.WHITE)));
+        if (de.moinmornhart.stinkendreich.paper.Autotest.aktiv()) {
+            Bukkit.getLogger().info("Autotest: James zu " + p.getName() + ": " + text);
+        }
     }
 
     @EventHandler
