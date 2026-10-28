@@ -196,14 +196,14 @@ const Z = 300, N = D.modelle.length;
 const r = new THREE.WebGLRenderer({canvas: document.getElementById('c'), antialias: true, preserveDrawingBuffer: true});
 r.setSize(2 * Z, N * Z); r.setScissorTest(true);
 const lader = new THREE.TextureLoader(), cache = {};
-function tex(k) {
-  if (!(k in cache)) {
-    const t = D.texturen[k] ? lader.load(D.texturen[k]) : null;
-    if (t) { t.magFilter = THREE.NearestFilter; t.minFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace; }
-    cache[k] = t;
-  }
-  return cache[k];
+// Erst alle Bilder laden, dann zeichnen (sonst bleiben die Flächen leer)
+for (const [k, url] of Object.entries(D.texturen)) {
+  if (!url) { cache[k] = null; continue; }
+  const t = await lader.loadAsync(url);
+  t.magFilter = THREE.NearestFilter; t.minFilter = THREE.NearestFilter; t.colorSpace = THREE.SRGBColorSpace;
+  cache[k] = t;
 }
+function tex(k) { return cache[k] || null; }
 const SEITEN = ['east', 'west', 'up', 'down', 'south', 'north'];   // Reihenfolge der BoxGeometry
 function wuerfel(w) {
   const gr = [0, 1, 2].map(i => Math.max(Math.abs(w.to[i] - w.from[i]), 0.001));
