@@ -87,7 +87,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         zugbruecke = new de.moinmornhart.stinkendreich.paper.block.Zugbruecke(this, mechanik);
         getServer().getPluginManager().registerEvents(zugbruecke, this);
         new de.moinmornhart.stinkendreich.paper.block.Geheimgang(this, bloecke, mechanik, tore);
-        new de.moinmornhart.stinkendreich.paper.block.Graben(this);
+        getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Graben(this), this);
         festung = new de.moinmornhart.stinkendreich.paper.block.Festung(this, bloecke, mechanik);
         fernseher = new de.moinmornhart.stinkendreich.paper.block.Fernseher(this);
         bodyguards = new de.moinmornhart.stinkendreich.paper.butler.Bodyguards(this);
@@ -104,6 +104,7 @@ public final class StinkendReichPaper extends JavaPlugin implements Listener {
         mitarbeiter = new de.moinmornhart.stinkendreich.paper.butler.Mitarbeiter(this);
         getServer().getPluginManager().registerEvents(mitarbeiter, this);
         getServer().getPluginManager().registerEvents(fernseher, this);
+        getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Fernbedienung(this, bloecke, mechanik), this);
         inkognito = new de.moinmornhart.stinkendreich.paper.block.Inkognito(this, bloecke);
         getServer().getPluginManager().registerEvents(inkognito, this);
         getServer().getPluginManager().registerEvents(new de.moinmornhart.stinkendreich.paper.block.Haushalt(this, bloecke, mechanik), this);

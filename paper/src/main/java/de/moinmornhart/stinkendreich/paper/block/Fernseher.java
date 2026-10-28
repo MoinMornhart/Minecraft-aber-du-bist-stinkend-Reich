@@ -129,6 +129,35 @@ public final class Fernseher implements Listener {
         tv.setItemStack(s);
     }
 
+    /**
+     * Fernseher, den der Spieler anschaut (kleinster Winkel zur Blickrichtung, höchstens 30°, bis 32 Blöcke), sonst der
+     * nächste. Für die Fernbedienung.
+     */
+    public ItemDisplay ziel(Player p) {
+        Location auge = p.getEyeLocation();
+        Vector blick = auge.getDirection();
+        ItemDisplay best = null;
+        double bestWinkel = Math.cos(Math.toRadians(30));
+        for (Entity e : auge.getWorld().getNearbyEntities(auge, 32, 32, 32)) {
+            if (e instanceof Interaction f && f.getPersistentDataContainer().has(schluesselFeld)
+                    && Bukkit.getEntity(UUID.fromString(f.getPersistentDataContainer().get(schluesselFeld, PersistentDataType.STRING))) instanceof ItemDisplay tv) {
+                Vector hin = tv.getLocation().toVector().subtract(auge.toVector());
+                double w = hin.lengthSquared() < 1.0E-6 ? 1.0 : hin.normalize().dot(blick);
+                if (w > bestWinkel) {
+                    bestWinkel = w;
+                    best = tv;
+                }
+            }
+        }
+        if (best == null) {
+            best = naechster(p.getLocation());
+            if (best != null && best.getLocation().distanceSquared(p.getLocation()) > 32 * 32) {
+                best = null;
+            }
+        }
+        return best;
+    }
+
     /** Nächster Fernseher zu einem Ort (für Tests). */
     public ItemDisplay naechster(Location l) {
         ItemDisplay best = null;

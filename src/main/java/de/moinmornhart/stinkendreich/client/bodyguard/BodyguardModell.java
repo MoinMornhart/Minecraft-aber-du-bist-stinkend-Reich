@@ -28,19 +28,23 @@ public class BodyguardModell extends IronGolemModel {
     @Override
     public void setupAnim(IronGolemRenderState zustand) {
         super.setupAnim(zustand);
-        if (zustand instanceof BodyguardRenderState b && b.zielt) {
-            armHeben(zustand.yRot, zustand.xRot);
+        if (zustand instanceof BodyguardRenderState b && !b.nahkampf) {
+            // Pistole immer in der Hand wie ein Spieler: beim Zielen waagerecht zum Gegner, sonst etwas gesenkt
+            armHeben(b.zielt ? zustand.yRot : 0.0F, b.zielt ? zustand.xRot : BEREIT);
         }
     }
     //?} else {
     /*@Override
     public void setupAnim(IronGolem golem, float schritt, float schwung, float alter, float kopfGier, float kopfNeigung) {
         super.setupAnim(golem, schritt, schwung, alter, kopfGier, kopfNeigung);
-        if (golem instanceof BodyguardEntity b && b.zielt()) {
-            armHeben(kopfGier, kopfNeigung);
+        if (golem instanceof BodyguardEntity b && !b.nahkampf()) {
+            armHeben(b.zielt() ? kopfGier : 0.0F, b.zielt() ? kopfNeigung : BEREIT);
         }
     }
     *///?}
+
+    /** Neigung des Arms, wenn er nicht zielt (Grad nach unten): Pistole bereit, Lauf schräg nach vorn unten. */
+    private static final float BEREIT = 25.0F;
 
     /** Rechter Arm waagerecht nach vorn und mit dem Kopf mitgedreht (Gier und Neigung des Kopfes in Grad). */
     private void armHeben(float gier, float neigung) {

@@ -44,6 +44,7 @@ TEXTE_DE = {
     "stinkendreich.fernseher.status.fehler": "Fernseher: %s",
     "stinkendreich.fernseher.status.freigabe": "Hier läuft ein Video. Rechtsklick auf den Fernseher, um Videos im Spiel einzuschalten.",
     "stinkendreich.fernbedienung.keiner": "Kein Fernseher in der Nähe",
+    "stinkendreich.fernbedienung.genommen": "Fernbedienung in der Hand · Rechtsklick: Fernseher · Schleichen + Rechtsklick auf einen Tisch: ablegen",
 }
 TEXTE_EN = {
     "entity.stinkendreich.fernseher": "XXL TV",
@@ -72,6 +73,7 @@ TEXTE_EN = {
     "stinkendreich.fernseher.status.fehler": "TV: %s",
     "stinkendreich.fernseher.status.freigabe": "A video is playing here. Right-click the TV to turn on videos in the game.",
     "stinkendreich.fernbedienung.keiner": "No TV nearby",
+    "stinkendreich.fernbedienung.genommen": "Remote in hand · Right-click: TV · Sneak + right-click on a table: put it down",
 }
 
 

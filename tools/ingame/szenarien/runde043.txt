@@ -1,0 +1,77 @@
+# Runde 0.4.3 (Mod, 26.3): Wandlücke neben der Personalküche, kein Eis im Graben, Fernbedienung vom Tisch in die Hand,
+# Bodyguards halten die Pistole wie ein Spieler (Arm gehoben) und stecken sie im Nahkampf weg.
+# Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/runde043.txt
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+taste F1
+warte 2
+# 1. Personalküche: Tür bei Villa 73/42, daneben (z 43) muss Wand sein
+server /villa ort 70.5 26 43 -90 5
+warte 4
+bild a01_kuechentuer
+# 2. Eis im Wassergraben (Villa x 8, oberste Wasserlage y 24): Kamera darüber, Eis relativ zur Kamera setzen
+server /villa ort 12 30 50 90 50
+warte 2
+server /execute at @p run fill ~-4 ~-6 ~-6 ~-4 ~-6 ~6 minecraft:ice replace minecraft:water
+warte 0.5
+bild a02_eis_gesetzt
+warte 6
+bild a03_eis_weg
+# 3. Fernbedienung auf dem Loungetisch im Penthouse-Kino: mit leerer Hand Rechtsklick → in der Hand
+server /gamemode creative @p
+server /clear @p
+server /villa ort 63.5 38 42.2 0 20
+warte 3
+taste F1
+warte 1
+bild a04_fernbedienung_liegt
+klick
+warte 2
+bild a05_fernbedienung_in_der_hand
+server /villa ort 63.5 38 42.2 0 3
+warte 1
+klick
+warte 2
+bild a06_fernseher_menue
+klient schliessen
+taste F1
+# 4. Bodyguards per Handy rufen (wie bodyguard_ziel.txt)
+server /difficulty easy
+server /villa ort 55.5 26 92 180 0
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+warte 1
+klick
+warte 1.5
+merke
+linksklick 640 440
+bis 15 Bodyguards sind da
+server /item replace entity @p weapon.mainhand with minecraft:air
+warte 3
+server /gamemode spectator
+server /villa ort 61 28 93 140 10
+warte 2
+bild a07_bodyguards_bereit
+server /gamemode creative
+server /villa ort 55.5 26 92 180 0
+warte 1
+server /execute as @p at @s run summon minecraft:vindicator ~-3 ~ ~-12 {NoAI:1b,PersistenceRequired:1b,active_effects:[{id:"minecraft:resistance",amplifier:4b,duration:600,show_particles:0b}]}
+server /gamemode spectator
+server /villa ort 61 28 93 140 10
+warte 2
+bild a08_bodyguards_zielen
+server /kill @e[type=minecraft:vindicator]
+server /gamemode creative
+server /villa ort 55.5 26 92 180 0
+warte 3
+server /execute as @p at @s run summon minecraft:vindicator ~2 ~-2 ~-3 {NoAI:1b,PersistenceRequired:1b,active_effects:[{id:"minecraft:resistance",amplifier:4b,duration:600,show_particles:0b}]}
+server /gamemode spectator
+server /villa ort 61 28 93 140 10
+warte 1.5
+bild a09_bodyguards_nahkampf
+warte 1.5
+bild a10_bodyguards_nahkampf2
+server /kill @e[type=minecraft:vindicator]
+server /difficulty peaceful

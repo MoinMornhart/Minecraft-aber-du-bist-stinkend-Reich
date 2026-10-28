@@ -20,7 +20,8 @@ import net.minecraft.client.renderer.entity.state.IronGolemRenderState;
 
 /**
  * Die goldene Pistole in der rechten Hand des Bodyguards (dieselbe, mit der er schießt). Sie hängt am rechten Arm des
- * Golem-Modells und schwingt mit ihm; gehalten wie bei einem Spieler, nur passend zur großen Golem-Hand vergrößert.
+ * Golem-Modells, gehalten wie bei einem Spieler (Arm gehoben, Lauf nach vorn), passend zur großen Golem-Hand
+ * vergrößert. Im Nahkampf ist sie weggesteckt.
  */
 //? if >=1.21.2 {
 public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemModel> {
@@ -47,26 +48,19 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
     }
 
     /**
-     * Arm-Lage übernehmen und an die Hand rücken; danach liegt die Pistole wie in einer Spielerhand. Beim Zielen ist der
-     * Arm schon gehoben ({@link BodyguardModell}), dann zeigt der Lauf ohne weitere Drehung entlang des Arms.
+     * Arm-Lage übernehmen und an die Hand rücken; danach liegt die Pistole wie in einer Spielerhand. Der Arm ist immer
+     * gehoben ({@link BodyguardModell}: zum Gegner oder etwas gesenkt), der Lauf zeigt entlang des Arms nach vorn.
      */
-    private void anDieHand(PoseStack pose, boolean zielt) {
+    private void anDieHand(PoseStack pose) {
         getParentModel().getFlowerHoldingArm().translateAndRotate(pose);
         pose.translate(HAND_X, HAND_Y, 0.0F);
-        // Wie bei einer Spielerhand, dazu 90° nach vorn: Die Pistolen-Haltung ist für einen gehobenen Arm gemacht
-        // (Zielhaltung), der Golem lässt den Arm hängen – ohne die Drehung zeigte der Lauf senkrecht nach oben
+        // Wie bei einer Spielerhand. Der Arm ist immer gehoben (BodyguardModell), dann zeigt der Lauf entlang des Arms
         //? if >=26.3 {
         pose.rotate(Axis.XP.rotationDegrees(-90.0F));
         pose.rotate(Axis.YP.rotationDegrees(180.0F));
-        if (!zielt) {
-            pose.rotate(Axis.XP.rotationDegrees(90.0F));
-        }
         //?} else {
         /*pose.mulPose(Axis.XP.rotationDegrees(-90.0F));
         pose.mulPose(Axis.YP.rotationDegrees(180.0F));
-        if (!zielt) {
-            pose.mulPose(Axis.XP.rotationDegrees(90.0F));
-        }
         *///?}
         pose.scale(GROESSE, GROESSE, GROESSE);
         pose.translate(0.0F, 0.08F, 0.0F);
@@ -76,11 +70,11 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
     @Override
     public void submit(PoseStack pose, net.minecraft.client.renderer.SubmitNodeCollector sammler, int licht, IronGolemRenderState zustand,
                        float gier, float neigung) {
-        if (zustand.isInvisible) {
-            return;
+        if (zustand.isInvisible || zustand instanceof BodyguardRenderState b && b.nahkampf) {
+            return;                                   // im Nahkampf steckt die Pistole weg
         }
         pose.pushPose();
-        anDieHand(pose, zustand instanceof BodyguardRenderState b && b.zielt);
+        anDieHand(pose);
         net.minecraft.client.renderer.item.ItemStackRenderState bild = new net.minecraft.client.renderer.item.ItemStackRenderState();
         Minecraft.getInstance().getItemModelResolver().updateForTopItem(bild, pistole(), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
                 Minecraft.getInstance().level, null, 0);
@@ -91,11 +85,11 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
     /*@Override
     public void render(PoseStack pose, net.minecraft.client.renderer.MultiBufferSource puffer, int licht, IronGolemRenderState zustand,
                        float gier, float neigung) {
-        if (zustand.isInvisible) {
-            return;
+        if (zustand.isInvisible || zustand instanceof BodyguardRenderState b && b.nahkampf) {
+            return;                                   // im Nahkampf steckt die Pistole weg
         }
         pose.pushPose();
-        anDieHand(pose, zustand instanceof BodyguardRenderState b && b.zielt);
+        anDieHand(pose);
         net.minecraft.client.renderer.item.ItemStackRenderState bild = new net.minecraft.client.renderer.item.ItemStackRenderState();
         Minecraft.getInstance().getItemModelResolver().updateForTopItem(bild, pistole(), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
                 Minecraft.getInstance().level, null, 0);
@@ -106,11 +100,11 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
     /*@Override
     public void render(PoseStack pose, net.minecraft.client.renderer.MultiBufferSource puffer, int licht, IronGolemRenderState zustand,
                        float gier, float neigung) {
-        if (zustand.isInvisible) {
-            return;
+        if (zustand.isInvisible || zustand instanceof BodyguardRenderState b && b.nahkampf) {
+            return;                                   // im Nahkampf steckt die Pistole weg
         }
         pose.pushPose();
-        anDieHand(pose, zustand instanceof BodyguardRenderState b && b.zielt);
+        anDieHand(pose);
         net.minecraft.client.renderer.item.ItemStackRenderState bild = new net.minecraft.client.renderer.item.ItemStackRenderState();
         // In 1.21.4 noch mit der Angabe „linke Hand“
         Minecraft.getInstance().getItemModelResolver().updateForTopItem(bild, pistole(), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND,
@@ -122,11 +116,11 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
     /*@Override
     public void render(PoseStack pose, net.minecraft.client.renderer.MultiBufferSource puffer, int licht, IronGolemRenderState zustand,
                        float gier, float neigung) {
-        if (zustand.isInvisible) {
-            return;
+        if (zustand.isInvisible || zustand instanceof BodyguardRenderState b && b.nahkampf) {
+            return;                                   // im Nahkampf steckt die Pistole weg
         }
         pose.pushPose();
-        anDieHand(pose, zustand instanceof BodyguardRenderState b && b.zielt);
+        anDieHand(pose);
         Minecraft.getInstance().getItemRenderer().renderStatic(pistole(), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, licht,
                 OverlayTexture.NO_OVERLAY, pose, puffer, Minecraft.getInstance().level, 0);
         pose.popPose();
@@ -135,11 +129,11 @@ public class PistolenLayer extends RenderLayer<IronGolemRenderState, IronGolemMo
     /*@Override
     public void render(PoseStack pose, net.minecraft.client.renderer.MultiBufferSource puffer, int licht, IronGolem golem,
                        float a, float b, float c, float d, float e, float f) {
-        if (golem.isInvisible()) {
-            return;
+        if (golem.isInvisible() || golem instanceof de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity bg && bg.nahkampf()) {
+            return;                                   // im Nahkampf steckt die Pistole weg
         }
         pose.pushPose();
-        anDieHand(pose, golem instanceof de.moinmornhart.stinkendreich.bodyguard.BodyguardEntity bg && bg.zielt());
+        anDieHand(pose);
         Minecraft.getInstance().getItemRenderer().renderStatic(golem, pistole(), ItemDisplayContext.THIRD_PERSON_RIGHT_HAND, false,
                 pose, puffer, golem.level(), licht, OverlayTexture.NO_OVERLAY, golem.getId());
         pose.popPose();

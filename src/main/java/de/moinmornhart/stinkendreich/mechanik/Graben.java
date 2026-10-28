@@ -22,7 +22,8 @@ import java.util.List;
  * Lava-Graben: Nur im Lockdown (Stufe 2 und 3) und in der Festung (Stufe 4) füllt sich der Graben rund um das
  * Grundstück mit Lava, sonst ist Wasser darin. Getauscht wird in zwei Schritten: erst alles leeren, im nächsten Tick neu füllen. So berühren
  * sich Wasser und Lava nie (das gäbe Obsidian). Blöcke, die jemand in den Graben gebaut hat, bleiben.
- * Ein- und ausschalten: Config „lavaGraben“.
+ * Ein- und ausschalten: Config „lavaGraben“. Eis im Graben (aus der Zeit vor 0.4.3 oder von Frostläufer-Stiefeln)
+ * taut er wieder auf; neues Eis entsteht auf dem Grundstück nicht mehr ({@code KeinEisMixin}).
  */
 public final class Graben {
     /** So oft wird nachgesehen, ob jemand zu Hause ist (Ticks). */
@@ -31,6 +32,8 @@ public final class Graben {
     /** Graben je Villa: Felder des Rings, ob gerade Lava drin ist, und ob er im nächsten Tick neu gefüllt wird. */
     private static final class Ring {
         List<BlockPos> felder;
+        /** Oberste Lage des Rings (nur dort friert Wasser). */
+        List<BlockPos> oben;
         Boolean istLava;
         Boolean fuellenMitLava;
     }
@@ -64,6 +67,8 @@ public final class Graben {
         }
         if (r.felder == null) {
             r.felder = felderBerechnen(villa);
+            int y1 = r.felder.stream().mapToInt(BlockPos::getY).max().orElse(0);
+            r.oben = r.felder.stream().filter(p -> p.getY() == y1).toList();
         }
         if (r.felder.isEmpty() || !welt.isLoaded(r.felder.get(0)) || !welt.isLoaded(r.felder.get(r.felder.size() - 1))) {
             return;
@@ -74,11 +79,29 @@ public final class Graben {
         if (r.istLava == null) {
             r.istLava = welt.getBlockState(r.felder.get(r.felder.size() / 2)).is(Blocks.LAVA);
         }
+        if (!r.istLava) {
+            enteisen(welt, r);
+        }
         if (soll != r.istLava) {
             leeren(welt, r);
             r.fuellenMitLava = soll;
             zustand.anBewohner(Component.translatable(soll ? "stinkendreich.graben.lava" : "stinkendreich.graben.wasser")
                     .withStyle(soll ? ChatFormatting.GOLD : ChatFormatting.AQUA), true);
+        }
+    }
+
+    /** Eis auf dem Wasser des Grabens wieder zu Wasser machen. */
+    private static void enteisen(ServerLevel welt, Ring r) {
+        int n = 0;
+        for (BlockPos p : r.oben) {
+            BlockState b = welt.getBlockState(p);
+            if (b.is(Blocks.ICE) || b.is(Blocks.FROSTED_ICE)) {
+                welt.setBlock(p, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
+                n++;
+            }
+        }
+        if (n > 0) {
+            de.moinmornhart.stinkendreich.StinkendReich.LOGGER.info("Graben: {} Eisblöcke aufgetaut", n);
         }
     }
 

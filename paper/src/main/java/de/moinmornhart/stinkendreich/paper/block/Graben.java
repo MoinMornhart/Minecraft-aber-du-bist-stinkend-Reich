@@ -9,6 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFormEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,13 +22,18 @@ import java.util.Map;
  * Lava-Graben wie in der Mod: Im Lockdown (Stufe 2 und 3) füllt sich der Wassergraben rund ums Grundstück mit Lava,
  * sonst ist Wasser darin. Getauscht wird in zwei Schritten (erst leeren, im nächsten Tick füllen), damit sich Wasser und
  * Lava nie berühren (das gäbe Obsidian). Blöcke, die jemand in den Graben gebaut hat, bleiben.
+ *
+ * <p>Kein Eis auf dem Gelände einer Villa: In kalten Gegenden friert Minecraft offenes Wasser zu (Graben, Pool,
+ * Haibecken). Das wird auf dem Grundstück verhindert, und Eis, das schon im Graben liegt, taut wieder auf.
  */
-public final class Graben {
+public final class Graben implements Listener {
     private static final int PRUEFEN_ALLE = 40;
 
     /** Graben je Villa: Felder des Rings, ob Lava drin ist, und ob er im nächsten Tick neu gefüllt wird. */
     private static final class Ring {
         List<Block> felder;
+        /** Oberste Lage des Rings (nur dort friert Wasser). */
+        List<Block> oben;
         Boolean istLava;
         Boolean fuellenMitLava;
     }
@@ -53,6 +61,8 @@ public final class Graben {
             }
             if (r.felder == null) {
                 r.felder = felder(v);
+                int y1 = r.felder.stream().mapToInt(Block::getY).max().orElse(0);
+                r.oben = r.felder.stream().filter(b -> b.getY() == y1).toList();
             }
             if (r.felder.isEmpty() || !geladen(r.felder.getFirst()) || !geladen(r.felder.getLast())) {
                 continue;
@@ -60,6 +70,13 @@ public final class Graben {
             boolean soll = plugin.getConfig().getBoolean("villa.lavaGraben", true) && plugin.sicherheit().stufe(v) >= 2;
             if (r.istLava == null) {
                 r.istLava = r.felder.get(r.felder.size() / 2).getType() == Material.LAVA;
+            }
+            if (!r.istLava) {
+                for (Block b : r.oben) {
+                    if (b.getType() == Material.ICE || b.getType() == Material.FROSTED_ICE) {
+                        b.setType(Material.WATER, true);
+                    }
+                }
             }
             if (soll != r.istLava) {
                 for (Block b : r.felder) {
@@ -76,6 +93,14 @@ public final class Graben {
                 }
                 plugin.getLogger().info("Graben: Villa " + v.nr() + (soll ? " Lava" : " Wasser"));
             }
+        }
+    }
+
+    /** Wasser friert auf dem Gelände einer Villa nicht zu. */
+    @EventHandler(ignoreCancelled = true)
+    public void beimFrieren(BlockFormEvent e) {
+        if (e.getNewState().getType() == Material.ICE && plugin.villen().bei(e.getBlock().getLocation(), 72) != null) {
+            e.setCancelled(true);
         }
     }
 

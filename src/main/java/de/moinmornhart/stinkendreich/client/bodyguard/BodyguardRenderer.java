@@ -51,6 +51,7 @@ public class BodyguardRenderer extends IronGolemRenderer {
         super.extractRenderState(golem, zustand, teil);
         if (zustand instanceof BodyguardRenderState b) {
             b.zielt = golem instanceof BodyguardEntity bg && bg.zielt();
+            b.nahkampf = golem instanceof BodyguardEntity bg2 && bg2.nahkampf();
         }
     }
     //?}

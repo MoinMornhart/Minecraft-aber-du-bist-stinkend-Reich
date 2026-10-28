@@ -1,0 +1,73 @@
+# Runde 0.4.3, Teil 2 (Mod, 26.3): Eis im Graben taut auf, Fernbedienung vom Tisch in die Hand, neue Limo und neuer
+# Supersportwagen von allen Seiten (Plattform am Himmel). Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/runde043b.txt
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+taste F1
+warte 2
+# 1. Eis im Graben: setzen, Foto sofort, dann warten, bis der Graben es auftaut (Protokoll „Eisblöcke aufgetaut“)
+server /villa ort 12 30 50 90 50
+warte 2
+merke
+server /execute at @p run fill ~-4 ~-6 ~-6 ~-4 ~-6 ~6 minecraft:ice replace minecraft:water
+bild b01_eis_gesetzt
+bis 10 Eisblöcke aufgetaut
+warte 1
+bild b02_eis_weg
+# 2. Fernbedienung (leere Hand, Blick genau auf die Fernbedienung auf dem linken Loungetisch)
+server /gamemode creative @p
+server /clear @p
+server /villa ort 63.5 38 42.2 0 17
+warte 3
+taste F1
+warte 1
+bild b03_fernbedienung_ziel
+klick
+warte 2
+bild b04_fernbedienung_in_der_hand
+server /villa ort 63.5 38 42.2 0 3
+warte 1
+klick
+warte 2
+bild b05_fernseher_menue
+klient schliessen
+taste F1
+# 3. Neue Autos auf einer Plattform am Himmel
+server /gamemode spectator @p
+server /fill 190 150 196 262 150 224 minecraft:smooth_stone
+server /summon stinkendreich:stretchlimo 207 151 210
+server /summon stinkendreich:supersportwagen 240 151 210
+warte 2
+server /tp @e[type=stinkendreich:stretchlimo] 207 151 210 -90 0
+server /tp @e[type=stinkendreich:supersportwagen] 240 151 210 -90 0
+warte 1
+server /tp @p 207 153.5 223 180 8
+warte 5
+bild b06_limo_seite
+server /tp @p 194 154 219 -135 15
+warte 3
+bild b07_limo_vorn
+server /tp @p 220 154.5 218 135 18
+warte 3
+bild b08_limo_hinten
+server /tp @p 240 153 218 180 8
+warte 3
+bild b09_sport_seite
+server /tp @p 231 153.5 216 -140 15
+warte 3
+bild b10_sport_vorn
+server /tp @p 249 153.5 216 140 15
+warte 3
+bild b11_sport_hinten
+server /tp @p 240 158 210 0 90
+warte 3
+bild b12_sport_oben
+# Einsteigen: sieht man aus der Limo hinaus (getönte Scheiben)?
+server /gamemode creative @p
+server /tp @p 207 151 212
+warte 2
+server /ride @p mount @e[type=stinkendreich:stretchlimo,limit=1]
+warte 3
+bild b13_limo_innen

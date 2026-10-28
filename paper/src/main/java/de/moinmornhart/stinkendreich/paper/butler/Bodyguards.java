@@ -254,7 +254,8 @@ public final class Bodyguards implements Listener {
 
     /**
      * Die Puppe steht dort, wo der unsichtbare Golem läuft. Zielt er, schaut sie den Gegner an (Kopf und Körper, mit
-     * Neigung) und hält die Pistole im Anschlag, sonst schaut sie wie der Golem und hält die Pistole locker.
+     * Neigung) und hält die Pistole im Anschlag, sonst schaut sie wie der Golem und hält die Pistole locker. Im
+     * Nahkampf ist die Pistole weggesteckt.
      */
     private void puppeNachfuehren(IronGolem g, Mannequin m, LivingEntity ziel) {
         Location soll = g.getLocation();
@@ -270,8 +271,15 @@ public final class Bodyguards implements Listener {
             m.setBodyYaw(ziel != null ? soll.getYaw() : g.getBodyYaw());
         }
         ItemStack hand = m.getEquipment().getItem(EquipmentSlot.HAND);
+        if (nahkampf.contains(g)) {
+            // Im Nahkampf steckt die Pistole weg, er kämpft mit den Fäusten
+            if (!hand.isEmpty()) {
+                m.getEquipment().setItem(EquipmentSlot.HAND, null);
+            }
+            return;
+        }
         boolean imAnschlag = hand.getType() == Material.CROSSBOW;
-        if (imAnschlag != (ziel != null)) {
+        if (hand.isEmpty() || imAnschlag != (ziel != null)) {
             if (de.moinmornhart.stinkendreich.paper.Autotest.aktiv()) {
                 plugin.getLogger().info("Autotest: Bodyguard " + g.getEntityId() + (ziel != null
                         ? " zielt auf " + ziel.getType().getKey().getKey() + " " + ziel.getEntityId() : " zielt nicht mehr"));

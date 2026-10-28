@@ -454,7 +454,7 @@ def erdgeschoss() -> None:
         b.setze(x, OG - 2, 43, zustand("lantern", hanging="true", waterlogged="false"))
     # Personalküche hinter der Küche: hier kocht und schmilzt James (echte Öfen), Vorräte und Brennstoff
     b.quader(73, y, HZ0 + 1, 73, OG - 1, 44, WEISS)
-    b.luft(73, y, 42, 73, y + 1, 43)
+    b.luft(73, y, 42, 73, y + 1, 42)                                        # nur die Tür (daneben bleibt die Wand zu)
     tuer(b, 73, y, 42, "east", "stinkendreich:prunktuer", "right")
     b.setze(75, y, HZ0 + 1, zustand("smoker", facing="south", lit="false"))
     b.setze(76, y, HZ0 + 1, zustand("furnace", facing="south", lit="false"))

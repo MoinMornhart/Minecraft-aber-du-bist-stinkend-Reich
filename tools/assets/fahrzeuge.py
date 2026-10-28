@@ -115,6 +115,43 @@ def mat_glas_dunkel(d, r, lack):
     d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], outline=(14, 16, 22, 255))
 
 
+def mat_glas_getoent(d, r, lack):
+    """Getönte Scheibe (Limousine): grob dunkel, fein gerastert (siehe fein_getoent) – von außen dunkel, von innen
+    sieht man durch die Lücken hinaus."""
+    fuellen(d, r, (20, 24, 32))
+
+
+def mat_sterne(d, r, lack):
+    """Sternenhimmel unter dem Dach der Limousine: dunkelblau mit hellen Punkten."""
+    fuellen(d, r, (14, 16, 30))
+    x0, y0, b, h = r
+    zufall = random.Random(b * 31 + h)
+    for _ in range(max(1, b * h // 12)):
+        d.point((x0 + zufall.randrange(max(1, b)), y0 + zufall.randrange(max(1, h))), fill=(250, 244, 210, 255))
+
+
+def mat_licht_streifen(d, r, lack):
+    """Schmaler LED-Streifen (Tagfahrlicht)."""
+    fuellen(d, r, (236, 244, 255))
+
+
+def mat_rueck_streifen(d, r, lack):
+    """Durchgehendes Rücklichtband: rot mit dunklen Fugen."""
+    fuellen(d, r, ROT)
+    x0, y0, b, h = r
+    for x in range(x0 + 3, x0 + b - 1, 4):
+        d.line([(x, y0), (x, y0 + h - 1)], fill=(120, 10, 14, 255))
+
+
+def mat_wabe(d, r, lack):
+    """Wabengitter (Lufteinlässe des Supersportwagens)."""
+    fuellen(d, r, (14, 14, 16))
+    x0, y0, b, h = r
+    for y in range(y0, y0 + h, 2):
+        for x in range(x0 + (y - y0) % 4 // 2, x0 + b, 2):
+            d.point((x, y), fill=(46, 46, 52, 255))
+
+
 def mat_reifen(d, r, lack):
     fuellen(d, r, REIFEN)
     x0, y0, b, h = r
@@ -164,6 +201,18 @@ def fein_felge(d, r):
                    fill=(*CHROM, 255), width=max(1, FEIN // 2))
     kreis(FEIN * 1.4, (*GOLD, 255))                              # Nabe
     kreis(FEIN * 0.6, (*CHROM, 255))
+
+
+def fein_getoent(d, r):
+    """Getöntes Glas fein: Raster aus dunklen und durchsichtigen Punkten, dazu schräge Lichtreflexe."""
+    x0, y0, b, h = r
+    d.rectangle([x0, y0, x0 + b - 1, y0 + h - 1], fill=(0, 0, 0, 0))
+    for y in range(y0, y0 + h):
+        for x in range(x0 + (y - y0) % 2, x0 + b, 2):
+            d.point((x, y), fill=(18, 22, 32, 255))
+    for i in range(-h, b, max(12, b // 3)):
+        for k in range(2):
+            d.line([(x0 + i + k, y0 + h - 1), (x0 + i + k + h - 1, y0)], fill=(70, 86, 112, 255))
 
 
 def fein_scheinwerfer_rund(d, r):
@@ -242,10 +291,13 @@ MATERIALIEN = {
     "gruen": farbe_mat((30, 200, 70)), "glas_dunkel": mat_glas_dunkel,
     "grill_quer": mat_grill_quer, "scheinwerfer_rund": mat_scheinwerfer_rund,
     "reifen_flanke": farbe_mat(FLANKE), "felge_rund": mat_leer,
+    "glas_getoent": mat_glas_getoent, "sterne": mat_sterne, "led": mat_licht_streifen, "rueck_band": mat_rueck_streifen,
+    "wabe": mat_wabe,
 }
 
 # Materialien, die nach dem Vergrößern noch einmal fein gemalt werden
-FEIN_MALER = {"reifen_flanke": fein_flanke, "felge_rund": fein_felge, "scheinwerfer_rund": fein_scheinwerfer_rund}
+FEIN_MALER = {"reifen_flanke": fein_flanke, "felge_rund": fein_felge, "scheinwerfer_rund": fein_scheinwerfer_rund,
+              "glas_getoent": fein_getoent}
 
 # ---------------------------------------------------------------------------
 # Modell-Baukasten
@@ -562,29 +614,60 @@ def hubschrauber() -> Modell:
 
 
 def supersportwagen() -> Modell:
-    """Flacher Keil-Supersportwagen (4,5 × 2 Blöcke): Mittelmotor mit Lamellen, Lufteinlässe, Heckflügel."""
+    """Supersportwagen im Stil der italienischen Keile (4,5 × 2 Blöcke, Maßstab 1,5): flach und kantig, lange schräge
+    Haube, weit nach vorn gezogene Frontscheibe, kurzes Dach, Motorhaube mit Lamellen schräg zum Heck, riesige
+    Lufteinlässe in den Flanken und vorn, Y-förmige Lichter, Diffusor mit Endrohren in der Mitte, Heckflügel."""
     m = Modell("supersportwagen")
     k = m.teil("karosserie")
-    k.kasten((-16, -7, -36), (32, 4, 72), "lack", unten="schwarz", seite="seite")
-    k.kasten((-15, -9, -36), (30, 2, 22), "lack", oben="streifen")                    # flache Haube
-    k.kasten((-16, -4, -37), (32, 1, 3), "carbon")                                     # Frontsplitter
-    k.kasten((-16, -12, -14), (2, 5, 20), "lack").kasten((14, -12, -14), (2, 5, 20), "lack")   # Türen
-    k.kasten((-17, -11, 2), (1, 4, 8), "schwarz").kasten((16, -11, 2), (1, 4, 8), "schwarz")   # Lufteinlässe
-    k.kasten((-15, -12, 6), (30, 5, 30), "lack", oben="lamellen")                      # Motorabdeckung
-    k.kasten((-16, -6, 34), (32, 3, 3), "carbon", hinten="grill")                      # Diffusor
-    k.kasten((-13, -9.5, -36.6), (8, 1, 1), "licht").kasten((5, -9.5, -36.6), (8, 1, 1), "licht")
-    k.kasten((-13, -11, 35.6), (9, 2, 1), "rot").kasten((4, -11, 35.6), (9, 2, 1), "rot")
-    k.kasten((-4, -6, 36.2), (8, 2, 1), "kennzeichen")
+    # Unterbau, Schweller und Flanken
+    k.kasten((-16, -7, -34), (32, 4, 68), "lack", unten="schwarz", seite="seite")
+    k.kasten((-15, -3, -36), (30, 1, 72), "carbon")                                     # Seitenschweller / Boden
+    k.kasten((-16, -11, -14), (2, 4, 20), "lack").kasten((14, -11, -14), (2, 4, 20), "lack")   # Türen
+    # Lufteinlässe hinter den Türen (Wabengitter), darüber eine scharfe Kante
+    k.kasten((-16.5, -11, 6), (1, 5, 10), "wabe").kasten((15.5, -11, 6), (1, 5, 10), "wabe")
+    k.kasten((-16.5, -12, 4), (1, 1, 14), "lack").kasten((15.5, -12, 4), (1, 1, 14), "lack")
+    # Heck: Flanken bis zur Höhe der Motorhaube
+    k.kasten((-16, -12, 16), (32, 5, 20), "lack", oben="wabe")
+    # Front: niedrige Nase mit drei großen Einlässen und Carbon-Splitter
+    k.kasten((-16, -8, -36), (32, 1, 4), "lack")
+    k.kasten((-15, -7, -36.6), (9, 4, 1), "wabe").kasten((6, -7, -36.6), (9, 4, 1), "wabe")
+    k.kasten((-4, -6, -36.6), (8, 3, 1), "wabe")
+    k.kasten((-17, -3, -38), (34, 1, 4), "carbon")
+    # Y-förmige Scheinwerfer: schmaler Streifen und schräger Strich
+    k.kasten((-15, -9, -36.4), (8, 1, 1), "led").kasten((7, -9, -36.4), (8, 1, 1), "led")
+    m.teil("licht_l", (-8, -9, -36.4), (0, 0, 0.5), eltern="karosserie").kasten((0, -0.5, 0), (4, 1, 1), "led")
+    m.teil("licht_r", (8, -9, -36.4), (0, 0, -0.5), eltern="karosserie").kasten((-4, -0.5, 0), (4, 1, 1), "led")
+    # Heck: Y-Rücklichter, schwarzes Gitter, Diffusor mit Lamellen und zwei Endrohren in der Mitte
+    k.kasten((-15, -11, 35.6), (9, 1, 1), "rot").kasten((6, -11, 35.6), (9, 1, 1), "rot")
+    m.teil("ruecklicht_l", (-6, -11, 36.0), (0, 0, -0.5), eltern="karosserie").kasten((0, -0.5, 0), (4, 1, 1), "rot")
+    m.teil("ruecklicht_r", (6, -11, 36.0), (0, 0, 0.5), eltern="karosserie").kasten((-4, -0.5, 0), (4, 1, 1), "rot")
+    k.kasten((-14, -9, 35.8), (28, 3, 1), "wabe")
+    k.kasten((-16, -5, 34), (32, 2, 3), "carbon")
+    for x in (-12, -8, 7, 11):
+        k.kasten((x, -5, 36.5), (1, 2, 1), "carbon")
+    k.kasten((-3.5, -6.5, 36.4), (3, 2, 1), "chrom", hinten="schwarz").kasten((0.5, -6.5, 36.4), (3, 2, 1), "chrom", hinten="schwarz")
+    k.kasten((-4, -11.5, 36.2), (8, 2, 1), "kennzeichen")
+    # Innenraum
     k.kasten((-13, -8, -13), (26, 1, 19), "innen")
-    k.kasten((-11, -22, -6), (22, 1, 12), "lack_dunkel")                               # Dach (Kopffreiheit)
-    k.kasten((-13, -21, 5), (26, 9, 1), "glas")                                        # Heckscheibe
-    k.kasten((-14, -17, 30), (28, 1, 5), "carbon")                                     # Heckflügel
-    k.kasten((-9, -16, 32), (2, 4, 2), "schwarz").kasten((7, -16, 32), (2, 4, 2), "schwarz")
-    k.kasten((-15, -21, 4), (2, 9, 2), "lack_dunkel").kasten((13, -21, 4), (2, 9, 2), "lack_dunkel")   # hintere Säulen
-    # Frontscheibe mit zwei schmalen Säulen links und rechts (sonst schwebt das Dach)
-    m.teil("scheibe", (0, -12, -14), (-0.9, 0, 0), eltern="karosserie").kasten((-12, -15, 0), (24, 15, 1), "glas") \
-        .kasten((-14, -15, -0.5), (2, 15, 2), "lack_dunkel").kasten((12, -15, -0.5), (2, 15, 2), "lack_dunkel")
-    m.teil("seitenscheiben").kasten((-15, -21, -8), (1, 9, 13), "glas").kasten((14, -21, -8), (1, 9, 13), "glas")
+    # Haube: flache Platte, die von der Nase schräg bis zur Frontscheibe ansteigt
+    m.teil("haube", (0, -8, -36), (0.16, 0, 0), eltern="karosserie").kasten((-15, 0, 0), (30, 2, 23), "lack")
+    # Frontscheibe weit vorn und flach, mit schwarzen Säulen; kurzes Dach
+    m.teil("scheibe", (0, -11, -15), (-0.95, 0, 0), eltern="karosserie").kasten((-12, -16, 0), (24, 16, 1), "glas") \
+        .kasten((-14, -16, -0.5), (2, 16, 2), "lack_dunkel").kasten((12, -16, -0.5), (2, 16, 2), "lack_dunkel")
+    k.kasten((-12, -22.5, -4), (24, 1, 11), "lack")
+    # Motorhaube mit Lamellen fällt vom Dach schräg zum Heck ab, seitlich dunkle Lamellenflächen
+    m.teil("motorhaube", (0, -22, 6), (-0.42, 0, 0), eltern="karosserie").kasten((-12, 0, 0), (24, 1, 25), "lamellen")
+    for z0, y0, tiefe in ((6, -21, 6), (12, -19, 6), (18, -17, 6), (24, -15, 6)):
+        k.kasten((-15, y0, z0), (2, -12 - y0, tiefe), "lack_dunkel").kasten((13, y0, z0), (2, -12 - y0, tiefe), "lack_dunkel")
+    # Seitenscheiben (vorn zur Säule hin schräg abgestuft)
+    m.teil("seitenscheiben").kasten((-15, -21, -5), (1, 9, 11), "glas").kasten((14, -21, -5), (1, 9, 11), "glas") \
+        .kasten((-15, -17, -10), (1, 5, 5), "glas").kasten((14, -17, -10), (1, 5, 5), "glas")
+    # Außenspiegel und Heckflügel
+    k.kasten((-19, -15, -10), (3, 2, 2), "lack").kasten((16, -15, -10), (3, 2, 2), "lack")
+    sp = m.teil("spoiler")
+    sp.kasten((-15, -18, 29), (30, 1, 6), "carbon")
+    sp.kasten((-15, -21, 28), (1, 4, 7), "carbon").kasten((14, -21, 28), (1, 4, 7), "carbon")
+    sp.kasten((-9, -17, 31), (2, 5, 2), "carbon").kasten((7, -17, 31), (2, 5, 2), "carbon")
     s = m.teil("sitze")
     for x in (-11, 2):
         sitz(s, x, -9, -6, lehne_hoehe=6, mat="leder_knoepfe")
@@ -594,30 +677,39 @@ def supersportwagen() -> Modell:
 
 
 def stretchlimo() -> Modell:
-    """Stretch-Limousine (8 Blöcke lang): lange Fahrgastzelle mit Ledersofas, Bar mit Champagner, Dach auf Säulen."""
+    """Stretch-Limousine (8 Blöcke lang) wie eine echte: lange, niedrige Karosserie, durchgehendes Band aus getönten
+    Scheiben mit Chromleiste, großer Chromgrill mit Kühlerfigur, Chromstoßstangen, LED-Lichter, durchgehendes
+    Rücklichtband. Innen zwei Ledersofas, Bar mit Champagner und ein Sternenhimmel unter dem Dach."""
     m = Modell("stretchlimo")
     k = m.teil("karosserie")
-    k.kasten((-15, -8, -64), (30, 6, 128), "lack", unten="schwarz", seite="seite")
-    k.kasten((-15, -11, -64), (30, 3, 12), "lack")                                   # Haube
-    k.kasten((-15, -11, 54), (30, 3, 10), "lack")                                    # Kofferraum
-    k.kasten((-15, -12, -52), (2, 4, 106), "lack").kasten((13, -12, -52), (2, 4, 106), "lack")
-    k.kasten((-8, -10, -64.6), (16, 5, 1), "grill")
-    k.kasten((-1, -13, -61), (2, 2, 3), "gold")                                      # Kühlerfigur
-    k.kasten((-14, -10, -64.7), (5, 2, 1), "chrom", vorne="licht").kasten((9, -10, -64.7), (5, 2, 1), "chrom", vorne="licht")
-    k.kasten((-14, -10, 63.6), (6, 2, 1), "rot").kasten((8, -10, 63.6), (6, 2, 1), "rot")
+    k.kasten((-15, -9, -64), (30, 7, 128), "lack", unten="schwarz", seite="seite")
+    k.kasten((-15, -12, -64), (30, 3, 16), "lack")                                   # lange Haube
+    k.kasten((-15, -12, 54), (30, 3, 10), "lack")                                    # Kofferraum
+    # Türen mit Chrom-Zierleiste oben (unter den Fenstern)
+    k.kasten((-15, -12, -48), (2, 3, 102), "lack", oben="chrom").kasten((13, -12, -48), (2, 3, 102), "lack", oben="chrom")
+    # Chrom-Stoßstangen vorn und hinten
+    k.kasten((-15.5, -4, -65.5), (31, 1.5, 2), "chrom").kasten((-15.5, -4, 63.5), (31, 1.5, 2), "chrom")
+    # Großer Chromgrill mit senkrechten Streben, Kühlerfigur, LED-Scheinwerfer
+    k.kasten((-8, -11.5, -64.6), (16, 7, 1), "chrom")
+    k.kasten((-7, -10.5, -64.9), (14, 5, 1), "grill")
+    k.kasten((-1, -14, -61), (2, 2, 3), "gold")
+    k.kasten((-14.5, -10.5, -64.6), (6, 2, 1), "chrom", vorne="licht").kasten((8.5, -10.5, -64.6), (6, 2, 1), "chrom", vorne="licht")
+    k.kasten((-14.5, -11.5, -64.55), (6, 0.6, 1), "led").kasten((8.5, -11.5, -64.55), (6, 0.6, 1), "led")
+    # Durchgehendes Rücklichtband und Kennzeichen
+    k.kasten((-14.5, -11, 63.6), (29, 1.5, 1), "rueck_band")
     k.kasten((-4, -6, -64.8), (8, 2, 1), "kennzeichen").kasten((-4, -6, 64), (8, 2, 1), "kennzeichen")
-    k.kasten((-13, -9, -52), (26, 1, 106), "innen")
+    k.kasten((-13, -10, -52), (26, 1, 106), "innen")
     k.kasten((-13, -14, -51), (26, 3, 7), "schwarz", oben="innen")                    # Armaturenbrett
-    # Säulen und Dach
-    # (Dach so hoch, dass ein sitzender Spieler mit dem Kopf darunter passt; die Frontscheibe steht weit vorn
-    # und schräg, damit vorn niemand eingequetscht sitzt)
-    for x in (-15, 13):
-        for z in (-20, 4, 28, 52):
-            k.kasten((x, -29, z), (2, 17, 2), "lack")
-    k.kasten((-15, -31, -45), (30, 2, 99), "lack", oben="lack_dunkel")
+    # Fahrgastraum: getönte Scheiben als durchgehendes Band (Dach so hoch, dass ein sitzender Spieler mit dem Kopf
+    # darunter passt), schmale schwarze Säulen, Dach mit Chromkante
+    k.kasten((-15, -29, -45), (1, 17, 98), "glas_getoent").kasten((14, -29, -45), (1, 17, 98), "glas_getoent")
+    for z in (-21, 3, 27):
+        k.kasten((-15.3, -29, z), (0.6, 17, 1.5), "schwarz").kasten((14.7, -29, z), (0.6, 17, 1.5), "schwarz")
+    k.kasten((-15, -31, -45), (30, 2, 99), "lack", unten="sterne", seite="chrom")      # Dach, Kante in Chrom
     m.teil("scheibe", (0, -12, -52), (-0.5, 0, 0), eltern="karosserie").kasten((-13, -18, 0), (26, 18, 1), "glas") \
         .kasten((-15, -18, -0.5), (2, 18, 2), "lack").kasten((13, -18, -0.5), (2, 18, 2), "lack")
-    k.kasten((-13, -29, 53), (26, 17, 1), "glas")
+    k.kasten((-14, -29, 53), (28, 17, 1), "glas_getoent")                            # getönte Heckscheibe
+    k.kasten((-17.5, -15, -47), (2.5, 2, 1.5), "lack").kasten((15, -15, -47), (2.5, 2, 1.5), "lack")   # Spiegel
     # Fahrgastraum: zwei Ledersofas längs, Bar mit Champagner in der Mitte
     s = m.teil("sitze")
     sitz(s, -11, -10, -38, mat="leder")                                               # Fahrer

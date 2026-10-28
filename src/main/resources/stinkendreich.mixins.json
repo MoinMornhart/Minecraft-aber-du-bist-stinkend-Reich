@@ -6,6 +6,7 @@
     "BlockBenutzenMixin",
     "BlockItemMixin",
     "FigurBenutzenMixin",
+    "KeinEisMixin",
     "StrukturZugriff"
   ],
   "client": [

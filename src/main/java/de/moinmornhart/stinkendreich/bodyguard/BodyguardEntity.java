@@ -60,6 +60,8 @@ public class BodyguardEntity extends IronGolem {
     private static final int NACHLADEN = 18;
     /** Zielt gerade auf einen Gegner (für den Arm auf dem Client). */
     private static final EntityDataAccessor<Boolean> ZIELT = SynchedEntityData.defineId(BodyguardEntity.class, EntityDataSerializers.BOOLEAN);
+    /** Im Nahkampf: Die Pistole ist weggesteckt, er kämpft mit den Fäusten (für den Client). */
+    private static final EntityDataAccessor<Boolean> NAHKAMPF = SynchedEntityData.defineId(BodyguardEntity.class, EntityDataSerializers.BOOLEAN);
 
     private UUID chef;
     private int nachladen;
@@ -77,6 +79,12 @@ public class BodyguardEntity extends IronGolem {
     protected void defineSynchedData(SynchedEntityData.Builder daten) {
         super.defineSynchedData(daten);
         daten.define(ZIELT, false);
+        daten.define(NAHKAMPF, false);
+    }
+
+    /** Ist er im Nahkampf (auf dem Client: Pistole weggesteckt)? */
+    public boolean nahkampf() {
+        return entityData.get(NAHKAMPF);
     }
 
     /** Zielt er gerade mit der Pistole (auf dem Client: Arm gehoben)? */
@@ -162,10 +170,15 @@ public class BodyguardEntity extends IronGolem {
             }
         }
         LivingEntity ziel = getTarget();
-        boolean zielen = false;
+        boolean zielen = false, nah = false;
         if (ziel != null && ziel.isAlive()) {
             double d = distanceTo(ziel);
             zielen = (d > SCHUSS_AB || ziel instanceof Creeper) && d < SCHUSS_BIS && hasLineOfSight(ziel);
+            // Pistole weg, sobald es in den Nahkampf geht (wie das Nahkampf-Goal: Creeper nie)
+            nah = !zielen && !(ziel instanceof Creeper) && d < (nahkampf() ? NAHKAMPF_BIS : NAHKAMPF_AB);
+        }
+        if (nahkampf() != nah) {
+            entityData.set(NAHKAMPF, nah);
         }
         if (zielen) {
             // Zum Gegner drehen: Kopf und Körper, damit der gehobene Arm wirklich auf ihn zeigt
@@ -176,7 +189,10 @@ public class BodyguardEntity extends IronGolem {
             }
         }
         //? if >=1.21.9 {
-        if (getMainHandItem().isEmpty()) {
+        if (nah && !getMainHandItem().isEmpty()) {
+            // Im Nahkampf steckt die Pistole weg (auch bei Spielern ohne Mod)
+            setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, net.minecraft.world.item.ItemStack.EMPTY);
+        } else if (!nah && getMainHandItem().isEmpty()) {
             // Die Pistole sieht nur, wer die Mod nicht hat (Server-Version: Schaufensterpuppe); der Golem zeigt sie nicht
             setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, new net.minecraft.world.item.ItemStack(
                     de.moinmornhart.stinkendreich.register.ModItems.GOLDENE_PISTOLE));
