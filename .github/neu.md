@@ -1,3 +1,7 @@
+### Neu in 0.4.5 – keine hängenden Laser
+
+- **Inkognito in der Festung:** Die Himmelslaser auf der Mauer reichen bis 40 Blöcke hoch; beim Abtauchen fuhr nur die Villa mit, der obere Teil der Strahlen blieb in der Luft hängen. Jetzt werden die Strahlen vor dem Abtauchen entfernt und wachsen nach dem Auftauchen neu (die Festung ist dann wieder an).
+
 ### Neu in 0.4.4 – Limo zurück in die Garage, saubere Straßen
 
 - **James bringt die Limo nach Hause:** Nach der Fahrt wartet er, bis du ausgestiegen bist, fährt los Richtung Villa und parkt die Limo auf ihrem Stellplatz in der Tiefgarage. Es bleiben keine Limos mehr in der Landschaft stehen; gerufen wird immer die Limo aus der Garage (vorher kam bei jedem Anruf eine neue dazu, wenn die Garage gerade nicht geladen war). Mod und Paper.

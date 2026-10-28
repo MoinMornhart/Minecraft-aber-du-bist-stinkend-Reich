@@ -96,6 +96,7 @@ public final class Inkognito {
                 case LADEN_RUNTER -> {
                     // Erst warten, bis das ganze Grundstück samt Figuren geladen ist, dann alles einpacken
                     if (sofort || ++gewartet >= LADE_TICKS) {
+                        strahlenWeg(welt, villa);
                         eingepackt = einpacken(welt, villa, 0);
                         gewartet = 0;
                         phase = Phase.RUNTER;
@@ -277,6 +278,32 @@ public final class Inkognito {
     /** So tief fährt die Villa: ihre Höhe über dem Gras plus die Erdschichten darüber. */
     private static int tiefe(VillaPlatzierung.VillaInfo villa) {
         return villa.plan().hoehe - villa.plan().bodenY + DECKE - 1;
+    }
+
+    /**
+     * Laserstrahlen über der Villa entfernen (Himmelslaser der Festung reichen bis 40 Blöcke über die Mauer). Gefahren
+     * wird nur der Bereich der Villa; der Teil des Strahls darüber blieb sonst in der Luft hängen (Philip: „Laser bleiben
+     * oben einfach so hängen“), denn der Sender ist dann schon unten und räumt ihn nicht mehr ab.
+     */
+    private static void strahlenWeg(ServerLevel welt, VillaPlatzierung.VillaInfo villa) {
+        BlockPos u = villa.ursprung();
+        int von = u.getY() + villa.plan().bodenY, bis = Math.min(Kompat.maxY(welt) - 1, u.getY() + villa.plan().hoehe + LaserSenderBlock.MAX_REICHWEITE + 2);
+        BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos();
+        int weg = 0;
+        for (int x = 0; x < villa.plan().breiteX; x++) {
+            for (int z = 0; z < villa.plan().breiteZ; z++) {
+                for (int y = von; y <= bis; y++) {
+                    p.set(u.getX() + x, y, u.getZ() + z);
+                    if (welt.getBlockState(p).is(de.moinmornhart.stinkendreich.register.ModBloecke.LASERSTRAHL)) {
+                        welt.setBlock(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2 | 16);
+                        weg++;
+                    }
+                }
+            }
+        }
+        if (weg > 0) {
+            StinkendReich.LOGGER.info("Inkognito: {} Laserstrahl-Blöcke entfernt", weg);
+        }
     }
 
     private static final String STUFE_VORHER = "stufe_vor_inkognito";

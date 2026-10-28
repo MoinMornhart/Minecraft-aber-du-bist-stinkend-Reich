@@ -1,0 +1,23 @@
+# 0.4.5: Festung + Inkognito – keine hängenden Himmelslaser über der versteckten Villa; nach dem Auftauchen ist die
+# Stufe von vorher zurück (Tor und Garagentor bleiben nicht offen)
+server /gamemode spectator
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+taste F1
+server /villa stufe 4
+warte 40
+server /villa ort 160 70 175 139 22
+warte 6
+bild i01_festung
+merke
+server /villa inkognito an
+bis 240 Inkognito: Villa 0 ist unten
+warte 4
+bild i02_versteckt
+merke
+server /villa inkognito aus
+bis 240 Inkognito: Villa 0 ist oben
+warte 30
+bild i03_wieder_oben
