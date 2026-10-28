@@ -63,6 +63,8 @@ final class StrassenBau {
      */
     private final List<double[]> ziele;
     private final int maxSchritte;
+    /** Fahrbahnhöhe am Ziel (Ende der Zufahrt einer Villa), NaN = unbekannt. */
+    private final double zielY;
     private double x, z;
     private float richtung;
     private int y;
@@ -83,7 +85,7 @@ final class StrassenBau {
     private int wartet;
 
     StrassenBau(StinkendReichPaper plugin, World welt, String name, double startX, double startY, double startZ, float richtung,
-                List<double[]> ziele) {
+                List<double[]> ziele, double zielY) {
         this.plugin = plugin;
         this.welt = welt;
         this.name = name;
@@ -92,6 +94,7 @@ final class StrassenBau {
         this.y = (int) Math.floor(startY) - 1;
         this.richtung = richtung;
         this.ziele = new ArrayList<>(ziele);
+        this.zielY = zielY;
         double weg = 0, px = x, pz = z;
         for (double[] p : ziele) {
             weg += Math.hypot(p[0] - px, p[1] - pz);
@@ -258,6 +261,11 @@ final class StrassenBau {
             }
         }
         double soll = Math.max(summe / n, ueberWasser);
+        // Kurz vor dem Ziel auf dessen Höhe einschwenken (ein Block auf drei, rechtzeitig): Sonst kam die Straße zu hoch
+        // oder zu tief an der Zufahrt an, fand keinen Anschluss und kreiste um das Ziel
+        if (naheZiel(Math.abs(y - zielY) * 3 + 10)) {
+            soll = zielY;
+        }
         if (schritte - letzteAenderung >= 3 && Math.abs(soll - y) > 0.75) {
             y += soll > y ? 1 : -1;
             letzteAenderung = schritte;
@@ -285,7 +293,8 @@ final class StrassenBau {
                 int bx = (int) Math.floor(x + rx * d + rz * o), bz = (int) Math.floor(z + rz * d - rx * o);
                 for (int h = 0; h <= 4; h++) {
                     Block b = welt.getBlockAt(bx, y + h, bz);
-                    if (h >= 1 && o == 0 && unterbauOderFahrbahn(b.getType())) {
+                    // (außer am Ziel: die Zufahrt, an die sie anschließt, darf höher liegen)
+                    if (h >= 1 && o == 0 && unterbauOderFahrbahn(b.getType()) && !naheZiel(16)) {
                         letzteSperre = "andere Straße darüber bei " + bx + " " + (y + h) + " " + bz;
                         return false;
                     }
@@ -519,6 +528,15 @@ final class StrassenBau {
             return true;
         }
         return !Natur.natuerlich(m) && !istStrasse(m);
+    }
+
+    /** Ist die Straße auf dem letzten Stück und näher als {@code abstand} am Ziel (das eine bekannte Höhe hat)? */
+    private boolean naheZiel(double abstand) {
+        if (Double.isNaN(zielY) || ziele.size() > 1) {
+            return false;
+        }
+        double[] ziel = ziele.getFirst();
+        return Math.hypot(ziel[0] - x, ziel[1] - z) < abstand;
     }
 
     /** Liegt das Ziel dieser Straße auf (oder dicht an) einem freigehaltenen Platz? Dann darf sie hinein. */

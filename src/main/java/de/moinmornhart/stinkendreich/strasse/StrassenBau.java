@@ -94,6 +94,9 @@ public final class StrassenBau {
     /** Chunks rund um die Spitze, die geladen sein müssen (2 = 5 × 5 Chunks, 32 Blöcke in jede Richtung). */
     private static final int UMKREIS = 2;
 
+    /** Fahrbahnhöhe am Ziel (Ende der Zufahrt einer Villa), NaN = unbekannt. */
+    private double zielY = Double.NaN;
+
     StrassenBau(ServerLevel welt, String name, Vec3 ziel, Vec3 start, float richtung, int eltern, int abzweig) {
         this.welt = welt;
         this.name = name;
@@ -110,6 +113,16 @@ public final class StrassenBau {
 
     public String name() {
         return name;
+    }
+
+    /** Die Straße endet an einer Zufahrt mit dieser Fahrbahnhöhe: kurz davor rechtzeitig darauf einschwenken. */
+    void zielHoehe(double y) {
+        zielY = y;
+    }
+
+    /** Ist die Straße näher als {@code abstand} an einem Ziel mit bekannter Höhe? */
+    private boolean naheZiel(double abstand) {
+        return !Double.isNaN(zielY) && Math.hypot(ziel.x - x, ziel.z - z) < abstand;
     }
 
     public boolean fertig() {
@@ -263,6 +276,11 @@ public final class StrassenBau {
         }
         // Über Wasser liegt die Fahrbahn immer mindestens einen Block über der Oberfläche (rechtzeitig ansteigen)
         double soll = Math.max(summe / n, ueberWasser);
+        // Kurz vor dem Ziel auf dessen Höhe einschwenken (ein Block auf drei, rechtzeitig): Sonst kam die Straße zu hoch
+        // oder zu tief an der Zufahrt an, fand keinen Anschluss und kreiste um das Ziel
+        if (naheZiel(Math.abs(y - zielY) * 3 + 10)) {
+            soll = zielY;
+        }
         if (schritte - letzteAenderung >= 3 && Math.abs(soll - y) > 0.75) {
             y += soll > y ? 1 : -1;
             letzteAenderung = schritte;
@@ -292,7 +310,8 @@ public final class StrassenBau {
                 int bx = (int) Math.floor(x + rx * d + rz * o), bz = (int) Math.floor(z + rz * d - rx * o);
                 for (int h = 0; h <= 4; h++) {
                     // Eine andere Straße höher als diese: nicht darunter hindurch (sonst entsteht eine Unterführung)
-                    if (h >= 1 && o == 0 && unterbauOderFahrbahn(welt.getBlockState(new BlockPos(bx, y + h, bz)))) {
+                    // (außer am Ziel: die Zufahrt, an die sie anschließt, darf höher liegen)
+                    if (h >= 1 && o == 0 && unterbauOderFahrbahn(welt.getBlockState(new BlockPos(bx, y + h, bz))) && !naheZiel(16)) {
                         letzteSperre = "andere Straße darüber bei " + bx + " " + (y + h) + " " + bz;
                         return false;
                     }

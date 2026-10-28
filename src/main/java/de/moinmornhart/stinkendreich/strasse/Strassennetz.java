@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec3;
 
@@ -135,6 +136,13 @@ public final class Strassennetz {
             return;
         }
         StrassenBau b = bauen(welt, punkt, name);
+        if (b != null && b.name().equals(name)) {
+            // Höhe der Zufahrt am Ziel (punkt ist die Stehhöhe darüber; ohne gefundene Zufahrt der Spawnpunkt: unbekannt)
+            BlockPos p = BlockPos.containing(punkt);
+            if (welt.getBlockState(p.below()).is(Blocks.GRAY_CONCRETE) || welt.getBlockState(p).is(Blocks.POLISHED_ANDESITE_SLAB)) {
+                b.zielHoehe(p.getY() - 1);
+            }
+        }
         StinkendReich.LOGGER.info("Straßennetz: baue Straße zur {} ({})", name, b == null ? "ging nicht" : BlockPos.containing(punkt));
     }
 

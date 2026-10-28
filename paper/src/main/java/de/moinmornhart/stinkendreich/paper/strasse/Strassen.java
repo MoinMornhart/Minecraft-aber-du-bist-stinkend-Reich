@@ -174,7 +174,10 @@ public final class Strassen {
         // Richtung am Anfang: an der Spawn-Villa nach Süden (die Zufahrt), am Abzweig zum ersten Wegpunkt
         float richtung = aktivEltern < 0 ? 0.0F
                 : (float) Math.toDegrees(Math.atan2(-(wege.getFirst()[0] - ax), wege.getFirst()[1] - az));
-        return new StrassenBau(plugin, a.getWorld(), name, ax, ay, az, richtung, wege);
+        // Fahrbahnhöhe am Ziel: villaZiel liefert die Stehhöhe über der Fahrbahn (ohne gefundene Zufahrt: unbekannt)
+        double zielY = b.getBlock().getRelative(0, -1, 0).getType() == Material.GRAY_CONCRETE
+                || b.getBlock().getType() == Material.POLISHED_ANDESITE_SLAB ? Math.floor(b.getY()) - 1 : Double.NaN;
+        return new StrassenBau(plugin, a.getWorld(), name, ax, ay, az, richtung, wege, zielY);
     }
 
     /** Darf hier eine neue Straße abzweigen? Nicht auf einem Grundstück (samt Rand) und nicht auf einem freien Platz. */
