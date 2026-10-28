@@ -31,7 +31,6 @@ server /villa ort 60.5 boden 133 0 0
 warte 3
 merke
 server /butler fahr mich zur villa von max
-bis 20 Chauffeur: Fahrweg
 bis 20 Chauffeur: Start
 server /villa einsteigen
 merke
