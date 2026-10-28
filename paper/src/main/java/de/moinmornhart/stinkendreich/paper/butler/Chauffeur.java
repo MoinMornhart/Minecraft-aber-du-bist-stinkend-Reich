@@ -110,7 +110,8 @@ final class Chauffeur implements Auftrag {
         koerper.teleport(puppe.getLocation());
         switch (phase) {
             case EINSTEIGEN -> {
-                if (ALLEIN || plugin.fahrzeuge().sitztDrin(wagen, p)) {
+                // Testmodus: drei Sekunden stehen bleiben, damit sich die Kamera an James hängen kann
+                if (ALLEIN ? warten >= 60 : plugin.fahrzeuge().sitztDrin(wagen, p)) {
                     Butler.sagen(p, "Bitte anschnallen. Wir fahren " + zielName + ".");
                     phase = Phase.FAHRT;
                     log("losgefahren");
