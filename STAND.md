@@ -730,9 +730,31 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   (`FernseherVideos.VORHER`). Tests `lan_fernseher.txt` (`STINKENDREICH_TESTVIDEO_LANGSAM=Max`), Testbefehl `/villa fernseher`.
 - Offen: Trailer-Teil 8 + README-Abschnitt gemeinsam fernsehen; Zugangskarte, GitHub-Paket und WeltVonPaper auf echtem Server.
 
+## Runde 0.4.7 (29.10. abends, noch kein Release)
+
+- **Fernbedienung in der Hand:** `mixin/client/HandMitFernbedienungMixin` zeichnet in der Ich-Sicht den Arm dazu
+  (bis 1.21.8 `ItemInHandRenderer.renderArmWithItem` mit MultiBufferSource, 1.21.9–26.2 mit SubmitNodeCollector, ab 26.2
+  heißt die Methode `submitArmWithItem` – beide Namen im @Inject; 26.3 `FirstPersonHandsAndItemsRenderer.submitArmWithItem`
+  mit PlayerRenderState). Eigenes Item-Modell `models/item/fernbedienung.json` aus deko.py (`HAND`, `hand_modell`): Ich-Sicht
+  [-10, 8, 0] / [-1.5, 2.5, -4.5], dritte Person [90, 0, 0] / [0, -1.5, 0.5], Maßstab 0,6. Prüfen am Rüstungsständer
+  (`fernbedienung_hand.txt`): `tp … facing` rechnet von den Füßen, nicht von den Augen.
+- **Wegweiser:** `strasse/WegweiserForm` (ohne Minecraft, auch im Paper-Plugin über `include` in paper/build.gradle.kts):
+  Fichtenpfahl, Pfeilbretter aus Schwarzeiche + Spitze (Quadrat 45°), goldene Text-Anzeigen auf beiden Seiten; `FORM` in der
+  Signatur. Mod `strasse/Wegweiser` (Befehle `summon block_display/text_display`, Text ab 1.21.5 als NBT, davor JSON;
+  Zufahrt vor dem Kreisel + je Abzweig: neue Straße, geradeaus, Heimweg; gesetzt wenn `Kompat.ganzGeladen`, Merkliste im
+  Straßennetz-JSON), Paper `strasse/Wegweiser` (`wegweiser.json`). Testhilfen `/butler wegweiser <nr>`, Paper `/villa wegweiser <nr>`.
+  Test `wegweiser.txt` (Mod), `paper_wegweiser.txt` (Paper).
+- **Navi:** Ziel → Seite REISE („Limo oder Heli?“) → `fahr|Ziel` bzw. `flieg|Ziel`; sitzt man schon in Limo/Hubschrauber, ohne
+  Nachfrage. „Limo/Hubschrauber rufen“ entfernt (Mod-Handy, `HandyDialog`, Paper `Handy.naviSeite`). `HeliBereitstellung`
+  holt den nächsten freien Hubschrauber (bis 512) neben den Spieler, wenn keiner in 96 Blöcken steht (sonst tickte James im
+  ungeladenen Bereich nicht). Test `navi047.txt`: Abholung und Flug nach Hause geprüft.
+- **Rollläden** neben der Haustür (einzelnes Feld) standen quer: villa.py `fluegel` (Achse z nur bei z0 != z1), bestehende Villen
+  beim Schalten (`TorsteuerungBlock.einzelnAusrichten`, Paper `Tore.setzeOffen`). Test `rollo047.txt`.
+- `mod.version` = 0.4.7, README und `.github/neu.md` haben 0.4.7; `.github/release-version` bleibt 0.4.6 bis Philips „Release raus“.
+
 ## Nächster Schritt
 
-**Release 0.4.6 veröffentlicht** (29.10. 07:11, 17 Mod-Dateien + Paper-Plugin + `stinkendreich_paket-0.4.6.zip`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.6). Als Nächstes: Trailer-Teil 8 + README (gemeinsam fernsehen). **Release 0.4.3 angestoßen** (28.10. 18:07, Lauf 40742187650). **Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
+**0.4.7 in Arbeit** (siehe oben; offen: Paper-Test Wegweiser/Navi, Trailer-Teil 8). **Release 0.4.6 veröffentlicht** (29.10. 07:11, 17 Mod-Dateien + Paper-Plugin + `stinkendreich_paket-0.4.6.zip`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.6). Als Nächstes: Trailer-Teil 8 + README (gemeinsam fernsehen). **Release 0.4.3 angestoßen** (28.10. 18:07, Lauf 40742187650). **Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
 
 **Release 0.4.1 veröffentlicht** (27.10. 12:05, 17 Mod-Dateien + `stinkendreich_paper-0.4.1+paper26.3.jar`: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.1). Vorher geprüft (27.10. 11:45):
 alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
