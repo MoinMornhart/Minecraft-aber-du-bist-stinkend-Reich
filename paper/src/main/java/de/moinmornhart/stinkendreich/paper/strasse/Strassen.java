@@ -53,6 +53,7 @@ public final class Strassen {
         this.plugin = plugin;
         this.datei = plugin.getDataFolder().toPath().resolve("strassen.json");
         this.kehrer = new Strassenkehrer(plugin);
+        this.wegweiser = new Wegweiser(plugin);
         laden();
         Bukkit.getScheduler().runTaskTimer(plugin, this::tick, 20L, 1L);
         // Villen von früher ohne Straße (etwa vor diesem Update gebaut) bekommen ihre nach dem Start
@@ -66,6 +67,11 @@ public final class Strassen {
     /** Die Straße, die zu dieser Villa führt, oder null. */
     public Strasse zur(int villa) {
         return strassen.stream().filter(s -> s.villa() == villa).findFirst().orElse(null);
+    }
+
+    /** Testhilfe: Standort vor dem Wegweiser {@code nr} (siehe {@link Wegweiser#blick}). */
+    public Location wegweiserBlick(World w, int nr) {
+        return wegweiser.blick(w, nr);
     }
 
     /** Stand für /villa strassen. */
@@ -96,6 +102,7 @@ public final class Strassen {
     }
 
     private final Strassenkehrer kehrer;
+    private final Wegweiser wegweiser;
     private int ticks;
 
     /** Liegengebliebenes an den Straßen wegräumen (fertige Straßen und die, die gerade entsteht). */
@@ -115,6 +122,10 @@ public final class Strassen {
     private void tick() {
         if (++ticks % Strassenkehrer.ALLE == 0) {
             kehren();
+            Villen.Villa spawn = plugin.villen().nr(0);
+            if (spawn != null && spawn.world() != null) {
+                wegweiser.tick(spawn.world(), strassen, spawn.name());
+            }
         }
         if (aktiv == null) {
             int[] naechste = warteschlange.poll();

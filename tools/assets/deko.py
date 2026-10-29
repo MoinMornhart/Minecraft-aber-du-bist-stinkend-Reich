@@ -1309,6 +1309,28 @@ SITZE = {"liege_kopf": 7, "wanne_kopf": 4, "klavierbank": 11, "barhocker": 11}
 SCHUBLADE = {"nachttisch"}
 # Liegt auf Möbeln: bis zu so vielen Pixeln tiefer (FernbedienungBlock)
 TIEFER = {"fernbedienung": 8}
+# Eigenes Modell für die Hand (Philip: „richtig in der Hand halten“): das Teil in die Mitte gelegt und eigene Lagen für
+# Ich-Sicht (der Arm wird dazu gezeichnet, siehe HandMitFernbedienungMixin), dritte Person, Inventar, Boden und Rahmen.
+HAND = {"fernbedienung": {
+    "firstperson_righthand": {"rotation": [-10, 8, 0], "translation": [-1.5, 2.5, -4.5], "scale": [0.6, 0.6, 0.6]},
+    "firstperson_lefthand": {"rotation": [-10, -8, 0], "translation": [-1.5, 2.5, -4.5], "scale": [0.6, 0.6, 0.6]},
+    "thirdperson_righthand": {"rotation": [90, 0, 0], "translation": [0, -1.5, 0.5], "scale": [0.6, 0.6, 0.6]},
+    "thirdperson_lefthand": {"rotation": [90, 0, 0], "translation": [0, -1.5, 0.5], "scale": [0.6, 0.6, 0.6]},
+    "gui": {"rotation": [90, 0, 45], "translation": [0, 0, 0], "scale": [1.2, 1.2, 1.2]},
+    "ground": {"rotation": [0, 0, 0], "translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5]},
+    "fixed": {"rotation": [90, 0, 0], "translation": [0, 0, 0], "scale": [1, 1, 1]},
+    "head": {"rotation": [0, 0, 0], "translation": [0, 13, 0], "scale": [1, 1, 1]}}}
+
+
+def hand_modell(teile, lagen) -> dict:
+    """Item-Modell: Teile mittig (Mitte der Höhe auf 8) und mit eigener Lage in Hand, Inventar und Rahmen."""
+    unten = min(t["von"][1] for t in teile)
+    oben = max(t["bis"][1] for t in teile)
+    dy = 8 - (unten + oben) / 2
+    mitte = [dict(t, von=[t["von"][0], t["von"][1] + dy, t["von"][2]], bis=[t["bis"][0], t["bis"][1] + dy, t["bis"][2]]) for t in teile]
+    m = modell(mitte)
+    m["display"] = lagen
+    return m
 # Rechtsklick öffnet das Spielfenster des Flügels (KlavierBlock)
 KLAVIER = {"konzertfluegel", "fluegel_teil"}
 # Blöcke mit eigener Funktion beim Rechtsklick (siehe ModDeko): Toilette spült
@@ -1451,8 +1473,12 @@ def main() -> dict:
             for richtung, y in (("north", 0), ("east", 90), ("south", 180), ("west", 270)):
                 varianten[f"facing={richtung}"] = {"model": modell_id, **({"y": y} if y else {})}
         schreibe_json(ASSETS / "blockstates" / f"{name}.json", {"variants": varianten})
-        schreibe_json(ASSETS / "models/item" / f"{name}.json", {"parent": modell_id})
-        schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": modell_id}})
+        if name in HAND:
+            schreibe_json(ASSETS / "models/item" / f"{name}.json", hand_modell(teile, HAND[name]))
+            schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": f"{NS}:item/{name}"}})
+        else:
+            schreibe_json(ASSETS / "models/item" / f"{name}.json", {"parent": modell_id})
+            schreibe_json(ASSETS / "items" / f"{name}.json", {"model": {"type": "minecraft:model", "model": modell_id}})
         schreibe_json(RES / f"data/{NS}/loot_table/blocks/{name}.json", {
             "type": "minecraft:block",
             "pools": [{"rolls": 1, "entries": [{"type": "minecraft:item", "name": f"{NS}:{name}"}],

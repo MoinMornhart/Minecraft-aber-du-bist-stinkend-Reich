@@ -21,9 +21,11 @@ import java.util.List;
 /**
  * Was das Handy auf dem Server auslöst (Paket „handy“, Wert „Aktion|Angabe“):
  * <ul>
- *   <li>{@code anruf|limo} – James kommt mit der Stretch-Limo und wartet am Steuer</li>
- *   <li>{@code anruf|heli} – James kommt mit dem Hubschrauber und landet neben dir</li>
- *   <li>{@code fahr|Ziel} – James holt dich mit der Limo ab und fährt dich hin (Villa, Dorf, Endportal …)</li>
+ *   <li>{@code fahr|Ziel} – James holt dich mit der Limo ab und fährt dich hin (Villa, Dorf, Endportal …); sitzt du
+ *   schon im Hubschrauber, fliegt er dich</li>
+ *   <li>{@code flieg|Ziel} – James holt dich mit dem Hubschrauber ab und fliegt dich hin, sobald du drin sitzt</li>
+ *   <li>{@code anruf|limo} / {@code anruf|heli} – nur noch für alte Knöpfe und Spieler ohne Mod: James kommt und
+ *   wartet am Steuer</li>
  *   <li>{@code orte} – schickt dem Handy die Liste der Orte, die James kennt</li>
  *   <li>{@code ort|merken|Name} / {@code ort|vergessen|Name} – Ort hier speichern (James kennt ihn dann) oder löschen</li>
  *   <li>{@code liefer|Was} – Lieferservice: James bringt Tiere oder Waren (siehe {@link Lieferservice})</li>
@@ -128,9 +130,20 @@ public final class Handy {
                     b.neueAuftraege(List.of(new AnrufAuftrag(""), new FahrAuftrag(null, "")));
                 }
             }
-            case "fahr" -> {
+            case "fahr", "flieg" -> {
                 ButlerBefehle.FahrZiel z = ButlerBefehle.fahrZiel(b, p, angabe, false);
                 if (z.antwort().fehler()) {
+                    b.sagen(z.antwort().text());
+                    return;
+                }
+                // Hubschrauber gewählt oder du sitzt schon drin: James holt dich damit ab und fliegt los, sobald du
+                // eingestiegen bist (Philip: „Ich steige ein und sofort fliegt er mich“)
+                boolean imHeli = p.getVehicle() instanceof de.moinmornhart.stinkendreich.auto.AutoEntity h && h.art.fliegt();
+                if (was.equals("flieg") || imHeli) {
+                    if (!imHeli) {
+                        HeliBereitstellung.bereitstellen(p, b);
+                    }
+                    b.neueAuftraege(List.of(new FlugAuftrag(z.punkt(), z.name())));
                     b.sagen(z.antwort().text());
                     return;
                 }

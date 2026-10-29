@@ -35,7 +35,8 @@ sourceSets {
     main {
         java {
             srcDir("../src/main/java")
-            include("de/moinmornhart/stinkendreich/paper/**", "de/moinmornhart/stinkendreich/klavier/Lieder.java")
+            include("de/moinmornhart/stinkendreich/paper/**", "de/moinmornhart/stinkendreich/klavier/Lieder.java",
+                    "de/moinmornhart/stinkendreich/strasse/WegweiserForm.java")
         }
     }
 }

@@ -572,7 +572,7 @@ public final class Zugbruecke {
      * Blockzustand für die Anzeige aus dem Text des setblock-Befehls: „minecraft:quartz_slab[type=bottom]“ wird zu
      * {Name:"minecraft:quartz_slab",Properties:{type:"bottom"}}; ab 26.3 heißen die Felder id und properties.
      */
-    static String anzeigeZustand(String zustand) {
+    public static String anzeigeZustand(String zustand) {
         //? if >=26.3 {
         String name = "id", eigenschaften = "properties";
         //?} else

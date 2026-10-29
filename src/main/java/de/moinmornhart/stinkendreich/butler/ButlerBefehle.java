@@ -108,6 +108,18 @@ public final class ButlerBefehle {
                                     p.teleportTo(q.getX() + 0.5, q.getY() + 1, q.getZ() + 0.5);
                                     return 1;
                                 }))))
+                        // Testhilfe: vor einen Wegweiser stellen („/butler wegweiser 0“ = der große an der Zufahrt)
+                        .then(Commands.literal("wegweiser").then(Commands.argument("nr", com.mojang.brigadier.arguments.IntegerArgumentType.integer(0)).executes(k -> {
+                            ServerPlayer p = k.getSource().getPlayerOrException();
+                            double[] b = de.moinmornhart.stinkendreich.strasse.Strassennetz.get(k.getSource().getServer())
+                                    .wegweiserBlick(com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(k, "nr"));
+                            if (b == null) {
+                                return 0;
+                            }
+                            de.moinmornhart.stinkendreich.Kompat.befehl(k.getSource().getServer(), String.format(java.util.Locale.ROOT,
+                                    "tp %s %.2f %.2f %.2f facing %.2f %.2f %.2f", p.getScoreboardName(), b[0], b[1], b[2], b[3], b[4], b[5]));
+                            return 1;
+                        })))
                         .then(Commands.literal("strasse").then(Commands.argument("ziel", StringArgumentType.greedyString()).executes(k -> {
                             ServerPlayer p = k.getSource().getPlayerOrException();
                             ausfuehren(ButlerVerwaltung.vonSpieler(p), p, new Sprache.Befehl(Sprache.Art.STRASSE,

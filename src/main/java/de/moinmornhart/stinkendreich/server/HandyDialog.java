@@ -38,29 +38,41 @@ public final class HandyDialog {
     private HandyDialog() {
     }
 
-    /** Öffnet eine Seite des Handys: start, navi, lieferung oder auftrag. */
+    /** Öffnet eine Seite des Handys: start, navi, reise|Ziel (Limo oder Heli?), lieferung oder auftrag. */
     public static void oeffnen(ServerPlayer spieler, String seite) {
         List<ActionButton> knoepfe = new ArrayList<>();
         List<Input> eingaben = new ArrayList<>();
         String titel = "start";
+        // Navi-Ziel: Sitzt der Spieler schon in Limo oder Hubschrauber, geht es gleich los, sonst erst „Limo oder Heli?“
+        String reise = spieler.getVehicle() instanceof de.moinmornhart.stinkendreich.auto.AutoEntity ? "fahr|" : "seite|reise|";
+        if (seite.startsWith("reise|")) {
+            String ziel = seite.substring("reise|".length());
+            seite = "reise";
+            titel = "reise";
+            knopf(knoepfe, "reise.limo", "fahr|" + ziel);
+            knopf(knoepfe, "reise.heli", "flieg|" + ziel);
+            knopf(knoepfe, "zurueck", "seite|navi");
+        }
         switch (seite) {
+            case "reise" -> {
+            }
             case "navi" -> {
                 titel = "navi";
-                knopf(knoepfe, "navi.villa", "fahr|#villa");
+                knopf(knoepfe, "navi.villa", reise + "#villa");
                 for (String ziel : List.of("dorf", "endportal", "netherportal", "mine")) {
-                    knopf(knoepfe, "navi." + ziel, "fahr|" + ziel);
+                    knopf(knoepfe, "navi." + ziel, reise + ziel);
                 }
                 // Villen der anderen Spieler
                 for (String herr : de.moinmornhart.stinkendreich.handy.Handy.andereVillen(spieler)) {
                     knoepfe.add(new ActionButton(new CommonButtonData(Component.literal("🏠 ")
                             .append(Component.translatable("stinkendreich.strasse.ziel.villa", herr)), BREITE),
-                            Optional.of(befehl("fahr|villa von " + herr))));
+                            Optional.of(befehl(reise + "villa von " + herr))));
                 }
                 ButlerEntity b = ButlerVerwaltung.vonSpieler(spieler);
                 if (b != null) {
                     for (String ort : new java.util.TreeSet<>(b.orte().keySet())) {
                         knoepfe.add(new ActionButton(new CommonButtonData(Component.literal("➜ " + ort), BREITE),
-                                Optional.of(befehl("fahr|" + ort))));
+                                Optional.of(befehl(reise + ort))));
                     }
                 }
                 // Eigenen Ort an der aktuellen Stelle speichern: James kennt ihn danach auch im Chat
@@ -119,8 +131,6 @@ public final class HandyDialog {
                 zurueck(knoepfe);
             }
             default -> {
-                knopf(knoepfe, "anruf_limo", "anruf|limo");
-                knopf(knoepfe, "anruf_heli", "anruf|heli");
                 knopf(knoepfe, "navi", "seite|navi");
                 knopf(knoepfe, "lieferung", "seite|lieferung");
                 knopf(knoepfe, "auftraege", "seite|auftrag");

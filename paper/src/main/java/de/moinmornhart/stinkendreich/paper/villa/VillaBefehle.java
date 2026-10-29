@@ -144,6 +144,15 @@ public final class VillaBefehle implements TabExecutor {
                     p.teleport(l);
                 }
             }
+            case "wegweiser" -> {
+                // Testhilfe für Bilder: vor einen Wegweiser stellen (/villa wegweiser <nr>, 0 = erster)
+                Location l = p == null ? null : plugin.strassen().wegweiserBlick(p.getWorld(), args.length > 1 ? Integer.parseInt(args[1]) : 0);
+                if (l == null) {
+                    antwort(wer, "Diesen Wegweiser gibt es nicht.");
+                } else {
+                    p.teleport(l);
+                }
+            }
             case "einsteigen" -> {
                 // Testhilfe: ins nächste Fahrzeug einsteigen (wie Rechtsklick)
                 if (p != null && !plugin.fahrzeuge().einsteigen(p)) {

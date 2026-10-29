@@ -205,6 +205,15 @@ public final class Kompat {
         /*return stapel.getItem() instanceof net.minecraft.world.item.DyeItem d ? d.getDyeColor() : null;*/
     }
 
+    /** Sind Blöcke und Figuren des Chunks geladen, der diese Stelle enthält? (Schlüssel heißt ab 26.1 pack statt asLong.) */
+    public static boolean ganzGeladen(ServerLevel welt, BlockPos p) {
+        //? if >=26.1 {
+        long schluessel = net.minecraft.world.level.ChunkPos.pack(p.getX() >> 4, p.getZ() >> 4);
+        //?} else
+        /*long schluessel = net.minecraft.world.level.ChunkPos.asLong(p.getX() >> 4, p.getZ() >> 4);*/
+        return welt.hasChunkAt(p) && welt.areEntitiesLoaded(schluessel);
+    }
+
     /** Führt einen Befehl als Server aus, ohne Ausgabe im Chat. */
     public static void befehl(MinecraftServer server, String befehl) {
         server.getCommands().performPrefixedCommand(server.createCommandSourceStack().withSuppressedOutput(), befehl);

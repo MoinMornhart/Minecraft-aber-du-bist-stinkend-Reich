@@ -80,6 +80,7 @@ public final class Strassennetz {
                 }
                 if (s.getTickCount() % Strassenkehrer.ALLE == 0) {
                     aktuell.kehren();
+                    aktuell.wegweiserPruefen();
                 }
             }
         });
@@ -276,6 +277,7 @@ public final class Strassennetz {
         warteschlange.clear();
         warteschlange.addAll(AUTOMATISCH);
         automatikGestartet = true;
+        wegweiser.neuPlanen();
         speichern();
         StinkendReich.LOGGER.info("Straßennetz: alle Straßen werden neu gebaut");
     }
@@ -595,6 +597,20 @@ public final class Strassennetz {
     }
 
     private final Strassenkehrer kehrer = new Strassenkehrer();
+    private final Wegweiser wegweiser = new Wegweiser();
+
+    /** Testhilfe: Standort und Blickpunkt vor dem Wegweiser {@code nr} (siehe {@link Wegweiser#blick}). */
+    public double[] wegweiserBlick(int nr) {
+        return wegweiser.blick(server.overworld(), nr);
+    }
+
+    /** Wegweiser an Kreisel und Abzweigen aufstellen bzw. anpassen (siehe {@link Wegweiser}). */
+    private void wegweiserPruefen() {
+        String heim = VillaPlatzierung.villa().map(Strassennetz::villaName).orElse(null);
+        if (wegweiser.tick(server.overworld(), strassen, kreiselMitte(), heim)) {
+            speichern();
+        }
+    }
 
     /** Liegengebliebenes an den Straßen wegräumen (fertige Straßen und die, die gerade entsteht). */
     private void kehren() {
@@ -641,6 +657,9 @@ public final class Strassennetz {
                     }
                     n.strassen.add(new Strasse(s.get("name").getAsString(), s.get("eltern").getAsInt(), s.get("abzweig").getAsInt(), punkte));
                 }
+                if (j.has("wegweiser")) {
+                    n.wegweiser.laden(j.getAsJsonObject("wegweiser"));
+                }
             }
         } catch (Exception ex) {
             StinkendReich.LOGGER.warn("Straßennetz nicht lesbar: {}", ex.toString());
@@ -663,6 +682,7 @@ public final class Strassennetz {
             liste.add(o);
         }
         j.add("strassen", liste);
+        j.add("wegweiser", wegweiser.speichern());
         try {
             Files.writeString(pfad, GSON.toJson(j), StandardCharsets.UTF_8);
         } catch (Exception ex) {

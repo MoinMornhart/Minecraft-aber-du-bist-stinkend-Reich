@@ -1,5 +1,6 @@
 package de.moinmornhart.stinkendreich.paper;
 
+import de.moinmornhart.stinkendreich.paper.auto.Fahrzeuge;
 import de.moinmornhart.stinkendreich.paper.butler.Butler;
 import de.moinmornhart.stinkendreich.paper.villa.Villen;
 import io.papermc.paper.datacomponent.DataComponentTypes;
@@ -9,6 +10,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -98,20 +100,48 @@ public final class Handy implements Listener {
                 knoepfe.add(Dialoge.Knopf.von(v.name(), (s, a) -> s.teleport(v.spawn(plugin.bauplan()))));
             }
         }
-        // James als Pilot
-        knoepfe.add(Dialoge.Knopf.von("Hubschrauber: nach Hause", (s, a) -> butler.befehl(s, "flieg mich nach hause")));
-        knoepfe.add(Dialoge.Knopf.von("Hubschrauber: ins Dorf", (s, a) -> butler.befehl(s, "flieg mich ins dorf")));
+        knoepfe.add(1, Dialoge.Knopf.von("Navigation", (s, a) -> naviSeite(s)));
+        Dialoge.zeigen(p, "Goldenes Handy", "Was darf es sein?", List.of(), knoepfe);
+    }
+
+    // ------------------------------------------------------------------
+    // Navigation (Philip: Ziel wählen, dann Limo oder Heli; James holt ab und bringt einen hin, sobald man drin sitzt;
+    // sitzt man schon in Limo oder Hubschrauber, geht es gleich damit los)
+    // ------------------------------------------------------------------
+
+    private void naviSeite(Player p) {
+        List<Dialoge.Knopf> knoepfe = new ArrayList<>();
+        knoepfe.add(Dialoge.Knopf.von("Nach Hause", (s, a) -> reisen(s, "nach hause", true)));
+        knoepfe.add(Dialoge.Knopf.von("Ins Dorf", (s, a) -> reisen(s, "ins dorf", false)));
+        Villen.Villa eigene = plugin.villen().vonBesitzer(p.getUniqueId());
         for (Villen.Villa v : plugin.villen().alle()) {
             if (v != eigene && v.besitzerName() != null && !v.besitzerName().isEmpty()) {
-                knoepfe.add(Dialoge.Knopf.von("Hubschrauber: " + v.name(), (s, a) -> butler.befehl(s,
-                        "flieg mich zur villa von " + v.besitzerName().toLowerCase(java.util.Locale.GERMAN))));
-                if (plugin.strassen().zur(v.nr()) != null) {
-                    knoepfe.add(Dialoge.Knopf.von("Limo: " + v.name(), (s, a) -> butler.befehl(s,
-                            "fahr mich zur villa von " + v.besitzerName().toLowerCase(java.util.Locale.GERMAN))));
-                }
+                knoepfe.add(Dialoge.Knopf.von(v.name(), (s, a) -> reisen(s,
+                        "zur villa von " + v.besitzerName().toLowerCase(java.util.Locale.GERMAN), plugin.strassen().zur(v.nr()) != null)));
             }
         }
-        Dialoge.zeigen(p, "Goldenes Handy", "Was darf es sein?", List.of(), knoepfe);
+        Dialoge.zeigen(p, "Navigation", "Wohin darf James Sie bringen?", List.of(), knoepfe);
+    }
+
+    /** Ziel gewählt: im Hubschrauber oder in der Limo gleich los, sonst „Limo oder Heli?“ (Limo nur, wo eine Straße hinführt). */
+    private void reisen(Player p, String ziel, boolean limoGeht) {
+        Butler butler = plugin.butler();
+        ArmorStand heli = plugin.fahrzeuge().hubschrauber(p.getLocation(), 8);
+        if (heli != null && plugin.fahrzeuge().sitztDrin(heli, p)) {
+            butler.befehl(p, "flieg mich " + ziel);
+            return;
+        }
+        ArmorStand limo = plugin.fahrzeuge().fahrzeug(Fahrzeuge.Art.STRETCHLIMO, p.getLocation(), 8);
+        if (limoGeht && limo != null && plugin.fahrzeuge().sitztDrin(limo, p)) {
+            butler.befehl(p, "fahr mich " + ziel);
+            return;
+        }
+        List<Dialoge.Knopf> knoepfe = new ArrayList<>();
+        if (limoGeht) {
+            knoepfe.add(Dialoge.Knopf.von("🚗 Mit der Limo", (s, a) -> butler.befehl(s, "fahr mich " + ziel)));
+        }
+        knoepfe.add(Dialoge.Knopf.von("🚁 Mit dem Hubschrauber", (s, a) -> butler.befehl(s, "flieg mich " + ziel)));
+        Dialoge.zeigen(p, "Limo oder Heli?", "James holt Sie ab.", List.of(), knoepfe);
     }
 
     // ------------------------------------------------------------------

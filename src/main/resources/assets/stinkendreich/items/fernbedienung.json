@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "stinkendreich:block/deko/fernbedienung"
+    "model": "stinkendreich:item/fernbedienung"
   }
 }

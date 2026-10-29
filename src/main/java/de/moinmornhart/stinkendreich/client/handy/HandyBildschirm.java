@@ -16,9 +16,9 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import java.util.List;
 
 /**
- * Das Handy: ein goldenes Smartphone mit Apps. Startseite: James anrufen (Limo oder Hubschrauber), Navigation
- * (James holt dich ab und fährt dich hin; unter „Meine Orte“ eigene Ziele speichern, die James dann auch im Chat
- * kennt), Lieferservice (Tiere und Waren), Aufträge (wie im Chat), Mitarbeiter bestellen, Bodyguards rufen oder
+ * Das Handy: ein goldenes Smartphone mit Apps. Startseite: Navigation (Ziel wählen, dann Limo oder Hubschrauber:
+ * James holt dich ab und bringt dich hin, sobald du eingestiegen bist; sitzt du schon in Limo oder Hubschrauber, geht es
+ * gleich damit los; unter „Meine Orte“ eigene Ziele speichern, die James dann auch im Chat kennt), Lieferservice (Tiere und Waren), Aufträge (wie im Chat), Mitarbeiter bestellen, Bodyguards rufen oder
  * heimschicken. Jede Taste schickt eine Nachricht „handy“ an den Server.
  */
 public class HandyBildschirm extends Screen {
@@ -27,7 +27,7 @@ public class HandyBildschirm extends Screen {
     /** Etwas flachere Schalter auf der Smart-Home-Seite, damit alle zehn plus Farben passen. */
     private static final int SMART_H = 16;
 
-    private enum Seite { START, NAVI, ORTE, LIEFERUNG, AUFTRAG, SMART, GAESTE }
+    private enum Seite { START, NAVI, REISE, ORTE, LIEFERUNG, AUFTRAG, SMART, GAESTE }
 
     /** Höchstens so viele eigene Orte passen auf eine Seite. */
     private static final int ORTE_MAX = 7;
@@ -44,6 +44,8 @@ public class HandyBildschirm extends Screen {
     private static final java.util.Map<String, Boolean> smartZustand = new java.util.HashMap<>();
 
     private Seite seite = Seite.START;
+    /** Gewähltes Navi-Ziel, solange auf der Seite REISE noch Limo oder Hubschrauber gewählt wird. */
+    private String reiseZiel = "";
     private EditBox eingabe;
 
     public HandyBildschirm() {
@@ -69,8 +71,6 @@ public class HandyBildschirm extends Screen {
         int y = oben() + 40;
         switch (seite) {
             case START -> {
-                y = knopf(x, y, "anruf_limo", () -> senden("anruf|limo"));
-                y = knopf(x, y, "anruf_heli", () -> senden("anruf|heli"));
                 y = knopf(x, y, "navi", () -> wechseln(Seite.NAVI));
                 y = knopf(x, y, "lieferung", () -> wechseln(Seite.LIEFERUNG));
                 y = knopf(x, y, "auftraege", () -> wechseln(Seite.AUFTRAG));
@@ -83,11 +83,17 @@ public class HandyBildschirm extends Screen {
             case NAVI -> {
                 for (String ziel : List.of("villa", "dorf", "endportal", "netherportal", "mine")) {
                     String befehl = ziel.equals("villa") ? "#villa" : ziel;
-                    y = knopf(x, y, "navi." + ziel, () -> senden("fahr|" + befehl));
+                    y = knopf(x, y, "navi." + ziel, () -> reisen(befehl));
                 }
                 y += 4;
                 knopf(x, y, "orte", () -> wechseln(Seite.ORTE));
                 knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.START));
+            }
+            case REISE -> {
+                y += 14;    // Platz für den Hinweis „James holt dich ab“
+                y = knopf(x, y, "reise.limo", () -> senden("fahr|" + reiseZiel));
+                knopf(x, y, "reise.heli", () -> senden("flieg|" + reiseZiel));
+                knopf(x, oben() + HOEHE - 30, "zurueck", () -> wechseln(Seite.NAVI));
             }
             case ORTE -> {
                 // Gespeicherte Orte: Name = hinfahren, ✕ = löschen
@@ -97,13 +103,13 @@ public class HandyBildschirm extends Screen {
                         // Villa eines anderen Spielers: hinfahren, aber nicht löschbar
                         String herr = ort.substring("#villa:".length());
                         Component text = Component.literal("🏠 ").append(Component.translatable("stinkendreich.strasse.ziel.villa", herr));
-                        addRenderableWidget(Button.builder(text, b -> senden("fahr|villa von " + herr))
+                        addRenderableWidget(Button.builder(text, b -> reisen("villa von " + herr))
                                 .bounds(x, y, KNOPF_B, KNOPF_H).build());
                         y += KNOPF_H + ABSTAND;
                         continue;
                     }
                     addRenderableWidget(Button.builder(Component.literal("➜ " + ort.substring(0, 1).toUpperCase(java.util.Locale.ROOT) + ort.substring(1)),
-                            b -> senden("fahr|" + ort))
+                            b -> reisen(ort))
                             .bounds(x, y, KNOPF_B - 22, KNOPF_H).build());
                     addRenderableWidget(Button.builder(Component.literal("✕"), b -> anfragen("ort|vergessen|" + ort))
                             .bounds(x + KNOPF_B - 20, y, 20, KNOPF_H).build());
@@ -291,6 +297,20 @@ public class HandyBildschirm extends Screen {
         }
     }
 
+    /**
+     * Navi-Ziel gewählt: Sitzt der Spieler schon in Limo oder Hubschrauber, bringt James ihn gleich damit hin; sonst
+     * fragt das Handy, womit James ihn abholen soll.
+     */
+    private void reisen(String ziel) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null && mc.player.getVehicle() instanceof de.moinmornhart.stinkendreich.auto.AutoEntity a) {
+            senden((a.art.fliegt() ? "flieg|" : "fahr|") + ziel);
+            return;
+        }
+        reiseZiel = ziel;
+        wechseln(Seite.REISE);
+    }
+
     /** Schickt die Aktion an den Server und schließt das Handy (wie Auflegen). */
     private void senden(String wert) {
         Minecraft mc = Minecraft.getInstance();
@@ -354,6 +374,9 @@ public class HandyBildschirm extends Screen {
         schrift(g, titel, x + BREITE / 2, y + 28, 0xFFE8BA34, true);
         if (seite == Seite.ORTE && orte.isEmpty()) {
             schrift(g, Component.translatable("stinkendreich.handy.orte.leer").getString(), x + BREITE / 2, y + 46, 0xFFB8BCC8, true);
+        }
+        if (seite == Seite.REISE) {
+            schrift(g, Component.translatable("stinkendreich.handy.reise.hinweis").getString(), x + BREITE / 2, y + 46, 0xFFB8BCC8, true);
         }
         if (seite == Seite.GAESTE && gaeste.isEmpty()) {
             schrift(g, Component.translatable("stinkendreich.handy.gaeste.leer").getString(), x + BREITE / 2, y + 46, 0xFFB8BCC8, true);

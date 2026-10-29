@@ -1,0 +1,31 @@
+# Wegweiser an den Straßen (Mod, neue Welt): großer Wegweiser an der Zufahrt vor dem Kreisel, dazu einer an jedem
+# Abzweig. Wartet auf die automatischen Straßen und eine Nachbarvilla, dann Bilder von den ersten Wegweisern.
+# Aufruf: tools/ingame/test.sh 26.3 tools/ingame/szenarien/wegweiser.txt
+warte 20
+server /time set 6000
+server /gamerule advance_time false
+merke
+server /villa nachbar Max
+bis 300 Baustelle: Villa 1 fertig
+merke anfang
+bis 1200 Straße Villa von Max: Ende
+merke anfang
+bis 1200 Straße Dorf: Ende
+merke anfang
+bis 1200 Straße Mine: Ende
+merke anfang
+bis 300 Straßennetz: Wegweiser bei
+server /gamemode spectator @p
+taste F1
+server /butler wegweiser 0
+warte 6
+bild w01_zufahrt
+server /butler wegweiser 1
+warte 8
+bild w02_abzweig
+server /butler wegweiser 2
+warte 8
+bild w03_abzweig
+server /butler wegweiser 3
+warte 8
+bild w04_abzweig

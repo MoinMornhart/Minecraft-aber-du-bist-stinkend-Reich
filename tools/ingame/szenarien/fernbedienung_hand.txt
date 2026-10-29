@@ -1,0 +1,39 @@
+# Fernbedienung in der Hand: Ich-Sicht (mit Hand) und von außen an einem Rüstungsständer (gleiche Lage in der Hand
+# wie beim Spieler), von vorn, beiden Seiten und schräg oben. Weltkoordinaten = Villa + (-56, 62, -56).
+server /gamemode survival
+server /time set 6000
+server /weather clear
+warte 30
+server /item replace entity @p weapon.mainhand with stinkendreich:fernbedienung
+server /villa ort 55.5 26 93.5 0 0
+warte 4
+bild h01_ich_sicht
+server /villa ort 55.5 26 93.5 0 40
+warte 2
+bild h02_ich_sicht_unten
+server /execute at @p run summon minecraft:armor_stand ~ ~ ~2.5 {Tags:["fbtest"],ShowArms:1b,NoGravity:1b,NoBasePlate:1b,Rotation:[180f,0f],equipment:{mainhand:{id:"stinkendreich:fernbedienung",count:1},offhand:{id:"stinkendreich:fernbedienung",count:1}}}
+server /gamemode spectator @p
+taste F1
+server /execute at @e[tag=fbtest,limit=1] run tp @p ~ ~-0.6 ~-1.5 facing ~ ~-0.62 ~
+warte 3
+bild h03_staender_vorn
+server /execute at @e[tag=fbtest,limit=1] run tp @p ~-1.5 ~-0.6 ~ facing ~ ~-0.62 ~
+warte 2
+bild h04_staender_rechts
+server /execute at @e[tag=fbtest,limit=1] run tp @p ~1.5 ~-0.6 ~ facing ~ ~-0.62 ~
+warte 2
+bild h05_staender_links
+server /execute at @e[tag=fbtest,limit=1] run tp @p ~-0.6 ~0.4 ~-1.0 facing ~-0.3 ~-0.72 ~
+warte 2
+bild h06_staender_oben
+server /kill @e[tag=fbtest]
+server /gamemode survival @p
+server /villa ort 55.5 26 93.5 -30 10
+taste F5
+taste F5
+warte 3
+bild h07_spieler_vorn
+server /villa ort 55.5 26 93.5 -60 10
+warte 2
+bild h08_spieler_schraeg
+taste F5
