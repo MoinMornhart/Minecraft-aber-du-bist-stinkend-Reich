@@ -1,5 +1,5 @@
 """Setzt Trailer Teil 8 (0.4.7) aus trailer8a (Fernbedienung in der Hand), trailer8b (Rollläden), trailer8c (Navi mit
-Hubschrauber, Wartezeit und Flug gekürzt) und trailer8d (Wegweiser) zusammen, alle aus tools/ingame/szenarien/trailer8.txt.
+Hubschrauber, Wartezeit und Flug gekürzt) sowie trailer8d/e (Wegweiser, Nachdreh aus trailer8d.txt) zusammen, die anderen aus tools/ingame/szenarien/trailer8.txt.
 Ergebnis: build/ingame/trailer8/trailer8_roh.mp4 und trailer8_kapitel.txt, danach video.py und an docs/trailer.mp4 hängen.
 """
 import subprocess
@@ -15,7 +15,7 @@ def laenge(d):
 
 
 # Navi: Abschnitte nach dem Ansehen der Rohaufnahme (Anflug, Einsteigen + Start, Landung)
-ABSCHNITTE_C = [(0.3, None)]
+ABSCHNITTE_C = [(0.3, 3.5), (21.3, 33.5)]
 
 # Stück, Rohaufnahme, behaltene Abschnitte (von, bis in Sekunden der Aufnahme; None = bis zum Ende)
 STUECKE = [
@@ -23,6 +23,7 @@ STUECKE = [
     ("b", W / "build/ingame/26.3/trailer8b_roh.mp4", [(0.3, None)]),
     ("c", W / "build/ingame/26.3/trailer8c_roh.mp4", ABSCHNITTE_C),
     ("d", W / "build/ingame/26.3/trailer8d_roh.mp4", [(0.3, None)]),
+    ("e", W / "build/ingame/26.3/trailer8e_roh.mp4", [(0.3, None)]),
 ]
 
 liste, kapitel, versatz = [], [], 0.0

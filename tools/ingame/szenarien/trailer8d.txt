@@ -1,0 +1,24 @@
+# Trailer Teil 8, Wegweiser-Nachdreh in der Welt aus trailer8.txt (Straßen und Wegweiser stehen schon):
+# Spielstand nach run/testwelt kopieren, dann
+# SICHTWEITE=12 WELT_BEHALTEN=1 tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer8d.txt
+# Kamerafahrt um den großen Wegweiser an der Zufahrt (Welt 4 88 62) und den am Abzweig (Welt -196 88 34).
+# Villa-Koordinaten = Welt + (56, -62, 56).
+warte 30
+server /gamemode spectator @p
+server /time set 6000
+server /gamerule advance_time false
+taste F1
+server /villa ort 64 27.6 121 135 8
+warte 15
+video start trailer8d
+kapitel Wegweiser aus Holz an jeder Straße: wohin und wie weit
+server fahrt 10 | 64 27.6 121 135 8 | 60 27.6 123.5 180 8 | 56 27.6 121 -135 8
+warte 11
+video stopp
+server /villa ort -136 27.6 93 135 8
+warte 15
+video start trailer8e
+kapitel An jedem Abzweig: neue Straße, geradeaus und der Weg nach Hause
+server fahrt 10 | -136 27.6 93 135 8 | -140 27.6 95.5 180 8 | -144 27.6 93 -135 8
+warte 11
+video stopp
