@@ -606,7 +606,9 @@ public final class Strassennetz {
 
     /** Wegweiser an Kreisel und Abzweigen aufstellen bzw. anpassen (siehe {@link Wegweiser}). */
     private void wegweiserPruefen() {
-        String heim = VillaPlatzierung.villa().map(Strassennetz::villaName).orElse(null);
+        // Heimweg: „Villa von …“; ohne Besitzer (noch niemand eingezogen) einfach „Villa“
+        String heim = VillaPlatzierung.villa().map(v -> v.besitzerName().isEmpty()
+                ? net.minecraft.network.chat.Component.translatable("stinkendreich.strasse.ziel.villa_heim").getString() : villaName(v)).orElse(null);
         if (wegweiser.tick(server.overworld(), strassen, kreiselMitte(), heim)) {
             speichern();
         }

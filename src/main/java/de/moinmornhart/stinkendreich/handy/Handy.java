@@ -144,7 +144,7 @@ public final class Handy {
                         HeliBereitstellung.bereitstellen(p, b);
                     }
                     b.neueAuftraege(List.of(new FlugAuftrag(z.punkt(), z.name())));
-                    b.sagen(z.antwort().text());
+                    b.sagen(net.minecraft.network.chat.Component.translatable("stinkendreich.butler.flug.ziel", z.name()));
                     return;
                 }
                 // Steht der Wagen schon bereit (du sitzt drin oder James wartet am Steuer), nimmt James genau diesen –

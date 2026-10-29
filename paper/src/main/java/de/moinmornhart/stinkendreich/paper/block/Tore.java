@@ -194,6 +194,11 @@ public final class Tore {
 
     /** Ein Flügel: gewünschten Zustand setzen und in Stufen hinfahren. */
     public boolean setzeOffen(Block b, Zustand z, boolean offen) {
+        // Einzelne Rollläden (neben der Haustür) standen bis 0.4.6 quer zur Fassade: immer längs x davor (wie in der Mod)
+        if (z.block().equals("stinkendreich:rollladen") && z.ist("spalte", "einzeln") && z.ist("axis", "z")) {
+            z = z.mit("axis", "x");
+            bloecke.setzen(b, z);
+        }
         if (z.ist("open", Boolean.toString(offen))) {
             return false;
         }

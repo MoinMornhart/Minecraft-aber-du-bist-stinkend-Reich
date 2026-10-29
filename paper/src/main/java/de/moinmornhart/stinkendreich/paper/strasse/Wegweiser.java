@@ -44,7 +44,7 @@ final class Wegweiser {
 
     private record Pfahl(String id, double x, double z, int strassenY, List<WegweiserForm.Schild> schilder) {
         String signatur() {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("f" + WegweiserForm.FORM + ";");
             schilder.forEach(s -> sb.append(s.text()).append('@').append(Math.round(Math.toDegrees(Math.atan2(s.dz(), s.dx())))).append(';'));
             return sb.toString();
         }
@@ -111,8 +111,8 @@ final class Wegweiser {
         double l = Math.hypot(s.dx(), s.dz()), dx = s.dx() / l, dz = s.dz() / l;
         int boden = w.getHighestBlockYAt((int) Math.floor(p.x()), (int) Math.floor(p.z()), HeightMap.MOTION_BLOCKING_NO_LEAVES) + 1;
         int y = Math.abs(boden - (p.strassenY() + 1)) <= 4 ? boden : p.strassenY() + 1;
-        Location ort = new Location(w, p.x() + dx * 2 - dz * 6, y + 1.0, p.z() + dz * 2 + dx * 6);
-        ort.setDirection(new org.bukkit.util.Vector(p.x() + dx * 1.2 - ort.getX(), y + 2.4 - ort.getY(), p.z() + dz * 1.2 - ort.getZ()));
+        Location ort = new Location(w, p.x() - dx * 4 - dz * 4, y + 2.5, p.z() - dz * 4 + dx * 4);
+        ort.setDirection(new org.bukkit.util.Vector(p.x() + dx * 1.2 - ort.getX(), y + 2.4 - 1.62 - ort.getY(), p.z() + dz * 1.2 - ort.getZ()));
         return ort;
     }
 

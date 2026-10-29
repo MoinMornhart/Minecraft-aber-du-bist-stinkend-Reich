@@ -15,13 +15,15 @@ import java.util.Locale;
 public final class WegweiserForm {
     /** Pfahl, Schilder und Schrift. */
     public static final String PFAHL = "minecraft:spruce_log", KAPPE = "minecraft:dark_oak_slab", BRETT = "minecraft:dark_oak_planks";
+    /** Stand der Form: ändert sich die Form, werden vorhandene Wegweiser neu aufgestellt (Teil der Signatur). */
+    public static final int FORM = 2;
     /** Farbe der Schrift (Gold, passend zur Villa). */
     public static final String SCHRIFTFARBE = "#FFD45A";
-    /** Größe der Schrift (1 = Minecraft-Standard, ein Buchstabe ist dann gut 0,15 Blöcke breit). */
+    /** Größe der Schrift (1 = Minecraft-Standard, ein fetter Buchstabe ist dann knapp 0,19 Blöcke breit). */
     public static final float SCHRIFT = 0.8F;
 
     private static final float PFAHL_DICKE = 0.22F, BRETT_HOEHE = 0.36F, BRETT_DICKE = 0.08F, ABSTAND = 0.55F;
-    private static final float BREITE_JE_ZEICHEN = 0.135F, RAND = 0.55F, MIN_LAENGE = 1.3F, MAX_LAENGE = 3.4F;
+    private static final float BREITE_JE_ZEICHEN = 0.19F, RAND = 0.6F, MIN_LAENGE = 1.3F, MAX_LAENGE = 4.2F;
 
     /** Ein Schild: Aufschrift und Richtung, in die der Pfeil zeigt (waagerecht, x/z, muss nicht normiert sein). */
     public record Schild(String text, double dx, double dz) {

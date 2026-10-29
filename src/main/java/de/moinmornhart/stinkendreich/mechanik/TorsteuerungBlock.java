@@ -137,6 +137,7 @@ public class TorsteuerungBlock extends MechanikBlock {
             if (!s.is(typ)) {
                 continue;
             }
+            s = einzelnAusrichten(welt, p, s);
             geaendert |= TorfluegelBlock.setzeOffen(welt, p, s, offen);
             // Am Rand des Umkreises: den Flügel nach oben bzw. unten weiterverfolgen
             if (p.getY() == oben) {
@@ -147,6 +148,21 @@ public class TorsteuerungBlock extends MechanikBlock {
             }
         }
         return geaendert;
+    }
+
+    /**
+     * Rollläden, die nur einen Block breit sind (neben der Haustür), standen bis 0.4.6 quer zur Fassade wie ein Brett
+     * (Philips Bild): Der Bauplan gab ihnen die Achse z. Rollläden hängen nur vor der Südfassade der Villa, also immer längs
+     * x – bestehende Villen werden so beim nächsten Schalten korrigiert.
+     */
+    private static BlockState einzelnAusrichten(ServerLevel welt, BlockPos p, BlockState s) {
+        if (!s.is(de.moinmornhart.stinkendreich.register.ModBloecke.ROLLLADEN) || s.getValue(Eigenschaften.SPALTE) != Eigenschaften.Spalte.EINZELN
+                || s.getValue(Eigenschaften.ACHSE) != Direction.Axis.Z) {
+            return s;
+        }
+        s = s.setValue(Eigenschaften.ACHSE, Direction.Axis.X);
+        welt.setBlock(p, s, net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        return s;
     }
 
     /** Schaltet die Blöcke des Typs, die über bzw. unter {@code start} direkt aufeinander folgen (höchstens 16). */

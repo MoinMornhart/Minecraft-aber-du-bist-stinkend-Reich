@@ -1,0 +1,20 @@
+# Rollläden (Philips Bild 29.10.): Smart Home „Rollläden zu“, dann die Front von vorn und schräg. Die schmalen Läden
+# neben der Haustür müssen flach vor der Fassade liegen (nicht quer wie ein Brett).
+warte 30
+server /gamemode creative @p
+server /time set 6000
+server /gamerule advance_time false
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /handy smart|rollo|zu
+warte 6
+server /gamemode spectator @p
+taste F1
+server /villa ort 55.5 28 82 180 5
+warte 4
+bild r01_front
+server /villa ort 47 28 76 210 5
+warte 3
+bild r02_schraeg_links
+server /villa ort 64 28 76 150 5
+warte 3
+bild r03_schraeg_rechts

@@ -35,7 +35,7 @@ final class Wegweiser {
     /** Ein geplanter Wegweiser: Kennung (auch Marke der Figuren), Fußpunkt, Höhe der Straße daneben, Schilder. */
     private record Pfahl(String id, double x, double z, int strassenY, List<WegweiserForm.Schild> schilder) {
         String signatur() {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder("f" + WegweiserForm.FORM + ";");
             schilder.forEach(s -> sb.append(s.text()).append('@').append(Math.round(Math.toDegrees(Math.atan2(s.dz(), s.dx())))).append(';'));
             return sb.toString();
         }
@@ -79,7 +79,8 @@ final class Wegweiser {
 
     /**
      * Testhilfe (/butler wegweiser &lt;nr&gt;): Standort zum Anschauen des Wegweisers {@code nr} – x, y, z des Betrachters und
-     * der Punkt, auf den er schaut –, oder null. Der Betrachter steht schräg vor dem ersten Schild.
+     * der Punkt, auf den er schaut –, oder null. Der Betrachter steht schräg hinter dem Pfahl, etwas erhöht
+     * (über Büschen); der Blickpunkt ist um die Augenhöhe gesenkt, weil {@code tp … facing} von den Füßen aus rechnet.
      */
     double[] blick(ServerLevel welt, int nr) {
         if (nr < 0 || nr >= plan.size()) {
@@ -88,10 +89,10 @@ final class Wegweiser {
         Pfahl p = plan.get(nr);
         WegweiserForm.Schild s = p.schilder().get(0);
         double l = Math.hypot(s.dx(), s.dz()), dx = s.dx() / l, dz = s.dz() / l;
-        double bx = p.x() + dx * 2 - dz * 6, bz = p.z() + dz * 2 + dx * 6;
+        double bx = p.x() - dx * 4 - dz * 4, bz = p.z() - dz * 4 + dx * 4;
         int boden = welt.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, (int) Math.floor(p.x()), (int) Math.floor(p.z()));
         int y = Math.abs(boden - (p.strassenY() + 1)) <= 4 ? boden : p.strassenY() + 1;
-        return new double[]{bx, y + 1.0, bz, p.x() + dx * 1.2, y + 2.4, p.z() + dz * 1.2};
+        return new double[]{bx, y + 2.5, bz, p.x() + dx * 1.2, y + 2.4 - 1.62, p.z() + dz * 1.2};
     }
 
     /** Alle Wegweiser vergessen (Straßen werden neu gebaut); geladene werden sofort abgebaut, die übrigen beim Laden. */

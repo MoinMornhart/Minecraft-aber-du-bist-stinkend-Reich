@@ -1677,7 +1677,9 @@ def fluegel(x0, y0, z0, x1, y1, z1, name: str, offen: bool) -> None:
         return namen[0] if i == 0 else namen[2] if i == n - 1 else namen[1]
 
     flach = y0 == y1 and x0 != x1 and z0 != z1
-    achse = "z" if (x0 == x1 and not flach) else "x"
+    # Längs z nur, wenn die Fläche wirklich in z-Richtung reicht: ein einzelnes Feld (x0 == x1, z0 == z1) vor einer
+    # Fassade nach Süden gehört längs x davor (sonst stand der schmale Rollladen neben der Haustür quer ab)
+    achse = "z" if (x0 == x1 and z0 != z1 and not flach) else "x"
     for x in range(x0, x1 + 1):
         for y in range(y0, y1 + 1):
             for z in range(z0, z1 + 1):
