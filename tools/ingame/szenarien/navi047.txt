@@ -1,0 +1,30 @@
+# Navi 0.4.7: Ziel + „Hubschrauber“ (= /handy flieg|Ziel): James holt den Spieler mit dem Hubschrauber ab, nach dem
+# Einsteigen fliegt er sofort los. Danach: im Hubschrauber sitzend ein Ziel wählen (/handy fahr|…) = er fliegt, ohne
+# zu fragen. Weltkoordinaten = Villa + (-56, 62, -56).
+warte 30
+server /gamemode creative @p
+server /time set 6000
+server /gamerule advance_time false
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /spreadplayers 0 220 0 1 false @p
+warte 8
+merke
+server /handy flieg|#villa
+bis 240 Der Hubschrauber steht bereit
+warte 3
+taste F5
+bild n01_heli_gelandet
+server /ride @p mount @e[type=stinkendreich:hubschrauber,limit=1,sort=nearest]
+warte 8
+bild n02_abflug
+merke
+bis 300 Wir sind gelandet
+warte 2
+bild n03_zuhause
+taste F5
+merke
+server /handy fahr|dorf
+warte 10
+bild n04_im_heli_zum_dorf
+bis 400 Wir sind gelandet
+bild n05_im_dorf

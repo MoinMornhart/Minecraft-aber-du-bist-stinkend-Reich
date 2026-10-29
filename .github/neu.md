@@ -1,3 +1,9 @@
+### Neu in 0.4.7 – Wegweiser, Navi mit Limo oder Heli, Fernbedienung in der Hand
+
+- **Wegweiser an den Straßen:** Holzpfähle mit Pfeilschildern und goldener Schrift. Ein großer steht an der Zufahrt vor dem Kreisel und zeigt zu allen Straßen („MINE · 340 m“, „DORF · 1,2 km“), an jedem Abzweig steht einer mit der neuen Straße, dem Weg geradeaus und dem Heimweg. Kommt eine Straße dazu, wird der Wegweiser ergänzt. Gebaut aus Anzeige-Figuren von Minecraft – Freunde ohne Mod sehen sie auch. Mod und Paper.
+- **Navi: erst das Ziel, dann Limo oder Hubschrauber.** James holt dich mit dem gewählten Fahrzeug ab, und sobald du eingestiegen bist, fährt bzw. fliegt er los. Sitzt du schon in der Limo oder im Hubschrauber, geht es ohne Nachfrage gleich damit los. Die Knöpfe „Limo rufen“ und „Hubschrauber rufen“ sind weg. Mod, Handy-Fenster ohne Mod und Paper (dort die Limo nur, wo eine Straße hinführt).
+- **Fernbedienung richtig in der Hand:** In der Ich-Sicht war die Hand weg – jetzt siehst du deinen Arm, der die Fernbedienung hält. Von außen hält die Figur sie waagerecht nach vorn, Tasten nach oben (vorher hing sie schief neben der Hand).
+
 ### Neu in 0.4.6 – gemeinsam fernsehen, Ressourcenpaket von GitHub, personalisierte Zugangskarten
 
 - **Gemeinsam Videos schauen:** Startet jemand ein Video, wartet der Fernseher, bis es bei allen Zuschauern in der Nähe (32 Blöcke, mit Mod) geladen ist – über der Hotbar steht „Warte auf die anderen Zuschauer … (1/2 bereit)“. Dann startet es bei allen im selben Moment, auch nach Pause und Spulen. Länger als 45 Sekunden wird nicht gewartet.
