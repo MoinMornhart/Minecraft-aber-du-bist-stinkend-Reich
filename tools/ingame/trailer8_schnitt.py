@@ -19,7 +19,7 @@ ABSCHNITTE_C = [(0.3, None)]
 
 # Stück, Rohaufnahme, behaltene Abschnitte (von, bis in Sekunden der Aufnahme; None = bis zum Ende)
 STUECKE = [
-    ("a", W / "build/ingame/26.3/trailer8a_roh.mp4", [(0.3, None)]),
+    ("a", W / "build/ingame/26.3/trailer8a_roh.mp4", [(1.2, None)]),
     ("b", W / "build/ingame/26.3/trailer8b_roh.mp4", [(0.3, None)]),
     ("c", W / "build/ingame/26.3/trailer8c_roh.mp4", ABSCHNITTE_C),
     ("d", W / "build/ingame/26.3/trailer8d_roh.mp4", [(0.3, None)]),
