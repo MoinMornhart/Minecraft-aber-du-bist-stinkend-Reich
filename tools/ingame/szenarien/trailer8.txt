@@ -1,0 +1,81 @@
+# Trailer Teil 8 (0.4.7): Fernbedienung richtig in der Hand, Rollläden flach vor der Fassade, Navi mit Hubschrauber,
+# Wegweiser an den Straßen. Neue Welt (die Straßen entstehen dabei im Hintergrund).
+# Aufruf: SICHTWEITE=12 tools/ingame/test.sh 26.3 tools/ingame/szenarien/trailer8.txt
+# Weltkoordinaten = Villa + (-56, 62, -56); „fahrt“ und „/villa ort“ nehmen Villa-Koordinaten.
+server /gamemode creative
+server /time set 6000
+server /weather clear
+server /gamerule advance_time false
+warte 30
+# a) Fernbedienung vom Tisch im Penthouse-Kino in die Hand (Hand sichtbar, also ohne F1)
+server /clear @p
+server /villa ort 63.5 38 42.2 0 17
+warte 4
+video start trailer8a
+kapitel Neu in 0.4.7: die Fernbedienung liegt richtig in der Hand
+warte 2
+klick
+warte 2.5
+server /villa ort 63.5 38 42.2 0 3
+warte 1.5
+klick
+warte 3
+server /villa ort 63.5 38 42.2 -25 25
+warte 2.5
+video stopp
+klient schliessen
+# b) Rollläden: erst offen, dann im Video über Smart Home zu
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /handy smart|rollo|auf
+warte 6
+server /gamemode spectator @p
+taste F1
+server /villa ort 47 28 76 210 5
+warte 4
+video start trailer8b
+kapitel Rollläden fahren flach vor die Fassade – auch neben der Haustür
+warte 1
+server /gamemode creative @p
+server /handy smart|rollo|zu
+server /gamemode spectator @p
+server fahrt 9 | 47 28 76 210 5 | 55.5 28 80 180 5 | 64 28 76 150 5
+warte 10
+video stopp
+# c) Navi: Ziel wählen, dann „Hubschrauber“: James holt dich ab und fliegt sofort los
+server /gamemode creative @p
+server /item replace entity @p weapon.mainhand with stinkendreich:handy
+server /spreadplayers 0 220 0 1 false @p
+warte 8
+taste F5
+video start trailer8c
+kapitel Navi: Ziel wählen, Limo oder Hubschrauber – James holt dich ab
+merke
+server /handy flieg|#villa
+bis 240 Der Hubschrauber steht bereit
+warte 3
+server /ride @p mount @e[type=stinkendreich:hubschrauber,limit=1,sort=nearest]
+kapitel Einsteigen – und er fliegt sofort los
+merke
+bis 300 Wir sind gelandet
+warte 3
+video stopp
+taste F5
+# d) Wegweiser: Nachbarvilla + Straßen abwarten, dann die Wegweiser zeigen
+merke
+server /villa nachbar Max
+bis 300 Baustelle: Villa 1 fertig
+merke anfang
+bis 1200 Straße Villa von Max: Ende
+merke anfang
+bis 300 Straßennetz: Wegweiser bei
+server /gamemode spectator @p
+server /butler wegweiser 0
+warte 8
+video start trailer8d
+kapitel Wegweiser aus Holz an jeder Straße: wohin und wie weit
+warte 4
+server /butler wegweiser 1
+warte 4
+server /butler wegweiser 2
+warte 4
+video stopp
