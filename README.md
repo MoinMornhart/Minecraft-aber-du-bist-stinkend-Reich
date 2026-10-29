@@ -30,7 +30,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (15 Minuten, echtes Minecraft, am Ende Paper-Server, neue Skins, Freunde in deiner Welt, Bodyguards im Einsatz, Straßen zu allen Freunden und die neuen Autos aus 0.4.3, Wegweiser und Navi mit Hubschrauber aus 0.4.7)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (16 Minuten, echtes Minecraft, am Ende Paper-Server, neue Skins, Freunde in deiner Welt, Bodyguards im Einsatz, Straßen zu allen Freunden und die neuen Autos aus 0.4.3, Wegweiser und Navi mit Hubschrauber aus 0.4.7)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards, Agenten-Ausrüstung und am Ende James als Chauffeur über die neuen Abzweige von Villa zu Villa</sub></p>
 
 ## 🏛️ Die Villa
