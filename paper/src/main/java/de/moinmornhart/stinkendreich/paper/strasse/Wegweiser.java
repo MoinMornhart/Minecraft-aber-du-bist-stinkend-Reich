@@ -182,13 +182,13 @@ final class Wegweiser {
                 ids.add(id);
             }
             List<WegweiserForm.Schild> liste = schilder.get(id);
-            hinzu(liste, new WegweiserForm.Schild(WegweiserForm.aufschrift(s.name(), laenge(s.punkte(), 0)), bx + (e == null ? 0.5 - (px - j[0]) : 0),
+            hinzu(liste, new WegweiserForm.Schild(WegweiserForm.aufschrift(ziel(s.name()), laenge(s.punkte(), 0)), bx + (e == null ? 0.5 - (px - j[0]) : 0),
                     bz + (e == null ? 0.5 - (pz - j[2]) : 0)));
             if (e != null) {
                 List<int[]> ep = e.punkte();
                 if (i + 8 < ep.size()) {
                     int[] w = ep.get(i + 8);
-                    hinzu(liste, new WegweiserForm.Schild(WegweiserForm.aufschrift(e.name(), laenge(ep, i)), w[0] - j[0], w[2] - j[2]));
+                    hinzu(liste, new WegweiserForm.Schild(WegweiserForm.aufschrift(ziel(e.name()), laenge(ep, i)), w[0] - j[0], w[2] - j[2]));
                 }
                 if (heim != null) {
                     int[] h = ep.get(Math.max(i - 8, 0));
@@ -201,6 +201,11 @@ final class Wegweiser {
             plan.add(new Pfahl(ids.get(k), orte.get(k)[0], orte.get(k)[1], (int) orte.get(k)[2], List.copyOf(schilder.get(ids.get(k)))));
         }
         return plan;
+    }
+
+    /** Ziel auf dem Schild: „Straße zur Villa von Max“ → „Villa von Max“. */
+    private static String ziel(String strasse) {
+        return strasse.replaceFirst("^Straße (zur|zum|nach|ins) ", "");
     }
 
     private static void hinzu(List<WegweiserForm.Schild> liste, WegweiserForm.Schild s) {
