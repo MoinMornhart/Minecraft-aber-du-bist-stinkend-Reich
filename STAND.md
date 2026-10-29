@@ -711,9 +711,28 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
 - Trailer Teil 7 (`trailer7.txt`, `trailer7_schnitt.py`), ganzer Trailer neu kodiert (crf 28, maxrate 700k, Ton 96k):
   15:18, 60 MB. Tests: `runde043*.txt`.
 
+## Runden 0.4.4–0.4.6 (28.10. abends)
+
+- 0.4.4 (veröffentlicht 19:14): **Straßenkehrer** (`strasse/Strassenkehrer`, Mod und Paper: alle 40 Ticks herrenlose Gegenstände
+  ≥ 100 Ticks alt in 11 Blöcken um Straßenpunkte weg, nie auf Grundstücken). **Limo in die Garage** (`auto/Garage`: Stellplatz
+  aus Marke „stellplatz“ + FUHRPARK, Chunk 100 Ticks erzwungen, doppelte Wagen weg; `FahrAuftrag` Phasen AUSSTEIGEN/HEIMFAHRT,
+  außer Sicht → `Garage.einparken`; `AnrufAuftrag` lädt die Garage vor; Paper `Chauffeur` HEIMFAHRT). Paper-Ressourcenpaket
+  pro Spieler über `getVirtualHost()`. `WeltVonPaper` (Fabric-Server auf Paper-Welt: world_gen_settings.dat kopieren).
+  Inkognito merkt sich die Sicherheitsstufe (`stufe_vor_inkognito`) und stellt sie beim Auftauchen wieder her (Tore blieben offen).
+- 0.4.5: Inkognito in der Festung entfernt Laserstrahlen vor dem Einpacken (`Inkognito.strahlenWeg`). Release-Lauf scheiterte
+  mit 403 „Resource not accessible by integration“ beim Anlegen des Release (Bauschritte alle grün, Ursache unklar, direkt
+  nach 0.4.4) → in 0.4.6 enthalten.
+- 0.4.6: Ressourcenpaket für Paper standardmäßig von GitHub (`ressourcenpaket.quelle: github`, Release-Datei
+  `stinkendreich_paket-<version>.zip` aus `tools/paper/paket_bauen.sh`, ohne Prüfsumme; `server` = eingebauter Webserver).
+  Zugangskarten personalisiert (`Zugang.karte`, `truhenkartenAusstellen`, `namenNachtragen`). **Gemeinsam fernsehen**
+  (`FernseherEntity`: Zustand `W<pos>;<bereit>/<alle>`, Zuschauer = Mod-Spieler in 32 Blöcken, Paket „fernseherbereit“,
+  höchstens 45 s warten; Client lädt vor mit `VideoAbspieler.halten`). Pause/Weiter: altes Bild bleibt, bis das neue da ist
+  (`FernseherVideos.VORHER`). Tests `lan_fernseher.txt` (`STINKENDREICH_TESTVIDEO_LANGSAM=Max`), Testbefehl `/villa fernseher`.
+- Offen: Trailer-Teil 8 + README-Abschnitt gemeinsam fernsehen; Zugangskarte, GitHub-Paket und WeltVonPaper auf echtem Server.
+
 ## Nächster Schritt
 
-**Release 0.4.3 angestoßen** (28.10. 18:07, Lauf 40742187650). **Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
+**Release 0.4.6 angestoßen** (29.10. 07:04, Lauf 40827024527, Philip: „Release raus“). **Release 0.4.3 angestoßen** (28.10. 18:07, Lauf 40742187650). **Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).
 
 **Release 0.4.1 veröffentlicht** (27.10. 12:05, 17 Mod-Dateien + `stinkendreich_paper-0.4.1+paper26.3.jar`: https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.1). Vorher geprüft (27.10. 11:45):
 alle 17 Versionen übersetzen, Paper-Plugin baut, README und Trailer (Teil 4) neu. Offen: YouTube im Fernseher
