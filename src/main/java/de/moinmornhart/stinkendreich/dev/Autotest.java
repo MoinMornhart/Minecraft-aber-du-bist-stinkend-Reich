@@ -41,12 +41,6 @@ public final class Autotest {
             ServerTickEvents.END_SERVER_TICK.register(Autotest::befehleAusDatei);
             ServerTickEvents.END_SERVER_TICK.register(Autotest::kamerafahrt);
         }
-        //? if >=26.3 {
-        if (MODUS.contains("paperdaten")) {
-            // Blockdaten für das Paper-Plugin (paper/src/main/resources/bloecke.json)
-            ServerLifecycleEvents.SERVER_STARTED.register(PaperDaten::schreiben);
-        }
-        //?}
         if (!MODUS.contains("server-stop")) {
             return;
         }

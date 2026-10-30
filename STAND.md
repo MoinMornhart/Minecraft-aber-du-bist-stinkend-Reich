@@ -756,6 +756,14 @@ Werkzeug: `scratchpad/seite_daten.py` anpassen, `seite_neu.py seite_daten.json`,
   geladen), Schnitt `trailer8_schnitt.py`, crf 28/maxrate 700k angehängt: `docs/trailer.mp4` 16:26, 66 MB. Paper-Wegweiser zeigen
   das Ziel ohne „Straße zur …“.
 
+## Paper-Plugin entfernt (30.10., Philip: „lösch mal den Paper-Zeug, also das Plugin, nur Mod“)
+
+- Gelöscht: `paper/`, `tools/paper/`, `tools/ingame/paper.sh`, `tools/ingame/bedrock/`, alle `paper_*`/`bedrock_*`-Szenarien,
+  `dev/PaperDaten`, Paper-Fotos; Release-Ablauf baut nur noch die 17 Mod-Dateien; README ohne Paper-Abschnitt.
+  Bleibt: Fabric-Server mit Polymer (Freunde ohne Mod), `WeltVonPaper` (alte Paper-Welten mit der Mod weiterspielen).
+  Ältere Releases (bis 0.4.7) haben das Plugin noch als Datei. Abschnitte zum Paper-Plugin weiter oben sind nur noch Geschichte.
+- `mod.version` = 0.4.8, `.github/neu.md` hat 0.4.8; `.github/release-version` bleibt 0.4.7 bis Philips „Release raus“.
+
 ## Nächster Schritt
 
 **Release 0.4.7 veröffentlicht** (29.10. 19:16 nach Philips „Release raus“, 17 Mod-Dateien + Paper-Plugin + `stinkendreich_paket-0.4.7.zip`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.7). **Release 0.4.6 veröffentlicht** (29.10. 07:11, 17 Mod-Dateien + Paper-Plugin + `stinkendreich_paket-0.4.6.zip`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.6). Als Nächstes: Trailer-Teil 8 + README (gemeinsam fernsehen). **Release 0.4.3 angestoßen** (28.10. 18:07, Lauf 40742187650). **Release 0.4.2 veröffentlicht** (28.10. 09:34, 17 Mod-Dateien + `stinkendreich_paper-0.4.2+paper26.3.jar`: https://github.com/pmornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/tag/v0.4.2; Philip: „Release raus“; `.github/release-version` = 0.4.2, Lauf 40664348070; Notizen in `.github/neu.md` inkl. Bedrock-Vorschau und Trailer 6). Vorher: **0.4.2 war fertig** (28.10. 08:12): alle 17 Versionen übersetzen, Paper-Plugin baut, Tests bestanden (Paper: bestehende Welt, Freunde gleichzeitig, Neustart im Bau, Bodyguards, vier Freunde mit Straßen über Abzweige, Chauffeur über zwei Abzweige; Mod: erste Villa in bestehender Welt, Nachbarvilla auf bebautem Platz, Bodyguards, vier Freunde mit Straßen), README und Trailer (Teil 6) neu. Danach: Server ohne Mod für 1.21–1.21.5 (Truhen-Menüs).

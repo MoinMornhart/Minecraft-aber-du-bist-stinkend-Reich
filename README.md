@@ -30,7 +30,7 @@
 
 <img src="docs/bilder/villa_drohne.jpg" alt="Die Villa aus der Luft" width="100%">
 
-<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (16 Minuten, echtes Minecraft, am Ende Paper-Server, neue Skins, Freunde in deiner Welt, Bodyguards im Einsatz, Straßen zu allen Freunden und die neuen Autos aus 0.4.3, Wegweiser und Navi mit Hubschrauber aus 0.4.7)" width="100%"></a>
+<a href="docs/trailer.mp4"><img src="docs/bilder/trailer.jpg" alt="Trailer ansehen (16 Minuten, echtes Minecraft, neue Skins, Freunde in deiner Welt, Bodyguards im Einsatz, Straßen zu allen Freunden und die neuen Autos aus 0.4.3, Wegweiser und Navi mit Hubschrauber aus 0.4.7)" width="100%"></a>
 <p align="center"><sub>▶️ Trailer ansehen: Villa, Flügel, Esszimmer, Fernseher mit Video und Fernbedienung, Butler, Straßen, Hubschrauber, Handy mit Navi, Bodyguards, Agenten-Ausrüstung und am Ende James als Chauffeur über die neuen Abzweige von Villa zu Villa</sub></p>
 
 ## 🏛️ Die Villa
@@ -587,75 +587,6 @@ Ohne Mod sehen Spieler die Villa mit allen Möbeln, James, die Tänzerinnen, die
 </tr>
 </table>
 
-### 🧱 Paper-Server: das Plugin (Minecraft 26.3, Spieler ohne Mod)
-
-Läuft dein Server mit [Paper](https://papermc.io/), nimm statt der Mod das Plugin `stinkendreich_paper-…+paper26.3.jar` aus dem [neuesten Release](https://github.com/MoinMornhart/Minecraft-aber-du-bist-stinkend-Reich/releases/latest) und leg es in den `plugins`-Ordner. Mehr braucht es nicht – auch keine weiteren Plugins. Der Server liefert das Ressourcenpaket selbst aus (eingebauter Webserver auf Port 25580, einstellbar in `plugins/StinkendReich/config.yml`); Spieler nehmen es beim Betreten an und spielen mit ganz normalem Minecraft.
-
-**Jederzeit, auch auf einem bestehenden Server:** In einer neuen Welt steht die Villa am Spawn; gab es die Welt schon vorher, baut das Plugin die erste Villa auf dem nächsten Platz ohne Spielerbauten, und der erste Spieler wird ihr Herr (Zugangskarte, vor die Tür gebracht). Jeder, der irgendwann dazukommt – auch während gerade gebaut wird –, bekommt seine eigene Villa in der Nachbarschaft (im Hintergrund gebaut, ohne Hänger) samt Zugangskarte, auf einem festen Platz im Raster um die erste Villa. Diese Plätze bleiben frei: Die Straßen zu den Villen fahren um sie herum. Ein Neustart mitten im Bau schadet nicht: Der Bau geht an derselben Stelle weiter. Mit dabei sind fast alle Mechanismen der Mod: Türen, Tore und Rollläden, Kartenleser und Tastenfeld, Aufzug, Zugbrücke mit Animation, Sicherheitssystem mit Laser, Bewegungsmeldern, Sirenen und Tresorfallen, die Festung mit Minen und Abwehrgeschützen, der Inkognito-Modus, Smart Home mit Lichtfarben und Disco, Überwachungskameras, Konzertflügel und Musikanlage, Kamin, Whirlpool, Dusche und Schublade, Gemälde, Fuhrpark mit fahrbaren Autos, Hubschrauber, Fernseher (Video-Link im Fenster, abspielen im Browser) und Butler James. Dazu der Agenten-Anzug mit allen Kräften, goldene Pistole, Laseruhr und Geldkanone, die Waffenkammer im Bunker, Bodyguards und Lieferservice per Handy, tanzende Tänzerinnen im Geheimclub und echte Haie im Becken, die auch auf „Friedlich“ zubeißen – samt Haifalle unter dem Glasboden im Wohnzimmer, Wasserrutsche und Goldmünzen-Becken. Handy, Zentrale, Aufzug, Tastenfeld und Co. öffnen sich als Fenster.
-
-<table>
-<tr>
-<td><img src="docs/bilder/paper_zugbruecke.jpg" alt="Zugbrücke auf Paper"><br><sub>Zugbrücke gleitet unter das Tor</sub></td>
-<td><img src="docs/bilder/paper_inkognito.jpg" alt="Inkognito auf Paper"><br><sub>Inkognito: die Villa ist unter der Wiese verschwunden</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_disco.jpg" alt="Disco auf Paper"><br><sub>Smart Home: Disco im Ballsaal</sub></td>
-<td><img src="docs/bilder/paper_laser.jpg" alt="Laser auf Paper"><br><sub>Stufe 3: Laser im Garten</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_kamera.jpg" alt="Überwachungskamera auf Paper"><br><sub>Monitor: Blick durch die Überwachungskamera</sub></td>
-<td><img src="docs/bilder/paper_klaviatur.jpg" alt="Klaviatur auf Paper"><br><sub>Konzertflügel: selbst spielen im Fenster</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_waffenkammer.jpg" alt="Waffenkammer auf Paper"><br><sub>Waffenkammer im Bunker</sub></td>
-<td><img src="docs/bilder/paper_pistole.jpg" alt="Goldene Pistole auf Paper"><br><sub>Agenten-Anzug: goldene Pistole, oben die Kräfte des Anzugs</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_bodyguards.jpg" alt="Bodyguards auf Paper"><br><sub>Per Handy: Bodyguards und ein gelieferter Hund</sub></td>
-<td><img src="docs/bilder/paper_taenzerinnen.jpg" alt="Tänzerinnen auf Paper"><br><sub>Geheimclub: die Tänzerinnen kreisen um die Stangen</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_bodyguards_zielen.jpg" alt="Bodyguards zielen auf Paper"><br><sub>Bodyguards im Anschlag, jeder auf einen eigenen Gegner</sub></td>
-<td><img src="docs/bilder/server_bodyguard.jpg" alt="Bodyguard als Türsteher"><br><sub>Bodyguard als Türsteher im Smoking</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_hai.jpg" alt="Hai auf Paper"><br><sub>Echte Haie im Becken</sub></td>
-<td><img src="docs/bilder/paper_haibiss.jpg" alt="Haibiss auf Paper"><br><sub>Wer ins Becken fällt, wird gebissen – auch auf „Friedlich“</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_tunnel.jpg" alt="James gräbt auf Paper"><br><sub>„Butler, hol mir 4 Eisen“: James im Treppentunnel</sub></td>
-<td><img src="docs/bilder/paper_mitarbeiter.jpg" alt="Mitarbeiter auf Paper"><br><sub>Mitarbeiter graben vor der Villa, daneben ihre Kiste</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_sortiert.jpg" alt="Sortierte Truhe auf Paper"><br><sub>„Butler, sortier die Truhen“: jede Sorte in ihrer Stammtruhe</sub></td>
-<td><img src="docs/bilder/paper_kiste.jpg" alt="Mitarbeiterkiste auf Paper"><br><sub>Die erste Ladung: 16 Kohle in der Mitarbeiterkiste</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_heli_abflug.jpg" alt="Hubschrauber startet auf Paper"><br><sub>„Butler, flieg mich ins Dorf“: James startet vom Dach</sub></td>
-<td><img src="docs/bilder/paper_heli_dorf.jpg" alt="Hubschrauber im Dorf auf Paper"><br><sub>Gelandet im Dorf, gut 1200 Blöcke weiter</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_strasse.jpg" alt="Straße zur Nachbarvilla auf Paper"><br><sub>Straße zur Nachbarvilla: Mittellinie, Bordstein, Laternen</sub></td>
-<td><img src="docs/bilder/paper_strasse_berg.jpg" alt="Straße im Gebirge auf Paper"><br><sub>Im Gebirge am Hang entlang, durch Kuppen als Einschnitt</sub></td>
-</tr>
-<tr>
-<td><img src="docs/bilder/paper_limo.jpg" alt="James fährt die Limo auf Paper"><br><sub>„Butler, fahr mich zur Villa von Max“: James am Steuer der Limo</sub></td>
-<td><img src="docs/bilder/paper_strasse_einschnitt.jpg" alt="Einschnitt durch den Berg auf Paper"><br><sub>Offener Einschnitt durch den Berg</sub></td>
-</tr>
-</table>
-
-James arbeitet auch auf Paper: „Butler, hol mir 16 Eisen“ – er gräbt einen Treppentunnel, baut die ganze Ader ab, schmilzt Metall im Hochofen der Villa und bringt es dir. „Butler, hol mir 16 Holz“ – er fällt echte Bäume (keine gebauten) und pflanzt an jeder Stelle einen neuen Setzling. „Butler, sortier die Truhen“ – er geht alle Truhen und Fässer um dich herum ab und räumt sie auf, jede Sorte in ihre Stammtruhe. „Butler, geh jagen“ – er jagt Kühe, Schweine, Schafe, Hühner und Kaninchen, schont aber Jungtiere, Tiere mit Namen und lässt von jeder Art mindestens zwei übrig (abschaltbar mit `butler.jagen: false`). Die Mitarbeiterkiste aus dem Handy bringt drei Mitarbeiter, die Diamanten, Eisen und Kohle in ihre Kiste schaffen.
-
-„Butler, flieg mich ins Dorf“ (oder „nach Hause“, „zur Villa von Max“, auch per Handy) – James setzt sich ans Steuer des Hubschraubers, holt dich ab, wartet, bis du eingestiegen bist (Rechtsklick), und fliegt dich über alles hinweg zum Ziel.
-
-**Straßen zwischen den Villen:** Sobald ein neuer Spieler seine Villa bekommt, baut der Server eine Straße bis vor seine Zufahrt – sie zweigt von der nächsten Straße des Netzes ab, mit Mittellinie, Bordstein und Laternen, durch Hügel als offener Einschnitt, über Wasser als Brücke, um freie Plätze und Grundstücke herum und von vorn auf die Höhe der Zufahrt. „Butler, fahr mich zur Villa von Max“ (oder „nach Hause“, auch im Handy): James fährt die Limo vor und dich über die Abzweige auf direktem Weg hin – auch nach einem Neustart des Servers, wenn gerade niemand bei seiner Villa ist. Danach bringt er die Limo zurück auf ihren Stellplatz in der Tiefgarage, und liegengebliebenes Laub neben den Straßen räumt der Server weg.
-
-**Bedrock-Spieler (Handy, Konsole, Windows) über Geyser – Vorschau:** Läuft auf deinem Paper-Server zusätzlich [Geyser](https://geysermc.org/), baut das Plugin beim Start selbst ein Bedrock-Ressourcenpaket aus allen Modellen der Villa und gibt es Geyser mit – du musst nichts von Hand einrichten. Bedrock-Spieler sehen dann Möbel, Türen, Autos und alle eigenen Blöcke wie Java-Spieler, Handy und Butler-Menü öffnen sich als Bedrock-Formulare, James, Personal und Tänzerinnen tragen ihre Häute, und Handy, Zugangskarte und Waffen haben eigene Bilder im Inventar. Mit einem Bedrock-Testprogramm geprüft, auf echten Geräten noch nicht – Rückmeldungen sind willkommen. Bedrock-Spieler heißen mit Punkt davor (z. B. „.Bob“), bei einer Whitelist so eintragen. Abschalten: `bedrock: an: false` in `plugins/StinkendReich/config.yml`.
-
-<img src="docs/bilder/bedrock_vorschau.jpg" alt="Java-Modelle links, daraus erzeugte Bedrock-Modelle rechts" width="360"><br><sub>Links das Java-Modell, rechts das daraus gebaute Bedrock-Modell: Sofa, Flügel, Kronleuchter, Gaming-Stuhl, Goldtoilette</sub>
-
-Was auf Paper (noch) fehlt: Videos direkt im Fernseher (das Fenster öffnet den Link im Browser) sowie eigene Musik und Spotify.
-
 <br>
 
 ## ⚙️ Einstellungen
@@ -676,7 +607,7 @@ Beim Start schaut die Mod in den Releases dieses Projekts nach einer neueren Ver
 ./gradlew :1.21.4:buildAndCollect  # nur eine Version
 ```
 
-Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (das Paper-Kapitel aus `tools/ingame/szenarien/paper_trailer.txt`, `paper_trailer2.txt`, `paper_trailer3.txt`, `paper_trailer3h.txt` und `paper_trailer3k.txt`, Spieltest mit `tools/ingame/paper.sh`; die neuen Skins aus `trailer4a.txt`, „Freunde in deiner Welt“ aus `trailer4b.txt` mit `tools/ingame/lan.sh`, Schnitt `tools/ingame/trailer4_schnitt.py`; die Bodyguards aus `trailer5a.txt` und `trailer5b.txt`, Schnitt `tools/ingame/trailer5_schnitt.py`; die Straßen zu allen Freunden aus `trailer6.txt`, Schnitt `tools/ingame/trailer6_schnitt.py`; Neues aus 0.4.3 aus `trailer7.txt`, Schnitt `tools/ingame/trailer7_schnitt.py`; Neues aus 0.4.7 aus `trailer8.txt`, Schnitt `tools/ingame/trailer8_schnitt.py`). Das Paper-Plugin liegt in `paper/` und wird mit `./gradlew -p paper build` gebaut.
+Eine Codebasis für alle Versionen mit [Stonecutter](https://stonecutter.kikugie.dev/); Unterschiede stehen als `//?`-Bedingungen im Code. Die Villa entsteht aus `tools/villa/villa.py`, Texturen, Geräusche, Icon und Titelbild aus `tools/assets/`. `tools/ingame/test.sh` startet Minecraft ohne Grafikkarte und macht Screenshots; die Fotos dieser Seite stammen aus den Szenarien `tools/ingame/szenarien/fotos*.txt`, der Trailer aus `tools/ingame/trailer_szenario.py` (die neuen Skins aus `trailer4a.txt`, „Freunde in deiner Welt“ aus `trailer4b.txt` mit `tools/ingame/lan.sh`, Schnitt `tools/ingame/trailer4_schnitt.py`; die Bodyguards aus `trailer5a.txt`, Schnitt `tools/ingame/trailer5_schnitt.py`; die Straßen zu allen Freunden aus `trailer6.txt`, Schnitt `tools/ingame/trailer6_schnitt.py`; Neues aus 0.4.3 aus `trailer7.txt`, Schnitt `tools/ingame/trailer7_schnitt.py`; Neues aus 0.4.7 aus `trailer8.txt`, Schnitt `tools/ingame/trailer8_schnitt.py`).
 
 **Neues Release:** `mod.version` in `stonecutter.properties.toml` erhöhen, dieselbe Nummer in `.github/release-version` eintragen und pushen (oder ein Tag `v…` pushen). GitHub baut dann alle .jar und legt das Release an; die Update-Funktion der Mod findet es von selbst.
 

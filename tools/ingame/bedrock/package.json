@@ -1,8 +1,0 @@
-{
-  "name": "stinkendreich-bedrock-test",
-  "private": true,
-  "description": "Test-Client für Bedrock-Spieler (Geyser) im Spieltest des Paper-Plugins",
-  "dependencies": {
-    "bedrock-protocol": "3.60.1"
-  }
-}

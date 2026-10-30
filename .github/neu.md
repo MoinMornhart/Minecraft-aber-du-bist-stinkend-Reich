@@ -1,3 +1,7 @@
+### Neu in 0.4.8 – nur noch die Mod
+
+- **Paper-Plugin eingestellt:** Es gibt nur noch die Fabric-Mod. Das Paper-Plugin und das Ressourcenpaket für Paper-Server sind nicht mehr Teil der Releases. Wer einen Server betreiben will, nimmt einen Fabric-Server mit der Mod (Freunde ohne Mod können mit Polymer weiter mitspielen, siehe README).
+
 ### Neu in 0.4.7 – Wegweiser, Navi mit Limo oder Heli, Fernbedienung in der Hand
 
 - **Wegweiser an den Straßen:** Holzpfähle mit Pfeilschildern und goldener Schrift. Ein großer steht an der Zufahrt vor dem Kreisel und zeigt zu allen Straßen („MINE · 340 m“, „DORF · 1,2 km“), an jedem Abzweig steht einer mit der neuen Straße, dem Weg geradeaus und dem Heimweg. Kommt eine Straße dazu, wird der Wegweiser ergänzt. Gebaut aus Anzeige-Figuren von Minecraft – Freunde ohne Mod sehen sie auch. Mod und Paper.
